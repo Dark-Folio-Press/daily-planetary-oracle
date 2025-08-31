@@ -687,10 +687,17 @@ export function MoodTransitDashboard() {
                         const data = weeklyChartData.find((d: any) => d.weekday === label);
                         return data?.fullWeekday || label;
                       }}
-                      formatter={(value: any, name: any) => [
-                        typeof value === 'number' ? value.toFixed(1) : value, 
-                        name === 'mood' ? 'Average Mood' : 'Average Energy'
-                      ]}
+                      formatter={(value: any, name: any, props: any) => {
+                        const { payload } = props;
+                        const displayName = name === 'mood' ? 'Average Mood' : 'Average Energy';
+                        const mainValue = typeof value === 'number' ? value.toFixed(1) : value;
+                        
+                        // Add cosmic correlation info to tooltip
+                        const lunarInfo = payload.lunarCorrelation ? ` | 🌙 Lunar: ${payload.lunarCorrelation.toFixed(1)}` : '';
+                        const planetaryInfo = payload.planetaryCorrelation ? ` | ⭐ Planetary: ${payload.planetaryCorrelation.toFixed(1)}` : '';
+                        
+                        return [mainValue + lunarInfo + planetaryInfo, displayName];
+                      }}
                     />
                     <Legend />
                     <Bar dataKey="mood" fill="#8884d8" name="Mood" />
