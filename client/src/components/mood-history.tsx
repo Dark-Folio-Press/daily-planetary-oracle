@@ -648,14 +648,111 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground mb-4">
-                  {moodHistory.length === 0 
-                    ? "No mood entries yet. Select a date from the calendar to start tracking!"
-                    : "Select a date from the calendar to view or edit your mood entry."
-                  }
-                </p>
-              </div>
+              // Show selected entry details or placeholder
+              (() => {
+                const selectedEntry = getEntryForDate(selectedDate);
+                
+                if (selectedEntry) {
+                  return (
+                    <div className="space-y-4">
+                      <div className="p-4 border rounded-lg bg-muted/30">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-medium">{format(selectedDate, 'MMMM d, yyyy')}</h3>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditExistingEntry(selectedEntry)}
+                          >
+                            <Edit2 className="w-4 h-4 mr-2" />
+                            Edit
+                          </Button>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Mood</p>
+                            <div className="flex items-center gap-2">
+                              <div className="flex">
+                                {[...Array(10)].map((_, i) => (
+                                  <span
+                                    key={i}
+                                    className={`text-lg ${i < selectedEntry.mood ? 'text-yellow-500' : 'text-gray-300'}`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                              <span className="text-sm font-medium">{selectedEntry.mood}/10</span>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <p className="text-sm text-muted-foreground">Energy</p>
+                            <div className="flex items-center gap-2">
+                              <div className="flex">
+                                {[...Array(10)].map((_, i) => (
+                                  <span
+                                    key={i}
+                                    className={`text-lg ${i < selectedEntry.energy ? 'text-blue-500' : 'text-gray-300'}`}
+                                  >
+                                    ⚡
+                                  </span>
+                                ))}
+                              </div>
+                              <span className="text-sm font-medium">{selectedEntry.energy}/10</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {selectedEntry.emotions && (
+                          <div className="mb-4">
+                            <p className="text-sm text-muted-foreground mb-2">Emotions</p>
+                            <div className="flex flex-wrap gap-1">
+                              {(Array.isArray(selectedEntry.emotions) 
+                                ? selectedEntry.emotions 
+                                : selectedEntry.emotions.split(',').map(e => e.trim())
+                              ).map((emotion, index) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
+                                >
+                                  {emotion}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {selectedEntry.journalEntry && (
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-2">Journal Entry</p>
+                            <p className="text-sm bg-background/50 p-3 rounded border">
+                              {selectedEntry.journalEntry}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground mb-4">
+                        {moodHistory.length === 0 
+                          ? "No mood entries yet. Select a date from the calendar to start tracking!"
+                          : `No entry for ${format(selectedDate, 'MMMM d, yyyy')}. Click "Add Entry" to create one.`
+                        }
+                      </p>
+                      {moodHistory.length > 0 && (
+                        <Button onClick={() => setShowAddForm(true)} variant="outline">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Entry for This Date
+                        </Button>
+                      )}
+                    </div>
+                  );
+                }
+              })()
             )}
           </CardContent>
         </Card>
