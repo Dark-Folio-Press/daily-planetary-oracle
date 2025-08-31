@@ -1057,16 +1057,157 @@ export function MoodTransitDashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="insights" className="space-y-4">
+        <TabsContent value="insights" className="space-y-6">
+          {/* Planetary Influences Section */}
+          {correlationData.planetaryInfluences && (
+            <Card data-testid="card-planetary-influences">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="mr-2 h-5 w-5 text-purple-500" />
+                  Planetary Influences
+                </CardTitle>
+                <CardDescription>
+                  How different planets affect your emotional patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Dominant Planet Summary */}
+                {correlationData.planetaryInfluences.dominantPlanet && (
+                  <div className="p-4 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                        {correlationData.planetaryInfluences.dominantPlanet.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Your Dominant Planet: {correlationData.planetaryInfluences.dominantPlanet}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Correlation strength: {Math.round(correlationData.planetaryInfluences.dominantCorrelation * 100)}%
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Individual Planet Influences */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {correlationData.planetaryInfluences.influences.map((influence, index) => (
+                    <div key={index} className="p-3 border rounded-lg bg-background" data-testid={`planet-influence-${index}`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                            {influence.planet.charAt(0)}
+                          </div>
+                          <span className="font-medium">{influence.planet}</span>
+                        </div>
+                        <Badge variant="secondary">{Math.round(influence.correlation * 100)}%</Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <div>Aspects: {influence.aspectTypes.join(', ')}</div>
+                        <div>Mood Impact: {influence.avgMoodImpact.toFixed(1)}/10</div>
+                        <div>Significant Days: {influence.significantDays}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Planetary Insights */}
+                {correlationData.planetaryInfluences.insights && correlationData.planetaryInfluences.insights.length > 0 && (
+                  <div className="space-y-2">
+                    <h5 className="font-medium text-sm">Planetary Insights:</h5>
+                    {correlationData.planetaryInfluences.insights.map((insight, index) => (
+                      <div key={index} className="p-3 bg-purple-50/50 dark:bg-purple-950/10 border border-purple-100 dark:border-purple-800 rounded-lg">
+                        <p className="text-sm" data-testid={`planetary-insight-${index}`}>{insight}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Lunar Influences Section */}
+          {correlationData.lunarInfluences && (
+            <Card data-testid="card-lunar-influences">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Moon className="mr-2 h-5 w-5 text-blue-500" />
+                  Lunar Influences
+                </CardTitle>
+                <CardDescription>
+                  How moon phases and lunar cycles affect your emotions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Lunar Sensitivity Summary */}
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold">Your Lunar Sensitivity</h4>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                      {Math.round(correlationData.lunarInfluences.overallLunarSensitivity * 100)}% sensitive
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Dominant Phase:</span>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="text-lg">{getMoonPhaseIcon(correlationData.lunarInfluences.dominantMoonPhase)}</span>
+                        <span className="font-medium">{getMoonPhaseName(correlationData.lunarInfluences.dominantMoonPhase)}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Lunar-Planetary Harmony:</span>
+                      <div className="mt-1">
+                        <Progress value={correlationData.lunarInfluences.lunarPlanetaryHarmony * 100} className="h-2" />
+                        <span className="text-xs">{Math.round(correlationData.lunarInfluences.lunarPlanetaryHarmony * 100)}% harmony</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Current Moon Phase */}
+                {correlationData.lunarInfluences.currentMoonData && (
+                  <div className="p-3 border rounded-lg bg-background">
+                    <h5 className="font-medium text-sm mb-2">Current Moon Influence:</h5>
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{getMoonPhaseIcon(correlationData.lunarInfluences.currentMoonData.phase)}</span>
+                      <div className="flex-1">
+                        <div className="font-medium">{getMoonPhaseName(correlationData.lunarInfluences.currentMoonData.phaseName)}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {Math.round(correlationData.lunarInfluences.currentMoonData.illumination)}% illuminated in {correlationData.lunarInfluences.currentMoonData.sign}
+                        </div>
+                        <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                          {correlationData.lunarInfluences.currentMoonData.influence}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Lunar Insights */}
+                {correlationData.lunarInfluences.insights && correlationData.lunarInfluences.insights.length > 0 && (
+                  <div className="space-y-2">
+                    <h5 className="font-medium text-sm">Lunar Insights:</h5>
+                    {correlationData.lunarInfluences.insights.map((insight, index) => (
+                      <div key={index} className="p-3 bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-800 rounded-lg">
+                        <p className="text-sm" data-testid={`lunar-insight-${index}`}>{insight}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* General Cosmic Insights and Recommendations */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card data-testid="card-insights">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Star className="mr-2 h-5 w-5" />
-                  Cosmic Insights
+                  <Activity className="mr-2 h-5 w-5 text-indigo-500" />
+                  General Cosmic Insights
                 </CardTitle>
                 <CardDescription>
-                  What your data reveals about your cosmic connections
+                  Overall patterns in your cosmic connections
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -1081,7 +1222,7 @@ export function MoodTransitDashboard() {
             <Card data-testid="card-recommendations">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Sun className="mr-2 h-5 w-5" />
+                  <Sun className="mr-2 h-5 w-5 text-amber-500" />
                   Personalized Recommendations
                 </CardTitle>
                 <CardDescription>
