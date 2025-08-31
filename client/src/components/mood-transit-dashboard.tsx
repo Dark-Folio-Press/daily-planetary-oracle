@@ -1267,21 +1267,31 @@ function DailyTransitCard({ entry, lunarData }: { entry: MoodTransitCorrelation;
   const getMoodLabel = (moodValue: number) => {
     const labels = {
       1: 'Troubled',
-      2: 'Down', 
-      3: 'Neutral',
-      4: 'Happy',
-      5: 'Euphoric'
+      2: 'Very Low', 
+      3: 'Down',
+      4: 'Low',
+      5: 'Neutral',
+      6: 'Slightly Positive',
+      7: 'Happy',
+      8: 'Very Happy',
+      9: 'Joyful',
+      10: 'Euphoric'
     };
     return labels[moodValue as keyof typeof labels] || 'Unknown';
   };
 
   const getEnergyLabel = (energyValue: number) => {
     const labels = {
-      1: 'Drained',
-      2: 'Tired',
-      3: 'Balanced', 
-      4: 'Energetic',
-      5: 'Bursting'
+      1: 'Exhausted',
+      2: 'Drained',
+      3: 'Tired',
+      4: 'Low Energy',
+      5: 'Balanced',
+      6: 'Good Energy', 
+      7: 'Energetic',
+      8: 'Very Energetic',
+      9: 'High Energy',
+      10: 'Bursting'
     };
     return labels[energyValue as keyof typeof labels] || 'Unknown';
   };
