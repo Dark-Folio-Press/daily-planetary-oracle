@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collap
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { CalendarDays, TrendingUp, Star, Moon, Sun, Activity, ChevronDown, ChevronUp, Zap, Heart, AlertTriangle } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, ComposedChart, Legend } from 'recharts';
 
 interface PlanetaryAspect {
   planet: string;
@@ -192,12 +192,41 @@ export function MoodTransitDashboard() {
     );
   }
 
-  const weeklyChartData = correlationData.weeklyPatterns.map(pattern => ({
-    weekday: pattern.weekday.substring(0, 3),
-    mood: pattern.avgMood,
-    energy: pattern.avgEnergy,
-    fullWeekday: pattern.weekday
-  }));
+  // Enhanced weekly chart data with lunar and planetary correlations
+  const weeklyChartData = correlationData.weeklyPatterns.map(pattern => {
+    // Calculate lunar correlation (based on dominant lunar phase influence)
+    let lunarCorrelation = 5; // Default neutral
+    if (pattern.lunarPatterns?.dominantPhase) {
+      // Calculate correlation based on moon phase patterns
+      const moonPhaseCorrelations = correlationData.lunarInfluences?.moonPhaseCorrelations || [];
+      const phaseCorr = moonPhaseCorrelations.find(c => c.phase === pattern.lunarPatterns.dominantPhase);
+      if (phaseCorr) {
+        lunarCorrelation = (phaseCorr.avgMood + phaseCorr.avgEnergy) / 2;
+      }
+    }
+
+    // Calculate planetary correlation (based on dominant planet influence)
+    let planetaryCorrelation = 5; // Default neutral
+    if (pattern.dominantPlanet && correlationData.planetaryInfluences?.influences) {
+      const planetInfluence = correlationData.planetaryInfluences.influences.find(
+        p => p.planet === pattern.dominantPlanet
+      );
+      if (planetInfluence) {
+        planetaryCorrelation = 5 + (planetInfluence.correlation * 5); // Convert to 0-10 scale
+      }
+    }
+
+    return {
+      weekday: pattern.weekday.substring(0, 3),
+      mood: pattern.avgMood,
+      energy: pattern.avgEnergy,
+      lunarCorrelation: Math.max(0, Math.min(10, lunarCorrelation)),
+      planetaryCorrelation: Math.max(0, Math.min(10, planetaryCorrelation)),
+      fullWeekday: pattern.weekday,
+      dominantPlanet: pattern.dominantPlanet,
+      dominantMoonPhase: pattern.lunarPatterns?.dominantPhase
+    };
+  });
 
   const correlationChartData = correlationData.strongCorrelations.map((corr, index) => ({
     pattern: corr.pattern.split(':')[0], // Shorten pattern name
@@ -619,12 +648,12 @@ export function MoodTransitDashboard() {
             <CardHeader>
               <CardTitle>Weekly Pattern Analysis</CardTitle>
               <CardDescription>
-                Detailed breakdown of your mood patterns by day of the week
+                Mood, energy patterns with lunar and planetary correlation lines
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={weeklyChartData}>
+                <ComposedChart data={weeklyChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="weekday" />
                   <YAxis domain={[0, 10]} />
@@ -633,10 +662,43 @@ export function MoodTransitDashboard() {
                       const data = weeklyChartData.find(d => d.weekday === label);
                       return data?.fullWeekday || label;
                     }}
+                    formatter={(value, name, props) => {
+                      const { payload } = props;
+                      if (name === 'lunarCorrelation') {
+                        return [
+                          `${value?.toFixed(1)}`, 
+                          `Lunar Influence ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
+                        ];
+                      }
+                      if (name === 'planetaryCorrelation') {
+                        return [
+                          `${value?.toFixed(1)}`, 
+                          `${payload.dominantPlanet || 'Planetary'} Influence`
+                        ];
+                      }
+                      return [`${value?.toFixed(1)}`, name === 'mood' ? 'Average Mood' : 'Average Energy'];
+                    }}
                   />
-                  <Bar dataKey="mood" fill="#8884d8" name="Average Mood" />
-                  <Bar dataKey="energy" fill="#82ca9d" name="Average Energy" />
-                </BarChart>
+                  <Legend />
+                  <Bar dataKey="mood" fill="#8884d8" name="Mood" />
+                  <Bar dataKey="energy" fill="#82ca9d" name="Energy" />
+                  <Line 
+                    type="monotone" 
+                    dataKey="lunarCorrelation" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                    name="Lunar Correlation"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="planetaryCorrelation" 
+                    stroke="#8b5cf6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                    name="Planetary Correlation"
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
               
               <div className="mt-6 space-y-4">
