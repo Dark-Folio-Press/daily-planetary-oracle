@@ -448,7 +448,7 @@ export default function ChatPage() {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
-                        <div className="font-medium tracking-wide">💬 Feedback Analytics</div>
+                        <div className="font-medium tracking-wide">💬 Accuracy Metrics</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
