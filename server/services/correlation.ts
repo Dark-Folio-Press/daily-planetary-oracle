@@ -506,8 +506,11 @@ export class CorrelationService {
       const aspects = patternAspects.get(pattern) || [];
 
       if (frequency > 0.2 || avgScore > 0.7) { // Appears in 20%+ of days or high correlation
+        // Generate enhanced pattern name with planetary context
+        const enhancedPattern = this.generateEnhancedPatternName(pattern, aspects);
+        
         strongCorrelations.push({
-          pattern,
+          pattern: enhancedPattern,
           strength: avgScore,
           frequency,
           description: this.generateDetailedPatternDescription(pattern, frequency, avgScore, aspects)
@@ -941,6 +944,60 @@ export class CorrelationService {
     return variance;
   }
 
+  private generateEnhancedPatternName(pattern: string, aspects: PlanetaryAspect[]): string {
+    // Analyze the planetary aspects to create specific pattern names
+    const planetCounts = new Map<string, number>();
+    const aspectTypes = new Map<string, number>();
+    
+    aspects.forEach(aspect => {
+      planetCounts.set(aspect.planet, (planetCounts.get(aspect.planet) || 0) + 1);
+      aspectTypes.set(aspect.aspect, (aspectTypes.get(aspect.aspect) || 0) + 1);
+    });
+    
+    // Find dominant planetary influences (top 2)
+    const dominantPlanets = [...planetCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([planet]) => planet);
+      
+    const dominantAspects = [...aspectTypes.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([aspect]) => aspect);
+
+    // Create enhanced pattern name
+    if (dominantPlanets.length > 0) {
+      if (pattern.includes('Energy alignment')) {
+        let enhancedName = `${dominantPlanets.join(' & ')} Energy Alignment`;
+        if (dominantAspects.length > 0) {
+          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
+        }
+        return enhancedName;
+      } else if (pattern.includes('Emotional tone')) {
+        let enhancedName = `${dominantPlanets.join(' & ')} Emotional Resonance`;
+        if (dominantAspects.length > 0) {
+          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
+        }
+        return enhancedName;
+      } else if (pattern.includes('Theme-emotion')) {
+        let enhancedName = `${dominantPlanets.join(' & ')} Theme Synchronicity`;
+        if (dominantAspects.length > 0) {
+          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
+        }
+        return enhancedName;
+      } else {
+        let enhancedName = `${dominantPlanets.join(' & ')} Cosmic Pattern`;
+        if (dominantAspects.length > 0) {
+          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
+        }
+        return enhancedName;
+      }
+    }
+    
+    // Fallback to original pattern name if no dominant planets found
+    return pattern;
+  }
+
   private generateDetailedPatternDescription(pattern: string, frequency: number, strength: number, aspects: PlanetaryAspect[]): string {
     const frequencyDesc = frequency > 0.5 ? "frequently" : frequency > 0.3 ? "often" : "sometimes";
     const strengthDesc = strength > 0.8 ? "very strong" : strength > 0.6 ? "strong" : "moderate";
@@ -967,7 +1024,7 @@ export class CorrelationService {
       .slice(0, 2)
       .map(([aspect]) => aspect);
     
-    // Create detailed explanation
+    // Create detailed explanation (pattern name is already enhanced)
     let description = `This pattern appears ${frequencyDesc} with ${strengthDesc} correlation (${Math.round(frequency * 100)}% of days, ${Math.round(strength * 100)}% match strength). `;
     
     if (dominantPlanets.length > 0) {
