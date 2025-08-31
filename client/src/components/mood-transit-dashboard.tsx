@@ -681,8 +681,14 @@ export function MoodTransitDashboard() {
               {correlationData.dailyEntries && correlationData.dailyEntries.length > 0 ? (
                 <div className="space-y-4">
                   {correlationData.dailyEntries.map((entry, index) => {
-                    // Get lunar data for this specific date
-                    const lunarForDate = correlationData.lunarInfluences?.currentMoonData || null;
+                    // Get lunar data for this specific date from the transit data
+                    const lunarForDate = entry.transit?.moonPhase ? {
+                      phase: entry.transit.moonPhase,
+                      phaseName: getMoonPhaseName(entry.transit.moonPhase),
+                      illumination: entry.transit.moonIllumination,
+                      sign: entry.transit.moonSign,
+                      influence: entry.transit.lunarInfluence
+                    } : null;
                     
                     return (
                       <DailyTransitCard 
