@@ -373,13 +373,13 @@ export function MoodTransitDashboard() {
                     </div>
                     
                     {/* Add current mood correlation if available */}
-                    {correlationData.lunarInfluences.moonPhaseCorrelations.length > 0 && (() => {
-                      const currentPhaseCorr = correlationData.lunarInfluences.moonPhaseCorrelations.find(
-                        c => c.phase === correlationData.lunarInfluences.currentMoonData.phase
-                      );
-                      return currentPhaseCorr ? (
-                        <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-800">
-                          <div className="text-xs text-muted-foreground mb-1">Your typical mood in this phase:</div>
+                    <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-800">
+                      <div className="text-xs text-muted-foreground mb-1">Lunar tracking data:</div>
+                      {correlationData.lunarInfluences.moonPhaseCorrelations && correlationData.lunarInfluences.moonPhaseCorrelations.length > 0 ? (() => {
+                        const currentPhaseCorr = correlationData.lunarInfluences.moonPhaseCorrelations.find(
+                          c => c.phase === correlationData.lunarInfluences.currentMoonData.phase
+                        );
+                        return currentPhaseCorr ? (
                           <div className="flex gap-3 text-xs">
                             <span className="flex items-center gap-1">
                               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
@@ -390,9 +390,13 @@ export function MoodTransitDashboard() {
                               Energy: {currentPhaseCorr.avgEnergy.toFixed(1)}/5
                             </span>
                           </div>
-                        </div>
-                      ) : null;
-                    })()}
+                        ) : (
+                          <div className="text-xs text-muted-foreground">No data for this phase yet</div>
+                        );
+                      })() : (
+                        <div className="text-xs text-muted-foreground">Track your mood daily to see patterns</div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
