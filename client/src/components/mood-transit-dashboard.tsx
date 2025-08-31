@@ -674,15 +674,24 @@ export function MoodTransitDashboard() {
             <CardHeader>
               <CardTitle>Daily Transit Details</CardTitle>
               <CardDescription>
-                Individual planetary aspects and their influence on your mood patterns
+                Individual planetary aspects and lunar phases affecting your daily mood patterns
               </CardDescription>
             </CardHeader>
             <CardContent>
               {correlationData.dailyEntries && correlationData.dailyEntries.length > 0 ? (
                 <div className="space-y-4">
-                  {correlationData.dailyEntries.map((entry, index) => (
-                    <DailyTransitCard key={entry.date} entry={entry} />
-                  ))}
+                  {correlationData.dailyEntries.map((entry, index) => {
+                    // Get lunar data for this specific date
+                    const lunarForDate = correlationData.lunarInfluences?.currentMoonData || null;
+                    
+                    return (
+                      <DailyTransitCard 
+                        key={entry.date} 
+                        entry={entry} 
+                        lunarData={lunarForDate}
+                      />
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
@@ -996,7 +1005,7 @@ export function MoodTransitDashboard() {
 }
 
 // Helper component for displaying individual daily transit entries
-function DailyTransitCard({ entry }: { entry: MoodTransitCorrelation }) {
+function DailyTransitCard({ entry, lunarData }: { entry: MoodTransitCorrelation; lunarData?: any }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   const formatDate = (dateStr: string) => {
@@ -1057,7 +1066,7 @@ function DailyTransitCard({ entry }: { entry: MoodTransitCorrelation }) {
             <CardTitle className="text-lg" data-testid={`text-date-${entry.date}`}>
               {formatDate(entry.date)}
             </CardTitle>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 flex-wrap">
               <Badge variant="outline" data-testid={`badge-mood-${entry.date}`}>
                 Mood: {getMoodLabel(entry.mood.mood)} ({entry.mood.mood}/5)
               </Badge>
@@ -1067,6 +1076,13 @@ function DailyTransitCard({ entry }: { entry: MoodTransitCorrelation }) {
               <Badge variant="secondary" data-testid={`badge-correlation-${entry.date}`}>
                 Correlation: {Math.round(entry.correlationScore * 100)}%
               </Badge>
+              
+              {/* Add lunar phase for this day */}
+              {lunarData && (
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200" data-testid={`badge-moon-${entry.date}`}>
+                  🌙 {lunarData.phaseName || 'Unknown Phase'}
+                </Badge>
+              )}
             </div>
           </div>
           
@@ -1083,7 +1099,29 @@ function DailyTransitCard({ entry }: { entry: MoodTransitCorrelation }) {
             </CollapsibleTrigger>
             
             <CollapsibleContent className="mt-4">
-              <div className="space-y-3">
+              <div className="space-y-4">
+                {/* Lunar Influence Section */}
+                {lunarData && (
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center">
+                      <span className="text-xl mr-2">{getMoonPhaseIcon(lunarData.phase || 'new')}</span>
+                      Lunar Influence
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-4 text-xs">
+                        <span><strong>Phase:</strong> {lunarData.phaseName || 'Unknown'}</span>
+                        <span><strong>Illumination:</strong> {lunarData.illumination || 0}%</span>
+                        {lunarData.sign && <span><strong>In:</strong> {lunarData.sign}</span>}
+                      </div>
+                      {lunarData.influence && (
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                          {lunarData.influence}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
                 <h4 className="font-semibold text-sm">Planetary Aspects:</h4>
                 
                 {entry.planetaryAspects && entry.planetaryAspects.length > 0 ? (
