@@ -2246,13 +2246,23 @@ ${daily.horoscope}
       // Ensure date is in YYYY-MM-DD format and treat it as a local date
       const normalizedDate = date.split('T')[0]; // Remove any time component
 
+      // Get lunar data for this date
+      const { LunarService } = await import('./services/lunar.js');
+      const lunarService = new LunarService();
+      const lunarData = lunarService.getLunarData(new Date(normalizedDate));
+
       const moodData = {
         userId,
         date: normalizedDate,
         mood: parseInt(mood),
         energy: parseInt(energy),
         emotions: emotions || null,
-        journalEntry: journalEntry || null
+        journalEntry: journalEntry || null,
+        moonPhase: lunarData.phase,
+        lunarInfluence: JSON.stringify(lunarData.lunarInfluence),
+        moonIllumination: lunarData.illumination,
+        moonSign: lunarData.sign,
+        lunarAspects: null // Will be calculated later if needed
       };
 
       // Check if mood entry already exists for this date

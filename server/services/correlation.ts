@@ -1165,7 +1165,8 @@ export class CorrelationService {
     let lunarInsight = '';
     if (dominantPhase) {
       const dominantData = phaseFrequencies[0];
-      const phaseName = this.lunarService.getMoonPhaseIcon(dominantPhase) + ' ' + this.getPhaseName(dominantPhase);
+      const lunarPattern = this.lunarService.getLunarPatternDescription(dominantPhase);
+      const phaseName = this.lunarService.getMoonPhaseIcon(dominantPhase) + ' ' + lunarPattern.name;
       lunarInsight = `Most commonly occurs during **${phaseName}** (${Math.round(dominantData.frequency * 100)}% of the time) with avg mood ${dominantData.avgMood}/10.`;
     } else {
       lunarInsight = 'No dominant lunar pattern detected for this day of the week.';
@@ -1194,7 +1195,8 @@ export class CorrelationService {
     
     if (lunarPatterns.dominantPhase) {
       const moonIcon = this.lunarService.getMoonPhaseIcon(lunarPatterns.dominantPhase);
-      const phaseName = this.getPhaseName(lunarPatterns.dominantPhase);
+      const lunarPattern = this.lunarService.getLunarPatternDescription(lunarPatterns.dominantPhase);
+      const phaseName = lunarPattern.name;
       
       return `${basicInsight} ${moonIcon} **Lunar Pattern**: Your ${weekday}s most commonly align with **${phaseName}** energy.`;
     }

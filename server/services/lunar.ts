@@ -193,6 +193,60 @@ export class LunarService {
     return names[phase] || 'Unknown';
   }
 
+  /**
+   * Get lunar pattern descriptions like planetary patterns
+   */
+  getLunarPatternDescription(phase: string): { name: string; description: string; energy: string } {
+    const patterns: Record<string, { name: string; description: string; energy: string }> = {
+      'new': {
+        name: 'New Moon Reset',
+        description: 'Fresh starts and new intentions manifest most powerfully',
+        energy: 'introspective and visionary'
+      },
+      'waxing_crescent': {
+        name: 'Crescent Growth',
+        description: 'Building momentum with gentle forward progress',
+        energy: 'hopeful and determined'
+      },
+      'first_quarter': {
+        name: 'Quarter Challenge',
+        description: 'Pushing through obstacles with decisive action',
+        energy: 'focused and assertive'
+      },
+      'waxing_gibbous': {
+        name: 'Gibbous Refinement',
+        description: 'Fine-tuning and perfecting your ongoing projects',
+        energy: 'productive and detail-oriented'
+      },
+      'full': {
+        name: 'Full Moon Peak',
+        description: 'Maximum emotional intensity and manifestation power',
+        energy: 'heightened and culminative'
+      },
+      'waning_gibbous': {
+        name: 'Grateful Release',
+        description: 'Sharing wisdom and releasing what no longer serves',
+        energy: 'generous and reflective'
+      },
+      'last_quarter': {
+        name: 'Quarter Forgiveness',
+        description: 'Letting go of past patterns and forgiving limitations',
+        energy: 'releasing and cleansing'
+      },
+      'waning_crescent': {
+        name: 'Crescent Wisdom',
+        description: 'Quiet contemplation and spiritual insight emerge',
+        energy: 'wise and introspective'
+      }
+    };
+    
+    return patterns[phase] || { 
+      name: 'Unknown Lunar Pattern', 
+      description: 'Unique cosmic energy pattern not yet identified',
+      energy: 'mysterious and undefined'
+    };
+  }
+
   private getMoonSign(date: Date): string {
     // Simplified moon sign calculation (moon moves ~13 degrees per day)
     const startDate = new Date('2000-01-01');
@@ -269,8 +323,8 @@ export class LunarService {
     if (dominantPhase) {
       const phaseData = correlations.find(c => c.phase === dominantPhase);
       if (phaseData) {
-        const phaseName = this.getPhaseName(dominantPhase);
-        insights.push(`✨ Your strongest lunar connection is with **${phaseName}** - this phase correlates with your highest mood/energy patterns.`);
+        const lunarPattern = this.getLunarPatternDescription(dominantPhase);
+        insights.push(`✨ Your strongest lunar connection is with **${lunarPattern.name}** - ${lunarPattern.description.toLowerCase()}.`);
       }
     }
     
@@ -279,7 +333,9 @@ export class LunarService {
     const lowestMood = correlations.reduce((min, c) => c.avgMood < min.avgMood ? c : min, correlations[0]);
     
     if (highestMood && lowestMood && highestMood.phase !== lowestMood.phase) {
-      insights.push(`🌟 Your mood peaks during **${this.getPhaseName(highestMood.phase)}** and dips during **${this.getPhaseName(lowestMood.phase)}**.`);
+      const highPattern = this.getLunarPatternDescription(highestMood.phase);
+      const lowPattern = this.getLunarPatternDescription(lowestMood.phase);
+      insights.push(`🌟 Your mood peaks during **${highPattern.name}** and dips during **${lowPattern.name}**.`);
     }
     
     return insights;
