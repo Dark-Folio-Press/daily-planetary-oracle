@@ -947,54 +947,41 @@ export class CorrelationService {
   private generateEnhancedPatternName(pattern: string, aspects: PlanetaryAspect[]): string {
     // Analyze the planetary aspects to create specific pattern names
     const planetCounts = new Map<string, number>();
-    const aspectTypes = new Map<string, number>();
+    const aspectCombinations = new Map<string, number>();
     
     aspects.forEach(aspect => {
       planetCounts.set(aspect.planet, (planetCounts.get(aspect.planet) || 0) + 1);
-      aspectTypes.set(aspect.aspect, (aspectTypes.get(aspect.aspect) || 0) + 1);
+      // Create full aspect combination string like "Venus trine Sun"
+      const combinationKey = `${aspect.planet} ${aspect.aspect} ${aspect.natalPlanet}`;
+      aspectCombinations.set(combinationKey, (aspectCombinations.get(combinationKey) || 0) + 1);
     });
+    
+    // Find the most frequent aspect combination
+    const dominantCombination = [...aspectCombinations.entries()]
+      .sort((a, b) => b[1] - a[1])[0];
     
     // Find dominant planetary influences (top 2)
     const dominantPlanets = [...planetCounts.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 2)
       .map(([planet]) => planet);
-      
-    const dominantAspects = [...aspectTypes.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 2)
-      .map(([aspect]) => aspect);
 
-    // Create enhanced pattern name
-    if (dominantPlanets.length > 0) {
+    // Create enhanced pattern name with specific aspect combination
+    if (dominantCombination && dominantPlanets.length > 0) {
+      const [aspectCombo] = dominantCombination;
+      
       if (pattern.includes('Energy alignment')) {
-        let enhancedName = `${dominantPlanets.join(' & ')} Energy Alignment`;
-        if (dominantAspects.length > 0) {
-          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
-        }
-        return enhancedName;
+        return `${dominantPlanets.join(' & ')} Energy Alignment (${aspectCombo})`;
       } else if (pattern.includes('Emotional tone')) {
-        let enhancedName = `${dominantPlanets.join(' & ')} Emotional Resonance`;
-        if (dominantAspects.length > 0) {
-          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
-        }
-        return enhancedName;
+        return `${dominantPlanets.join(' & ')} Emotional Resonance (${aspectCombo})`;
       } else if (pattern.includes('Theme-emotion')) {
-        let enhancedName = `${dominantPlanets.join(' & ')} Theme Synchronicity`;
-        if (dominantAspects.length > 0) {
-          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
-        }
-        return enhancedName;
+        return `${dominantPlanets.join(' & ')} Theme Synchronicity (${aspectCombo})`;
       } else {
-        let enhancedName = `${dominantPlanets.join(' & ')} Cosmic Pattern`;
-        if (dominantAspects.length > 0) {
-          enhancedName += ` (${dominantAspects.join(' & ')} aspects)`;
-        }
-        return enhancedName;
+        return `${dominantPlanets.join(' & ')} Cosmic Pattern (${aspectCombo})`;
       }
     }
     
-    // Fallback to original pattern name if no dominant planets found
+    // Fallback to original pattern name if no aspects found
     return pattern;
   }
 
