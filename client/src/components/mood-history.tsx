@@ -358,17 +358,24 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
         </div>
       )}
 
-      {/* Calendar Navigation and Entry Management */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Calendar View */}
+      {/* Entry Details and Calendar */}
+      <div className="space-y-6">
+        {/* Entry Form or Details */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Mood Calendar
-              </CardTitle>
-              <div className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5" />
+              {showAddForm ? 'Mood Entry' : 'Recent Entries'}
+            </CardTitle>
+            <CardDescription>
+              {showAddForm 
+                ? `Adding entry for ${format(selectedDate, 'MMMM d, yyyy')}`
+                : 'Your latest mood tracking entries'
+              }
+            </CardDescription>
+            {/* Month Navigation - Only show when not in add form */}
+            {!showAddForm && (
+              <div className="flex items-center justify-between pt-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -390,151 +397,7 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
-            </div>
-            <CardDescription>
-              Click on any day to add or edit your mood entry
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-1 mb-4">
-              {/* Day headers */}
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <div key={day} className="p-2 text-xs font-medium text-center text-muted-foreground">
-                  {day}
-                </div>
-              ))}
-              
-              {/* Calendar days */}
-              {calendarDays.map((day, index) => {
-                const entry = getEntryForDate(day);
-                const isSelected = isSameDay(day, selectedDate);
-                const isCurrentDay = isToday(day);
-                const isPastDate = day > new Date();
-                const isCurrentMonth = isSameMonth(day, currentMonth);
-                
-                return (
-                  <Button
-                    key={index}
-                    variant={isSelected ? "default" : "ghost"}
-                    size="sm"
-                    className={`
-                      h-10 p-1 relative text-xs
-                      ${!isCurrentMonth ? 'text-muted-foreground/50' : ''}
-                      ${isCurrentDay ? 'ring-2 ring-blue-500' : ''}
-                      ${entry && isCurrentMonth ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}
-                      ${isPastDate ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                      ${isSelected ? 'cosmic-gradient text-white' : ''}
-                    `}
-                    onClick={() => !isPastDate && isCurrentMonth && handleDateSelect(day)}
-                    disabled={isPastDate || !isCurrentMonth}
-                    data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
-                  >
-                    <div className="flex flex-col items-center">
-                      <span>{format(day, 'd')}</span>
-                      {entry && isCurrentMonth && (
-                        <div className="flex gap-0.5">
-                          <div 
-                            className="w-1 h-1 rounded-full bg-pink-500"
-                            title={`Mood: ${entry.mood}/10`}
-                          />
-                          <div 
-                            className="w-1 h-1 rounded-full bg-orange-500"
-                            title={`Energy: ${entry.energy}/10`}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </Button>
-                );
-              })}
-            </div>
-            
-            {/* Selected Date Info */}
-            <div className="border-t pt-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium">
-                  {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-                </h4>
-                {isToday(selectedDate) && (
-                  <Badge variant="outline" className="text-xs">Today</Badge>
-                )}
-              </div>
-              
-              {(() => {
-                const entry = getEntryForDate(selectedDate);
-                if (entry) {
-                  return (
-                    <div className="space-y-2">
-                      <div className="flex gap-4 text-sm">
-                        <span className="flex items-center gap-1">
-                          <Heart className="w-3 h-3 text-pink-500" />
-                          Mood: {entry.mood}/10
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Activity className="w-3 h-3 text-orange-500" />
-                          Energy: {entry.energy}/10
-                        </span>
-                      </div>
-                      {entry.emotions && entry.emotions.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {entry.emotions.map((emotion: string, idx: number) => (
-                            <Badge key={idx} variant="secondary" className="text-xs">
-                              {emotion}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEditExistingEntry(entry)}
-                          data-testid="button-edit-entry"
-                        >
-                          <Edit2 className="w-3 h-3 mr-1" />
-                          Edit Entry
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div className="text-center py-4">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        No mood entry for this day
-                      </p>
-                      <Button
-                        size="sm"
-                        className="cosmic-gradient"
-                        onClick={() => setShowAddForm(true)}
-                        disabled={selectedDate > new Date()}
-                        data-testid="button-add-entry-for-date"
-                      >
-                        <Plus className="w-3 h-3 mr-1" />
-                        Add Entry
-                      </Button>
-                    </div>
-                  );
-                }
-              })()}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Entry Form or Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5" />
-              {showAddForm ? 'Mood Entry' : 'Recent Entries'}
-            </CardTitle>
-            <CardDescription>
-              {showAddForm 
-                ? `Adding entry for ${format(selectedDate, 'MMMM d, yyyy')}`
-                : 'Your latest mood tracking entries'
-              }
-            </CardDescription>
+            )}
           </CardHeader>
           <CardContent>
             {/* Add Mood Entry Form */}
@@ -754,6 +617,144 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
                 }
               })()
             )}
+          </CardContent>
+        </Card>
+
+        {/* Calendar View */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Mood Calendar
+            </CardTitle>
+            <CardDescription>
+              Click on any day to add or edit your mood entry
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-1 mb-4">
+              {/* Day headers */}
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="p-2 text-xs font-medium text-center text-muted-foreground">
+                  {day}
+                </div>
+              ))}
+              
+              {/* Calendar days */}
+              {calendarDays.map((day, index) => {
+                const entry = getEntryForDate(day);
+                const isSelected = isSameDay(day, selectedDate);
+                const isCurrentDay = isToday(day);
+                const isPastDate = day > new Date();
+                const isCurrentMonth = isSameMonth(day, currentMonth);
+                
+                return (
+                  <Button
+                    key={index}
+                    variant={isSelected ? "default" : "ghost"}
+                    size="sm"
+                    className={`
+                      h-10 p-1 relative text-xs
+                      ${!isCurrentMonth ? 'text-muted-foreground/50' : ''}
+                      ${isCurrentDay ? 'ring-2 ring-blue-500' : ''}
+                      ${entry && isCurrentMonth ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}
+                      ${isPastDate ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      ${isSelected ? 'cosmic-gradient text-white' : ''}
+                    `}
+                    onClick={() => !isPastDate && isCurrentMonth && handleDateSelect(day)}
+                    disabled={isPastDate || !isCurrentMonth}
+                    data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <span>{format(day, 'd')}</span>
+                      {entry && isCurrentMonth && (
+                        <div className="flex gap-0.5">
+                          <div 
+                            className="w-1 h-1 rounded-full bg-pink-500"
+                            title={`Mood: ${entry.mood}/10`}
+                          />
+                          <div 
+                            className="w-1 h-1 rounded-full bg-orange-500"
+                            title={`Energy: ${entry.energy}/10`}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
+            
+            {/* Selected Date Info */}
+            <div className="border-t pt-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">
+                  {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                </h4>
+                {isToday(selectedDate) && (
+                  <Badge variant="outline" className="text-xs">Today</Badge>
+                )}
+              </div>
+              
+              {(() => {
+                const entry = getEntryForDate(selectedDate);
+                if (entry) {
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex gap-4 text-sm">
+                        <span className="flex items-center gap-1">
+                          <Heart className="w-3 h-3 text-pink-500" />
+                          Mood: {entry.mood}/10
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Activity className="w-3 h-3 text-orange-500" />
+                          Energy: {entry.energy}/10
+                        </span>
+                      </div>
+                      {entry.emotions && entry.emotions.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {entry.emotions.map((emotion: string, idx: number) => (
+                            <Badge key={idx} variant="secondary" className="text-xs">
+                              {emotion}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditExistingEntry(entry)}
+                          data-testid="button-edit-entry"
+                        >
+                          <Edit2 className="w-3 h-3 mr-1" />
+                          Edit Entry
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-muted-foreground mb-3">
+                        No mood entry for this day
+                      </p>
+                      <Button
+                        size="sm"
+                        className="cosmic-gradient"
+                        onClick={() => setShowAddForm(true)}
+                        disabled={selectedDate > new Date()}
+                        data-testid="button-add-entry-for-date"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add Entry
+                      </Button>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
           </CardContent>
         </Card>
       </div>
