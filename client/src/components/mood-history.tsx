@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar, TrendingUp, Heart, Moon, Sun, Activity, BookOpen, ArrowLeft, Edit2, Save, X, Star, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { format, parseISO, subDays, startOfWeek, endOfWeek, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, isToday } from 'date-fns';
+import { format, parseISO, subDays, startOfWeek, endOfWeek, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, isToday, getDay } from 'date-fns';
 import { useState } from 'react';
 
 const moodLabels = {
@@ -194,11 +194,20 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
     );
   };
 
-  // Get calendar days for current month
-  const calendarDays = eachDayOfInterval({
-    start: startOfMonth(currentMonth),
-    end: endOfMonth(currentMonth)
-  });
+  // Get calendar days with proper week alignment
+  const getCalendarDays = () => {
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
+    const calendarStart = startOfWeek(monthStart);
+    const calendarEnd = endOfWeek(monthEnd);
+    
+    return eachDayOfInterval({
+      start: calendarStart,
+      end: calendarEnd
+    });
+  };
+  
+  const calendarDays = getCalendarDays();
 
   // Calculate analytics
   const analytics = moodHistory.length > 0 ? {
@@ -399,6 +408,7 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
                 const isSelected = isSameDay(day, selectedDate);
                 const isCurrentDay = isToday(day);
                 const isPastDate = day > new Date();
+                const isCurrentMonth = isSameMonth(day, currentMonth);
                 
                 return (
                   <Button
@@ -407,18 +417,19 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
                     size="sm"
                     className={`
                       h-10 p-1 relative text-xs
+                      ${!isCurrentMonth ? 'text-muted-foreground/50' : ''}
                       ${isCurrentDay ? 'ring-2 ring-blue-500' : ''}
-                      ${entry ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}
+                      ${entry && isCurrentMonth ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}
                       ${isPastDate ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       ${isSelected ? 'cosmic-gradient text-white' : ''}
                     `}
-                    onClick={() => !isPastDate && handleDateSelect(day)}
-                    disabled={isPastDate}
+                    onClick={() => !isPastDate && isCurrentMonth && handleDateSelect(day)}
+                    disabled={isPastDate || !isCurrentMonth}
                     data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
                   >
                     <div className="flex flex-col items-center">
                       <span>{format(day, 'd')}</span>
-                      {entry && (
+                      {entry && isCurrentMonth && (
                         <div className="flex gap-0.5">
                           <div 
                             className="w-1 h-1 rounded-full bg-pink-500"
