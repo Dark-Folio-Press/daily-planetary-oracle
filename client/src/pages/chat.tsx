@@ -275,7 +275,7 @@ export default function ChatPage() {
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-foreground">Cosmic Playlist Generator</h1>
-                <p className="text-xs text-muted-foreground">Weekly planetary transit music</p>
+                <p className="text-xs text-muted-foreground">Discover Your Celestial Blueprint & Empower Your Cosmic Journey</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -392,7 +392,7 @@ export default function ChatPage() {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
-                        <div className="font-medium tracking-wide">📊 Mood Analytics</div>
+                        <div className="font-medium tracking-wide">📊 Mood Journal</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
@@ -403,35 +403,7 @@ export default function ChatPage() {
                 </div>
               )}
 
-              {/* Feedback Analytics Button - After Mood Analytics */}
-              {user && (
-                <div className="relative group">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.location.href = '/feedback-analytics'}
-                    className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
-                    data-testid="button-feedback-analytics"
-                  >
-                    <MessageSquare className="w-5 h-5" />
-                  </Button>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
-                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
-                      <div className="text-center">
-                        <div className="font-medium tracking-wide">💬 Feedback Analytics</div>
-                      </div>
-                      {/* Arrow pointing up */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
-                      {/* Soft glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Mood-Transit Correlation Button - After Feedback Analytics */}
+              {/* Mood-Transit Correlation Button - After Mood Analytics */}
               {user && (
                 <div className="relative group">
                   <Button
@@ -449,6 +421,34 @@ export default function ChatPage() {
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
                         <div className="font-medium tracking-wide">🌟 Cosmic Mood Analysis</div>
+                      </div>
+                      {/* Arrow pointing up */}
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
+                      {/* Soft glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Feedback Analytics Button - After Cosmic Mood Analysis */}
+              {user && (
+                <div className="relative group">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.location.href = '/feedback-analytics'}
+                    className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
+                    data-testid="button-feedback-analytics"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                  </Button>
+                  
+                  {/* Tooltip */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
+                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
+                      <div className="text-center">
+                        <div className="font-medium tracking-wide">💬 Feedback Analytics</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
