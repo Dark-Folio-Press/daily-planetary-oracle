@@ -1,0 +1,705 @@
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Progress } from './ui/progress';
+import { CalendarDays, TrendingUp, Star, Moon, Sun, Activity, ChevronDown, ChevronUp, Zap, Heart, AlertTriangle } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+
+interface PlanetaryAspect {
+  planet: string;
+  aspect: string;
+  natalPlanet: string;
+  orb: number;
+  significance: 'high' | 'medium' | 'low';
+  interpretation: string;
+  emotionalInfluence: 'positive' | 'negative' | 'neutral';
+}
+
+interface MoodTransitCorrelation {
+  date: string;
+  mood: any;
+  transit: any;
+  correlationScore: number;
+  significantCorrelations: string[];
+  insights: string[];
+  planetaryAspects: PlanetaryAspect[];
+}
+
+interface CorrelationAnalysis {
+  totalEntries: number;
+  correlationPeriod: string;
+  overallCorrelationScore: number;
+  strongCorrelations: Array<{
+    pattern: string;
+    strength: number;
+    frequency: number;
+    description: string;
+  }>;
+  weeklyPatterns: Array<{
+    weekday: string;
+    avgMood: number;
+    avgEnergy: number;
+    commonTransits: string[];
+  }>;
+  planetaryInfluences: {
+    dominantPlanet: string;
+    dominantCorrelation: number;
+    influences: Array<{
+      planet: string;
+      correlation: number;
+      aspectTypes: string[];
+      avgMoodImpact: number;
+      significantDays: number;
+    }>;
+    insights: string[];
+  };
+  dailyEntries: MoodTransitCorrelation[];
+  insights: string[];
+  recommendations: string[];
+}
+
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0', '#ffb347'];
+
+export function MoodTransitDashboard() {
+  const [dateRange, setDateRange] = useState('30'); // Default to 30 days
+
+  // Calculate date range for API call
+  const getDateRange = () => {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - parseInt(dateRange));
+    
+    return {
+      startDate: startDate.toISOString().split('T')[0],
+      endDate: endDate.toISOString().split('T')[0]
+    };
+  };
+
+  const { data: correlationData, isLoading, error, refetch } = useQuery({
+    queryKey: ['/api/analysis/mood-transit-correlation', dateRange],
+    queryFn: async () => {
+      const { startDate, endDate } = getDateRange();
+      const response = await fetch(`/api/analysis/mood-transit-correlation?startDate=${startDate}&endDate=${endDate}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch correlation analysis');
+      }
+      return response.json() as CorrelationAnalysis;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6" data-testid="correlation-dashboard-loading">
+        <div className="text-center py-8">
+          <div className="inline-flex items-center space-x-2">
+            <Moon className="animate-spin h-6 w-6 text-purple-500" />
+            <span className="text-lg text-muted-foreground">Analyzing cosmic patterns...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !correlationData) {
+    return (
+      <div className="text-center py-8" data-testid="correlation-dashboard-error">
+        <Star className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold mb-2">Unable to Load Cosmic Analysis</h3>
+        <p className="text-muted-foreground mb-4">
+          {correlationData?.totalEntries === 0 
+            ? "Start tracking your daily mood to see how cosmic energies influence your emotional patterns!"
+            : "There was an issue loading your correlation analysis."
+          }
+        </p>
+        <Button onClick={() => refetch()} variant="outline" data-testid="button-retry-analysis">
+          <Activity className="mr-2 h-4 w-4" />
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  const weeklyChartData = correlationData.weeklyPatterns.map(pattern => ({
+    weekday: pattern.weekday.substring(0, 3),
+    mood: pattern.avgMood,
+    energy: pattern.avgEnergy,
+    fullWeekday: pattern.weekday
+  }));
+
+  const correlationChartData = correlationData.strongCorrelations.map((corr, index) => ({
+    pattern: corr.pattern.split(':')[0], // Shorten pattern name
+    strength: Math.round(corr.strength * 100),
+    frequency: Math.round(corr.frequency * 100),
+    color: COLORS[index % COLORS.length]
+  }));
+
+  return (
+    <div className="space-y-6" data-testid="mood-transit-dashboard">
+      {/* Header with date range selector */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight" data-testid="text-dashboard-title">
+            Cosmic Mood Analysis
+          </h2>
+          <p className="text-muted-foreground" data-testid="text-analysis-period">
+            Analysis period: {correlationData.correlationPeriod}
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          <select 
+            value={dateRange} 
+            onChange={(e) => setDateRange(e.target.value)}
+            className="border border-input bg-background px-3 py-1 rounded-md text-sm"
+            data-testid="select-date-range"
+          >
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="365">Last year</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card data-testid="card-total-entries">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Entries</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" data-testid="text-total-entries">
+              {correlationData.totalEntries}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Mood & transit data points
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card data-testid="card-correlation-score">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Cosmic Alignment</CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" data-testid="text-correlation-score">
+              {Math.round(correlationData.overallCorrelationScore * 100)}%
+            </div>
+            <Progress 
+              value={correlationData.overallCorrelationScore * 100} 
+              className="mt-2"
+            />
+          </CardContent>
+        </Card>
+
+        <Card data-testid="card-strong-patterns">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Strong Patterns</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold" data-testid="text-strong-patterns">
+              {correlationData.strongCorrelations.length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Significant correlations found
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Analysis Tabs */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+          <TabsTrigger value="daily" data-testid="tab-daily">Daily Transits</TabsTrigger>
+          <TabsTrigger value="patterns" data-testid="tab-patterns">Patterns</TabsTrigger>
+          <TabsTrigger value="weekly" data-testid="tab-weekly">Weekly</TabsTrigger>
+          <TabsTrigger value="insights" data-testid="tab-insights">Insights</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Dominant Planetary Influence */}
+            <Card data-testid="card-dominant-influence">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-purple-500" />
+                  Your Cosmic Influencer
+                </CardTitle>
+                <CardDescription>
+                  The planetary force most connected to your emotional patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {correlationData.planetaryInfluences?.dominantPlanet ? (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-purple-600 mb-2">
+                        {correlationData.planetaryInfluences.dominantPlanet}
+                      </div>
+                      <div className="text-lg text-muted-foreground mb-2">
+                        {Math.round(correlationData.planetaryInfluences.dominantCorrelation * 100)}% correlation
+                      </div>
+                      <Progress 
+                        value={correlationData.planetaryInfluences.dominantCorrelation * 100} 
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="text-sm text-center text-muted-foreground">
+                      Your moods are most influenced by <strong>{correlationData.planetaryInfluences.dominantPlanet} transits</strong>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Moon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Track more days to discover your dominant planetary influence</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Personal Astrological Insights */}
+            <Card data-testid="card-personal-insights">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-amber-500" />
+                  Your Cosmic Patterns
+                </CardTitle>
+                <CardDescription>
+                  Personalized insights about your astrological responses
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {correlationData.planetaryInfluences?.insights && correlationData.planetaryInfluences.insights.length > 0 ? (
+                  <div className="space-y-3">
+                    {correlationData.planetaryInfluences.insights.slice(0, 3).map((insight, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 mt-0.5">
+                          {insight.includes('Venus') && <Heart className="h-4 w-4 text-pink-500" />}
+                          {insight.includes('Mars') && <Zap className="h-4 w-4 text-red-500" />}
+                          {insight.includes('Moon') && <Moon className="h-4 w-4 text-blue-500" />}
+                          {insight.includes('Sun') && <Sun className="h-4 w-4 text-yellow-500" />}
+                          {!insight.includes('Venus') && !insight.includes('Mars') && !insight.includes('Moon') && !insight.includes('Sun') && <Star className="h-4 w-4 text-purple-500" />}
+                        </div>
+                        <div className="text-sm" dangerouslySetInnerHTML={{ __html: insight.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Star className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No personalized insights available yet</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Planetary Influence Breakdown */}
+            <Card data-testid="card-planetary-breakdown" className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-green-500" />
+                  Planetary Influence Analysis
+                </CardTitle>
+                <CardDescription>
+                  How different planets correlate with your mood patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {correlationData.planetaryInfluences?.influences && correlationData.planetaryInfluences.influences.length > 0 ? (
+                  <div className="space-y-4">
+                    {correlationData.planetaryInfluences.influences.slice(0, 5).map((influence, index) => (
+                      <div key={influence.planet} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                            {influence.planet.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="font-semibold">{influence.planet}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {influence.significantDays} day{influence.significantDays !== 1 ? 's' : ''} tracked
+                              {influence.aspectTypes.length > 0 && ` • ${influence.aspectTypes.join(', ')} aspects`}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-lg">
+                            {Math.round(influence.correlation * 100)}%
+                          </div>
+                          <div className="text-sm text-muted-foreground">correlation</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Activity className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Track your daily moods to see detailed planetary influence analysis</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Weekly Energy Patterns - Keep this as it's useful */}
+            <Card data-testid="card-weekly-trends" className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Weekly Energy Patterns</CardTitle>
+                <CardDescription>
+                  Your average mood and energy by day of week
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={weeklyChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="weekday" />
+                    <YAxis domain={[0, 10]} />
+                    <Tooltip 
+                      labelFormatter={(label) => {
+                        const data = weeklyChartData.find(d => d.weekday === label);
+                        return data?.fullWeekday || label;
+                      }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="mood" 
+                      stroke="#8884d8" 
+                      strokeWidth={2}
+                      name="Mood"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="energy" 
+                      stroke="#82ca9d" 
+                      strokeWidth={2}
+                      name="Energy"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="daily" className="space-y-4">
+          <Card data-testid="card-daily-transits">
+            <CardHeader>
+              <CardTitle>Daily Transit Details</CardTitle>
+              <CardDescription>
+                Individual planetary aspects and their influence on your mood patterns
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {correlationData.dailyEntries && correlationData.dailyEntries.length > 0 ? (
+                <div className="space-y-4">
+                  {correlationData.dailyEntries.map((entry, index) => (
+                    <DailyTransitCard key={entry.date} entry={entry} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Star className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No daily transit data available for the selected period.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="patterns" className="space-y-4">
+          <Card data-testid="card-strong-correlations">
+            <CardHeader>
+              <CardTitle>Strong Correlation Patterns</CardTitle>
+              <CardDescription>
+                Patterns where your mood significantly aligns with cosmic energies
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {correlationData.strongCorrelations.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Moon className="mx-auto h-8 w-8 mb-2" />
+                  <p>No strong patterns detected yet. Keep tracking to discover your cosmic connections!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {correlationData.strongCorrelations.map((correlation, index) => (
+                    <div key={index} className="border rounded-lg p-4" data-testid={`pattern-${index}`}>
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-sm" data-testid={`text-pattern-name-${index}`}>
+                          {correlation.pattern}
+                        </h4>
+                        <div className="flex space-x-2">
+                          <Badge variant="secondary" data-testid={`badge-strength-${index}`}>
+                            {Math.round(correlation.strength * 100)}% strength
+                          </Badge>
+                          <Badge variant="outline" data-testid={`badge-frequency-${index}`}>
+                            {Math.round(correlation.frequency * 100)}% frequency
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground" data-testid={`text-pattern-description-${index}`}>
+                        {correlation.description}
+                      </p>
+                      <Progress 
+                        value={correlation.strength * 100} 
+                        className="mt-2"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="weekly" className="space-y-4">
+          <Card data-testid="card-weekly-details">
+            <CardHeader>
+              <CardTitle>Weekly Pattern Analysis</CardTitle>
+              <CardDescription>
+                Detailed breakdown of your mood patterns by day of the week
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={weeklyChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="weekday" />
+                  <YAxis domain={[0, 10]} />
+                  <Tooltip 
+                    labelFormatter={(label) => {
+                      const data = weeklyChartData.find(d => d.weekday === label);
+                      return data?.fullWeekday || label;
+                    }}
+                  />
+                  <Bar dataKey="mood" fill="#8884d8" name="Average Mood" />
+                  <Bar dataKey="energy" fill="#82ca9d" name="Average Energy" />
+                </BarChart>
+              </ResponsiveContainer>
+              
+              <div className="mt-6 space-y-3">
+                {correlationData.weeklyPatterns.map((pattern, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg" data-testid={`weekly-pattern-${index}`}>
+                    <div>
+                      <h4 className="font-medium" data-testid={`text-weekday-${index}`}>{pattern.weekday}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Mood: {pattern.avgMood.toFixed(1)} • Energy: {pattern.avgEnergy.toFixed(1)}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {pattern.commonTransits.map((transit, transitIndex) => (
+                        <Badge key={transitIndex} variant="outline" className="text-xs" data-testid={`transit-${index}-${transitIndex}`}>
+                          {transit}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="insights" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card data-testid="card-insights">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="mr-2 h-5 w-5" />
+                  Cosmic Insights
+                </CardTitle>
+                <CardDescription>
+                  What your data reveals about your cosmic connections
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {correlationData.insights.map((insight, index) => (
+                  <div key={index} className="p-3 bg-muted/50 rounded-lg" data-testid={`insight-${index}`}>
+                    <p className="text-sm" data-testid={`text-insight-${index}`}>{insight}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card data-testid="card-recommendations">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Sun className="mr-2 h-5 w-5" />
+                  Personalized Recommendations
+                </CardTitle>
+                <CardDescription>
+                  How to use these insights to enhance your daily life
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {correlationData.recommendations.map((recommendation, index) => (
+                  <div key={index} className="p-3 bg-primary/5 border border-primary/20 rounded-lg" data-testid={`recommendation-${index}`}>
+                    <p className="text-sm" data-testid={`text-recommendation-${index}`}>{recommendation}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+// Helper component for displaying individual daily transit entries
+function DailyTransitCard({ entry }: { entry: MoodTransitCorrelation }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  const getMoodLabel = (moodValue: number) => {
+    const labels = {
+      1: 'Troubled',
+      2: 'Down', 
+      3: 'Neutral',
+      4: 'Happy',
+      5: 'Euphoric'
+    };
+    return labels[moodValue as keyof typeof labels] || 'Unknown';
+  };
+
+  const getEnergyLabel = (energyValue: number) => {
+    const labels = {
+      1: 'Drained',
+      2: 'Tired',
+      3: 'Balanced', 
+      4: 'Energetic',
+      5: 'Bursting'
+    };
+    return labels[energyValue as keyof typeof labels] || 'Unknown';
+  };
+
+  const getSignificanceColor = (significance: string) => {
+    switch (significance) {
+      case 'high': return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium': return 'text-orange-600 bg-orange-50 border-orange-200';
+      case 'low': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
+
+  const getInfluenceIcon = (influence: string) => {
+    switch (influence) {
+      case 'positive': return <Heart className="w-4 h-4 text-green-500" />;
+      case 'negative': return <AlertTriangle className="w-4 h-4 text-red-500" />;
+      case 'neutral': return <Zap className="w-4 h-4 text-blue-500" />;
+      default: return <Star className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  return (
+    <Card className="border-l-4 border-l-purple-500" data-testid={`daily-transit-${entry.date}`}>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-lg" data-testid={`text-date-${entry.date}`}>
+              {formatDate(entry.date)}
+            </CardTitle>
+            <div className="flex items-center space-x-4">
+              <Badge variant="outline" data-testid={`badge-mood-${entry.date}`}>
+                Mood: {getMoodLabel(entry.mood.mood)} ({entry.mood.mood}/5)
+              </Badge>
+              <Badge variant="outline" data-testid={`badge-energy-${entry.date}`}>
+                Energy: {getEnergyLabel(entry.mood.energy)} ({entry.mood.energy}/5)
+              </Badge>
+              <Badge variant="secondary" data-testid={`badge-correlation-${entry.date}`}>
+                Correlation: {Math.round(entry.correlationScore * 100)}%
+              </Badge>
+            </div>
+          </div>
+          
+          <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                data-testid={`button-expand-${entry.date}`}
+              >
+                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                {entry.planetaryAspects?.length || 0} Transits
+              </Button>
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="mt-4">
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm">Planetary Aspects:</h4>
+                
+                {entry.planetaryAspects && entry.planetaryAspects.length > 0 ? (
+                  <div className="grid gap-3">
+                    {entry.planetaryAspects.map((aspect, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`p-3 rounded-lg border ${getSignificanceColor(aspect.significance)}`}
+                        data-testid={`aspect-${entry.date}-${idx}`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            {getInfluenceIcon(aspect.emotionalInfluence)}
+                            <span className="font-medium text-sm">
+                              {aspect.planet} {aspect.aspect} natal {aspect.natalPlanet}
+                            </span>
+                          </div>
+                          <div className="flex space-x-1">
+                            <Badge variant="outline">
+                              {aspect.significance}
+                            </Badge>
+                            {aspect.orb > 0 && (
+                              <Badge variant="secondary">
+                                {aspect.orb.toFixed(1)}°
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs leading-relaxed">
+                          {aspect.interpretation}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No significant planetary aspects detected for this day.
+                  </p>
+                )}
+
+                {entry.insights && entry.insights.length > 0 && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <h5 className="font-medium text-sm text-blue-900 mb-2">Cosmic Insights:</h5>
+                    <ul className="space-y-1">
+                      {entry.insights.map((insight, idx) => (
+                        <li key={idx} className="text-xs text-blue-800">
+                          • {insight}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </CardHeader>
+    </Card>
+  );
+}

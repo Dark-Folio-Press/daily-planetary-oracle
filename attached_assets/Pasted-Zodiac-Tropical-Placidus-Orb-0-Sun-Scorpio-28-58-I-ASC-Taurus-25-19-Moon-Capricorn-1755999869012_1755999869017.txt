@@ -1,0 +1,88 @@
+Zodiac : Tropical		Placidus Orb : 0
+	Sun		Scorpio	28°58'	 	 	I ASC		Taurus	25°19'
+	Moon		Capricorn	13°12'	 	 	II		Gemini	20°47'
+	Mercury		Sagittarius	20°45'	 	 	III		Cancer	11°37'
+	Venus		Sagittarius	21°05'	 	 	IV		Leo	3°08'
+	Mars		Pisces	8°33'	 	 	V		Leo	29°57'
+	Jupiter		Sagittarius	13°20'	 	 	VI		Libra	7°54'
+	Saturn		Gemini	3°21'	R	 	VII		Scorpio	25°19'
+	Uranus		Libra	16°37'	 	 	VIII		Sagittarius	20°47'
+	Neptune		Sagittarius	2°40'	 	 	IX		Capricorn	11°37'
+	Pluto		Libra	1°32'	 	 	X MC		Aquarius	3°08'
+	Lilith		Libra	19°31'	 	 	XI		Aquarius	29°57'
+	N Node		Aquarius	7°43'	 	 	XII		Aries	7°54'
+ 
+
+	Sun	in	VII
+	Moon	in	IX
+	Mercury	in	VII
+	Venus	in	VIII
+	Mars	in	XI
+	Jupiter	in	VII
+	Saturn	in	I ASC
+	Uranus	in	VI
+	Neptune	in	VII
+	Pluto	in	V
+	Lilith	in	VI
+	N Node	in	X MC
+ 
+
+ 
+masculine	7	 	fire	4
+feminine	3	 	earth	1
+cardinal	3	 	air	3
+fixed	1	 	water	2
+mutable	6	 	 
+ 
+
+Aspects
+The following table shows the planetary aspects in your natal chart. Interpretations of these factors are found below. The numbers listed under the column "Value" serve as a relative rating system for each aspect and are determined based on the planets involved, the aspect type, and the orb of influence. Negative values suggest more stressful or challenging influences while positive numbers show more flowing, easy energy.
+
+This is a wide table that may require you to scroll right on smaller screens.
+
+See also your full natal chart wheel graphic depicted below the report.
+
+
+
+Planet	Aspect	Planet	Orb	Value
+	Sun		Opposition		Saturn	4°23'	-144
+	Sun		Conjunction		Neptune	3°42'	302
+	Sun		Sextile		Pluto	2°34'	107
+	Sun		Opposition		I ASC	3°39'	-119
+	Sun		Sextile		X MC	4°11'	33
+	Moon		Sextile		Mars	4°39'	15
+	Moon		Square		Uranus	3°25'	-36
+	Mercury		Conjunction		Venus	0°20'	406
+	Mercury		Conjunction		Jupiter	7°25'	141
+	Mercury		Sextile		Uranus	4°08'	27
+	Mercury		Sextile		Lilith	1°14'	84
+	Venus		Conjunction		Jupiter	7°45'	162
+	Venus		Sextile		Uranus	4°28'	21
+	Venus		Sextile		Lilith	1°34'	96
+	Mars		Square		Jupiter	4°48'	-33
+	Mars		Square		Saturn	5°12'	-13
+	Mars		Square		Neptune	5°53'	-2
+	Jupiter		Sextile		Uranus	3°16'	83
+	Saturn		Opposition		Neptune	0°41'	-111
+	Saturn		Trine		Pluto	1°49'	39
+	Saturn		Trine		N Node	4°22'	14
+	Saturn		Conjunction		I ASC	8°02'	31
+	Saturn		Trine		X MC	0°13'	39
+	Uranus		Conjunction		Lilith	2°54'	85
+	Neptune		Sextile		Pluto	1°08'	46
+	Neptune		Opposition		I ASC	7°21'	-7
+	Neptune		Sextile		X MC	0°29'	36
+	Pluto		Trine		N Node	6°11'	0
+	Pluto		Trine		I ASC	6°13'	2
+	Pluto		Trine		X MC	1°37'	8
+ 	1777	-465	1312
+
+ 
+ 
+
+Part of Fortune & South Node
+The following table shows the positions of the Part of Fortune (using the classic formula) and the South Node of the Moon (the True value).
+
+	Fortune		Cancer	9°33'	 
+	South node		Leo	7°43'	 
+
