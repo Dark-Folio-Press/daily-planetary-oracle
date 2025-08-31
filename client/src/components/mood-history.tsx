@@ -373,26 +373,26 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
                 : 'Your latest mood tracking entries'
               }
             </CardDescription>
-            {/* Month Navigation - Only show when not in add form */}
+            {/* Day Navigation - Only show when not in add form */}
             {!showAddForm && (
               <div className="flex items-center justify-between pt-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentMonth(subDays(currentMonth, 30))}
-                  data-testid="button-prev-month"
+                  onClick={() => setSelectedDate(subDays(selectedDate, 1))}
+                  data-testid="button-prev-day"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
-                <span className="text-sm font-medium min-w-[120px] text-center">
-                  {format(currentMonth, 'MMMM yyyy')}
+                <span className="text-sm font-medium min-w-[160px] text-center">
+                  {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentMonth(addDays(currentMonth, 30))}
-                  disabled={isSameMonth(currentMonth, new Date())}
-                  data-testid="button-next-month"
+                  onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+                  disabled={selectedDate >= new Date()}
+                  data-testid="button-next-day"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
