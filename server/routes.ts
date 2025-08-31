@@ -2243,9 +2243,12 @@ ${daily.horoscope}
         return res.status(400).json({ error: "Date, mood, and energy are required" });
       }
 
+      // Ensure date is in YYYY-MM-DD format and treat it as a local date
+      const normalizedDate = date.split('T')[0]; // Remove any time component
+
       const moodData = {
         userId,
-        date,
+        date: normalizedDate,
         mood: parseInt(mood),
         energy: parseInt(energy),
         emotions: emotions || null,
@@ -2253,7 +2256,7 @@ ${daily.horoscope}
       };
 
       // Check if mood entry already exists for this date
-      const existingMood = await storage.getDailyMood(userId, date);
+      const existingMood = await storage.getDailyMood(userId, normalizedDate);
       
       if (existingMood) {
         // Update existing entry

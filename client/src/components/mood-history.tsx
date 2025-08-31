@@ -176,7 +176,11 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
   };
 
   const handleEditExistingEntry = (entry: any) => {
-    setSelectedDate(new Date(entry.date));
+    // Parse date as local date to avoid timezone issues
+    const [year, month, day] = entry.date.split('-').map(Number);
+    const localDate = new Date(year, month - 1, day);
+    
+    setSelectedDate(localDate);
     setNewMoodData({
       date: entry.date,
       mood: entry.mood,
@@ -189,9 +193,8 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
 
   // Get existing entry for selected date
   const getEntryForDate = (date: Date) => {
-    return moodHistory.find((entry: any) => 
-      isSameDay(new Date(entry.date), date)
-    );
+    const targetDateStr = format(date, 'yyyy-MM-dd');
+    return moodHistory.find((entry: any) => entry.date === targetDateStr);
   };
 
   // Get calendar days with proper week alignment
