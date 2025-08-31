@@ -4,25 +4,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, TrendingUp, Heart, Moon, Sun, Activity, BookOpen, ArrowLeft, Edit2, Save, X, Star } from 'lucide-react';
+import { Calendar, TrendingUp, Heart, Moon, Sun, Activity, BookOpen, ArrowLeft, Edit2, Save, X, Star, Plus, Minus } from 'lucide-react';
 import { format, parseISO, subDays, startOfWeek, endOfWeek } from 'date-fns';
 import { useState } from 'react';
 
 const moodLabels = {
-  1: { label: 'Troubled', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
-  2: { label: 'Down', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' },
-  3: { label: 'Neutral', color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' },
-  4: { label: 'Happy', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
-  5: { label: 'Euphoric', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }
+  1: { label: 'Deeply Troubled', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
+  2: { label: 'Very Down', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
+  3: { label: 'Down', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' },
+  4: { label: 'Slightly Low', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' },
+  5: { label: 'Neutral', color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' },
+  6: { label: 'Slightly Good', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
+  7: { label: 'Good', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
+  8: { label: 'Happy', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
+  9: { label: 'Very Happy', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' },
+  10: { label: 'Euphoric', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }
 };
 
 const energyLabels = {
-  1: { label: 'Drained', color: 'bg-purple-100 text-purple-800' },
-  2: { label: 'Tired', color: 'bg-blue-100 text-blue-800' },
-  3: { label: 'Balanced', color: 'bg-yellow-100 text-yellow-800' },
-  4: { label: 'Energetic', color: 'bg-orange-100 text-orange-800' },
-  5: { label: 'Bursting', color: 'bg-red-100 text-red-800' }
+  1: { label: 'Completely Drained', color: 'bg-red-100 text-red-800' },
+  2: { label: 'Very Drained', color: 'bg-red-100 text-red-800' },
+  3: { label: 'Tired', color: 'bg-orange-100 text-orange-800' },
+  4: { label: 'Slightly Tired', color: 'bg-orange-100 text-orange-800' },
+  5: { label: 'Balanced', color: 'bg-gray-100 text-gray-800' },
+  6: { label: 'Slightly Energetic', color: 'bg-blue-100 text-blue-800' },
+  7: { label: 'Energetic', color: 'bg-green-100 text-green-800' },
+  8: { label: 'Very Energetic', color: 'bg-green-100 text-green-800' },
+  9: { label: 'Highly Energetic', color: 'bg-yellow-100 text-yellow-800' },
+  10: { label: 'Bursting with Energy', color: 'bg-yellow-100 text-yellow-800' }
 };
 
 interface MoodHistoryProps {
@@ -34,6 +47,16 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
+  const [showAddForm, setShowAddForm] = useState(false);
+  
+  // New mood entry form state
+  const [newMoodData, setNewMoodData] = useState({
+    date: format(new Date(), 'yyyy-MM-dd'),
+    mood: 5,
+    energy: 5,
+    emotions: '',
+    journalEntry: ''
+  });
 
   // Remove date filtering to show all user's mood entries
   const { data: moodHistory = [], isLoading } = useQuery({
@@ -70,6 +93,42 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
     }
   });
 
+  // Mutation for creating new mood entries
+  const createMoodMutation = useMutation({
+    mutationFn: async (moodData: typeof newMoodData) => {
+      const response = await apiRequest('POST', '/api/mood/daily', {
+        date: moodData.date,
+        mood: moodData.mood,
+        energy: moodData.energy,
+        emotions: moodData.emotions ? moodData.emotions.split(',').map(e => e.trim()).filter(e => e) : [],
+        journalEntry: moodData.journalEntry.trim() || null
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/mood/history'] });
+      setShowAddForm(false);
+      setNewMoodData({
+        date: format(new Date(), 'yyyy-MM-dd'),
+        mood: 5,
+        energy: 5,
+        emotions: '',
+        journalEntry: ''
+      });
+      toast({
+        title: "Mood Entry Added",
+        description: "Your mood entry has been saved successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to Save",
+        description: error.message || "Failed to save mood entry. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleEditStart = (entry: any) => {
     setEditingId(entry.id);
     setEditText(entry.journalEntry || '');
@@ -84,6 +143,21 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
   const handleEditCancel = () => {
     setEditingId(null);
     setEditText('');
+  };
+
+  const handleNewMoodSubmit = () => {
+    createMoodMutation.mutate(newMoodData);
+  };
+
+  const handleNewMoodCancel = () => {
+    setShowAddForm(false);
+    setNewMoodData({
+      date: format(new Date(), 'yyyy-MM-dd'),
+      mood: 5,
+      energy: 5,
+      emotions: '',
+      journalEntry: ''
+    });
   };
 
   // Calculate analytics
@@ -192,7 +266,7 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
               <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Heart className="w-5 h-5 text-white" />
               </div>
-              <div className="text-2xl font-bold">{analytics.averageMood}/5</div>
+              <div className="text-2xl font-bold">{analytics.averageMood}/10</div>
               <div className="text-sm text-muted-foreground">Average Mood</div>
             </CardContent>
           </Card>
@@ -202,7 +276,7 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
               <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Activity className="w-5 h-5 text-white" />
               </div>
-              <div className="text-2xl font-bold">{analytics.averageEnergy}/5</div>
+              <div className="text-2xl font-bold">{analytics.averageEnergy}/10</div>
               <div className="text-sm text-muted-foreground">Average Energy</div>
             </CardContent>
           </Card>
@@ -235,13 +309,137 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
       {/* Mood Entries */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
-            Recent Mood Entries
-          </CardTitle>
-          <CardDescription>
-            Your last 30 days of cosmic vibrations and daily observations
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5" />
+                Recent Mood Entries
+              </CardTitle>
+              <CardDescription>
+                Your last 30 days of cosmic vibrations and daily observations
+              </CardDescription>
+            </div>
+            <Button 
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="cosmic-gradient"
+              data-testid="button-add-mood-entry"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Entry
+            </Button>
+          </div>
+
+          {/* Add Mood Entry Form */}
+          {showAddForm && (
+            <div className="mt-6 p-4 border rounded-lg bg-muted/30">
+              <h3 className="font-medium mb-4">Add New Mood Entry</h3>
+              <div className="space-y-4">
+                {/* Date Input */}
+                <div>
+                  <Label htmlFor="mood-date">Date</Label>
+                  <Input
+                    id="mood-date"
+                    type="date"
+                    value={newMoodData.date}
+                    onChange={(e) => setNewMoodData({ ...newMoodData, date: e.target.value })}
+                    max={format(new Date(), 'yyyy-MM-dd')}
+                    data-testid="input-mood-date"
+                  />
+                </div>
+
+                {/* Mood Slider */}
+                <div>
+                  <Label htmlFor="mood-slider">Mood: {newMoodData.mood}/10 - {moodLabels[newMoodData.mood as keyof typeof moodLabels]?.label}</Label>
+                  <div className="px-2 mt-2">
+                    <Slider
+                      id="mood-slider"
+                      value={[newMoodData.mood]}
+                      onValueChange={(value) => setNewMoodData({ ...newMoodData, mood: value[0] })}
+                      min={1}
+                      max={10}
+                      step={1}
+                      className="w-full"
+                      data-testid="slider-mood"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>1</span>
+                      <span>5</span>
+                      <span>10</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Energy Slider */}
+                <div>
+                  <Label htmlFor="energy-slider">Energy: {newMoodData.energy}/10 - {energyLabels[newMoodData.energy as keyof typeof energyLabels]?.label}</Label>
+                  <div className="px-2 mt-2">
+                    <Slider
+                      id="energy-slider"
+                      value={[newMoodData.energy]}
+                      onValueChange={(value) => setNewMoodData({ ...newMoodData, energy: value[0] })}
+                      min={1}
+                      max={10}
+                      step={1}
+                      className="w-full"
+                      data-testid="slider-energy"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>1</span>
+                      <span>5</span>
+                      <span>10</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Emotions Input */}
+                <div>
+                  <Label htmlFor="emotions">Emotions (comma-separated)</Label>
+                  <Input
+                    id="emotions"
+                    value={newMoodData.emotions}
+                    onChange={(e) => setNewMoodData({ ...newMoodData, emotions: e.target.value })}
+                    placeholder="happy, excited, grateful, anxious..."
+                    data-testid="input-emotions"
+                  />
+                </div>
+
+                {/* Journal Entry */}
+                <div>
+                  <Label htmlFor="journal">Journal Entry (optional)</Label>
+                  <Textarea
+                    id="journal"
+                    value={newMoodData.journalEntry}
+                    onChange={(e) => setNewMoodData({ ...newMoodData, journalEntry: e.target.value })}
+                    placeholder="How are you feeling today? Any synchronicities or cosmic insights?"
+                    className="min-h-[80px]"
+                    data-testid="textarea-journal"
+                  />
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={handleNewMoodCancel}
+                    disabled={createMoodMutation.isPending}
+                    data-testid="button-cancel-mood-entry"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleNewMoodSubmit}
+                    disabled={createMoodMutation.isPending}
+                    className="cosmic-gradient"
+                    data-testid="button-save-mood-entry"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {createMoodMutation.isPending ? 'Saving...' : 'Save Entry'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {moodHistory.length === 0 ? (
