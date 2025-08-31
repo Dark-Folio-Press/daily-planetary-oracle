@@ -230,8 +230,8 @@ export function MoodTransitDashboard() {
 
     const result = {
       weekday: pattern.weekday.substring(0, 3),
-      mood: pattern.avgMood * 2, // Convert 1-5 scale to 1-10 scale
-      energy: pattern.avgEnergy * 2, // Convert 1-5 scale to 1-10 scale
+      mood: pattern.avgMood, // Already on 1-10 scale
+      energy: pattern.avgEnergy, // Already on 1-10 scale
       lunarCorrelation: Math.max(0, Math.min(10, lunarCorrelation)),
       planetaryCorrelation: Math.max(0, Math.min(10, planetaryCorrelation)),
       fullWeekday: pattern.weekday,
@@ -438,12 +438,12 @@ export function MoodTransitDashboard() {
                             <div className="space-y-1">
                               <div className="flex items-center gap-2 text-xs">
                                 <span className="text-green-600 dark:text-green-400">✨ Best:</span>
-                                <span>{getMoonPhaseName(best.phase)} ({((best.avgMood + best.avgEnergy)/2 * 2).toFixed(1)})</span>
+                                <span>{getMoonPhaseName(best.phase)} ({((best.avgMood + best.avgEnergy)/2).toFixed(1)})</span>
                               </div>
                               {best.phase !== challenging.phase && (
                                 <div className="flex items-center gap-2 text-xs">
                                   <span className="text-orange-600 dark:text-orange-400">⚡ Intense:</span>
-                                  <span>{getMoonPhaseName(challenging.phase)} ({((challenging.avgMood + challenging.avgEnergy)/2 * 2).toFixed(1)})</span>
+                                  <span>{getMoonPhaseName(challenging.phase)} ({((challenging.avgMood + challenging.avgEnergy)/2).toFixed(1)})</span>
                                 </div>
                               )}
                             </div>
@@ -806,7 +806,7 @@ export function MoodTransitDashboard() {
                             <span>{((phase.avgMood + phase.avgEnergy) / 2).toFixed(1)}/5</span>
                           </div>
                           <Progress 
-                            value={((phase.avgMood + phase.avgEnergy) / 2) * 20} 
+                            value={((phase.avgMood + phase.avgEnergy) / 2) * 10} 
                             className="h-2"
                           />
                         </div>
