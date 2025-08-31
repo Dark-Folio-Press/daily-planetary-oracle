@@ -666,58 +666,81 @@ export function MoodTransitDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <ComposedChart data={weeklyChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="weekday" />
-                  <YAxis domain={[0, 10]} />
-                  <Tooltip 
-                    labelFormatter={(label) => {
-                      const data = weeklyChartData.find(d => d.weekday === label);
-                      return data?.fullWeekday || label;
-                    }}
-                    formatter={(value: any, name: any, props: any) => {
-                      const { payload } = props;
-                      const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
-                      
-                      if (name === 'lunarCorrelation') {
-                        return [
-                          numValue.toFixed(1), 
-                          `Lunar Influence ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
-                        ];
-                      }
-                      if (name === 'planetaryCorrelation') {
-                        return [
-                          numValue.toFixed(1), 
-                          `${payload.dominantPlanet || 'Planetary'} Influence`
-                        ];
-                      }
-                      return [numValue.toFixed(1), name === 'mood' ? 'Average Mood' : 'Average Energy'];
-                    }}
-                  />
-                  <Legend />
-                  <Bar dataKey="mood" fill="#8884d8" name="Mood" />
-                  <Bar dataKey="energy" fill="#82ca9d" name="Energy" />
-                  <Line 
-                    type="monotone" 
-                    dataKey="lunarCorrelation" 
-                    stroke="#3b82f6" 
-                    strokeWidth={3}
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
-                    name="🌙 Lunar"
-                    connectNulls={true}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="planetaryCorrelation" 
-                    stroke="#8b5cf6" 
-                    strokeWidth={3}
-                    dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 6 }}
-                    name="⭐ Planetary"
-                    connectNulls={true}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
+              <div className="space-y-4">
+                {/* Mood and Energy Bars */}
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={weeklyChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="weekday" />
+                    <YAxis domain={[0, 10]} />
+                    <Tooltip 
+                      labelFormatter={(label) => {
+                        const data = weeklyChartData.find(d => d.weekday === label);
+                        return data?.fullWeekday || label;
+                      }}
+                      formatter={(value: any, name: any) => [
+                        typeof value === 'number' ? value.toFixed(1) : value, 
+                        name === 'mood' ? 'Average Mood' : 'Average Energy'
+                      ]}
+                    />
+                    <Legend />
+                    <Bar dataKey="mood" fill="#8884d8" name="Mood" />
+                    <Bar dataKey="energy" fill="#82ca9d" name="Energy" />
+                  </BarChart>
+                </ResponsiveContainer>
+                
+                {/* Correlation Lines */}
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={weeklyChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="weekday" />
+                    <YAxis domain={[0, 10]} />
+                    <Tooltip 
+                      labelFormatter={(label) => {
+                        const data = weeklyChartData.find(d => d.weekday === label);
+                        return data?.fullWeekday || label;
+                      }}
+                      formatter={(value: any, name: any, props: any) => {
+                        const { payload } = props;
+                        const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                        
+                        if (name === 'lunarCorrelation') {
+                          return [
+                            numValue.toFixed(1), 
+                            `🌙 Lunar ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
+                          ];
+                        }
+                        if (name === 'planetaryCorrelation') {
+                          return [
+                            numValue.toFixed(1), 
+                            `⭐ ${payload.dominantPlanet || 'Planetary'} Influence`
+                          ];
+                        }
+                        return [numValue.toFixed(1), name];
+                      }}
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="lunarCorrelation" 
+                      stroke="#3b82f6" 
+                      strokeWidth={3}
+                      dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
+                      name="🌙 Lunar Correlation"
+                      connectNulls={false}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="planetaryCorrelation" 
+                      stroke="#8b5cf6" 
+                      strokeWidth={3}
+                      dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 6 }}
+                      name="⭐ Planetary Correlation"
+                      connectNulls={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
               
               <div className="mt-6 space-y-4">
                 {correlationData.weeklyPatterns.map((pattern, index) => (
