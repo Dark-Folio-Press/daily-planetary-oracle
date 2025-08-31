@@ -248,17 +248,22 @@ export class LunarService {
   }
 
   private getMoonSign(date: Date): string {
-    // Simplified moon sign calculation (moon moves ~13 degrees per day)
-    const startDate = new Date('2000-01-01');
+    // Moon moves through all 12 signs in ~27.3 days (about 2.3 days per sign)
+    const startDate = new Date('2000-01-06'); // Arbitrary start date when moon was in Aries
     const daysDiff = (date.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-    const moonPosition = (daysDiff * 13) % 360;
+    
+    // Moon completes a full cycle through all signs every 27.3 days
+    const lunarCycleDays = 27.32;
+    const daysIntoSign = daysDiff % lunarCycleDays;
     
     const signs = [
       'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
       'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
     ];
     
-    const signIndex = Math.floor(moonPosition / 30);
+    // Each sign gets about 2.28 days (27.32 / 12)
+    const daysPerSign = lunarCycleDays / 12;
+    const signIndex = Math.floor(daysIntoSign / daysPerSign) % 12;
     return signs[signIndex] || 'Aries';
   }
 
@@ -293,16 +298,24 @@ export class LunarService {
 
   private getSignificance(variance: number, frequency: number): 'high' | 'medium' | 'low' {
     const significanceScore = variance * frequency;
-    if (significanceScore > 1.5) return 'high';
-    if (significanceScore > 0.8) return 'medium';
+    // More generous thresholds for small datasets
+    if (significanceScore > 0.8) return 'high';
+    if (significanceScore > 0.3) return 'medium';
     return 'low';
   }
 
   private calculateLunarSensitivity(correlations: MoonPhaseCorrelation[]): number {
+    if (correlations.length === 0) return 0;
+    
     const highSignificanceCount = correlations.filter(c => c.significance === 'high').length;
     const mediumSignificanceCount = correlations.filter(c => c.significance === 'medium').length;
+    const lowSignificanceCount = correlations.filter(c => c.significance === 'low').length;
     
-    return (highSignificanceCount * 0.8 + mediumSignificanceCount * 0.4) / Math.max(correlations.length, 1);
+    // More realistic sensitivity calculation with credit for low significance too
+    const weightedScore = (highSignificanceCount * 1.0 + mediumSignificanceCount * 0.6 + lowSignificanceCount * 0.2);
+    const maxPossibleScore = correlations.length * 1.0;
+    
+    return Math.min(weightedScore / maxPossibleScore, 1.0);
   }
 
   private generateLunarInsights(

@@ -774,7 +774,7 @@ export function MoodTransitDashboard() {
                         <div className="flex items-start justify-between mb-2">
                           <h4 className="font-semibold text-sm flex items-center" data-testid={`text-lunar-pattern-name-${index}`}>
                             <span className="text-xl mr-2">{getMoonPhaseIcon(phase.phase)}</span>
-                            {getMoonPhaseName(phase.phaseName)}
+                            {phase.phaseName}
                           </h4>
                           <div className="flex space-x-2">
                             <Badge variant="secondary" className="bg-blue-100 text-blue-700" data-testid={`badge-lunar-mood-${index}`}>
