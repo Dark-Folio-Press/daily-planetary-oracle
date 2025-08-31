@@ -720,19 +720,24 @@ export function MoodTransitDashboard() {
                         const { payload } = props;
                         const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
                         
+                        // Add mood and energy info to all correlation tooltips
+                        const moodInfo = payload.mood ? ` | Mood: ${payload.mood.toFixed(1)}` : '';
+                        const energyInfo = payload.energy ? ` | Energy: ${payload.energy.toFixed(1)}` : '';
+                        const baseInfo = moodInfo + energyInfo;
+                        
                         if (name === 'lunarCorrelation') {
                           return [
-                            numValue.toFixed(1), 
+                            numValue.toFixed(1) + baseInfo, 
                             `🌙 Lunar ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
                           ];
                         }
                         if (name === 'planetaryCorrelation') {
                           return [
-                            numValue.toFixed(1), 
+                            numValue.toFixed(1) + baseInfo, 
                             `⭐ ${payload.dominantPlanet || 'Planetary'} Influence`
                           ];
                         }
-                        return [numValue.toFixed(1), name];
+                        return [numValue.toFixed(1) + baseInfo, name];
                       }}
                     />
                     <Legend />
