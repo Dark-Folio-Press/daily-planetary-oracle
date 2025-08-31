@@ -193,7 +193,7 @@ export function MoodTransitDashboard() {
   }
 
   // Enhanced weekly chart data with lunar and planetary correlations
-  const weeklyChartData = correlationData.weeklyPatterns.map(pattern => {
+  const weeklyChartData = (correlationData.weeklyPatterns?.length > 0 ? correlationData.weeklyPatterns.map(pattern => {
     // Calculate lunar correlation (based on dominant lunar phase influence)
     let lunarCorrelation = 5; // Default neutral
     if (pattern.lunarPatterns?.dominantPhase && correlationData.lunarInfluences) {
@@ -240,7 +240,16 @@ export function MoodTransitDashboard() {
     };
     
     return result;
-  });
+  }) : [
+    // Fallback data if no weeklyPatterns
+    { weekday: 'Sun', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Sunday' },
+    { weekday: 'Mon', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Monday' },
+    { weekday: 'Tue', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Tuesday' },
+    { weekday: 'Wed', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Wednesday' },
+    { weekday: 'Thu', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Thursday' },
+    { weekday: 'Fri', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Friday' },
+    { weekday: 'Sat', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Saturday' }
+  ]);
 
   const correlationChartData = correlationData.strongCorrelations.map((corr, index) => ({
     pattern: corr.pattern.split(':')[0], // Shorten pattern name
@@ -561,7 +570,7 @@ export function MoodTransitDashboard() {
                     <YAxis domain={[0, 10]} />
                     <Tooltip 
                       labelFormatter={(label) => {
-                        const data = weeklyChartData.find(d => d.weekday === label);
+                        const data = weeklyChartData.find((d: any) => d.weekday === label);
                         return data?.fullWeekday || label;
                       }}
                     />
@@ -675,7 +684,7 @@ export function MoodTransitDashboard() {
                     <YAxis domain={[0, 10]} />
                     <Tooltip 
                       labelFormatter={(label) => {
-                        const data = weeklyChartData.find(d => d.weekday === label);
+                        const data = weeklyChartData.find((d: any) => d.weekday === label);
                         return data?.fullWeekday || label;
                       }}
                       formatter={(value: any, name: any) => [
@@ -697,7 +706,7 @@ export function MoodTransitDashboard() {
                     <YAxis domain={[0, 10]} />
                     <Tooltip 
                       labelFormatter={(label) => {
-                        const data = weeklyChartData.find(d => d.weekday === label);
+                        const data = weeklyChartData.find((d: any) => d.weekday === label);
                         return data?.fullWeekday || label;
                       }}
                       formatter={(value: any, name: any, props: any) => {
