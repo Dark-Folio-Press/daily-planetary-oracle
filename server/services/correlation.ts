@@ -68,6 +68,27 @@ export interface CorrelationAnalysis {
     }>;
     insights: string[];
   };
+  lunarInfluences: {
+    overallLunarSensitivity: number;
+    dominantMoonPhase: string;
+    moonPhaseCorrelations: Array<{
+      phase: string;
+      phaseName: string;
+      avgMood: number;
+      avgEnergy: number;
+      frequency: number;
+      significance: 'high' | 'medium' | 'low';
+    }>;
+    currentMoonData: {
+      phase: string;
+      phaseName: string;
+      illumination: number;
+      sign: string;
+      influence: string;
+    };
+    lunarPlanetaryHarmony: number;
+    insights: string[];
+  };
   dailyEntries: MoodTransitCorrelation[];
   insights: string[];
   recommendations: string[];
@@ -89,6 +110,9 @@ export class CorrelationService {
     // Analyze planetary influences for enhanced insights
     const planetaryAnalysis = this.analyzePlanetaryInfluences(moods, transits);
     
+    // Analyze lunar influences and patterns
+    const lunarAnalysis = this.analyzeLunarInfluences(moods, transits);
+    
     return {
       totalEntries: correlations.length,
       correlationPeriod: this.getAnalysisPeriod(moods),
@@ -101,6 +125,7 @@ export class CorrelationService {
         influences: planetaryAnalysis.planetaryInfluences,
         insights: planetaryAnalysis.insights
       },
+      lunarInfluences: lunarAnalysis,
       dailyEntries: correlations,
       insights: this.generateInsights(correlations),
       recommendations: this.generateRecommendations(correlations)
@@ -967,6 +992,152 @@ export class CorrelationService {
       'waning_crescent': 'Waning Crescent'
     };
     return names[phase] || 'Unknown';
+  }
+
+  /**
+   * Analyze lunar influences and patterns for overview display
+   */
+  private analyzeLunarInfluences(moods: DailyMood[], transits: DailyTransit[]): CorrelationAnalysis['lunarInfluences'] {
+    // Prepare mood data with dates for lunar analysis
+    const moodData = moods.map(mood => ({
+      date: mood.date,
+      mood: mood.mood,
+      energy: mood.energy,
+      moonPhase: mood.moonPhase,
+      moonIllumination: mood.moonIllumination
+    }));
+
+    // Get comprehensive lunar analysis
+    const lunarCorrelations = this.lunarService.analyzeMoonPhaseCorrelations(moodData);
+    
+    // Get current moon data
+    const currentMoonData = this.lunarService.getLunarData(new Date());
+    
+    // Calculate lunar-planetary harmony
+    const lunarPlanetaryHarmony = this.calculateLunarPlanetaryHarmony(moods, transits);
+    
+    // Map phase correlations to the expected format
+    const moonPhaseCorrelations = lunarCorrelations.phaseCorrelations.map(correlation => ({
+      phase: correlation.phase,
+      phaseName: this.getPhaseName(correlation.phase),
+      avgMood: correlation.avgMood,
+      avgEnergy: correlation.avgEnergy,
+      frequency: correlation.frequency,
+      significance: correlation.significance
+    }));
+    
+    // Generate lunar insights
+    const insights = [
+      ...lunarCorrelations.insights,
+      this.generateLunarPlanetaryHarmonyInsight(lunarPlanetaryHarmony),
+      this.generateCurrentMoonInsight(currentMoonData)
+    ].filter(Boolean);
+
+    return {
+      overallLunarSensitivity: lunarCorrelations.lunarSensitivity,
+      dominantMoonPhase: lunarCorrelations.dominantPhase,
+      moonPhaseCorrelations,
+      currentMoonData: {
+        phase: currentMoonData.phase,
+        phaseName: currentMoonData.phaseName,
+        illumination: currentMoonData.illumination,
+        sign: currentMoonData.sign,
+        influence: this.describeLunarInfluence(currentMoonData.lunarInfluence)
+      },
+      lunarPlanetaryHarmony,
+      insights
+    };
+  }
+
+  /**
+   * Calculate how well lunar and planetary patterns align
+   */
+  private calculateLunarPlanetaryHarmony(moods: DailyMood[], transits: DailyTransit[]): number {
+    if (moods.length < 7) return 0.5; // Default neutral harmony for insufficient data
+    
+    let harmonyScore = 0;
+    let totalDays = 0;
+    
+    moods.forEach(mood => {
+      const transit = transits.find(t => t.date === mood.date);
+      if (!transit || !mood.moonPhase) return;
+      
+      totalDays++;
+      
+      // Get lunar data for this date
+      const lunarData = this.lunarService.getLunarData(new Date(mood.date));
+      
+      // Check if high mood days align with beneficial lunar-planetary combinations
+      if (mood.mood >= 7) {
+        // Full moon or new moon with high mood suggests good lunar sensitivity
+        if (lunarData.phase === 'full' || lunarData.phase === 'new') {
+          harmonyScore += 0.8;
+        }
+        // Waxing phases with high mood suggest good building energy alignment
+        else if (['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(lunarData.phase)) {
+          harmonyScore += 0.6;
+        }
+        else {
+          harmonyScore += 0.4;
+        }
+      } else if (mood.mood <= 4) {
+        // Low mood during challenging phases is normal
+        if (['last_quarter', 'waning_crescent'].includes(lunarData.phase)) {
+          harmonyScore += 0.3; // Some harmony in recognizing release phases
+        }
+      } else {
+        // Neutral mood gets neutral harmony
+        harmonyScore += 0.5;
+      }
+    });
+    
+    return totalDays > 0 ? harmonyScore / totalDays : 0.5;
+  }
+
+  /**
+   * Describe lunar influence in readable terms
+   */
+  private describeLunarInfluence(lunarInfluence: any): string {
+    if (!lunarInfluence) return 'Balanced cosmic energy';
+    
+    const { energy, emotional, manifestation } = lunarInfluence;
+    
+    if (energy === 'building' && emotional === 'heightened') {
+      return 'Building energy and heightened emotions';
+    } else if (energy === 'releasing' && emotional === 'calm') {
+      return 'Releasing energy and calming influence';
+    } else if (energy === 'stable' && manifestation === 'harvesting') {
+      return 'Stable energy perfect for manifestation';
+    } else if (energy === 'stable' && manifestation === 'planting') {
+      return 'Stable energy ideal for new beginnings';
+    }
+    
+    return `${energy.charAt(0).toUpperCase() + energy.slice(1)} energy with ${emotional} emotional tone`;
+  }
+
+  /**
+   * Generate insight about lunar-planetary harmony
+   */
+  private generateLunarPlanetaryHarmonyInsight(harmony: number): string {
+    if (harmony > 0.7) {
+      return '🌟 **Excellent Cosmic Harmony**: Your lunar and planetary patterns work together beautifully, amplifying positive influences.';
+    } else if (harmony > 0.5) {
+      return '⚖️ **Good Cosmic Balance**: Your lunar and planetary energies complement each other well most of the time.';
+    } else if (harmony > 0.3) {
+      return '🌓 **Mixed Cosmic Energies**: Your lunar and planetary patterns sometimes conflict - awareness can help you navigate these times.';
+    } else {
+      return '🌑 **Challenging Harmony**: Your lunar and planetary energies often work in different directions - consider tracking patterns for better alignment.';
+    }
+  }
+
+  /**
+   * Generate insight about current moon phase
+   */
+  private generateCurrentMoonInsight(moonData: any): string {
+    const today = new Date().toLocaleDateString();
+    const phaseIcon = this.lunarService.getMoonPhaseIcon(moonData.phase);
+    
+    return `${phaseIcon} **Today's Moon (${today})**: ${moonData.phaseName} in ${moonData.sign} (${moonData.illumination}% illuminated) brings ${moonData.lunarInfluence.energy} energy.`;
   }
 
   /**

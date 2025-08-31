@@ -76,6 +76,27 @@ interface CorrelationAnalysis {
     }>;
     insights: string[];
   };
+  lunarInfluences: {
+    overallLunarSensitivity: number;
+    dominantMoonPhase: string;
+    moonPhaseCorrelations: Array<{
+      phase: string;
+      phaseName: string;
+      avgMood: number;
+      avgEnergy: number;
+      frequency: number;
+      significance: 'high' | 'medium' | 'low';
+    }>;
+    currentMoonData: {
+      phase: string;
+      phaseName: string;
+      illumination: number;
+      sign: string;
+      influence: string;
+    };
+    lunarPlanetaryHarmony: number;
+    insights: string[];
+  };
   dailyEntries: MoodTransitCorrelation[];
   insights: string[];
   recommendations: string[];
@@ -276,6 +297,87 @@ export function MoodTransitDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
+          {/* Lunar Overview Cards */}
+          {correlationData.lunarInfluences && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Current Moon Phase */}
+              <Card data-testid="card-current-moon" className="border-blue-200 dark:border-blue-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <span className="text-2xl">{getMoonPhaseIcon(correlationData.lunarInfluences.currentMoonData.phase)}</span>
+                    Today's Moon
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    <div className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                      {correlationData.lunarInfluences.currentMoonData.phaseName}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {correlationData.lunarInfluences.currentMoonData.illumination}% illuminated in {correlationData.lunarInfluences.currentMoonData.sign}
+                    </div>
+                    <div className="text-xs bg-blue-50 dark:bg-blue-950/20 p-2 rounded">
+                      {correlationData.lunarInfluences.currentMoonData.influence}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Lunar Sensitivity */}
+              <Card data-testid="card-lunar-sensitivity" className="border-indigo-200 dark:border-indigo-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <Moon className="h-4 w-4 text-indigo-500" />
+                    Lunar Sensitivity
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      {Math.round(correlationData.lunarInfluences.overallLunarSensitivity * 100)}%
+                    </div>
+                    <Progress 
+                      value={correlationData.lunarInfluences.overallLunarSensitivity * 100} 
+                      className="h-2"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      {correlationData.lunarInfluences.overallLunarSensitivity > 0.6 ? 'Highly lunar sensitive' : 
+                       correlationData.lunarInfluences.overallLunarSensitivity > 0.3 ? 'Moderately lunar aware' : 
+                       'Low lunar correlation'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Lunar-Planetary Harmony */}
+              <Card data-testid="card-cosmic-harmony" className="border-purple-200 dark:border-purple-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <Star className="h-4 w-4 text-purple-500" />
+                    Cosmic Harmony
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      {Math.round(correlationData.lunarInfluences.lunarPlanetaryHarmony * 100)}%
+                    </div>
+                    <Progress 
+                      value={correlationData.lunarInfluences.lunarPlanetaryHarmony * 100} 
+                      className="h-2"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      {correlationData.lunarInfluences.lunarPlanetaryHarmony > 0.7 ? 'Excellent alignment' : 
+                       correlationData.lunarInfluences.lunarPlanetaryHarmony > 0.5 ? 'Good balance' : 
+                       correlationData.lunarInfluences.lunarPlanetaryHarmony > 0.3 ? 'Mixed energies' : 
+                       'Challenging harmony'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Dominant Planetary Influence */}
             <Card data-testid="card-dominant-influence">
@@ -339,7 +441,9 @@ export function MoodTransitDashboard() {
                           {insight.includes('Sun') && <Sun className="h-4 w-4 text-yellow-500" />}
                           {!insight.includes('Venus') && !insight.includes('Mars') && !insight.includes('Moon') && !insight.includes('Sun') && <Star className="h-4 w-4 text-purple-500" />}
                         </div>
-                        <div className="text-sm" dangerouslySetInnerHTML={{ __html: insight.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+                        <p className="text-sm text-muted-foreground leading-relaxed" data-testid={`insight-${index}`}>
+                          {insight}
+                        </p>
                       </div>
                     ))}
                   </div>
