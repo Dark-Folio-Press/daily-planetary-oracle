@@ -17,7 +17,7 @@ import { StarryNightToggle } from "@/components/starry-night-toggle";
 import { AvatarDisplay } from "@/components/avatar-display";
 import { GuestExitModal, useGuestExitModal } from "@/components/guest-exit-modal";
 
-import { Music, Sparkles, MoreHorizontal, LogOut, X, BarChart3, MessageSquare, TrendingUp } from "lucide-react";
+import { Music, Sparkles, MoreHorizontal, LogOut, X, BarChart3, MessageSquare, TrendingUp, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ChatPage() {
