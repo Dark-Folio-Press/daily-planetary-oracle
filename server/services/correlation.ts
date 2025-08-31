@@ -118,7 +118,7 @@ export class CorrelationService {
       correlationPeriod: this.getAnalysisPeriod(moods),
       overallCorrelationScore: this.calculateOverallCorrelation(correlations),
       strongCorrelations: this.identifyStrongCorrelations(correlations),
-      weeklyPatterns: this.analyzeWeeklyPatterns(correlations),
+      weeklyPatterns: this.analyzeWeeklyPatternsEnhanced(correlations, transits),
       planetaryInfluences: {
         dominantPlanet: planetaryAnalysis.dominantPlanet,
         dominantCorrelation: planetaryAnalysis.dominantCorrelation,
@@ -521,6 +521,174 @@ export class CorrelationService {
   /**
    * Analyze weekly patterns in mood and transits with planetary influences
    */
+  /**
+   * Enhanced weekly patterns analysis that includes planetary data for all days
+   */
+  private analyzeWeeklyPatternsEnhanced(correlations: MoodTransitCorrelation[], allTransits: DailyTransit[]): Array<{
+    weekday: string;
+    avgMood: number;
+    avgEnergy: number;
+    commonTransits: string[];
+    planetaryInfluences: Array<{
+      planet: string;
+      aspectType: string;
+      frequency: number;
+      avgCorrelation: number;
+      influence: string;
+    }>;
+    dominantPlanet: string;
+    weeklyInsight: string;
+    lunarPatterns: {
+      dominantPhase: string;
+      phaseFrequencies: Array<{
+        phase: string;
+        frequency: number;
+        avgMood: number;
+        avgEnergy: number;
+      }>;
+      lunarInsight: string;
+    };
+  }> {
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    // Create comprehensive weekday data including ALL transits, not just those with mood data
+    const weeklyData = new Map<string, {
+      moods: number[], 
+      energies: number[], 
+      transits: string[],
+      aspects: PlanetaryAspect[],
+      correlations: number[],
+      dates: string[]
+    }>();
+
+    // Initialize all weekdays
+    weekdays.forEach(weekday => {
+      weeklyData.set(weekday, { 
+        moods: [], 
+        energies: [], 
+        transits: [], 
+        aspects: [], 
+        correlations: [],
+        dates: []
+      });
+    });
+
+    // Add data from correlations (mood + transit data)
+    correlations.forEach(corr => {
+      const date = new Date(corr.date);
+      const weekday = weekdays[date.getDay()];
+      const data = weeklyData.get(weekday)!;
+      
+      data.moods.push(corr.mood.mood);
+      data.energies.push(corr.mood.energy);
+      data.correlations.push(corr.correlationScore);
+      data.aspects.push(...corr.planetaryAspects);
+      data.dates.push(corr.date);
+      
+      const transitData = corr.transit.transitData as any;
+      if (transitData?.themes) {
+        data.transits.push(...transitData.themes);
+      }
+    });
+
+    // Add planetary data from ALL transits (including days without mood data)
+    allTransits.forEach(transit => {
+      const date = new Date(transit.date);
+      const weekday = weekdays[date.getDay()];
+      const data = weeklyData.get(weekday)!;
+      
+      // Only add if we don't already have this date (avoid duplicates)
+      if (!data.dates.includes(transit.date)) {
+        const aspects = this.extractPlanetaryAspects(transit);
+        data.aspects.push(...aspects);
+        data.dates.push(transit.date);
+        
+        const transitData = transit.transitData as any;
+        if (transitData?.themes) {
+          data.transits.push(...transitData.themes);
+        }
+      }
+    });
+
+    // Calculate patterns for each weekday
+    return weekdays.map(weekday => {
+      const data = weeklyData.get(weekday)!;
+      
+      const avgMood = data.moods.length > 0 ? data.moods.reduce((sum, mood) => sum + mood, 0) / data.moods.length : 0;
+      const avgEnergy = data.energies.length > 0 ? data.energies.reduce((sum, energy) => sum + energy, 0) / data.energies.length : 0;
+      const avgCorrelation = data.correlations.length > 0 ? data.correlations.reduce((sum, corr) => sum + corr, 0) / data.correlations.length : 5;
+      
+      // Analyze planetary influences for this weekday (even without mood data)
+      const planetaryStats = new Map<string, {
+        aspects: string[],
+        correlations: number[],
+        influences: string[]
+      }>();
+      
+      data.aspects.forEach(aspect => {
+        const key = aspect.planet;
+        if (!planetaryStats.has(key)) {
+          planetaryStats.set(key, { 
+            aspects: [], 
+            correlations: [], 
+            influences: [] 
+          });
+        }
+        
+        const stats = planetaryStats.get(key)!;
+        stats.aspects.push(aspect.aspect);
+        stats.correlations.push(avgCorrelation);
+        stats.influences.push(aspect.interpretation);
+      });
+      
+      // Calculate planetary influences
+      const planetaryInfluences = [...planetaryStats.entries()].map(([planet, stats]) => {
+        const mostCommonAspect = this.getMostCommon(stats.aspects);
+        const avgPlanetCorrelation = stats.correlations.length > 0 ? stats.correlations.reduce((a, b) => a + b, 0) / stats.correlations.length : 5;
+        const frequency = data.aspects.length > 0 ? stats.aspects.length / data.aspects.length : 0;
+        
+        return {
+          planet,
+          aspectType: mostCommonAspect,
+          frequency,
+          avgCorrelation: avgPlanetCorrelation,
+          influence: stats.influences[0] || `${planet} brings significant energy to your ${weekday}s`
+        };
+      }).sort((a, b) => b.frequency - a.frequency).slice(0, 3);
+      
+      const dominantPlanet = planetaryInfluences.length > 0 ? planetaryInfluences[0].planet : '';
+      
+      // Find most common transits for this weekday
+      const transitCounts = new Map<string, number>();
+      data.transits.forEach(transit => {
+        transitCounts.set(transit, (transitCounts.get(transit) || 0) + 1);
+      });
+      
+      const commonTransits = [...transitCounts.entries()]
+        .filter(([_, count]) => count >= 2)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([transit, _]) => transit);
+
+      // Analyze lunar patterns for this weekday
+      const lunarPatterns = this.analyzeLunarPatternsForWeekday(data.dates, data.moods, data.energies);
+      
+      // Generate weekly insight with lunar integration
+      const weeklyInsight = this.generateWeeklyInsightWithLunar(weekday, avgMood, avgEnergy, avgCorrelation, dominantPlanet, planetaryInfluences, lunarPatterns);
+
+      return {
+        weekday,
+        avgMood: Number(avgMood.toFixed(1)),
+        avgEnergy: Number(avgEnergy.toFixed(1)),
+        commonTransits,
+        planetaryInfluences,
+        dominantPlanet,
+        weeklyInsight,
+        lunarPatterns
+      };
+    });
+  }
+
   private analyzeWeeklyPatterns(correlations: MoodTransitCorrelation[]): Array<{
     weekday: string;
     avgMood: number;
@@ -731,7 +899,7 @@ export class CorrelationService {
     }
 
     // Weekly pattern recommendations with planetary insights
-    const weeklyPatterns = this.analyzeWeeklyPatterns(correlations);
+    const weeklyPatterns = this.analyzeWeeklyPatternsEnhanced(correlations, []); // Use enhanced version
     const bestDays = weeklyPatterns.filter(p => p.avgMood >= 7);
     if (bestDays.length > 0) {
       const bestDayNames = bestDays.map(d => {
