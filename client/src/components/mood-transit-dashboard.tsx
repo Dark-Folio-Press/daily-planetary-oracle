@@ -1333,6 +1333,10 @@ function DailyTransitCard({ entry, lunarData }: { entry: MoodTransitCorrelation;
                 Correlation: {Math.round(entry.correlationScore * 100)}%
               </Badge>
               
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200" data-testid={`badge-transits-${entry.date}`}>
+                ⭐ {entry.planetaryAspects?.length || 0} Transits
+              </Badge>
+              
               {/* Add lunar phase for this day */}
               {lunarData && (
                 <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200" data-testid={`badge-moon-${entry.date}`}>
@@ -1350,7 +1354,7 @@ function DailyTransitCard({ entry, lunarData }: { entry: MoodTransitCorrelation;
                 data-testid={`button-expand-${entry.date}`}
               >
                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                {entry.planetaryAspects?.length || 0} Transits
+                Expand for details
               </Button>
             </CollapsibleTrigger>
             
