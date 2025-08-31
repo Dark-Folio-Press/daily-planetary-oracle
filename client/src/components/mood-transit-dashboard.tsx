@@ -704,49 +704,144 @@ export function MoodTransitDashboard() {
         </TabsContent>
 
         <TabsContent value="patterns" className="space-y-4">
-          <Card data-testid="card-strong-correlations">
-            <CardHeader>
-              <CardTitle>Strong Correlation Patterns</CardTitle>
-              <CardDescription>
-                Patterns where your mood significantly aligns with cosmic energies
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {correlationData.strongCorrelations.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Moon className="mx-auto h-8 w-8 mb-2" />
-                  <p>No strong patterns detected yet. Keep tracking to discover your cosmic connections!</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {correlationData.strongCorrelations.map((correlation, index) => (
-                    <div key={index} className="border rounded-lg p-4" data-testid={`pattern-${index}`}>
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold text-sm" data-testid={`text-pattern-name-${index}`}>
-                          {correlation.pattern}
-                        </h4>
-                        <div className="flex space-x-2">
-                          <Badge variant="secondary" data-testid={`badge-strength-${index}`}>
-                            {Math.round(correlation.strength * 100)}% strength
-                          </Badge>
-                          <Badge variant="outline" data-testid={`badge-frequency-${index}`}>
-                            {Math.round(correlation.frequency * 100)}% frequency
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Planetary Correlation Patterns */}
+            <Card data-testid="card-strong-correlations">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="mr-2 h-5 w-5 text-purple-500" />
+                  Planetary Patterns
+                </CardTitle>
+                <CardDescription>
+                  How planetary transits align with your mood patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {correlationData.strongCorrelations.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Star className="mx-auto h-8 w-8 mb-2 opacity-50" />
+                    <p>No strong planetary patterns detected yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {correlationData.strongCorrelations.map((correlation, index) => (
+                      <div key={index} className="border rounded-lg p-4" data-testid={`pattern-${index}`}>
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-semibold text-sm" data-testid={`text-pattern-name-${index}`}>
+                            {correlation.pattern}
+                          </h4>
+                          <div className="flex space-x-2">
+                            <Badge variant="secondary" data-testid={`badge-strength-${index}`}>
+                              {Math.round(correlation.strength * 100)}% strength
+                            </Badge>
+                            <Badge variant="outline" data-testid={`badge-frequency-${index}`}>
+                              {Math.round(correlation.frequency * 100)}% frequency
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground" data-testid={`text-pattern-description-${index}`}>
+                          <div dangerouslySetInnerHTML={{ __html: correlation.description.replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-600">$1</strong>') }} />
+                        </div>
+                        <Progress 
+                          value={correlation.strength * 100} 
+                          className="mt-2"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Lunar Correlation Patterns */}
+            <Card data-testid="card-lunar-patterns">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Moon className="mr-2 h-5 w-5 text-blue-500" />
+                  Lunar Patterns
+                </CardTitle>
+                <CardDescription>
+                  How moon phases correlate with your emotional cycles
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {correlationData.lunarInfluences?.moonPhaseCorrelations && correlationData.lunarInfluences.moonPhaseCorrelations.length > 0 ? (
+                  <div className="space-y-4">
+                    {correlationData.lunarInfluences.moonPhaseCorrelations
+                      .sort((a, b) => (b.avgMood + b.avgEnergy) - (a.avgMood + a.avgEnergy))
+                      .map((phase, index) => (
+                      <div key={phase.phase} className="border rounded-lg p-4 bg-blue-50/50 dark:bg-blue-950/20" data-testid={`lunar-pattern-${index}`}>
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-semibold text-sm flex items-center" data-testid={`text-lunar-pattern-name-${index}`}>
+                            <span className="text-xl mr-2">{getMoonPhaseIcon(phase.phase)}</span>
+                            {getMoonPhaseName(phase.phaseName)}
+                          </h4>
+                          <div className="flex space-x-2">
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-700" data-testid={`badge-lunar-mood-${index}`}>
+                              Mood: {phase.avgMood.toFixed(1)}/5
+                            </Badge>
+                            <Badge variant="outline" className="border-blue-200" data-testid={`badge-lunar-energy-${index}`}>
+                              Energy: {phase.avgEnergy.toFixed(1)}/5
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground mb-2" data-testid={`text-lunar-pattern-stats-${index}`}>
+                          <span className="font-medium">Frequency:</span> {Math.round(phase.frequency * 100)}% of tracked days
+                          <span className="ml-4 font-medium">Significance:</span> 
+                          <Badge variant="outline" className="ml-1">
+                            {phase.significance}
                           </Badge>
                         </div>
+                        
+                        {/* Combined mood+energy score visualization */}
+                        <div className="mt-2">
+                          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                            <span>Combined emotional score</span>
+                            <span>{((phase.avgMood + phase.avgEnergy) / 2).toFixed(1)}/5</span>
+                          </div>
+                          <Progress 
+                            value={((phase.avgMood + phase.avgEnergy) / 2) * 20} 
+                            className="h-2"
+                          />
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground" data-testid={`text-pattern-description-${index}`}>
-                        <div dangerouslySetInnerHTML={{ __html: correlation.description.replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-600">$1</strong>') }} />
-                      </div>
-                      <Progress 
-                        value={correlation.strength * 100} 
-                        className="mt-2"
-                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Moon className="mx-auto h-8 w-8 mb-2 opacity-50" />
+                    <p>Track your mood daily to discover lunar patterns!</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Combined Cosmic Pattern Insights */}
+          {correlationData.lunarInfluences?.insights && correlationData.lunarInfluences.insights.length > 0 && (
+            <Card data-testid="card-cosmic-insights">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Activity className="mr-2 h-5 w-5 text-indigo-500" />
+                  Cosmic Pattern Insights
+                </CardTitle>
+                <CardDescription>
+                  Deep insights about your lunar and planetary sensitivity patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {correlationData.lunarInfluences.insights.map((insight, index) => (
+                    <div key={index} className="p-3 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-800 rounded-lg" data-testid={`cosmic-insight-${index}`}>
+                      <p className="text-sm leading-relaxed" data-testid={`text-cosmic-insight-${index}`}>
+                        {insight}
+                      </p>
                     </div>
                   ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="weekly" className="space-y-4">
