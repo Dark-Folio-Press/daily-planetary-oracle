@@ -196,13 +196,18 @@ export function MoodTransitDashboard() {
   const weeklyChartData = correlationData.weeklyPatterns.map(pattern => {
     // Calculate lunar correlation (based on dominant lunar phase influence)
     let lunarCorrelation = 5; // Default neutral
-    if (pattern.lunarPatterns?.dominantPhase) {
+    if (pattern.lunarPatterns?.dominantPhase && correlationData.lunarInfluences) {
       // Calculate correlation based on moon phase patterns
-      const moonPhaseCorrelations = correlationData.lunarInfluences?.moonPhaseCorrelations || [];
+      const moonPhaseCorrelations = correlationData.lunarInfluences.moonPhaseCorrelations || [];
       const phaseCorr = moonPhaseCorrelations.find(c => c.phase === pattern.lunarPatterns.dominantPhase);
       if (phaseCorr) {
         lunarCorrelation = (phaseCorr.avgMood + phaseCorr.avgEnergy) / 2;
       }
+    }
+    
+    // Fallback: use overall lunar sensitivity if available
+    if (lunarCorrelation === 5 && correlationData.lunarInfluences?.overallLunarSensitivity) {
+      lunarCorrelation = 3 + (correlationData.lunarInfluences.overallLunarSensitivity * 4); // Scale to 3-7 range
     }
 
     // Calculate planetary correlation (based on dominant planet influence)
@@ -216,7 +221,7 @@ export function MoodTransitDashboard() {
       }
     }
 
-    return {
+    const result = {
       weekday: pattern.weekday.substring(0, 3),
       mood: pattern.avgMood,
       energy: pattern.avgEnergy,
@@ -226,6 +231,11 @@ export function MoodTransitDashboard() {
       dominantPlanet: pattern.dominantPlanet,
       dominantMoonPhase: pattern.lunarPatterns?.dominantPhase
     };
+    
+    // Debug logging to verify correlation data
+    console.log(`${pattern.weekday}: lunar=${result.lunarCorrelation}, planetary=${result.planetaryCorrelation}`);
+    
+    return result;
   });
 
   const correlationChartData = correlationData.strongCorrelations.map((corr, index) => ({
@@ -662,21 +672,23 @@ export function MoodTransitDashboard() {
                       const data = weeklyChartData.find(d => d.weekday === label);
                       return data?.fullWeekday || label;
                     }}
-                    formatter={(value, name, props) => {
+                    formatter={(value: any, name: any, props: any) => {
                       const { payload } = props;
+                      const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                      
                       if (name === 'lunarCorrelation') {
                         return [
-                          `${value?.toFixed(1)}`, 
+                          numValue.toFixed(1), 
                           `Lunar Influence ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
                         ];
                       }
                       if (name === 'planetaryCorrelation') {
                         return [
-                          `${value?.toFixed(1)}`, 
+                          numValue.toFixed(1), 
                           `${payload.dominantPlanet || 'Planetary'} Influence`
                         ];
                       }
-                      return [`${value?.toFixed(1)}`, name === 'mood' ? 'Average Mood' : 'Average Energy'];
+                      return [numValue.toFixed(1), name === 'mood' ? 'Average Mood' : 'Average Energy'];
                     }}
                   />
                   <Legend />
