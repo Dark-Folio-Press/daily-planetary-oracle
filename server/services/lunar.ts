@@ -114,7 +114,7 @@ export class LunarService {
     let dominantPhase = '';
 
     for (const [phase, entries] of phaseGroups) {
-      if (entries.length < 2) continue;
+      if (entries.length < 1) continue; // Allow single entries for better pattern detection
 
       const avgMood = entries.reduce((sum, e) => sum + e.mood, 0) / entries.length;
       const avgEnergy = entries.reduce((sum, e) => sum + e.energy, 0) / entries.length;
