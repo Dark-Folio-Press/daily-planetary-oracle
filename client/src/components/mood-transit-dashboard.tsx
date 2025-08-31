@@ -1378,6 +1378,21 @@ function DailyTransitCard({ entry, lunarData }: { entry: MoodTransitCorrelation;
                   </div>
                 )}
                 
+                {/* Journal Entry Section */}
+                {entry.mood.journalEntry && entry.mood.journalEntry.trim() && (
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center">
+                      <span className="text-xl mr-2">📝</span>
+                      Personal Reflection
+                    </h4>
+                    <div className="space-y-2">
+                      <p className="text-sm leading-relaxed text-emerald-800 dark:text-emerald-200" data-testid={`journal-${entry.date}`}>
+                        {entry.mood.journalEntry}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
                 <h4 className="font-semibold text-sm">Planetary Aspects:</h4>
                 
                 {entry.planetaryAspects && entry.planetaryAspects.length > 0 ? (
