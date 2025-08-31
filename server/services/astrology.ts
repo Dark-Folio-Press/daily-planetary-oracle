@@ -170,6 +170,11 @@ export class AstrologyService {
       // Calculate current planetary positions for the target date
       const transitPositions = await this.getPlanetaryPositionsForDate(targetDate);
       
+      // Get accurate lunar data for this specific date
+      const { LunarService } = await import('./lunar.js');
+      const lunarService = new LunarService();
+      const lunarData = lunarService.getLunarData(new Date(targetDate));
+      
       // Find significant aspects between transiting planets and natal planets
       const significantAspects = this.calculateSignificantAspects(natalChart, transitPositions);
       
@@ -188,7 +193,14 @@ export class AstrologyService {
         energyProfile,
         moodInfluences: this.interpretMoodInfluences(significantAspects),
         intensity: this.calculateTransitIntensity(significantAspects),
-        themes: this.extractDailyThemes(significantAspects)
+        themes: this.extractDailyThemes(significantAspects),
+        lunarData: {
+          phase: lunarData.phase,
+          phaseName: lunarData.phaseName,
+          illumination: lunarData.illumination,
+          sign: lunarData.sign,
+          influence: lunarData.lunarInfluence
+        }
       };
     } catch (error) {
       console.error('Error calculating daily transits:', error);
