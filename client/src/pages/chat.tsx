@@ -275,7 +275,7 @@ export default function ChatPage() {
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-foreground">Cosmic Playlist Generator</h1>
-                <p className="text-xs text-muted-foreground">Discover Your Celestial Blueprint & Empower Your Cosmic Journey</p>
+                <p className="text-xs text-muted-foreground">Weekly planetary transit music</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
