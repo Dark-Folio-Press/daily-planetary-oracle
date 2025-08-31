@@ -338,7 +338,7 @@ export class CorrelationService {
 
     // Theme correlation with emotions
     const emotionArray = Array.isArray(mood.emotions) ? mood.emotions : 
-                        typeof mood.emotions === 'string' ? mood.emotions.split(',') : [];
+                        typeof mood.emotions === 'string' ? (mood.emotions as string).split(',') : [];
     
     const themeCorrelation = this.calculateThemeEmotionCorrelation(themes, emotionArray);
     score += themeCorrelation * 0.3; // 30% weight for themes
@@ -420,7 +420,7 @@ export class CorrelationService {
   }
 
   /**
-   * Identify strong correlation patterns
+   * Identify strong correlation patterns with detailed planetary analysis
    */
   private identifyStrongCorrelations(correlations: MoodTransitCorrelation[]): Array<{
     pattern: string;
@@ -430,31 +430,41 @@ export class CorrelationService {
   }> {
     const patternCounts = new Map<string, number>();
     const patternScores = new Map<string, number[]>();
+    const patternAspects = new Map<string, PlanetaryAspect[]>();
 
-    // Count pattern occurrences and collect scores
+    // Count pattern occurrences and collect scores with planetary context
     correlations.forEach(corr => {
       corr.significantCorrelations.forEach(pattern => {
         patternCounts.set(pattern, (patternCounts.get(pattern) || 0) + 1);
         if (!patternScores.has(pattern)) {
           patternScores.set(pattern, []);
+          patternAspects.set(pattern, []);
         }
         patternScores.get(pattern)!.push(corr.correlationScore);
+        
+        // Collect planetary aspects for this pattern
+        const relevantAspects = corr.planetaryAspects.filter(aspect => 
+          aspect.significance === 'high' || 
+          (aspect.significance === 'medium' && aspect.emotionalInfluence !== 'neutral')
+        );
+        patternAspects.get(pattern)!.push(...relevantAspects);
       });
     });
 
-    // Convert to result format
+    // Convert to result format with enhanced descriptions
     const strongCorrelations = [];
     for (const [pattern, count] of patternCounts) {
       const scores = patternScores.get(pattern) || [];
       const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
       const frequency = count / correlations.length;
+      const aspects = patternAspects.get(pattern) || [];
 
       if (frequency > 0.2 || avgScore > 0.7) { // Appears in 20%+ of days or high correlation
         strongCorrelations.push({
           pattern,
           strength: avgScore,
           frequency,
-          description: this.generatePatternDescription(pattern, frequency, avgScore)
+          description: this.generateDetailedPatternDescription(pattern, frequency, avgScore, aspects)
         });
       }
     }
@@ -619,11 +629,63 @@ export class CorrelationService {
     return variance;
   }
 
-  private generatePatternDescription(pattern: string, frequency: number, strength: number): string {
+  private generateDetailedPatternDescription(pattern: string, frequency: number, strength: number, aspects: PlanetaryAspect[]): string {
     const frequencyDesc = frequency > 0.5 ? "frequently" : frequency > 0.3 ? "often" : "sometimes";
     const strengthDesc = strength > 0.8 ? "very strong" : strength > 0.6 ? "strong" : "moderate";
     
-    return `This pattern appears ${frequencyDesc} with ${strengthDesc} correlation (${(frequency * 100).toFixed(0)}% of days, ${(strength * 100).toFixed(0)}% match strength).`;
+    // Analyze the planetary aspects for specific explanations
+    const planetCounts = new Map<string, number>();
+    const aspectTypes = new Map<string, number>();
+    const influences = { positive: 0, negative: 0, neutral: 0 };
+    
+    aspects.forEach(aspect => {
+      planetCounts.set(aspect.planet, (planetCounts.get(aspect.planet) || 0) + 1);
+      aspectTypes.set(aspect.aspect, (aspectTypes.get(aspect.aspect) || 0) + 1);
+      influences[aspect.emotionalInfluence]++;
+    });
+    
+    // Find dominant planetary influences
+    const dominantPlanets = [...planetCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([planet]) => planet);
+      
+    const dominantAspects = [...aspectTypes.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([aspect]) => aspect);
+    
+    // Create detailed explanation
+    let description = `This pattern appears ${frequencyDesc} with ${strengthDesc} correlation (${Math.round(frequency * 100)}% of days, ${Math.round(strength * 100)}% match strength). `;
+    
+    if (dominantPlanets.length > 0) {
+      if (pattern.includes('Energy alignment')) {
+        description += `Your energy levels consistently align with **${dominantPlanets.join(' and ')} transits**`;
+        if (dominantAspects.length > 0) {
+          description += `, particularly during **${dominantAspects.join(' and ')} aspects**`;
+        }
+        description += '. This suggests you naturally attune to these planetary energies, feeling more energized when they activate your birth chart.';
+      } else if (pattern.includes('Emotional tone')) {
+        description += `Your emotional state resonates strongly with **${dominantPlanets.join(' and ')} influences**`;
+        if (influences.positive > influences.negative) {
+          description += ', especially during **harmonious aspects** that bring emotional balance and positive feelings.';
+        } else if (influences.negative > influences.positive) {
+          description += ', including **challenging aspects** that intensify your emotional responses and require conscious navigation.';
+        }
+      } else if (pattern.includes('Theme-emotion')) {
+        description += `The cosmic themes you experience align with **${dominantPlanets.join(' and ')} energies**, indicating these planets significantly influence your daily emotional experience and reactions to life events.`;
+      } else {
+        description += `This alignment primarily involves **${dominantPlanets.join(' and ')} energies**`;
+        if (dominantAspects.length > 0) {
+          description += ` through **${dominantAspects.join(' and ')} aspects**`;
+        }
+        description += ', showing a consistent response pattern to these specific planetary influences.';
+      }
+    } else {
+      description += 'This represents a general alignment with cosmic energies, though the specific planetary influences vary.';
+    }
+    
+    return description;
   }
 
   /**

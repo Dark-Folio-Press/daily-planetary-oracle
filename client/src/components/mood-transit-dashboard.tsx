@@ -87,7 +87,7 @@ export function MoodTransitDashboard() {
       if (!response.ok) {
         throw new Error('Failed to fetch correlation analysis');
       }
-      return response.json() as CorrelationAnalysis;
+      return response.json() as Promise<CorrelationAnalysis>;
     },
   });
 
@@ -445,9 +445,9 @@ export function MoodTransitDashboard() {
                           </Badge>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground" data-testid={`text-pattern-description-${index}`}>
-                        {correlation.description}
-                      </p>
+                      <div className="text-sm text-muted-foreground" data-testid={`text-pattern-description-${index}`}>
+                        <div dangerouslySetInnerHTML={{ __html: correlation.description.replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-600">$1</strong>') }} />
+                      </div>
                       <Progress 
                         value={correlation.strength * 100} 
                         className="mt-2"
