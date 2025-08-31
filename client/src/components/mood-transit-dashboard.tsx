@@ -994,26 +994,23 @@ export function MoodTransitDashboard() {
                           const { payload } = props;
                           const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
                           
-                          // Only add mood/energy info to correlation tooltips, not to mood/energy lines themselves
-                          if (name === 'Mood' || name === 'Energy') {
-                            return [numValue.toFixed(1), name];
+                          // Simplified tooltip format
+                          if (name === 'Mood') {
+                            return [`${numValue.toFixed(1)}/10`, 'Mood'];
                           }
-                          
-                          // Add mood and energy info only to correlation tooltips
-                          const moodInfo = payload.mood ? ` | Mood: ${payload.mood.toFixed(1)}` : '';
-                          const energyInfo = payload.energy ? ` | Energy: ${payload.energy.toFixed(1)}` : '';
-                          const baseInfo = moodInfo + energyInfo;
-                          
+                          if (name === 'Energy') {
+                            return [`${numValue.toFixed(1)}/10`, 'Energy'];
+                          }
                           if (name === '🌙 Lunar Correlation') {
                             return [
-                              numValue.toFixed(1) + baseInfo, 
-                              `🌙 Lunar ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
+                              `${numValue.toFixed(1)}/10`,
+                              `🌙 ${payload.dominantMoonPhase ? getMoonPhaseName(payload.dominantMoonPhase) : 'Lunar'}`
                             ];
                           }
                           if (name === '⭐ Planetary Correlation') {
                             return [
-                              numValue.toFixed(1) + baseInfo, 
-                              `⭐ ${payload.dominantPlanet || 'Planetary'} Influence`
+                              `${numValue.toFixed(1)}/10`,
+                              `⭐ ${payload.dominantPlanet || 'Planetary'}`
                             ];
                           }
                           return [numValue.toFixed(1), name];
