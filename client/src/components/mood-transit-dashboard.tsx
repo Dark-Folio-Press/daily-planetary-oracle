@@ -371,6 +371,28 @@ export function MoodTransitDashboard() {
                     <div className="text-xs bg-blue-50 dark:bg-blue-950/20 p-2 rounded">
                       {correlationData.lunarInfluences.currentMoonData.influence}
                     </div>
+                    
+                    {/* Add current mood correlation if available */}
+                    {correlationData.lunarInfluences.moonPhaseCorrelations.length > 0 && (() => {
+                      const currentPhaseCorr = correlationData.lunarInfluences.moonPhaseCorrelations.find(
+                        c => c.phase === correlationData.lunarInfluences.currentMoonData.phase
+                      );
+                      return currentPhaseCorr ? (
+                        <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-800">
+                          <div className="text-xs text-muted-foreground mb-1">Your typical mood in this phase:</div>
+                          <div className="flex gap-3 text-xs">
+                            <span className="flex items-center gap-1">
+                              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                              Mood: {currentPhaseCorr.avgMood.toFixed(1)}/5
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                              Energy: {currentPhaseCorr.avgEnergy.toFixed(1)}/5
+                            </span>
+                          </div>
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 </CardContent>
               </Card>
@@ -397,6 +419,34 @@ export function MoodTransitDashboard() {
                        correlationData.lunarInfluences.overallLunarSensitivity > 0.3 ? 'Moderately lunar aware' : 
                        'Low lunar correlation'}
                     </div>
+                    
+                    {/* Show best and challenging lunar phases */}
+                    {correlationData.lunarInfluences.moonPhaseCorrelations.length > 0 && (
+                      <div className="mt-3 pt-2 border-t border-indigo-200 dark:border-indigo-800">
+                        <div className="text-xs text-muted-foreground mb-2">Your lunar patterns:</div>
+                        {(() => {
+                          const sorted = [...correlationData.lunarInfluences.moonPhaseCorrelations]
+                            .sort((a, b) => (b.avgMood + b.avgEnergy) - (a.avgMood + a.avgEnergy));
+                          const best = sorted[0];
+                          const challenging = sorted[sorted.length - 1];
+                          
+                          return (
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-green-600 dark:text-green-400">✨ Best:</span>
+                                <span>{getMoonPhaseName(best.phaseName)} ({(best.avgMood + best.avgEnergy)/2 * 2})</span>
+                              </div>
+                              {best.phase !== challenging.phase && (
+                                <div className="flex items-center gap-2 text-xs">
+                                  <span className="text-orange-600 dark:text-orange-400">⚡ Intense:</span>
+                                  <span>{getMoonPhaseName(challenging.phaseName)} ({(challenging.avgMood + challenging.avgEnergy)/2 * 2})</span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -424,6 +474,26 @@ export function MoodTransitDashboard() {
                        correlationData.lunarInfluences.lunarPlanetaryHarmony > 0.3 ? 'Mixed energies' : 
                        'Challenging harmony'}
                     </div>
+                    
+                    {/* Show dominant moon phase and planetary influence */}
+                    {correlationData.lunarInfluences.dominantMoonPhase && correlationData.planetaryInfluences.dominantPlanet && (
+                      <div className="mt-3 pt-2 border-t border-purple-200 dark:border-purple-800">
+                        <div className="text-xs text-muted-foreground mb-2">Your cosmic combination:</div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-blue-500">🌙</span>
+                            <span>Most responsive to: {getMoonPhaseName(correlationData.lunarInfluences.dominantMoonPhase)}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-purple-500">⭐</span>
+                            <span>Most influenced by: {correlationData.planetaryInfluences.dominantPlanet}</span>
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-2">
+                            When these align, you experience {correlationData.lunarInfluences.lunarPlanetaryHarmony > 0.6 ? 'amplified' : 'noticeable'} cosmic synergy
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
