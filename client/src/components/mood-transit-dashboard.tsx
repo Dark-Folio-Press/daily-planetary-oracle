@@ -44,6 +44,15 @@ interface CorrelationAnalysis {
     avgMood: number;
     avgEnergy: number;
     commonTransits: string[];
+    planetaryInfluences: Array<{
+      planet: string;
+      aspectType: string;
+      frequency: number;
+      avgCorrelation: number;
+      influence: string;
+    }>;
+    dominantPlanet: string;
+    weeklyInsight: string;
   }>;
   planetaryInfluences: {
     dominantPlanet: string;
@@ -485,23 +494,80 @@ export function MoodTransitDashboard() {
                 </BarChart>
               </ResponsiveContainer>
               
-              <div className="mt-6 space-y-3">
+              <div className="mt-6 space-y-4">
                 {correlationData.weeklyPatterns.map((pattern, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg" data-testid={`weekly-pattern-${index}`}>
-                    <div>
-                      <h4 className="font-medium" data-testid={`text-weekday-${index}`}>{pattern.weekday}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Mood: {pattern.avgMood.toFixed(1)} • Energy: {pattern.avgEnergy.toFixed(1)}
-                      </p>
+                  <Card key={index} className="p-4" data-testid={`weekly-pattern-${index}`}>
+                    <div className="space-y-3">
+                      {/* Header with weekday and dominant planet */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <h4 className="font-semibold text-lg" data-testid={`text-weekday-${index}`}>
+                            {pattern.weekday}
+                          </h4>
+                          {pattern.dominantPlanet && (
+                            <Badge variant="secondary" className="bg-purple-100 text-purple-700" data-testid={`dominant-planet-${index}`}>
+                              <Star className="w-3 h-3 mr-1" />
+                              {pattern.dominantPlanet}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-right text-sm text-muted-foreground">
+                          Mood: {pattern.avgMood.toFixed(1)} • Energy: {pattern.avgEnergy.toFixed(1)}
+                        </div>
+                      </div>
+                      
+                      {/* Weekly insight */}
+                      {pattern.weeklyInsight && (
+                        <div className="p-3 bg-muted/30 rounded-lg">
+                          <div 
+                            className="text-sm" 
+                            data-testid={`weekly-insight-${index}`}
+                            dangerouslySetInnerHTML={{ 
+                              __html: pattern.weeklyInsight.replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-600">$1</strong>') 
+                            }} 
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Planetary influences */}
+                      {pattern.planetaryInfluences && pattern.planetaryInfluences.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-muted-foreground">Planetary Influences:</h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {pattern.planetaryInfluences.slice(0, 3).map((influence, inflIndex) => (
+                              <div key={inflIndex} className="flex items-center justify-between p-2 bg-background border rounded text-xs">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                                    {influence.planet.charAt(0)}
+                                  </div>
+                                  <div>
+                                    <div className="font-medium">{influence.planet}</div>
+                                    <div className="text-muted-foreground">{influence.aspectType}</div>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="font-medium">{Math.round(influence.frequency * 100)}%</div>
+                                  <div className="text-muted-foreground">freq</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Common transits */}
+                      {pattern.commonTransits && pattern.commonTransits.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          <span className="text-xs text-muted-foreground mr-2">Themes:</span>
+                          {pattern.commonTransits.map((transit, transitIndex) => (
+                            <Badge key={transitIndex} variant="outline" className="text-xs" data-testid={`transit-${index}-${transitIndex}`}>
+                              {transit}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      {pattern.commonTransits.map((transit, transitIndex) => (
-                        <Badge key={transitIndex} variant="outline" className="text-xs" data-testid={`transit-${index}-${transitIndex}`}>
-                          {transit}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </CardContent>

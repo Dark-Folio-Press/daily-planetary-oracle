@@ -35,6 +35,15 @@ export interface CorrelationAnalysis {
     avgMood: number;
     avgEnergy: number;
     commonTransits: string[];
+    planetaryInfluences: Array<{
+      planet: string;
+      aspectType: string;
+      frequency: number;
+      avgCorrelation: number;
+      influence: string;
+    }>;
+    dominantPlanet: string;
+    weeklyInsight: string;
   }>;
   planetaryInfluences: {
     dominantPlanet: string;
@@ -473,29 +482,52 @@ export class CorrelationService {
   }
 
   /**
-   * Analyze weekly patterns in mood and transits
+   * Analyze weekly patterns in mood and transits with planetary influences
    */
   private analyzeWeeklyPatterns(correlations: MoodTransitCorrelation[]): Array<{
     weekday: string;
     avgMood: number;
     avgEnergy: number;
     commonTransits: string[];
+    planetaryInfluences: Array<{
+      planet: string;
+      aspectType: string;
+      frequency: number;
+      avgCorrelation: number;
+      influence: string;
+    }>;
+    dominantPlanet: string;
+    weeklyInsight: string;
   }> {
     const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const weeklyData = new Map<string, {moods: number[], energies: number[], transits: string[]}>();
+    const weeklyData = new Map<string, {
+      moods: number[], 
+      energies: number[], 
+      transits: string[],
+      aspects: PlanetaryAspect[],
+      correlations: number[]
+    }>();
 
-    // Group data by weekday
+    // Group data by weekday with planetary aspects
     correlations.forEach(corr => {
       const date = new Date(corr.date);
       const weekday = weekdays[date.getDay()];
       
       if (!weeklyData.has(weekday)) {
-        weeklyData.set(weekday, { moods: [], energies: [], transits: [] });
+        weeklyData.set(weekday, { 
+          moods: [], 
+          energies: [], 
+          transits: [], 
+          aspects: [], 
+          correlations: [] 
+        });
       }
       
       const data = weeklyData.get(weekday)!;
       data.moods.push(corr.mood.mood);
       data.energies.push(corr.mood.energy);
+      data.correlations.push(corr.correlationScore);
+      data.aspects.push(...corr.planetaryAspects);
       
       const transitData = corr.transit.transitData as any;
       if (transitData?.themes) {
@@ -503,7 +535,7 @@ export class CorrelationService {
       }
     });
 
-    // Calculate averages and common transits
+    // Calculate averages, planetary influences, and insights
     return weekdays.map(weekday => {
       const data = weeklyData.get(weekday);
       if (!data || data.moods.length === 0) {
@@ -511,12 +543,56 @@ export class CorrelationService {
           weekday,
           avgMood: 0,
           avgEnergy: 0,
-          commonTransits: []
+          commonTransits: [],
+          planetaryInfluences: [],
+          dominantPlanet: '',
+          weeklyInsight: 'No data available for this day of the week.'
         };
       }
 
       const avgMood = data.moods.reduce((sum, mood) => sum + mood, 0) / data.moods.length;
       const avgEnergy = data.energies.reduce((sum, energy) => sum + energy, 0) / data.energies.length;
+      const avgCorrelation = data.correlations.reduce((sum, corr) => sum + corr, 0) / data.correlations.length;
+      
+      // Analyze planetary influences for this weekday
+      const planetaryStats = new Map<string, {
+        aspects: string[],
+        correlations: number[],
+        influences: string[]
+      }>();
+      
+      data.aspects.forEach(aspect => {
+        const key = aspect.planet;
+        if (!planetaryStats.has(key)) {
+          planetaryStats.set(key, { 
+            aspects: [], 
+            correlations: [], 
+            influences: [] 
+          });
+        }
+        
+        const stats = planetaryStats.get(key)!;
+        stats.aspects.push(aspect.aspect);
+        stats.correlations.push(avgCorrelation);
+        stats.influences.push(aspect.interpretation);
+      });
+      
+      // Calculate planetary influences
+      const planetaryInfluences = [...planetaryStats.entries()].map(([planet, stats]) => {
+        const mostCommonAspect = this.getMostCommon(stats.aspects);
+        const avgPlanetCorrelation = stats.correlations.reduce((a, b) => a + b, 0) / stats.correlations.length;
+        const frequency = stats.aspects.length / data.aspects.length;
+        
+        return {
+          planet,
+          aspectType: mostCommonAspect,
+          frequency,
+          avgCorrelation: avgPlanetCorrelation,
+          influence: stats.influences[0] || `${planet} brings significant energy to your ${weekday}s`
+        };
+      }).sort((a, b) => b.frequency - a.frequency).slice(0, 3);
+      
+      const dominantPlanet = planetaryInfluences.length > 0 ? planetaryInfluences[0].planet : '';
       
       // Find most common transits for this weekday
       const transitCounts = new Map<string, number>();
@@ -524,17 +600,23 @@ export class CorrelationService {
         transitCounts.set(transit, (transitCounts.get(transit) || 0) + 1);
       });
       
-      const commonTransits = Array.from(transitCounts.entries())
-        .filter(([_, count]) => count >= 2) // Appears at least twice
+      const commonTransits = [...transitCounts.entries()]
+        .filter(([_, count]) => count >= 2)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3)
         .map(([transit, _]) => transit);
+
+      // Generate weekly insight
+      const weeklyInsight = this.generateWeeklyInsight(weekday, avgMood, avgEnergy, avgCorrelation, dominantPlanet, planetaryInfluences);
 
       return {
         weekday,
         avgMood: Number(avgMood.toFixed(1)),
         avgEnergy: Number(avgEnergy.toFixed(1)),
-        commonTransits
+        commonTransits,
+        planetaryInfluences,
+        dominantPlanet,
+        weeklyInsight
       };
     });
   }
@@ -599,11 +681,24 @@ export class CorrelationService {
       recommendations.push("⚖️ Your energy levels vary significantly. Use transit insights to plan high and low energy activities.");
     }
 
-    // Weekly pattern recommendations
+    // Weekly pattern recommendations with planetary insights
     const weeklyPatterns = this.analyzeWeeklyPatterns(correlations);
     const bestDays = weeklyPatterns.filter(p => p.avgMood >= 7);
     if (bestDays.length > 0) {
-      recommendations.push(`🌟 Your best days tend to be: ${bestDays.map(d => d.weekday).join(', ')}. Plan important activities accordingly.`);
+      const bestDayNames = bestDays.map(d => {
+        const planetInfo = d.dominantPlanet ? ` (${d.dominantPlanet} influence)` : '';
+        return `${d.weekday}${planetInfo}`;
+      });
+      recommendations.push(`🌟 Your best days tend to be: ${bestDayNames.join(', ')}. Plan important activities accordingly.`);
+    }
+    
+    // Add planetary-specific recommendations
+    const planetaryPatterns = weeklyPatterns.filter(p => p.dominantPlanet);
+    if (planetaryPatterns.length > 0) {
+      const dominantPlanets = [...new Set(planetaryPatterns.map(p => p.dominantPlanet))];
+      if (dominantPlanets.length <= 2) {
+        recommendations.push(`🪐 Your weekly rhythms are strongly influenced by ${dominantPlanets.join(' and ')}. Consider these planetary energies when planning your week.`);
+      }
     }
 
     return recommendations;
@@ -686,6 +781,58 @@ export class CorrelationService {
     }
     
     return description;
+  }
+
+  /**
+   * Helper method to find most common item in array
+   */
+  private getMostCommon(items: string[]): string {
+    if (items.length === 0) return '';
+    
+    const counts = new Map<string, number>();
+    items.forEach(item => {
+      counts.set(item, (counts.get(item) || 0) + 1);
+    });
+    
+    let maxCount = 0;
+    let mostCommon = '';
+    
+    for (const [item, count] of counts) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommon = item;
+      }
+    }
+    
+    return mostCommon;
+  }
+
+  /**
+   * Generate weekly insight based on planetary influences and mood patterns
+   */
+  private generateWeeklyInsight(weekday: string, avgMood: number, avgEnergy: number, avgCorrelation: number, dominantPlanet: string, planetaryInfluences: any[]): string {
+    if (!dominantPlanet) {
+      return `Your ${weekday}s show average mood of ${avgMood.toFixed(1)} and energy of ${avgEnergy.toFixed(1)}, but we need more data to identify planetary patterns.`;
+    }
+    
+    const moodDesc = avgMood >= 7 ? 'excellent' : avgMood >= 5 ? 'balanced' : 'challenging';
+    const energyDesc = avgEnergy >= 7 ? 'high' : avgEnergy >= 5 ? 'moderate' : 'low';
+    const correlationDesc = avgCorrelation >= 0.7 ? 'strongly aligned' : avgCorrelation >= 0.5 ? 'moderately aligned' : 'loosely aligned';
+    
+    let insight = `Your ${weekday}s tend to be ${moodDesc} mood days with ${energyDesc} energy levels. `;
+    
+    if (planetaryInfluences.length > 0) {
+      const topInfluence = planetaryInfluences[0];
+      insight += `**${dominantPlanet}** is your dominant planetary influence on ${weekday}s, primarily through **${topInfluence.aspectType} aspects**. `;
+      
+      if (avgCorrelation >= 0.6) {
+        insight += `Your cosmic alignment is ${correlationDesc} on these days, suggesting ${dominantPlanet} energy resonates well with your natural rhythms.`;
+      } else {
+        insight += `While ${dominantPlanet} is active, your alignment varies - this planet may require more conscious attention on ${weekday}s.`;
+      }
+    }
+    
+    return insight;
   }
 
   /**
