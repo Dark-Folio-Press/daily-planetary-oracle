@@ -230,8 +230,8 @@ export function MoodTransitDashboard() {
 
     const result = {
       weekday: pattern.weekday.substring(0, 3),
-      mood: pattern.avgMood,
-      energy: pattern.avgEnergy,
+      mood: pattern.avgMood * 2, // Convert 1-5 scale to 1-10 scale
+      energy: pattern.avgEnergy * 2, // Convert 1-5 scale to 1-10 scale
       lunarCorrelation: Math.max(0, Math.min(10, lunarCorrelation)),
       planetaryCorrelation: Math.max(0, Math.min(10, planetaryCorrelation)),
       fullWeekday: pattern.weekday,
@@ -242,13 +242,13 @@ export function MoodTransitDashboard() {
     return result;
   }) : [
     // Fallback data if no weeklyPatterns
-    { weekday: 'Sun', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Sunday' },
-    { weekday: 'Mon', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Monday' },
-    { weekday: 'Tue', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Tuesday' },
-    { weekday: 'Wed', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Wednesday' },
-    { weekday: 'Thu', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Thursday' },
-    { weekday: 'Fri', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Friday' },
-    { weekday: 'Sat', mood: 0, energy: 0, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Saturday' }
+    { weekday: 'Sun', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Sunday' },
+    { weekday: 'Mon', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Monday' },
+    { weekday: 'Tue', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Tuesday' },
+    { weekday: 'Wed', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Wednesday' },
+    { weekday: 'Thu', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Thursday' },
+    { weekday: 'Fri', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Friday' },
+    { weekday: 'Sat', mood: 5, energy: 5, lunarCorrelation: 5, planetaryCorrelation: 5, fullWeekday: 'Saturday' }
   ]);
 
   const correlationChartData = correlationData.strongCorrelations.map((corr, index) => ({
@@ -675,38 +675,8 @@ export function MoodTransitDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {/* Mood and Energy Bars */}
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={weeklyChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="weekday" />
-                    <YAxis domain={[0, 10]} />
-                    <Tooltip 
-                      labelFormatter={(label) => {
-                        const data = weeklyChartData.find((d: any) => d.weekday === label);
-                        return data?.fullWeekday || label;
-                      }}
-                      formatter={(value: any, name: any, props: any) => {
-                        const { payload } = props;
-                        const displayName = name === 'mood' ? 'Average Mood' : 'Average Energy';
-                        const mainValue = typeof value === 'number' ? value.toFixed(1) : value;
-                        
-                        // Add cosmic correlation info to tooltip
-                        const lunarInfo = payload.lunarCorrelation ? ` | 🌙 Lunar: ${payload.lunarCorrelation.toFixed(1)}` : '';
-                        const planetaryInfo = payload.planetaryCorrelation ? ` | ⭐ Planetary: ${payload.planetaryCorrelation.toFixed(1)}` : '';
-                        
-                        return [mainValue + lunarInfo + planetaryInfo, displayName];
-                      }}
-                    />
-                    <Legend />
-                    <Bar dataKey="mood" fill="#8884d8" name="Mood" />
-                    <Bar dataKey="energy" fill="#82ca9d" name="Energy" />
-                  </BarChart>
-                </ResponsiveContainer>
-                
-                {/* Correlation Lines */}
-                <ResponsiveContainer width="100%" height={200}>
+              {/* Enhanced Correlation Lines Chart */}
+              <ResponsiveContainer width="100%" height={400}>
                   <LineChart data={weeklyChartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="weekday" />
@@ -743,6 +713,24 @@ export function MoodTransitDashboard() {
                     <Legend />
                     <Line 
                       type="monotone" 
+                      dataKey="mood" 
+                      stroke="#8884d8" 
+                      strokeWidth={2}
+                      dot={{ fill: '#8884d8', strokeWidth: 1, r: 4 }}
+                      name="Mood"
+                      connectNulls={false}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="energy" 
+                      stroke="#82ca9d" 
+                      strokeWidth={2}
+                      dot={{ fill: '#82ca9d', strokeWidth: 1, r: 4 }}
+                      name="Energy"
+                      connectNulls={false}
+                    />
+                    <Line 
+                      type="monotone" 
                       dataKey="lunarCorrelation" 
                       stroke="#3b82f6" 
                       strokeWidth={3}
@@ -761,7 +749,6 @@ export function MoodTransitDashboard() {
                     />
                   </LineChart>
                 </ResponsiveContainer>
-              </div>
               
               <div className="mt-6 space-y-4">
                 {correlationData.weeklyPatterns.map((pattern, index) => (
