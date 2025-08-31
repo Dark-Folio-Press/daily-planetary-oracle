@@ -690,24 +690,29 @@ export function MoodTransitDashboard() {
                         const { payload } = props;
                         const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
                         
-                        // Add mood and energy info to all correlation tooltips
+                        // Only add mood/energy info to correlation tooltips, not to mood/energy lines themselves
+                        if (name === 'Mood' || name === 'Energy') {
+                          return [numValue.toFixed(1), name];
+                        }
+                        
+                        // Add mood and energy info only to correlation tooltips
                         const moodInfo = payload.mood ? ` | Mood: ${payload.mood.toFixed(1)}` : '';
                         const energyInfo = payload.energy ? ` | Energy: ${payload.energy.toFixed(1)}` : '';
                         const baseInfo = moodInfo + energyInfo;
                         
-                        if (name === 'lunarCorrelation') {
+                        if (name === '🌙 Lunar Correlation') {
                           return [
                             numValue.toFixed(1) + baseInfo, 
                             `🌙 Lunar ${payload.dominantMoonPhase ? `(${getMoonPhaseName(payload.dominantMoonPhase)})` : ''}`
                           ];
                         }
-                        if (name === 'planetaryCorrelation') {
+                        if (name === '⭐ Planetary Correlation') {
                           return [
                             numValue.toFixed(1) + baseInfo, 
                             `⭐ ${payload.dominantPlanet || 'Planetary'} Influence`
                           ];
                         }
-                        return [numValue.toFixed(1) + baseInfo, name];
+                        return [numValue.toFixed(1), name];
                       }}
                     />
                     <Legend />
