@@ -381,7 +381,7 @@ export class AstrologyService {
       // Calculate new transit data
       const transitData = await this.calculateDailyTransits(birthInfo, date);
       
-      // Store in database
+      // Store in database with lunar data
       const storedTransit = await storage.createDailyTransit({
         userId,
         date,
@@ -391,7 +391,12 @@ export class AstrologyService {
           energyProfile: transitData.energyProfile,
           moodInfluences: transitData.moodInfluences
         },
-        musicRecommendations: this.generateMusicRecommendations(transitData)
+        musicRecommendations: this.generateMusicRecommendations(transitData),
+        moonPhase: transitData.lunarData?.phase,
+        lunarInfluence: transitData.lunarData?.influence,
+        moonIllumination: transitData.lunarData?.illumination,
+        moonSign: transitData.lunarData?.sign,
+        lunarAspects: null // Will be calculated later if needed
       });
 
       return storedTransit.transitData;
