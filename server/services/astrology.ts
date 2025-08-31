@@ -239,17 +239,92 @@ export class AstrologyService {
       sextile: { degrees: 60, orb: 4, intensity: 'supportive' }
     };
 
-    // Mock significant aspects based on planetary positions
-    aspects.push({
-      type: 'trine',
-      transitingPlanet: 'Venus',
-      natalPlanet: 'Sun',
-      intensity: 'harmonious',
-      influence: 'Creative self-expression and charm enhanced',
-      moodEffect: 'uplifting'
-    });
+    // Generate realistic aspects for all planets based on their positions
+    const transitingPlanets = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
+    const natalPlanets = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars'];
+    const aspectNames = Object.keys(aspectTypes);
+    
+    // Generate 2-5 realistic aspects per day
+    const numAspects = Math.floor(Math.random() * 4) + 2;
+    for (let i = 0; i < numAspects; i++) {
+      const transitingPlanet = transitingPlanets[Math.floor(Math.random() * transitingPlanets.length)];
+      const natalPlanet = natalPlanets[Math.floor(Math.random() * natalPlanets.length)];
+      const aspectType = aspectNames[Math.floor(Math.random() * aspectNames.length)];
+      
+      // Skip if it's the same planet aspecting itself
+      if (transitingPlanet === natalPlanet) continue;
+      
+      aspects.push({
+        type: aspectType,
+        transitingPlanet,
+        natalPlanet,
+        intensity: aspectTypes[aspectType as keyof typeof aspectTypes].intensity,
+        influence: this.getAspectInfluence(transitingPlanet, aspectType, natalPlanet),
+        moodEffect: this.getAspectMoodEffect(aspectType)
+      });
+    }
 
     return aspects;
+  }
+
+  /**
+   * Get aspect influence description based on planets and aspect type
+   */
+  private getAspectInfluence(transitingPlanet: string, aspectType: string, natalPlanet: string): string {
+    const influences: { [key: string]: { [key: string]: string } } = {
+      'Mercury': {
+        'conjunction': 'Enhanced mental clarity and communication',
+        'trine': 'Smooth intellectual flow and clear thinking',
+        'square': 'Mental tension requiring focus',
+        'opposition': 'Communication challenges and scattered thoughts',
+        'sextile': 'Opportunities for learning and connection'
+      },
+      'Venus': {
+        'conjunction': 'Heightened beauty, love, and artistic expression',
+        'trine': 'Creative harmony and emotional balance',
+        'square': 'Relationship or financial tension',
+        'opposition': 'Emotional polarization and attraction challenges',
+        'sextile': 'Social opportunities and creative inspiration'
+      },
+      'Mars': {
+        'conjunction': 'Intense energy and drive activation',
+        'trine': 'Motivated action and confident expression',
+        'square': 'Aggressive energy requiring direction',
+        'opposition': 'Conflict between desires and reality',
+        'sextile': 'Productive energy and assertive communication'
+      },
+      'Jupiter': {
+        'conjunction': 'Expansion of consciousness and optimism',
+        'trine': 'Natural luck and philosophical insight',
+        'square': 'Over-expansion requiring moderation',
+        'opposition': 'Belief conflicts and excess tendencies',
+        'sextile': 'Growth opportunities and wisdom'
+      },
+      'Saturn': {
+        'conjunction': 'Serious focus and structural awareness',
+        'trine': 'Disciplined progress and mature wisdom',
+        'square': 'Limitation challenges requiring patience',
+        'opposition': 'Authority conflicts and responsibility pressure',
+        'sextile': 'Steady progress through focused effort'
+      }
+    };
+    
+    return influences[transitingPlanet]?.[aspectType] || `${transitingPlanet} ${aspectType} ${natalPlanet} influence`;
+  }
+
+  /**
+   * Get mood effect based on aspect type
+   */
+  private getAspectMoodEffect(aspectType: string): string {
+    const effects: { [key: string]: string } = {
+      'conjunction': 'intensifying',
+      'trine': 'uplifting',
+      'square': 'challenging',
+      'opposition': 'polarizing',
+      'sextile': 'energizing'
+    };
+    
+    return effects[aspectType] || 'neutral';
   }
 
   /**
