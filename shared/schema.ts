@@ -124,6 +124,10 @@ export const dailyTransits = pgTable("daily_transits", {
   transitData: jsonb("transit_data").notNull(), // Current planetary positions and aspects
   personalizedAspects: jsonb("personalized_aspects"), // How transits affect user's natal chart
   musicRecommendations: jsonb("music_recommendations"), // Daily music suggestions based on transits
+  moonPhase: text("moon_phase"), // Moon phase for this date
+  moonIllumination: integer("moon_illumination"), // Percentage of moon illuminated (0-100)
+  moonSign: text("moon_sign"), // Current astrological sign of the moon
+  lunarAspects: jsonb("lunar_aspects"), // Moon aspects to natal chart
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -193,6 +197,9 @@ export const dailyMoods = pgTable("daily_moods", {
   energy: integer("energy").notNull(), // 1-10 scale
   emotions: text("emotions").array(), // Array of emotion tags
   journalEntry: text("journal_entry"), // Daily reflection/synchronicities
+  moonPhase: text("moon_phase"), // Moon phase for this date (e.g., "Full Moon", "New Moon")
+  moonIllumination: integer("moon_illumination"), // Percentage of moon illuminated (0-100)
+  moonSign: text("moon_sign"), // Current astrological sign of the moon
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -1,4 +1,5 @@
 import type { DailyMood, DailyTransit } from "@shared/schema";
+import { LunarService, type LunarData, type MoonPhaseCorrelation } from "./lunar";
 
 export interface MoodTransitCorrelation {
   date: string;
@@ -44,6 +45,16 @@ export interface CorrelationAnalysis {
     }>;
     dominantPlanet: string;
     weeklyInsight: string;
+    lunarPatterns: {
+      dominantPhase: string;
+      phaseFrequencies: Array<{
+        phase: string;
+        frequency: number;
+        avgMood: number;
+        avgEnergy: number;
+      }>;
+      lunarInsight: string;
+    };
   }>;
   planetaryInfluences: {
     dominantPlanet: string;
@@ -63,6 +74,7 @@ export interface CorrelationAnalysis {
 }
 
 export class CorrelationService {
+  private lunarService = new LunarService();
   /**
    * Analyze correlations between mood and transit data
    */
@@ -505,7 +517,8 @@ export class CorrelationService {
       energies: number[], 
       transits: string[],
       aspects: PlanetaryAspect[],
-      correlations: number[]
+      correlations: number[],
+      dates: string[]
     }>();
 
     // Group data by weekday with planetary aspects
@@ -519,7 +532,8 @@ export class CorrelationService {
           energies: [], 
           transits: [], 
           aspects: [], 
-          correlations: [] 
+          correlations: [],
+          dates: []
         });
       }
       
@@ -528,6 +542,7 @@ export class CorrelationService {
       data.energies.push(corr.mood.energy);
       data.correlations.push(corr.correlationScore);
       data.aspects.push(...corr.planetaryAspects);
+      data.dates.push(corr.date);
       
       const transitData = corr.transit.transitData as any;
       if (transitData?.themes) {
@@ -546,7 +561,12 @@ export class CorrelationService {
           commonTransits: [],
           planetaryInfluences: [],
           dominantPlanet: '',
-          weeklyInsight: 'No data available for this day of the week.'
+          weeklyInsight: 'No data available for this day of the week.',
+          lunarPatterns: {
+            dominantPhase: '',
+            phaseFrequencies: [],
+            lunarInsight: 'No lunar data available for this day.'
+          }
         };
       }
 
@@ -606,8 +626,11 @@ export class CorrelationService {
         .slice(0, 3)
         .map(([transit, _]) => transit);
 
-      // Generate weekly insight
-      const weeklyInsight = this.generateWeeklyInsight(weekday, avgMood, avgEnergy, avgCorrelation, dominantPlanet, planetaryInfluences);
+      // Analyze lunar patterns for this weekday
+      const lunarPatterns = this.analyzeLunarPatternsForWeekday(data.dates, data.moods, data.energies);
+      
+      // Generate weekly insight with lunar integration
+      const weeklyInsight = this.generateWeeklyInsightWithLunar(weekday, avgMood, avgEnergy, avgCorrelation, dominantPlanet, planetaryInfluences, lunarPatterns);
 
       return {
         weekday,
@@ -616,7 +639,8 @@ export class CorrelationService {
         commonTransits,
         planetaryInfluences,
         dominantPlanet,
-        weeklyInsight
+        weeklyInsight,
+        lunarPatterns
       };
     });
   }
@@ -833,6 +857,116 @@ export class CorrelationService {
     }
     
     return insight;
+  }
+
+  /**
+   * Analyze lunar patterns for a specific weekday
+   */
+  private analyzeLunarPatternsForWeekday(dates: string[], moods: number[], energies: number[]): {
+    dominantPhase: string;
+    phaseFrequencies: Array<{
+      phase: string;
+      frequency: number;
+      avgMood: number;
+      avgEnergy: number;
+    }>;
+    lunarInsight: string;
+  } {
+    if (dates.length === 0) {
+      return {
+        dominantPhase: '',
+        phaseFrequencies: [],
+        lunarInsight: 'No lunar data available.'
+      };
+    }
+    
+    // Calculate lunar data for each date and group by phase
+    const phaseData = new Map<string, { moods: number[], energies: number[] }>();
+    
+    dates.forEach((dateStr, index) => {
+      const lunarData = this.lunarService.getLunarData(new Date(dateStr));
+      const phase = lunarData.phase;
+      
+      if (!phaseData.has(phase)) {
+        phaseData.set(phase, { moods: [], energies: [] });
+      }
+      
+      phaseData.get(phase)!.moods.push(moods[index]);
+      phaseData.get(phase)!.energies.push(energies[index]);
+    });
+    
+    // Calculate frequencies and averages
+    const phaseFrequencies = [...phaseData.entries()].map(([phase, data]) => {
+      const avgMood = data.moods.reduce((sum, m) => sum + m, 0) / data.moods.length;
+      const avgEnergy = data.energies.reduce((sum, e) => sum + e, 0) / data.energies.length;
+      const frequency = data.moods.length / dates.length;
+      
+      return {
+        phase,
+        frequency,
+        avgMood: Number(avgMood.toFixed(1)),
+        avgEnergy: Number(avgEnergy.toFixed(1))
+      };
+    }).sort((a, b) => b.frequency - a.frequency);
+    
+    const dominantPhase = phaseFrequencies.length > 0 ? phaseFrequencies[0].phase : '';
+    
+    // Generate insight
+    let lunarInsight = '';
+    if (dominantPhase) {
+      const dominantData = phaseFrequencies[0];
+      const phaseName = this.lunarService.getMoonPhaseIcon(dominantPhase) + ' ' + this.getPhaseName(dominantPhase);
+      lunarInsight = `Most commonly occurs during **${phaseName}** (${Math.round(dominantData.frequency * 100)}% of the time) with avg mood ${dominantData.avgMood}/10.`;
+    } else {
+      lunarInsight = 'No dominant lunar pattern detected for this day of the week.';
+    }
+    
+    return {
+      dominantPhase,
+      phaseFrequencies,
+      lunarInsight
+    };
+  }
+
+  /**
+   * Generate enhanced weekly insight with lunar integration
+   */
+  private generateWeeklyInsightWithLunar(
+    weekday: string, 
+    avgMood: number, 
+    avgEnergy: number, 
+    avgCorrelation: number, 
+    dominantPlanet: string, 
+    planetaryInfluences: any[], 
+    lunarPatterns: any
+  ): string {
+    const basicInsight = this.generateWeeklyInsight(weekday, avgMood, avgEnergy, avgCorrelation, dominantPlanet, planetaryInfluences);
+    
+    if (lunarPatterns.dominantPhase) {
+      const moonIcon = this.lunarService.getMoonPhaseIcon(lunarPatterns.dominantPhase);
+      const phaseName = this.getPhaseName(lunarPatterns.dominantPhase);
+      
+      return `${basicInsight} ${moonIcon} **Lunar Pattern**: Your ${weekday}s most commonly align with **${phaseName}** energy.`;
+    }
+    
+    return basicInsight;
+  }
+
+  /**
+   * Get phase name from phase key
+   */
+  private getPhaseName(phase: string): string {
+    const names: Record<string, string> = {
+      'new': 'New Moon',
+      'waxing_crescent': 'Waxing Crescent',
+      'first_quarter': 'First Quarter',
+      'waxing_gibbous': 'Waxing Gibbous',
+      'full': 'Full Moon',
+      'waning_gibbous': 'Waning Gibbous',
+      'last_quarter': 'Last Quarter',
+      'waning_crescent': 'Waning Crescent'
+    };
+    return names[phase] || 'Unknown';
   }
 
   /**

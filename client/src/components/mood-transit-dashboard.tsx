@@ -53,6 +53,16 @@ interface CorrelationAnalysis {
     }>;
     dominantPlanet: string;
     weeklyInsight: string;
+    lunarPatterns: {
+      dominantPhase: string;
+      phaseFrequencies: Array<{
+        phase: string;
+        frequency: number;
+        avgMood: number;
+        avgEnergy: number;
+      }>;
+      lunarInsight: string;
+    };
   }>;
   planetaryInfluences: {
     dominantPlanet: string;
@@ -72,6 +82,35 @@ interface CorrelationAnalysis {
 }
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0', '#ffb347'];
+
+// Helper functions for lunar display
+const getMoonPhaseIcon = (phase: string): string => {
+  const icons: Record<string, string> = {
+    'new': '🌑',
+    'waxing_crescent': '🌒',
+    'first_quarter': '🌓',
+    'waxing_gibbous': '🌔',
+    'full': '🌕',
+    'waning_gibbous': '🌖',
+    'last_quarter': '🌗',
+    'waning_crescent': '🌘'
+  };
+  return icons[phase] || '🌙';
+};
+
+const getMoonPhaseName = (phase: string): string => {
+  const names: Record<string, string> = {
+    'new': 'New Moon',
+    'waxing_crescent': 'Waxing Crescent',
+    'first_quarter': 'First Quarter',
+    'waxing_gibbous': 'Waxing Gibbous',
+    'full': 'Full Moon',
+    'waning_gibbous': 'Waning Gibbous',
+    'last_quarter': 'Last Quarter',
+    'waning_crescent': 'Waning Crescent'
+  };
+  return names[phase] || 'Unknown';
+};
 
 export function MoodTransitDashboard() {
   const [dateRange, setDateRange] = useState('30'); // Default to 30 days
@@ -175,51 +214,53 @@ export function MoodTransitDashboard() {
         </div>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card data-testid="card-total-entries">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Entries</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-total-entries">
-              {correlationData.totalEntries}
+      {/* Compact Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <Card data-testid="card-total-entries" className="py-3">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <div className="text-xl font-bold" data-testid="text-total-entries">
+                {correlationData.totalEntries}
+              </div>
+              <p className="text-xs text-muted-foreground">Entries</p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Mood & transit data points
-            </p>
+            <Activity className="h-5 w-5 text-muted-foreground" />
           </CardContent>
         </Card>
 
-        <Card data-testid="card-correlation-score">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cosmic Alignment</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-correlation-score">
-              {Math.round(correlationData.overallCorrelationScore * 100)}%
+        <Card data-testid="card-correlation-score" className="py-3">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <div className="text-xl font-bold" data-testid="text-correlation-score">
+                {Math.round(correlationData.overallCorrelationScore * 100)}%
+              </div>
+              <p className="text-xs text-muted-foreground">Alignment</p>
             </div>
-            <Progress 
-              value={correlationData.overallCorrelationScore * 100} 
-              className="mt-2"
-            />
+            <Star className="h-5 w-5 text-purple-500" />
           </CardContent>
         </Card>
 
-        <Card data-testid="card-strong-patterns">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Strong Patterns</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-strong-patterns">
-              {correlationData.strongCorrelations.length}
+        <Card data-testid="card-strong-patterns" className="py-3">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <div className="text-xl font-bold" data-testid="text-strong-patterns">
+                {correlationData.strongCorrelations.length}
+              </div>
+              <p className="text-xs text-muted-foreground">Patterns</p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Significant correlations found
-            </p>
+            <TrendingUp className="h-5 w-5 text-emerald-500" />
+          </CardContent>
+        </Card>
+
+        <Card data-testid="card-dominant-planet" className="py-3">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <div className="text-lg font-bold text-purple-600" data-testid="text-dominant-planet">
+                {correlationData.planetaryInfluences?.dominantPlanet || 'N/A'}
+              </div>
+              <p className="text-xs text-muted-foreground">Influencer</p>
+            </div>
+            <Moon className="h-5 w-5 text-indigo-500" />
           </CardContent>
         </Card>
       </div>
@@ -551,6 +592,46 @@ export function MoodTransitDashboard() {
                                 </div>
                               </div>
                             ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Lunar patterns */}
+                      {pattern.lunarPatterns && pattern.lunarPatterns.dominantPhase && (
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-muted-foreground">Lunar Patterns:</h5>
+                          <div className="space-y-2">
+                            {/* Dominant phase display */}
+                            <div className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded text-xs">
+                              <div className="flex items-center gap-2">
+                                <div className="text-lg" title={getMoonPhaseName(pattern.lunarPatterns.dominantPhase)}>
+                                  {getMoonPhaseIcon(pattern.lunarPatterns.dominantPhase)}
+                                </div>
+                                <div>
+                                  <div className="font-medium">{getMoonPhaseName(pattern.lunarPatterns.dominantPhase)}</div>
+                                  <div className="text-muted-foreground">Dominant phase</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-medium">
+                                  {pattern.lunarPatterns.phaseFrequencies.length > 0 && 
+                                    Math.round(pattern.lunarPatterns.phaseFrequencies[0].frequency * 100)}%
+                                </div>
+                                <div className="text-muted-foreground">freq</div>
+                              </div>
+                            </div>
+                            
+                            {/* Lunar insight */}
+                            {pattern.lunarPatterns.lunarInsight && (
+                              <div className="p-2 bg-blue-50/50 dark:bg-blue-950/10 rounded text-xs">
+                                <div 
+                                  className="text-muted-foreground"
+                                  dangerouslySetInnerHTML={{ 
+                                    __html: pattern.lunarPatterns.lunarInsight.replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-600 dark:text-blue-400">$1</strong>') 
+                                  }} 
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
