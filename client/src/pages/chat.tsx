@@ -385,7 +385,7 @@ export default function ChatPage() {
                     onClick={handleMoodHistoryClick}
                     className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
                   >
-                    <BarChart3 className="w-5 h-5" />
+                    <BookOpen className="w-5 h-5" />
                   </Button>
                   
                   {/* Tooltip */}
@@ -441,7 +441,7 @@ export default function ChatPage() {
                     className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
                     data-testid="button-feedback-analytics"
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <BarChart3 className="w-5 h-5" />
                   </Button>
                   
                   {/* Tooltip */}
