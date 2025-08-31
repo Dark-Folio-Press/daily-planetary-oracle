@@ -438,12 +438,12 @@ export function MoodTransitDashboard() {
                             <div className="space-y-1">
                               <div className="flex items-center gap-2 text-xs">
                                 <span className="text-green-600 dark:text-green-400">✨ Best:</span>
-                                <span>{getMoonPhaseName(best.phaseName)} ({(best.avgMood + best.avgEnergy)/2 * 2})</span>
+                                <span>{getMoonPhaseName(best.phaseName || best.phase)} ({((best.avgMood + best.avgEnergy)/2 * 2).toFixed(1)})</span>
                               </div>
                               {best.phase !== challenging.phase && (
                                 <div className="flex items-center gap-2 text-xs">
                                   <span className="text-orange-600 dark:text-orange-400">⚡ Intense:</span>
-                                  <span>{getMoonPhaseName(challenging.phaseName)} ({(challenging.avgMood + challenging.avgEnergy)/2 * 2})</span>
+                                  <span>{getMoonPhaseName(challenging.phaseName || challenging.phase)} ({((challenging.avgMood + challenging.avgEnergy)/2 * 2).toFixed(1)})</span>
                                 </div>
                               )}
                             </div>
