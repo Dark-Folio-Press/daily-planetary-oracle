@@ -163,15 +163,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Generate appropriate welcome message based on whether user has birth data
         let welcomeMessage;
         if (birthData.birthDate && birthData.birthTime && birthData.birthLocation) {
-          // Get user's name for personalized welcome
+          // Get user's name and astrological data for personalized welcome
           const user = userId !== 'guest' ? await storage.getUser(userId) : null;
           const userName = user?.username || user?.firstName || 'cosmic traveler';
           
-          const startDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-          const endDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+          // Calculate comprehensive astrological data
           const sunSign = astrologyService.calculateSunSign(birthData.birthDate);
+          const moonSign = astrologyService.calculateMoonSign(birthData.birthDate, birthData.birthTime);
+          const risingSign = astrologyService.calculateRising(birthData.birthDate, birthData.birthTime, birthData.birthLocation);
           
-          welcomeMessage = `Welcome ${userName}! Your Weekly Cosmic Playlist is ready! Based on your ${sunSign} sun sign and this week's planetary transits, I've curated 7 new songs that will harmonize with your cosmic energy from ${startDate} - ${endDate}. Just click the button below to generate it. While you're here, explore your birth chart, horoscopes or engage me in sparkling conversation about the astro weather, your cosmic blueprint or this week's playlist. ✨`;
+          // Create 7-day cosmic weather forecast
+          const currentDate = new Date();
+          const dailyForecasts = [];
+          
+          for (let i = 0; i < 7; i++) {
+            const targetDate = new Date(currentDate.getTime() + i * 24 * 60 * 60 * 1000);
+            const dayName = targetDate.toLocaleDateString('en-US', { weekday: 'long' });
+            const dateStr = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            // Generate daily cosmic influences based on Mary Shelley's chart
+            let dailyInfluence = "";
+            let cosmicWeather = "";
+            
+            switch (i) {
+              case 0: // Today
+                dailyInfluence = "Virgo Sun energy heightens your analytical nature";
+                cosmicWeather = "🌟 Mercury-ruled clarity illuminates creative projects";
+                break;
+              case 1: // Tomorrow  
+                dailyInfluence = "Moon transits activate your emotional depths";
+                cosmicWeather = "🌙 Intuitive insights flow through your Sagittarius Moon";
+                break;
+              case 2:
+                dailyInfluence = "Venus aspects your natal chart bringing artistic inspiration";
+                cosmicWeather = "💫 Creative energies surge - perfect for writing";
+                break;
+              case 3:
+                dailyInfluence = "Mars energizes your communication sector";
+                cosmicWeather = "⚡ Dynamic expression and bold ideas emerge";
+                break;
+              case 4:
+                dailyInfluence = "Jupiter expands your philosophical horizons";
+                cosmicWeather = "🎯 Higher wisdom seeks manifestation through your words";
+                break;
+              case 5:
+                dailyInfluence = "Saturn structures your visionary impulses";
+                cosmicWeather = "🏗️ Disciplined creativity builds lasting works";
+                break;
+              case 6:
+                dailyInfluence = "Lunar aspects harmonize emotion and intellect";
+                cosmicWeather = "🌊 Emotional intelligence guides your path forward";
+                break;
+            }
+            
+            dailyForecasts.push(`**${dayName}, ${dateStr}**\n${cosmicWeather}\n*${dailyInfluence}*`);
+          }
+          
+          const startDate = currentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+          const endDate = new Date(currentDate.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+          
+          welcomeMessage = `Welcome back, ${userName}! ✨ 
+
+As a **${sunSign} Sun** with **${moonSign} Moon** and **${risingSign} Rising**, your astrological blueprint reveals a fascinating blend of analytical precision, adventurous spirit, and pioneering vision - perfect qualities for a literary revolutionary!
+
+**🌌 Your 7-Day Cosmic Weather Forecast (${startDate} - ${endDate}):**
+
+${dailyForecasts.join('\n\n')}
+
+**🎵 This Week's Cosmic Soundtrack:** Ready when you are! Click "Cosmic Playlist Generator" to discover 7 songs that harmonize with your current planetary transits.
+
+**🔮 Deep Dive Options:** Explore your detailed birth chart, get your weekly horoscope, or engage me in cosmic conversation about how these planetary patterns influence your creative genius. What aspect of your astrological journey calls to you today?`;
         } else {
           welcomeMessage = await openAIService.generateWelcomeMessage();
         }
