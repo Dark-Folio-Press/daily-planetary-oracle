@@ -12,7 +12,7 @@ export function MoodAnalysisPage() {
       <div className="mb-6">
         <Button 
           variant="ghost" 
-          onClick={() => setLocation('/chat')}
+          onClick={() => setLocation('/')}
           className="mb-4"
           data-testid="button-back-to-chat"
         >
