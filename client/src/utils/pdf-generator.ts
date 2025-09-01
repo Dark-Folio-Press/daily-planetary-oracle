@@ -99,14 +99,7 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
             🎵 Try CosmicPlaylistGenerator-Free
           </div>
         </div>
-        <div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px;">
-          <p style="color: #d1d5db; margin: 0 0 10px 0; font-size: 14px;">
-            Continue this conversation at:
-          </p>
-          <p style="margin: 0; font-weight: 600; color: #fbbf24; font-size: 14px; word-break: break-all;">
-            ${chatUrl}
-          </p>
-        </div>
+
       </div>
     `;
     
@@ -149,7 +142,7 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
     
     // Add clickable link annotations on the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
-    const freeAppUrl = `${window.location.origin}`;
+    const freeAppUrl = `${window.location.origin}/signup`;
     
     // Calculate positions for the buttons (approximate positions in the footer)
     const buttonY = pdf.internal.pageSize.getHeight() - 45; // 45mm from bottom
@@ -259,14 +252,7 @@ export async function generatePDFFromMessages(
             🎵 Generate Your Playlist
           </div>
         </div>
-        <div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px;">
-          <p style="color: #d1d5db; margin: 0 0 10px 0; font-size: 14px;">
-            Continue this conversation at:
-          </p>
-          <p style="margin: 0; font-weight: 600; color: #fbbf24; font-size: 14px; word-break: break-all;">
-            ${chatUrl}
-          </p>
-        </div>
+
       </div>
     `;
     
@@ -307,7 +293,7 @@ export async function generatePDFFromMessages(
     
     // Add clickable link annotations on the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
-    const freeAppUrl = `${window.location.origin}`;
+    const freeAppUrl = `${window.location.origin}/signup`;
     
     // Calculate positions for the buttons (approximate positions in the footer)
     const buttonY = pdf.internal.pageSize.getHeight() - 45; // 45mm from bottom
