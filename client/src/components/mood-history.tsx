@@ -298,7 +298,7 @@ export default function MoodHistory({ onClose }: MoodHistoryProps) {
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Heart className="w-6 h-6 text-pink-500" />
-            Your Cosmic Mood Journey
+            Your Cosmic Journey
           </h2>
           <p className="text-muted-foreground mt-1">
             Track your emotional patterns and cosmic alignment over time
