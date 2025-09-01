@@ -5,7 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Edit, Trash2, Calendar, MapPin, Clock, User, Star, Share2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Edit, Trash2, Calendar, MapPin, Clock, User, Star, Share2, Activity, TrendingUp, Moon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -109,6 +110,21 @@ export function UserProfileCard() {
   });
   
   const astrologyData = bigThreeData || { sunSign: '', moonSign: '', risingSign: '' };
+
+  // Fetch cosmic analysis data (last 7 days)
+  const { data: cosmicAnalysis } = useQuery({
+    queryKey: ['/api/analysis/mood-transit-correlation', '7'],
+    queryFn: async () => {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 7);
+      
+      const response = await fetch(`/api/analysis/mood-transit-correlation?startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}`);
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!user,
+  });
 
   if (showChartGenerator && astrologyData.sunSign) {
     return (
@@ -284,6 +300,65 @@ export function UserProfileCard() {
             })()}
           </div>
         </div>
+        
+        {/* Cosmic Analysis Cards */}
+        {cosmicAnalysis && (
+          <div className="space-y-2">
+            <div className="text-sm font-medium text-purple-200">Cosmic Mood Analysis</div>
+            <div className="text-xs text-purple-300/80 mb-3">
+              Analysis period: {cosmicAnalysis.correlationPeriod}
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Card className="bg-white/5 border-white/10 py-2">
+                <CardContent className="flex items-center justify-between p-3">
+                  <div>
+                    <div className="text-lg font-bold text-white">
+                      {cosmicAnalysis.totalEntries}
+                    </div>
+                    <p className="text-xs text-purple-300/80">Entries</p>
+                  </div>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/5 border-white/10 py-2">
+                <CardContent className="flex items-center justify-between p-3">
+                  <div>
+                    <div className="text-lg font-bold text-white">
+                      {Math.round(cosmicAnalysis.overallCorrelationScore * 100)}%
+                    </div>
+                    <p className="text-xs text-purple-300/80">Alignment</p>
+                  </div>
+                  <Star className="h-4 w-4 text-purple-400" />
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/5 border-white/10 py-2">
+                <CardContent className="flex items-center justify-between p-3">
+                  <div>
+                    <div className="text-lg font-bold text-white">
+                      {cosmicAnalysis.strongCorrelations.length}
+                    </div>
+                    <p className="text-xs text-purple-300/80">Patterns</p>
+                  </div>
+                  <TrendingUp className="h-4 w-4 text-emerald-400" />
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/5 border-white/10 py-2">
+                <CardContent className="flex items-center justify-between p-3">
+                  <div>
+                    <div className="text-sm font-bold text-purple-400">
+                      {cosmicAnalysis.planetaryInfluences?.dominantPlanet || 'N/A'}
+                    </div>
+                    <p className="text-xs text-purple-300/80">Influencer</p>
+                  </div>
+                  <Moon className="h-4 w-4 text-indigo-400" />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
         
         {/* Cosmic Weather */}
         <AstrologicalWeather />
