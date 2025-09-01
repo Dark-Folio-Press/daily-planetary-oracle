@@ -170,7 +170,7 @@ export function UserProfileCard() {
   }
 
   return (
-    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6 max-h-[90vh] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#8b5cf6 #374151' }}>
+    <div className="bg-white/5 dark:bg-white/5 bg-gray-100/80 backdrop-blur-md border border-white/10 dark:border-white/10 border-gray-300/30 rounded-2xl p-6 mb-6 max-h-[90vh] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#8b5cf6 #374151' }}>
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
           {/* User Avatar */}
@@ -210,14 +210,14 @@ export function UserProfileCard() {
           </div>
           
           <div>
-            <h3 className="font-semibold text-white text-lg">
+            <h3 className="font-semibold text-white dark:text-white text-gray-900 text-lg">
               {user.username || user.email}
             </h3>
-            <p className="text-sm text-gray-300">{user.email}</p>
+            <p className="text-sm text-gray-300 dark:text-gray-300 text-gray-600">{user.email}</p>
             {astrologyData.sunSign && (
               <div className="flex items-center mt-1">
                 <Star className="w-3 h-3 text-yellow-400 mr-1" />
-                <span className="text-sm text-gray-200 font-medium">{astrologyData.sunSign}</span>
+                <span className="text-sm text-gray-200 dark:text-gray-200 text-gray-700 font-medium">{astrologyData.sunSign}</span>
               </div>
             )}
           </div>
