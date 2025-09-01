@@ -19,6 +19,7 @@ import { GuestExitModal, useGuestExitModal } from "@/components/guest-exit-modal
 
 import { Music, Sparkles, MoreHorizontal, LogOut, X, BarChart3, MessageSquare, TrendingUp, BookOpen, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function ChatPage() {
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random()}`);
@@ -364,26 +365,22 @@ export default function ChatPage() {
               
               {/* Spotify Integration - Second after profile */}
               {user && (
-                <div className="relative group flex-shrink-0">
-                  <div 
-                    className="w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-white/10 rounded-lg transition-colors"
-                    onClick={() => setShowSpotifyCard(true)}
-                  >
-                    <SiSpotify className="w-5 h-5 text-green-500 hover:text-green-400 transition-colors" />
-                  </div>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[9999] group-hover:translate-y-0 translate-y-2">
-                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
-                      <div className="text-center">
-                        <div className="font-medium tracking-wide">✨ Spotify Configuration ✨</div>
-                      </div>
-                      {/* Arrow pointing up */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
-                      {/* Soft glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
-                    </div>
-                  </div>
+                <div className="relative flex-shrink-0">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div 
+                          className="w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-white/10 rounded-lg transition-colors"
+                          onClick={() => setShowSpotifyCard(true)}
+                        >
+                          <SiSpotify className="w-5 h-5 text-green-500 hover:text-green-400 transition-colors" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                        ✨ Spotify Configuration ✨
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   
                   {/* Spotify Card Popup */}
                   {showSpotifyCard && (
