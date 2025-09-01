@@ -306,44 +306,40 @@ export default function ChatPage() {
                  }}>
               {/* User Profile - First after app logo */}
               {user ? (
-                <div 
-                  className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-lg px-2 py-1 transition-colors group relative flex-shrink-0"
-                  onClick={() => setShowProfileCard(true)}
-                >
-                  <AvatarDisplay
-                    avatarType={(user as any)?.avatarType}
-                    avatarIcon={(user as any)?.avatarIcon}
-                    profileImageUrl={(user as any)?.profileImageUrl}
-                    size="md"
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-foreground">
-                      {(user as any)?.username || (user as any)?.email}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {(user as any)?.email}
-                    </span>
-                    {/* Show sun sign if available */}
-                    {astrologyData?.sunSign && (
-                      <span className="text-xs text-yellow-400">
-                        {astrologyData.sunSign}
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[9999] group-hover:translate-y-0 translate-y-2">
-                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
-                      <div className="text-center">
-                        <div className="font-medium tracking-wide">✨ Vibe Check & Charts ✨</div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div 
+                        className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-lg px-2 py-1 transition-colors flex-shrink-0"
+                        onClick={() => setShowProfileCard(true)}
+                      >
+                        <AvatarDisplay
+                          avatarType={(user as any)?.avatarType}
+                          avatarIcon={(user as any)?.avatarIcon}
+                          profileImageUrl={(user as any)?.profileImageUrl}
+                          size="md"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-foreground">
+                            {(user as any)?.username || (user as any)?.email}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {(user as any)?.email}
+                          </span>
+                          {/* Show sun sign if available */}
+                          {astrologyData?.sunSign && (
+                            <span className="text-xs text-yellow-400">
+                              {astrologyData.sunSign}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      {/* Arrow pointing up */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
-                      {/* Soft glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
-                    </div>
-                  </div>
-                </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                      ✨ Vibe Check & Charts ✨
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : null}
               
               {/* Slide-out Profile Card */}
@@ -412,85 +408,67 @@ export default function ChatPage() {
 
               {/* Mood History Button - Third after Spotify */}
               {user && (
-                <div className="relative group flex-shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleMoodHistoryClick}
-                    className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                  </Button>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[9999] group-hover:translate-y-0 translate-y-2">
-                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
-                      <div className="text-center">
-                        <div className="font-medium tracking-wide">✨Journal the Journey!✨</div>
-                      </div>
-                      {/* Arrow pointing up */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
-                      {/* Soft glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
-                    </div>
-                  </div>
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleMoodHistoryClick}
+                        className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors flex-shrink-0"
+                      >
+                        <BookOpen className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                      ✨Journal the Journey!✨
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
 
               {/* Mood-Transit Correlation Button - After Mood Analytics */}
               {user && (
-                <div className="relative group flex-shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.location.href = '/mood-analysis'}
-                    className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
-                    data-testid="button-mood-analysis"
-                  >
-                    <TrendingUp className="w-5 h-5" />
-                  </Button>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[9999] group-hover:translate-y-0 translate-y-2">
-                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
-                      <div className="text-center">
-                        <div className="font-medium tracking-wide">✨Analytics✨</div>
-                      </div>
-                      {/* Arrow pointing up */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
-                      {/* Soft glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
-                    </div>
-                  </div>
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.location.href = '/mood-analysis'}
+                        className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors flex-shrink-0"
+                        data-testid="button-mood-analysis"
+                      >
+                        <TrendingUp className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                      ✨Analytics✨
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
 
               {/* Feedback Analytics Button - After Cosmic Mood Analysis */}
               {user && (
-                <div className="relative group flex-shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.location.href = '/feedback-analytics'}
-                    className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors"
-                    data-testid="button-feedback-analytics"
-                  >
-                    <Gauge className="w-5 h-5" />
-                  </Button>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[9999] group-hover:translate-y-0 translate-y-2">
-                    <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
-                      <div className="text-center">
-                        <div className="font-medium tracking-wide">✨Satisfaction Meter✨</div>
-                      </div>
-                      {/* Arrow pointing up */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
-                      {/* Soft glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-sm -z-10" />
-                    </div>
-                  </div>
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.location.href = '/feedback-analytics'}
+                        className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors flex-shrink-0"
+                        data-testid="button-feedback-analytics"
+                      >
+                        <Gauge className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                      ✨Satisfaction Meter✨
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
               
               {/* Share Button - Fourth after Mood */}
