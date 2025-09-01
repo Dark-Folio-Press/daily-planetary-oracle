@@ -51,6 +51,8 @@ export const users = pgTable("users", {
   currentTransitDetails: jsonb("current_transit_details"), // Stored for 7 days
   // Spotify playlist tracking
   spotifyPlaylistId: varchar("spotify_playlist_id"), // Store the current week's playlist ID
+  // Music mode preference for premium users
+  musicMode: varchar("music_mode").default("personal"), // 'personal' or 'discovery'
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

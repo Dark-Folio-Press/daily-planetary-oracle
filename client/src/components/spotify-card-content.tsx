@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Music, CheckCircle, AlertCircle, X } from "lucide-react";
+import { Music, CheckCircle, AlertCircle, X, User, Compass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -22,11 +23,14 @@ export function SpotifyCardContent() {
   const [status, setStatus] = useState<SpotifyStatus | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [musicMode, setMusicMode] = useState<'personal' | 'discovery'>('personal');
+  const [isSwitchingMode, setIsSwitchingMode] = useState(false);
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     checkSpotifyStatus();
+    loadMusicMode();
     
     // Check for callback parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -150,6 +154,48 @@ export function SpotifyCardContent() {
     }
   };
 
+  const loadMusicMode = async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      const response = await apiRequest('GET', '/api/user/music-mode');
+      const data = await response.json();
+      setMusicMode(data.musicMode || 'personal');
+    } catch (error) {
+      console.error("Error loading music mode:", error);
+    }
+  };
+
+  const handleMusicModeToggle = async (newMode: 'personal' | 'discovery') => {
+    if (!isAuthenticated) return;
+    
+    setIsSwitchingMode(true);
+    try {
+      const response = await apiRequest('PUT', '/api/user/music-mode', {
+        musicMode: newMode
+      });
+      
+      if (response.ok) {
+        setMusicMode(newMode);
+        toast({
+          title: newMode === 'personal' ? "Personal Mode Enabled" : "Discovery Mode Enabled",
+          description: newMode === 'personal' 
+            ? "Playlists will be based on your Spotify listening history"
+            : "Playlists will feature new discoveries based on cosmic energy",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating music mode:", error);
+      toast({
+        title: "Update Failed",
+        description: "Unable to switch music mode. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSwitchingMode(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="text-center text-muted-foreground">
@@ -197,6 +243,49 @@ export function SpotifyCardContent() {
               )}
             </div>
           )}
+
+          {/* Music Mode Toggle - Only show when connected */}
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4 space-y-3 border border-purple-200/50 dark:border-purple-700/30">
+            <h4 className="font-medium text-sm text-purple-900 dark:text-purple-100 flex items-center gap-2">
+              <Compass className="w-4 h-4" />
+              Music Discovery Mode
+            </h4>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  musicMode === 'personal' 
+                    ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-700' 
+                    : 'text-muted-foreground'
+                }`}>
+                  <User className="w-3 h-3" />
+                  Personal
+                </div>
+                
+                <Switch
+                  checked={musicMode === 'discovery'}
+                  onCheckedChange={(checked) => handleMusicModeToggle(checked ? 'discovery' : 'personal')}
+                  disabled={isSwitchingMode}
+                />
+                
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  musicMode === 'discovery' 
+                    ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-700' 
+                    : 'text-muted-foreground'
+                }`}>
+                  <Compass className="w-3 h-3" />
+                  Discovery
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-xs text-muted-foreground leading-relaxed">
+              {musicMode === 'personal' 
+                ? "🎵 Playlists based on your listening history and saved tracks"
+                : "✨ Cosmic discoveries from the entire Spotify catalog"
+              }
+            </div>
+          </div>
 
           <div className="flex gap-2">
             <Button

@@ -161,42 +161,63 @@ Use this specific information in your response to give personalized transit insi
 
   /**
    * Enhanced playlist generation using Spotify recommendations and 30-day usage filtering
+   * @param musicMode - 'personal' for user's taste or 'discovery' for new music exploration
    */
-  async generatePersonalizedPlaylist(birthInfo: BirthInfo, userId: string, accessToken?: string, musicProfile?: any): Promise<PlaylistData> {
+  async generatePersonalizedPlaylist(birthInfo: BirthInfo, userId: string, accessToken?: string, musicProfile?: any, musicMode: 'personal' | 'discovery' = 'personal'): Promise<PlaylistData> {
     let spotifyRecommendations: SpotifyTrack[] = [];
     let musicContext = '';
     
     // Try to get Spotify recommendations if user is connected
-    if (accessToken && musicProfile) {
+    if (accessToken) {
       try {
-        console.log('Getting personalized Spotify recommendations...');
-        
-        // Get recommendation seeds (liked songs and top artists)
-        const seeds = await spotifyService.getRecommendationSeeds(accessToken);
-        console.log(`Found ${seeds.trackIds.length} track seeds and ${seeds.artistIds.length} artist seeds`);
-        
-        if (seeds.trackIds.length > 0 || seeds.artistIds.length > 0) {
-          // Get recommendations based on user's taste and astrological energy
+        if (musicMode === 'personal' && musicProfile) {
+          console.log('Getting personalized Spotify recommendations (Personal Mode)...');
+          
+          // Get recommendation seeds (liked songs and top artists)
+          const seeds = await spotifyService.getRecommendationSeeds(accessToken);
+          console.log(`Found ${seeds.trackIds.length} track seeds and ${seeds.artistIds.length} artist seeds`);
+          
+          if (seeds.trackIds.length > 0 || seeds.artistIds.length > 0) {
+            // Get recommendations based on user's taste and astrological energy
+            const targetEnergy = this.calculateAstrologicalEnergy(birthInfo);
+            const targetValence = this.calculateAstrologicalValence(birthInfo);
+            
+            spotifyRecommendations = await spotifyService.getPersonalizedRecommendations(accessToken, {
+              seedTracks: seeds.trackIds.slice(0, 3),
+              seedArtists: seeds.artistIds.slice(0, 2),
+              targetEnergy,
+              targetValence,
+              limit: 50 // Get more options to filter from
+            });
+            
+            console.log(`Got ${spotifyRecommendations.length} personalized Spotify recommendations`);
+          }
+        } else if (musicMode === 'discovery') {
+          console.log('Getting cosmic discovery recommendations (Discovery Mode)...');
+          
+          // Get pure astrological energy-based recommendations without personal taste
           const targetEnergy = this.calculateAstrologicalEnergy(birthInfo);
           const targetValence = this.calculateAstrologicalValence(birthInfo);
           
-          spotifyRecommendations = await spotifyService.getPersonalizedRecommendations(accessToken, {
-            seedTracks: seeds.trackIds.slice(0, 3),
-            seedArtists: seeds.artistIds.slice(0, 2),
+          // Use diverse genre seeds for discovery
+          const genreSeeds = ['ambient', 'indie', 'jazz', 'electronic', 'world-music'];
+          
+          spotifyRecommendations = await spotifyService.getGenreBasedRecommendations(accessToken, {
+            seedGenres: genreSeeds.slice(0, 3), // Max 3 genre seeds
             targetEnergy,
             targetValence,
-            limit: 50 // Get more options to filter from
+            limit: 50
           });
           
-          console.log(`Got ${spotifyRecommendations.length} Spotify recommendations`);
-          
-          // Filter out recently used songs (30-day limit)
-          if (spotifyRecommendations.length > 0) {
-            const spotifyIds = spotifyRecommendations.map(track => track.id);
-            const availableSongs = await storage.filterOutRecentlyUsedSongs(userId, spotifyIds, 30);
-            spotifyRecommendations = spotifyRecommendations.filter(track => availableSongs.includes(track.id));
-            console.log(`${availableSongs.length} songs available after filtering recently used`);
-          }
+          console.log(`Got ${spotifyRecommendations.length} discovery Spotify recommendations`);
+        }
+        
+        // Filter out recently used songs (30-day limit) for both modes
+        if (spotifyRecommendations.length > 0) {
+          const spotifyIds = spotifyRecommendations.map(track => track.id);
+          const availableSongs = await storage.filterOutRecentlyUsedSongs(userId, spotifyIds, 30);
+          spotifyRecommendations = spotifyRecommendations.filter(track => availableSongs.includes(track.id));
+          console.log(`${availableSongs.length} songs available after filtering recently used`);
         }
       } catch (error) {
         console.error('Error getting Spotify recommendations:', error);
@@ -204,11 +225,11 @@ Use this specific information in your response to give personalized transit insi
       }
     }
     
-    // Build context for AI
-    if (musicProfile) {
+    // Build context for AI based on music mode
+    if (musicMode === 'personal' && musicProfile) {
       musicContext = `
       
-**User's Spotify Music Profile:**
+**User's Spotify Music Profile (Personal Mode Active):**
 - Top Artists: ${musicProfile.topArtists?.join(', ') || 'Not available'}
 - Preferred Genres: ${musicProfile.preferredGenres?.join(', ') || 'Not available'}
 - Music Characteristics:
@@ -217,6 +238,14 @@ Use this specific information in your response to give personalized transit insi
   - Average Tempo: ${Math.round(musicProfile.averageTempo || 120)} BPM
 
 Use this music profile to select songs that align with their taste while incorporating astrological influences.`;
+    } else if (musicMode === 'discovery') {
+      musicContext = `
+      
+**Discovery Mode Active:**
+- Focus on cosmic exploration and new musical territories
+- Prioritize genres: ambient, indie, jazz, electronic, world music
+- Select songs that expand musical horizons based purely on astrological energy
+- Avoid mainstream or overly familiar tracks - aim for hidden gems and artistic discoveries`;
     }
 
     if (spotifyRecommendations.length > 0) {

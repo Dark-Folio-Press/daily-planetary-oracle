@@ -126,6 +126,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's music mode preference
+  app.get("/api/user/music-mode", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const user = await storage.getUser(userId);
+      
+      res.json({ 
+        musicMode: user?.musicMode || 'personal',
+        connected: !!user?.spotifyAccessToken
+      });
+    } catch (error) {
+      console.error("Error getting music mode:", error);
+      res.status(500).json({ message: "Failed to get music mode preference" });
+    }
+  });
+
+  // Update user's music mode preference
+  app.put("/api/user/music-mode", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const { musicMode } = req.body;
+      
+      if (!musicMode || !['personal', 'discovery'].includes(musicMode)) {
+        return res.status(400).json({ message: "Invalid music mode. Must be 'personal' or 'discovery'" });
+      }
+      
+      const updatedUser = await storage.updateUser(userId, { musicMode });
+      res.json({ 
+        musicMode: updatedUser.musicMode,
+        success: true
+      });
+    } catch (error) {
+      console.error("Error updating music mode:", error);
+      res.status(500).json({ message: "Failed to update music mode preference" });
+    }
+  });
+
   // Create or get chat session (allow guest users)
   app.post("/api/chat/session", async (req: any, res) => {
     try {
@@ -406,13 +443,15 @@ ${dailyForecasts.join('\n\n')}
         }
 
         if (birthDate && birthTime && birthLocation) {
-          // Get user's music profile and Spotify access token if available
+          // Get user's music profile, Spotify access token, and music mode if available
           let musicProfile = null;
           let spotifyAccessToken = null;
+          let musicMode: 'personal' | 'discovery' = 'personal';
           if (userId !== 'guest') {
             const user = await storage.getUser(userId);
             musicProfile = (user as any)?.musicProfile?.musicProfile || null;
             spotifyAccessToken = (user as any)?.spotifyAccessToken || null;
+            musicMode = (user as any)?.musicMode || 'personal';
           }
 
           // Generate playlist using enhanced method with Spotify recommendations
@@ -420,7 +459,7 @@ ${dailyForecasts.join('\n\n')}
             date: birthDate,
             time: birthTime,
             location: birthLocation,
-          }, userId, spotifyAccessToken, musicProfile);
+          }, userId, spotifyAccessToken, musicProfile, musicMode);
 
           // Save playlist
           await storage.createPlaylist({
@@ -524,18 +563,22 @@ Would you like me to explain the astrological reasoning behind any specific song
 
       // If no existing playlist found, generate a new one
       if (!playlistData) {
-        // Get user's music profile if available
+        // Get user's music profile, Spotify access token, and music mode if available
         let musicProfile = null;
+        let spotifyAccessToken = null;
+        let musicMode: 'personal' | 'discovery' = 'personal';
         if (userId !== 'guest') {
           const user = await storage.getUser(userId);
           musicProfile = (user as any)?.musicProfile?.musicProfile || null;
+          spotifyAccessToken = (user as any)?.spotifyAccessToken || null;
+          musicMode = (user as any)?.musicMode || 'personal';
         }
 
-        playlistData = await openAIService.generatePlaylist({
+        playlistData = await openAIService.generatePersonalizedPlaylist({
           date: session.birthDate,
           time: session.birthTime,
           location: session.birthLocation,
-        }, musicProfile);
+        }, userId, spotifyAccessToken, musicProfile, musicMode);
 
         await storage.createPlaylist({
           sessionId,

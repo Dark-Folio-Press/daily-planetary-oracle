@@ -368,6 +368,44 @@ export class SpotifyService {
   }
 
   /**
+   * Get genre-based recommendations for discovery mode (no personal taste)
+   */
+  async getGenreBasedRecommendations(accessToken: string, params: {
+    seedGenres: string[];
+    targetEnergy?: number;
+    targetValence?: number;
+    targetTempo?: number;
+    limit?: number;
+  }): Promise<SpotifyTrack[]> {
+    const { seedGenres, targetEnergy, targetValence, targetTempo, limit = 20 } = params;
+    
+    const urlParams = new URLSearchParams();
+    
+    // Add genre seeds (max 5 total seeds)
+    seedGenres.slice(0, 5).forEach(genre => {
+      urlParams.append('seed_genres', genre);
+    });
+    
+    if (seedGenres.length === 0) {
+      // No seeds available, return empty array
+      return [];
+    }
+    
+    urlParams.append('limit', limit.toString());
+    
+    // Add target audio features if provided
+    if (targetEnergy !== undefined) urlParams.append('target_energy', targetEnergy.toString());
+    if (targetValence !== undefined) urlParams.append('target_valence', targetValence.toString());
+    if (targetTempo !== undefined) urlParams.append('target_tempo', targetTempo.toString());
+    
+    const url = `/recommendations?${urlParams.toString()}`;
+    
+    console.log('Getting genre-based recommendations from:', url);
+    const response = await this.getSpotifyApi(accessToken, url);
+    return response?.tracks || [];
+  }
+
+  /**
    * Get user's top track and artist IDs for use as recommendation seeds
    */
   async getRecommendationSeeds(accessToken: string): Promise<{
