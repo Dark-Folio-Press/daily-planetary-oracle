@@ -278,11 +278,15 @@ export default function ChatPage() {
                 <p className="text-xs text-muted-foreground">Your AI astrological mentor</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 overflow-x-auto scrollbar-hide max-w-full min-w-0"
+                 style={{
+                   msOverflowStyle: 'none',  /* IE and Edge */
+                   scrollbarWidth: 'none',   /* Firefox */
+                 }}>
               {/* User Profile - First after app logo */}
               {user ? (
                 <div 
-                  className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-lg px-2 py-1 transition-colors group relative"
+                  className="flex items-center space-x-2 cursor-pointer hover:bg-white/10 rounded-lg px-2 py-1 transition-colors group relative flex-shrink-0"
                   onClick={() => setShowProfileCard(true)}
                 >
                   <AvatarDisplay
@@ -340,7 +344,7 @@ export default function ChatPage() {
               
               {/* Spotify Integration - Second after profile */}
               {user && (
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <div 
                     className="w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-white/10 rounded-lg transition-colors group"
                     onClick={() => setShowSpotifyCard(true)}
@@ -378,7 +382,7 @@ export default function ChatPage() {
 
               {/* Mood History Button - Third after Spotify */}
               {user && (
-                <div className="relative group">
+                <div className="relative group flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -405,7 +409,7 @@ export default function ChatPage() {
 
               {/* Mood-Transit Correlation Button - After Mood Analytics */}
               {user && (
-                <div className="relative group">
+                <div className="relative group flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -433,7 +437,7 @@ export default function ChatPage() {
 
               {/* Feedback Analytics Button - After Cosmic Mood Analysis */}
               {user && (
-                <div className="relative group">
+                <div className="relative group flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -461,45 +465,51 @@ export default function ChatPage() {
               
               {/* Share Button - Fourth after Mood */}
               {(user && messages.length > 0) ? (
-                <ShareButton 
-                  type="conversation" 
-                  sessionId={sessionId} 
-                  variant="ghost" 
-                  size="sm" 
-                />
+                <div className="flex-shrink-0">
+                  <ShareButton 
+                    type="conversation" 
+                    sessionId={sessionId} 
+                    variant="ghost" 
+                    size="sm" 
+                  />
+                </div>
               ) : null}
               
               {/* Theme Toggle - Fourth after Share Button */}
-              <StarryNightToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
+              <div className="flex-shrink-0">
+                <StarryNightToggle isDarkMode={isDarkMode} onToggle={toggleTheme} />
+              </div>
               
               {/* Logout Button - Last */}
-              {user ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={async () => {
-                    try {
-                      await apiRequest('POST', '/api/auth/logout');
-                      window.location.href = '/';
-                    } catch (error) {
-                      console.error('Logout error:', error);
-                      window.location.href = '/';
-                    }
-                  }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.location.href = '/login'}
-                  className="text-sm"
-                >
-                  Sign In
-                </Button>
-              )}
+              <div className="flex-shrink-0">
+                {user ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        await apiRequest('POST', '/api/auth/logout');
+                        window.location.href = '/';
+                      } catch (error) {
+                        console.error('Logout error:', error);
+                        window.location.href = '/';
+                      }
+                    }}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.location.href = '/login'}
+                    className="text-sm"
+                  >
+                    Sign In
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
