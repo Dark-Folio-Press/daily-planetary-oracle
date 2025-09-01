@@ -29,6 +29,7 @@ export default function ChatPage() {
   
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const quickActionsRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -249,6 +250,20 @@ export default function ChatPage() {
     setMoodModalTab('history');
     setShowMoodModal(true);
   };
+
+  // Auto-scroll to quick actions on initial load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (quickActionsRef.current) {
+        quickActionsRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, 1000); // Wait 1 second for content to load
+    
+    return () => clearTimeout(timer);
+  }, []); // Only run on initial mount
 
   if (isLoading) {
     return (
@@ -555,10 +570,12 @@ export default function ChatPage() {
         </div>
 
         {/* Quick Actions */}
-        <QuickActions 
-          onAction={handleQuickAction}
-          disabled={sendMessageMutation.isPending || getDailyHoroscopeMutation.isPending}
-        />
+        <div ref={quickActionsRef}>
+          <QuickActions 
+            onAction={handleQuickAction}
+            disabled={sendMessageMutation.isPending || getDailyHoroscopeMutation.isPending}
+          />
+        </div>
       </main>
 
       {/* Chat Input */}
