@@ -2736,7 +2736,7 @@ ${daily.horoscope}
       const backfillPromises = missingTransitDates.map(date =>
         astrologyService.generateAndStoreDailyTransit(
           userId,
-          { date: user.birthDate, time: user.birthTime, location: user.birthLocation },
+          { date: user.birthDate!, time: user.birthTime!, location: user.birthLocation! },
           date
         )
       );

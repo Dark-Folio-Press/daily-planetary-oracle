@@ -754,7 +754,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(dailyTransits)
       .where(eq(dailyTransits.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async createContentFeedback(feedbackData: InsertContentFeedback): Promise<ContentFeedback> {
@@ -883,6 +883,7 @@ export class MemStorage implements IStorage {
       currentPlaylistData: userData.currentPlaylistData || null,
       currentTransitDetails: userData.currentTransitDetails || null,
       spotifyPlaylistId: userData.spotifyPlaylistId || null,
+      musicMode: userData.musicMode || "personal",
       createdAt: userData.createdAt || new Date(),
       updatedAt: userData.updatedAt || new Date(),
     };
@@ -936,6 +937,7 @@ export class MemStorage implements IStorage {
       currentPlaylistData: userData.currentPlaylistData || null,
       currentTransitDetails: userData.currentTransitDetails || null,
       spotifyPlaylistId: userData.spotifyPlaylistId || null,
+      musicMode: userData.musicMode || "personal",
       createdAt: userData.createdAt || new Date(),
       updatedAt: userData.updatedAt || new Date(),
     };
@@ -1123,7 +1125,7 @@ export class MemStorage implements IStorage {
 
   // Mood & Feedback Tracking (MemStorage stubs - guests don't persist mood/feedback)
   async createDailyMood(mood: InsertDailyMood): Promise<DailyMood> { 
-    return { id: 1, userId: mood.userId, date: mood.date, mood: mood.mood, energy: mood.energy, emotions: mood.emotions || null, journalEntry: mood.journalEntry || null, createdAt: new Date(), updatedAt: new Date() };
+    return { id: 1, userId: mood.userId, date: mood.date, mood: mood.mood, energy: mood.energy, emotions: mood.emotions || null, journalEntry: mood.journalEntry || null, moonPhase: mood.moonPhase || null, moonIllumination: mood.moonIllumination || null, moonSign: mood.moonSign || null, createdAt: new Date(), updatedAt: new Date() };
   }
   async getDailyMood(userId: string, date: string): Promise<DailyMood | undefined> { return undefined; }
   async getUserDailyMoods(userId: string, startDate?: string, endDate?: string): Promise<DailyMood[]> { return []; }

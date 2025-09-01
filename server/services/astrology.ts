@@ -714,7 +714,7 @@ export class AstrologyService {
     };
   }
 
-  private calculateMoonSign(date: string, time: string): string {
+  public calculateMoonSign(date: string, time: string): string {
     console.log('Moon calculation input:', { date, time });
     
     const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
@@ -785,7 +785,7 @@ export class AstrologyService {
     return calculatedMoonSign;
   }
 
-  private calculateRising(date: string, time: string, location: string): string {
+  public calculateRising(date: string, time: string, location: string): string {
     console.log('Rising calculation input:', { date, time, location });
     
     const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
