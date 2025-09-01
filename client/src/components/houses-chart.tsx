@@ -227,9 +227,9 @@ export function HousesChart({ birthDate, birthTime, birthLocation, userName }: H
               onClick={resetToGeneral}
               variant="outline" 
               size="sm"
-              className="bg-gray-600/20 hover:bg-gray-500/30 border-gray-500/30"
+              className="bg-gray-600/20 hover:bg-gray-500/30 border-gray-500/30 text-white font-semibold text-sm"
             >
-              Show General
+              <span className="font-semibold">Show General</span>
             </Button>
           )}
         </div>
