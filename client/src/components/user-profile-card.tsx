@@ -312,55 +312,82 @@ export function UserProfileCard() {
             </div>
             <div className="grid grid-cols-2 gap-2">
               {/* Journal Entries Card - Links to cosmic journal */}
-              <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
-                <CardContent className="flex items-center justify-between p-3">
-                  <div>
-                    <div className="text-lg font-bold text-white">
-                      {cosmicAnalysis.totalEntries}
-                    </div>
-                    <p className="text-xs text-purple-300/80">Journal Entries</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                    <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                </CardContent>
-              </Card>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
+                      <CardContent className="flex items-center justify-between p-3">
+                        <div>
+                          <div className="text-lg font-bold text-white">
+                            {cosmicAnalysis.totalEntries}
+                          </div>
+                          <p className="text-xs text-purple-300/80">Journal Entries</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Activity className="h-4 w-4 text-muted-foreground" />
+                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium max-w-xs">
+                    Daily journaling unlocks deeper insights, hidden patterns, and crafts more personalized forecasts for you
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               {/* Alignment Rate Card - Links to cosmic analytics */}
-              <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
-                <CardContent className="flex items-center justify-between p-3">
-                  <div>
-                    <div className="text-lg font-bold text-white">
-                      {Math.round(cosmicAnalysis.overallCorrelationScore * 100)}%
-                    </div>
-                    <p className="text-xs text-purple-300/80">Mood & Transit Alignment Rate</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-purple-400" />
-                    <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                </CardContent>
-              </Card>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
+                      <CardContent className="flex items-center justify-between p-3">
+                        <div>
+                          <div className="text-lg font-bold text-white">
+                            {Math.round(cosmicAnalysis.overallCorrelationScore * 100)}%
+                          </div>
+                          <p className="text-xs text-purple-300/80">Mood & Transit Alignment Rate</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 text-purple-400" />
+                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium max-w-xs">
+                    How well your mood aligns with the daily energetic patterns of transiting planetary bodies
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               {/* Patterns Card - Links to patterns tab */}
-              <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => {
-                setLocation('/mood-analysis');
-                // Note: Pattern tab navigation would require additional state management
-              }}>
-                <CardContent className="flex items-center justify-between p-3">
-                  <div>
-                    <div className="text-lg font-bold text-white">
-                      {cosmicAnalysis.strongCorrelations.length}
-                    </div>
-                    <p className="text-xs text-purple-300/80">Patterns Identified</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className="h-4 w-4 text-emerald-400" />
-                    <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                </CardContent>
-              </Card>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => {
+                      setLocation('/mood-analysis');
+                      // Note: Pattern tab navigation would require additional state management
+                    }}>
+                      <CardContent className="flex items-center justify-between p-3">
+                        <div>
+                          <div className="text-lg font-bold text-white">
+                            {cosmicAnalysis.strongCorrelations.length}
+                          </div>
+                          <p className="text-xs text-purple-300/80">Patterns Identified</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <TrendingUp className="h-4 w-4 text-emerald-400" />
+                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium max-w-xs">
+                    Recurring cosmic-mood correlations discovered in your data
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               {/* Planetary Influencer Card - With tooltip and links to mood analysis */}
               <TooltipProvider>
