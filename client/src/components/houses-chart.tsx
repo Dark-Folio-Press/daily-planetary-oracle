@@ -208,17 +208,17 @@ export function HousesChart({ birthDate, birthTime, birthLocation, userName }: H
               disabled={isGenerating || !birthDate || !birthTime || !birthLocation}
               variant="outline"
               size="sm"
-              className="bg-purple-600/20 hover:bg-purple-500/30 border-purple-500/30"
+              className="bg-purple-600/20 hover:bg-purple-500/30 border-purple-500/30 text-white font-semibold text-sm"
             >
               {isGenerating ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400 mr-2"></div>
-                  Calculating...
+                  <span className="font-semibold">Calculating...</span>
                 </div>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 mr-1" />
-                  Get My Houses
+                  <span className="font-semibold">Get My Houses</span>
                 </>
               )}
             </Button>
