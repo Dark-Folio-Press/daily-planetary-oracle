@@ -140,20 +140,28 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
       heightLeft -= pageHeight;
     }
     
-    // Add clickable link annotations on the last page
+    // Add clickable text links at the bottom of the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
     const freeAppUrl = `${window.location.origin}/signup`;
     
-    // Calculate positions for the buttons (approximate positions in the footer)
-    const buttonY = pdf.internal.pageSize.getHeight() - 45; // 45mm from bottom
-    const button1X = 50; // Left button
-    const button2X = 110; // Right button  
-    const buttonWidth = 50;
-    const buttonHeight = 8;
+    // Position the text links at the bottom of the page
+    const currentPage = pdf.getCurrentPageInfo().pageNumber;
+    pdf.setPage(currentPage);
     
-    // Add clickable areas
-    pdf.link(button1X, buttonY, buttonWidth, buttonHeight, { url: cosmicChatUrl });
-    pdf.link(button2X, buttonY, buttonWidth, buttonHeight, { url: freeAppUrl });
+    // Add some space and clickable text links
+    const bottomMargin = 30;
+    const linkY = pdf.internal.pageSize.getHeight() - bottomMargin;
+    
+    pdf.setFontSize(12);
+    pdf.setTextColor(0, 100, 200); // Blue color for links
+    
+    // Add first link
+    pdf.text('🌟 Start Your Cosmic Chat', 30, linkY - 10);
+    pdf.link(30, linkY - 15, 70, 10, { url: cosmicChatUrl });
+    
+    // Add second link  
+    pdf.text('🎵 Generate Your Playlist', 110, linkY - 10);
+    pdf.link(110, linkY - 15, 70, 10, { url: freeAppUrl });
     
     // Generate filename
     const fileName = `cosmic-chat-${sessionId.slice(-8)}-${new Date().toISOString().split('T')[0]}.pdf`;
@@ -291,20 +299,28 @@ export async function generatePDFFromMessages(
       heightLeft -= pageHeight;
     }
     
-    // Add clickable link annotations on the last page
+    // Add clickable text links at the bottom of the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
     const freeAppUrl = `${window.location.origin}/signup`;
     
-    // Calculate positions for the buttons (approximate positions in the footer)
-    const buttonY = pdf.internal.pageSize.getHeight() - 45; // 45mm from bottom
-    const button1X = 50; // Left button
-    const button2X = 110; // Right button  
-    const buttonWidth = 50;
-    const buttonHeight = 8;
+    // Position the text links at the bottom of the page
+    const currentPage = pdf.getCurrentPageInfo().pageNumber;
+    pdf.setPage(currentPage);
     
-    // Add clickable areas
-    pdf.link(button1X, buttonY, buttonWidth, buttonHeight, { url: cosmicChatUrl });
-    pdf.link(button2X, buttonY, buttonWidth, buttonHeight, { url: freeAppUrl });
+    // Add some space and clickable text links
+    const bottomMargin = 30;
+    const linkY = pdf.internal.pageSize.getHeight() - bottomMargin;
+    
+    pdf.setFontSize(12);
+    pdf.setTextColor(0, 100, 200); // Blue color for links
+    
+    // Add first link
+    pdf.text('🌟 Start Your Cosmic Chat', 30, linkY - 10);
+    pdf.link(30, linkY - 15, 70, 10, { url: cosmicChatUrl });
+    
+    // Add second link  
+    pdf.text('🎵 Generate Your Playlist', 110, linkY - 10);
+    pdf.link(110, linkY - 15, 70, 10, { url: freeAppUrl });
     
     // Generate filename
     const fileName = `cosmic-chat-${sessionId.slice(-8)}-${new Date().toISOString().split('T')[0]}.pdf`;
