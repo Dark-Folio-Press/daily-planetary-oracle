@@ -6,46 +6,46 @@ import { useState, useEffect } from "react";
 export default function Landing() {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
 
-  // Alternating text content as requested
+  // Alternating text content focusing on astrological mastery
   const textVariations = [
     {
-      title: "AI-curated music to match your individual weekly planetary transits",
-      subtitle: "Let our AI astrologer create a personalized 7-song weekly playlist based on your birth chart and current planetary movements."
+      title: "Master your astrological blueprint with AI-powered guidance",
+      subtitle: "Discover the depths of your birth chart through personalized conversations with our AI astrologer. Learn how planetary transits shape your daily life and cosmic journey."
     },
     {
-      title: "AI-Powered Curation",
-      subtitle: "Experience musical alchemy— Your celestial blueprint guides our Astro Agent in transmuting planetary patterns into sound. Each note resonates with the energy of your chart and the shifting skies."
+      title: "Your personal astrological mentor awaits",
+      subtitle: "Engage in meaningful conversations about your chart placements, planetary influences, and cosmic patterns. Unlock the wisdom of the stars through guided AI discussions."
     }
   ];
 
-  // Feature descriptions with alternating content
+  // Feature descriptions focusing on astrological mastery
   const featureDescriptions = [
     [
       {
-        title: "AI-Powered Curation",
-        content: "Experience musical alchemy— Your celestial blueprint guides our Astro Agent in transmuting planetary patterns into sound. Each note resonates with the energy of your chart and the shifting skies."
+        title: "Interactive AI Astrological Guidance",
+        content: "Engage in deep conversations with our AI astrologer about your birth chart, planetary placements, and cosmic influences. Learn through personalized discussions tailored to your unique astrological profile."
       },
       {
-        title: "Astrological Insights",
-        content: "Unlock personalized horoscopes crafted from real-time planetary movements and precise birth chart readings powered by Swiss Ephemeris and Immanuel."
+        title: "Comprehensive Chart Analysis",
+        content: "Unlock detailed birth chart readings, transit analysis, and precise interpretations powered by Swiss Ephemeris. Master the language of the stars through professional-level insights."
       },
       {
-        title: "Spotify Integration", 
-        content: "Your stars, your soundtrack. Send your daily horoscope playlist straight to Spotify and carry the cosmos in your pocket."
+        title: "Cosmic Soundtrack & Mood Tracking", 
+        content: "Express your astrological journey through personalized music and daily mood tracking. Discover how planetary movements influence your emotional patterns and energy levels."
       }
     ],
     [
       {
-        title: "Musical Alchemy",
-        content: "Our Astro Agent transmutes planetary patterns into sound. Each note resonates with the energy of your chart and the shifting skies. Get your horoscope as a soundscape!"
+        title: "Personalized Astrological Learning",
+        content: "Transform your relationship with astrology through AI-guided conversations. Ask questions, explore meanings, and deepen your understanding of your cosmic blueprint."
       },
       {
-        title: "Astrological Insights",
-        content: "Unlock personalized horoscopes crafted from real-time planetary movements and precise birth chart readings powered by Swiss Ephemeris and Immanuel."
+        title: "Professional Chart Interpretations",
+        content: "Access detailed birth chart analysis, aspect patterns, and transit forecasts. Our AI provides university-level astrological education through interactive discussions."
       },
       {
-        title: "Spotify Integration",
-        content: "Your stars, your soundtrack. Send your daily horoscope playlist straight to Spotify and carry the cosmos in your pocket."
+        title: "Journey Documentation",
+        content: "Track your astrological insights, mood patterns, and cosmic synchronicities. Build a comprehensive record of your spiritual and astrological growth over time."
       }
     ]
   ];
@@ -74,7 +74,7 @@ export default function Landing() {
               </div>
             </div>
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              Cosmic Playlist Generator
+              CosmicVibes
             </h1>
             <div className="transition-all duration-1000 ease-in-out">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
@@ -123,8 +123,8 @@ export default function Landing() {
               Welcome, Celestial Traveler
             </h2>
             <p className="text-gray-600 mb-6">
-              Sign in to save and share your personalized playlists, detailed birth chart readings, and cosmic horoscopes. 
-              Your astrological journey awaits with AI-curated music that matches your celestial energy.
+              Embark on a journey of astrological self-discovery through AI-guided conversations. 
+              Master your birth chart, understand planetary influences, and unlock the wisdom of your cosmic blueprint.
             </p>
             <div className="space-y-4">
               <Link href="/login">
@@ -137,7 +137,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <p className="text-sm text-gray-500">
-                New to Cosmic Playlist?{" "}
+                New to CosmicVibes?{" "}
                 <Link href="/signup" className="text-blue-600 hover:text-blue-500 font-medium">
                   Create an account
                 </Link>

@@ -274,8 +274,8 @@ export default function ChatPage() {
                 <Music className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground">Cosmic Playlist Generator</h1>
-                <p className="text-xs text-muted-foreground">Weekly planetary transit music</p>
+                <h1 className="text-lg font-semibold text-foreground">CosmicVibes</h1>
+                <p className="text-xs text-muted-foreground">Your AI astrological mentor</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -310,7 +310,7 @@ export default function ChatPage() {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
-                        <div className="font-medium tracking-wide">✨ Vibe Check & Charts ✨</div>
+                        <div className="font-medium tracking-wide">✨ Astrological Profile ✨</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
@@ -392,7 +392,7 @@ export default function ChatPage() {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
-                        <div className="font-medium tracking-wide">📊 Mood Journal</div>
+                        <div className="font-medium tracking-wide">📔 Cosmic Journal</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
@@ -420,7 +420,7 @@ export default function ChatPage() {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
-                        <div className="font-medium tracking-wide">🌟 Cosmic Mood Analysis</div>
+                        <div className="font-medium tracking-wide">🌟 Astrological Insights</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
@@ -448,7 +448,7 @@ export default function ChatPage() {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
-                        <div className="font-medium tracking-wide">💬 Accuracy Metrics</div>
+                        <div className="font-medium tracking-wide">📊 Reading Accuracy</div>
                       </div>
                       {/* Arrow pointing up */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-purple-500/90" />
@@ -516,10 +516,10 @@ export default function ChatPage() {
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-            AI-curated music to match your individual weekly planetary transits
+            Master your astrological blueprint through AI guidance
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Let our AI astrologer create a personalized 7-song weekly playlist based on your birth chart and current planetary movements.
+            Engage in personalized conversations about your birth chart, planetary transits, and cosmic influences. Discover the depths of your astrological journey.
           </p>
         </div>
 

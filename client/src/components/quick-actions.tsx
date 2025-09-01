@@ -54,10 +54,10 @@ export default function QuickActions({ onAction, disabled = false }: QuickAction
 
   const actions = [
     {
-      icon: Music,
-      label: "Cosmic Playlist Generator",
-      color: "text-pink-500 group-hover:text-pink-600",
-      feature: 'playlist' as const,
+      icon: Sparkles,
+      label: "Detailed Birth Chart Reading",
+      color: "text-blue-500 group-hover:text-blue-600",
+      feature: 'chart' as const,
     },
     {
       icon: Calendar,
@@ -72,16 +72,16 @@ export default function QuickActions({ onAction, disabled = false }: QuickAction
       feature: 'transit' as const,
     },
     {
-      icon: Sparkles,
-      label: "Detailed Birth Chart Reading",
-      color: "text-blue-500 group-hover:text-blue-600",
-      feature: 'chart' as const,
-    },
-    {
       icon: Smile,
       label: "Daily Mood Tracker",
       color: "text-indigo-500 group-hover:text-indigo-600",
       feature: 'mood' as const,
+    },
+    {
+      icon: Music,
+      label: "Cosmic Playlist Generator",
+      color: "text-pink-500 group-hover:text-pink-600",
+      feature: 'playlist' as const,
     },
   ];
 
