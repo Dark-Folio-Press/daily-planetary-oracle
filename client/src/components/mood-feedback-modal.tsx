@@ -24,7 +24,7 @@ export default function MoodTrackerModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Heart className="w-5 h-5 text-pink-500" />
-            Mood Tracker
+            Cosmic Journal
           </DialogTitle>
         </DialogHeader>
 
