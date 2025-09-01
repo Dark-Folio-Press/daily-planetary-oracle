@@ -210,14 +210,14 @@ export function UserProfileCard() {
           </div>
           
           <div>
-            <h3 className="font-semibold text-foreground text-lg">
+            <h3 className="font-semibold text-white text-lg">
               {user.username || user.email}
             </h3>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
+            <p className="text-sm text-gray-300">{user.email}</p>
             {astrologyData.sunSign && (
               <div className="flex items-center mt-1">
                 <Star className="w-3 h-3 text-yellow-400 mr-1" />
-                <span className="text-sm text-muted-foreground">{astrologyData.sunSign}</span>
+                <span className="text-sm text-gray-200 font-medium">{astrologyData.sunSign}</span>
               </div>
             )}
           </div>
