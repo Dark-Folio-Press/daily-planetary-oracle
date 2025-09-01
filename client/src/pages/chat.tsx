@@ -251,13 +251,18 @@ export default function ChatPage() {
     setShowMoodModal(true);
   };
 
-  // Auto-scroll to quick actions on initial load
+  // Auto-scroll to welcome message on initial load
   useEffect(() => {
     const timer = setTimeout(() => {
       if (quickActionsRef.current) {
-        quickActionsRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
+        // Calculate the ribbon height plus some padding
+        const ribbonHeight = 80; // Approximate ribbon height
+        const elementTop = quickActionsRef.current.offsetTop;
+        const scrollPosition = elementTop - ribbonHeight;
+        
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth'
         });
       }
     }, 1000); // Wait 1 second for content to load
