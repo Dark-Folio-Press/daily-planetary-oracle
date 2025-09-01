@@ -117,12 +117,25 @@ export default function ShareButton({ type, sessionId, variant = 'outline', size
     
     const shareUrl = shareData.spotifyUrl || shareData.shareUrl || '';
     
-    if (platform === 'x') {
-      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareData.socialText.twitter)}`;
-      window.open(url, '_blank', 'width=600,height=400');
-    } else if (platform === 'facebook') {
-      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareData.socialText.facebook)}`;
-      window.open(url, '_blank', 'width=600,height=400');
+    try {
+      if (platform === 'x') {
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareData.socialText.twitter)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+      } else if (platform === 'facebook') {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareData.socialText.facebook)}`;
+        const popup = window.open(url, '_blank', 'width=600,height=400');
+        
+        if (!popup) {
+          throw new Error('Popup blocked');
+        }
+      }
+    } catch (error) {
+      console.error(`${platform} share error:`, error);
+      toast({
+        title: "Share failed",
+        description: `Unable to open ${platform === 'facebook' ? 'Facebook' : 'X/Twitter'} share. Please check your popup blocker settings or try copying the link instead.`,
+        variant: "destructive",
+      });
     }
   };
 

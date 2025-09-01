@@ -96,7 +96,7 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
             🌟 Start Your Cosmic Chat
           </div>
           <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px; color: #ffffff;">
-            🎵 Generate Your Playlist
+            🎵 Try CosmicPlaylistGenerator-Free
           </div>
         </div>
         <div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px;">
