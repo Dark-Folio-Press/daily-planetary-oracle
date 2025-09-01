@@ -92,12 +92,12 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
       <div style="padding: 40px; text-align: center; background: rgba(255, 255, 255, 0.05); margin-top: 20px;">
         <h3 style="color: #ffffff; margin: 0 0 20px 0; font-size: 20px; font-weight: 600;">Ready to explore your own cosmic journey?</h3>
         <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-          <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px; color: #1f2937;">
+          <a href="https://cosmicvibes.app" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px; color: #1f2937; display: inline-block;">
             🌟 Start Your Cosmic Chat
-          </div>
-          <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px; color: #ffffff;">
+          </a>
+          <a href="https://cosmicplaylistgenerator-free.app" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px; color: #ffffff; display: inline-block;">
             🎵 Try CosmicPlaylistGenerator-Free
-          </div>
+          </a>
         </div>
         <div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px;">
           <p style="color: #d1d5db; margin: 0 0 10px 0; font-size: 14px;">

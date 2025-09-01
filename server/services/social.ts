@@ -127,18 +127,18 @@ export class SocialService {
       const playlist = metadata?.playlist;
       
       return {
-        twitter: `🌟 Check out my cosmic playlist "${playlist?.name}" curated by AI based on astrological transits! ${playlist?.songCount} songs aligned with ${playlist?.sunSign} energy. ${shareUrl} #CosmicMusic #Astrology`,
-        facebook: `I just discovered this amazing cosmic playlist generator that creates personalized music based on astrological transits! My playlist "${playlist?.name}" has ${playlist?.songCount} songs perfectly aligned with my ${playlist?.sunSign} energy. Check it out!`,
-        general: `🎵 Discover "${playlist?.name}" - a cosmic playlist with ${playlist?.songCount} songs curated by AI based on astrological transits for ${playlist?.sunSign} energy. ${shareUrl}`
+        twitter: `🌟 Check out my cosmic playlist "${playlist?.name}" curated by AI based on astrological transits! ${playlist?.songCount} songs aligned with ${playlist?.sunSign} energy. ${shareUrl} Create yours free at https://cosmicplaylistgenerator-free.app #CosmicMusic #Astrology`,
+        facebook: `I just discovered this amazing cosmic playlist generator that creates personalized music based on astrological transits! My playlist "${playlist?.name}" has ${playlist?.songCount} songs perfectly aligned with my ${playlist?.sunSign} energy. Create your own at https://cosmicplaylistgenerator-free.app!`,
+        general: `🎵 Discover "${playlist?.name}" - a cosmic playlist with ${playlist?.songCount} songs curated by AI based on astrological transits for ${playlist?.sunSign} energy. ${shareUrl} | Create yours: https://cosmicplaylistgenerator-free.app`
       };
     } else {
       const metadata = sharedContent.metadata as any;
       const conversation = metadata?.conversation;
       
       return {
-        twitter: `✨ Had an fascinating astrological conversation that generated${conversation?.hasPlaylist ? ' a personalized cosmic playlist and' : ''} amazing insights! ${shareUrl} #Astrology #CosmicChat`,
-        facebook: `I just had the most insightful astrological conversation with AI that${conversation?.hasPlaylist ? ' created a personalized cosmic playlist and' : ''} provided deep cosmic wisdom. The future of astrology is here!`,
-        general: `✨ Explore this cosmic conversation with ${conversation?.messageCount} astrological insights${conversation?.hasPlaylist ? ' and a personalized playlist' : ''}. ${shareUrl}`
+        twitter: `✨ Had an fascinating astrological conversation that generated${conversation?.hasPlaylist ? ' a personalized cosmic playlist and' : ''} amazing insights! ${shareUrl} Get free playlists at https://cosmicplaylistgenerator-free.app #Astrology #CosmicChat`,
+        facebook: `I just had the most insightful astrological conversation with AI that${conversation?.hasPlaylist ? ' created a personalized cosmic playlist and' : ''} provided deep cosmic wisdom. Try it free at https://cosmicplaylistgenerator-free.app!`,
+        general: `✨ Explore this cosmic conversation with ${conversation?.messageCount} astrological insights${conversation?.hasPlaylist ? ' and a personalized playlist' : ''}. ${shareUrl} | Free playlists: https://cosmicplaylistgenerator-free.app`
       };
     }
   }
