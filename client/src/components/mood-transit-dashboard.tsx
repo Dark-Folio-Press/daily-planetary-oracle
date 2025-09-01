@@ -674,7 +674,7 @@ export function MoodTransitDashboard() {
             <CardHeader>
               <CardTitle>Daily Transit Details</CardTitle>
               <CardDescription>
-                Individual planetary aspects and lunar phases affecting your daily mood patterns
+                Individual planetary aspects and lunar phases correlating with your daily mood patterns
               </CardDescription>
             </CardHeader>
             <CardContent>
