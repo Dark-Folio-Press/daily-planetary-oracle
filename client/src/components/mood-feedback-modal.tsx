@@ -32,11 +32,11 @@ export default function MoodTrackerModal({
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="mood" className="flex items-center gap-2">
               <Smile className="w-4 h-4" />
-              Daily Mood
+              Daily Mood Journal
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
-              Mood History
+              History
             </TabsTrigger>
           </TabsList>
 
