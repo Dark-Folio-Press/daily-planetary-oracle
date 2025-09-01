@@ -149,7 +149,7 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
     
     // Add clickable link annotations on the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
-    const freeAppUrl = 'https://cosmicplaylistgenerator-free.app';
+    const freeAppUrl = `${window.location.origin}`;
     
     // Calculate positions for the buttons (approximate positions in the footer)
     const buttonY = pdf.internal.pageSize.getHeight() - 45; // 45mm from bottom
@@ -307,7 +307,7 @@ export async function generatePDFFromMessages(
     
     // Add clickable link annotations on the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
-    const freeAppUrl = 'https://cosmicplaylistgenerator-free.app';
+    const freeAppUrl = `${window.location.origin}`;
     
     // Calculate positions for the buttons (approximate positions in the footer)
     const buttonY = pdf.internal.pageSize.getHeight() - 45; // 45mm from bottom

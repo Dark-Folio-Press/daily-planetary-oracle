@@ -1930,7 +1930,7 @@ ${daily.horoscope}
               <div class="cta-section">
                 <p>Ready to explore your own cosmic journey?</p>
                 <a href="${appUrl}/signup" class="cta primary">🌟 Start Your Cosmic Chat</a>
-                <a href="https://cosmicplaylistgenerator-free.app" class="cta">🎵 Generate Your Playlist</a>
+                <a href="${appUrl}" class="cta">🎵 Generate Your Playlist</a>
               </div>
             </div>
           </body>
@@ -2004,14 +2004,14 @@ ${daily.horoscope}
             <p class="period">Cosmic period: ${playlist.weekStart} to ${playlist.weekEnd}</p>
             <div class="song-count">${playlist.songCount} cosmic songs</div>
             <p>A personalized weekly playlist created with astrological insights and cosmic energy alignment.</p>
-            <a href="https://cosmicplaylistgenerator-free.app" class="cta">🎵 Get Your Free Playlist</a>
+            <a href="${appUrl}" class="cta">🎵 Get Your Free Playlist</a>
           </div>
           
           <script>
             // Auto-redirect to main app after 3 seconds if not a crawler
             if (!navigator.userAgent.includes('bot') && !navigator.userAgent.includes('crawler')) {
               setTimeout(() => {
-                window.location.href = 'https://cosmicplaylistgenerator-free.app';
+                window.location.href = '${appUrl}';
               }, 3000);
             }
           </script>
