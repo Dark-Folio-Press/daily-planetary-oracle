@@ -373,7 +373,7 @@ export default function ChatPage() {
                         </div>
                       </TooltipTrigger>
                       <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
-                        ✨ Spotify Configuration ✨
+                        ✨Spotify ✨
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -421,7 +421,7 @@ export default function ChatPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
-                      ✨Journal the Journey!✨
+                      ✨Cosmic Journal✨
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -443,7 +443,7 @@ export default function ChatPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
-                      ✨Analytics✨
+                      ✨Cosmic Analytics✨
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -465,7 +465,7 @@ export default function ChatPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
-                      ✨Satisfaction Meter✨
+                      ✨Accuracy Rate ✨
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
