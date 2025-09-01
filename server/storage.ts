@@ -127,6 +127,13 @@ export interface IStorage {
   getWeeklyReflection(userId: string, weekStart: string): Promise<WeeklyReflection | undefined>;
   getUserWeeklyReflections(userId: string): Promise<WeeklyReflection[]>;
   updateWeeklyReflection(id: number, updates: Partial<InsertWeeklyReflection>): Promise<WeeklyReflection | undefined>;
+
+  // Daily Transit Tracking
+  createDailyTransit(transit: InsertDailyTransit): Promise<DailyTransit>;
+  getDailyTransit(userId: string, date: string): Promise<DailyTransit | undefined>;
+  getUserDailyTransits(userId: string, startDate?: string, endDate?: string): Promise<DailyTransit[]>;
+  updateDailyTransit(id: number, updates: Partial<InsertDailyTransit>): Promise<DailyTransit | undefined>;
+  deleteDailyTransit(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1143,6 +1150,15 @@ export class MemStorage implements IStorage {
   async getWeeklyReflection(userId: string, weekStart: string): Promise<WeeklyReflection | undefined> { return undefined; }
   async getUserWeeklyReflections(userId: string): Promise<WeeklyReflection[]> { return []; }
   async updateWeeklyReflection(id: number, updates: Partial<InsertWeeklyReflection>): Promise<WeeklyReflection | undefined> { return undefined; }
+
+  // Daily Transit Tracking (MemStorage stubs - guests don't persist daily transits)
+  async createDailyTransit(transit: InsertDailyTransit): Promise<DailyTransit> {
+    return { id: 1, userId: transit.userId, date: transit.date, transitData: transit.transitData, personalizedAspects: transit.personalizedAspects || null, musicRecommendations: transit.musicRecommendations || null, moonPhase: transit.moonPhase || null, moonIllumination: transit.moonIllumination || null, moonSign: transit.moonSign || null, lunarAspects: transit.lunarAspects || null, createdAt: new Date() };
+  }
+  async getDailyTransit(userId: string, date: string): Promise<DailyTransit | undefined> { return undefined; }
+  async getUserDailyTransits(userId: string, startDate?: string, endDate?: string): Promise<DailyTransit[]> { return []; }
+  async updateDailyTransit(id: number, updates: Partial<InsertDailyTransit>): Promise<DailyTransit | undefined> { return undefined; }
+  async deleteDailyTransit(id: number): Promise<boolean> { return false; }
 }
 
 export const storage = new DatabaseStorage();

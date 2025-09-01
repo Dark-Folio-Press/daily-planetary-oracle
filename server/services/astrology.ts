@@ -358,7 +358,7 @@ export class AstrologyService {
    * Interpret how transits might influence mood
    */
   interpretMoodInfluences(aspects: any[]): string[] {
-    const influences = [];
+    const influences: string[] = [];
     
     aspects.forEach(aspect => {
       switch (aspect.moodEffect) {
@@ -399,7 +399,7 @@ export class AstrologyService {
    * Extract daily themes from transit aspects
    */
   extractDailyThemes(aspects: any[]): string[] {
-    const themes = [];
+    const themes: string[] = [];
     
     aspects.forEach(aspect => {
       if (aspect.transitingPlanet === 'Venus') themes.push('Love & Creativity');
@@ -408,7 +408,7 @@ export class AstrologyService {
       if (aspect.transitingPlanet === 'Moon') themes.push('Emotions & Intuition');
     });
 
-    return themes.length > 0 ? [...new Set(themes)] : ['Self-Reflection'];
+    return themes.length > 0 ? Array.from(new Set(themes)) : ['Self-Reflection'];
   }
 
   /**
@@ -468,7 +468,7 @@ export class AstrologyService {
         },
         musicRecommendations: this.generateMusicRecommendations(transitData),
         moonPhase: transitData.lunarData?.phase,
-        lunarInfluence: transitData.lunarData?.influence,
+        // Note: lunarInfluence field removed as it doesn't exist in schema
         moonIllumination: transitData.lunarData?.illumination,
         moonSign: transitData.lunarData?.sign,
         lunarAspects: null // Will be calculated later if needed
@@ -488,10 +488,10 @@ export class AstrologyService {
     const { energyProfile, themes } = transitData;
     
     const recommendations = {
-      genres: [],
-      moods: [],
-      tempos: [],
-      suggestions: []
+      genres: [] as string[],
+      moods: [] as string[],
+      tempos: [] as string[],
+      suggestions: [] as string[]
     };
 
     // Energy level recommendations
@@ -522,22 +522,24 @@ export class AstrologyService {
     }
 
     // Theme-based recommendations
-    themes.forEach(theme => {
-      switch (theme) {
-        case 'Love & Creativity':
-          recommendations.suggestions.push('Romantic ballads and creative inspiration music');
-          break;
-        case 'Communication & Learning':
-          recommendations.suggestions.push('Focus music and lyrical storytelling');
-          break;
-        case 'Action & Energy':
-          recommendations.suggestions.push('Motivational and workout music');
-          break;
-        case 'Emotions & Intuition':
-          recommendations.suggestions.push('Emotional and intuitive musical experiences');
-          break;
-      }
-    });
+    if (themes && Array.isArray(themes)) {
+      themes.forEach((theme: string) => {
+        switch (theme) {
+          case 'Love & Creativity':
+            recommendations.suggestions.push('Romantic ballads and creative inspiration music');
+            break;
+          case 'Communication & Learning':
+            recommendations.suggestions.push('Focus music and lyrical storytelling');
+            break;
+          case 'Action & Energy':
+            recommendations.suggestions.push('Motivational and workout music');
+            break;
+          case 'Emotions & Intuition':
+            recommendations.suggestions.push('Emotional and intuitive musical experiences');
+            break;
+        }
+      });
+    }
 
     return recommendations;
   }
