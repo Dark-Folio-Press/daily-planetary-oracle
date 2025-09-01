@@ -550,7 +550,7 @@ export default function ChatPage() {
 
 
         {/* Chat Messages */}
-        <div className="space-y-6 mb-8">
+        <div ref={quickActionsRef} className="space-y-6 mb-8">
           {messages.map((message: any) => (
             <ChatMessage 
               key={message.id} 
@@ -570,12 +570,10 @@ export default function ChatPage() {
         </div>
 
         {/* Quick Actions */}
-        <div ref={quickActionsRef}>
-          <QuickActions 
-            onAction={handleQuickAction}
-            disabled={sendMessageMutation.isPending || getDailyHoroscopeMutation.isPending}
-          />
-        </div>
+        <QuickActions 
+          onAction={handleQuickAction}
+          disabled={sendMessageMutation.isPending || getDailyHoroscopeMutation.isPending}
+        />
       </main>
 
       {/* Chat Input */}
