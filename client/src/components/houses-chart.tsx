@@ -196,8 +196,8 @@ export function HousesChart({ birthDate, birthTime, birthLocation, userName }: H
     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mt-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-xl font-semibold text-foreground mb-2">🏠 Astrological Houses</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="text-xl font-semibold text-white mb-2">🏠 Astrological Houses</h3>
+          <p className="text-sm text-gray-300">
             {showPersonalized ? 'Your personalized house placements' : 'The twelve life areas in astrology'}
           </p>
         </div>
@@ -249,7 +249,7 @@ export function HousesChart({ birthDate, birthTime, birthLocation, userName }: H
                   <IconComponent className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">{getOrdinal(house.number)} House</h4>
+                  <h4 className="font-semibold text-sm text-white">{getOrdinal(house.number)} House</h4>
                   <p className="text-xs text-purple-300">{house.name}</p>
                 </div>
               </div>
@@ -278,7 +278,7 @@ export function HousesChart({ birthDate, birthTime, birthLocation, userName }: H
                 </div>
               )}
 
-              <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+              <p className="text-xs text-gray-300 mb-3 leading-relaxed">
                 {house.description}
               </p>
               
