@@ -20,12 +20,15 @@ export function MoodAnalysisPage() {
           Back to Chat
         </Button>
         
-        <div className="space-y-1">
+        <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight" data-testid="text-page-title">
             Mood & Transit Analysis
           </h1>
           <p className="text-lg text-muted-foreground" data-testid="text-page-description">
             Discover how cosmic energies influence your emotional patterns and daily mood.
+          </p>
+          <p className="text-base text-purple-200/90 font-medium italic" data-testid="text-cosmic-attunement">
+            Strong correlation means you're cosmically attuned - naturally sensing planetary shifts. Keep journaling and exploring your chart to unlock deeper insights for your cosmic journey.
           </p>
         </div>
       </div>
