@@ -142,7 +142,7 @@ export async function generateChatPDF(sessionId: string, title: string = "Cosmic
     
     // Add clickable text links at the bottom of the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
-    const freeAppUrl = `${window.location.origin}/signup`;
+    const freeAppUrl = `${window.location.origin}`;
     
     // Position the text links at the bottom of the page
     const currentPage = pdf.getCurrentPageInfo().pageNumber;
@@ -301,7 +301,7 @@ export async function generatePDFFromMessages(
     
     // Add clickable text links at the bottom of the last page
     const cosmicChatUrl = `${window.location.origin}/signup`;
-    const freeAppUrl = `${window.location.origin}/signup`;
+    const freeAppUrl = `${window.location.origin}`;
     
     // Position the text links at the bottom of the page
     const currentPage = pdf.getCurrentPageInfo().pageNumber;
