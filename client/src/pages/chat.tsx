@@ -298,7 +298,7 @@ export default function ChatPage() {
                 <p className="text-xs text-muted-foreground">Your AI astrological mentor</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 overflow-x-auto scrollbar-hide max-w-full min-w-0"
+            <div className="flex items-center space-x-3 overflow-x-auto overflow-y-visible scrollbar-hide max-w-full min-w-0"
                  style={{
                    msOverflowStyle: 'none',  /* IE and Edge */
                    scrollbarWidth: 'none',   /* Firefox */
@@ -331,7 +331,7 @@ export default function ChatPage() {
                   </div>
                   
                   {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[60] group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
                         <div className="font-medium tracking-wide">✨ Vibe Check & Charts ✨</div>
@@ -373,7 +373,7 @@ export default function ChatPage() {
                   </div>
                   
                   {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[60] group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
                         <div className="font-medium tracking-wide">✨ Spotify Configuration ✨</div>
@@ -426,7 +426,7 @@ export default function ChatPage() {
                   </Button>
                   
                   {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[60] group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
                         <div className="font-medium tracking-wide">✨Journal the Journey!✨</div>
@@ -454,7 +454,7 @@ export default function ChatPage() {
                   </Button>
                   
                   {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[60] group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
                         <div className="font-medium tracking-wide">✨Analytics✨</div>
@@ -482,7 +482,7 @@ export default function ChatPage() {
                   </Button>
                   
                   {/* Tooltip */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-50 group-hover:translate-y-0 translate-y-2">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-[60] group-hover:translate-y-0 translate-y-2">
                     <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white text-xs rounded-xl px-4 py-2.5 whitespace-nowrap shadow-xl border border-white/20">
                       <div className="text-center">
                         <div className="font-medium tracking-wide">✨Satisfaction Meter✨</div>
