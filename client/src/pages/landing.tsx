@@ -74,7 +74,7 @@ export default function Landing() {
               </div>
             </div>
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              CosmicVibes
+              Cosmic Vibes
             </h1>
             <div className="transition-all duration-1000 ease-in-out">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
@@ -137,7 +137,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <p className="text-sm text-gray-500">
-                New to CosmicVibes?{" "}
+                New to Cosmic Vibes?{" "}
                 <Link href="/signup" className="text-blue-600 hover:text-blue-500 font-medium">
                   Create an account
                 </Link>

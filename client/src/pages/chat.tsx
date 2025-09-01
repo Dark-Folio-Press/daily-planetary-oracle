@@ -295,8 +295,8 @@ export default function ChatPage() {
                 <Music className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground">CosmicVibes</h1>
-                <p className="text-xs text-muted-foreground">Your AI astrological mentor</p>
+                <h1 className="text-lg font-semibold text-foreground">Cosmic Vibes</h1>
+                <p className="text-xs text-muted-foreground">Your AI Astrology Assistant</p>
               </div>
             </div>
             <div className="flex items-center space-x-3 overflow-x-auto overflow-y-visible scrollbar-hide max-w-full min-w-0"
