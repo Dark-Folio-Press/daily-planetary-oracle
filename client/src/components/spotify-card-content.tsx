@@ -244,39 +244,39 @@ export function SpotifyCardContent() {
             </div>
           )}
 
-          {/* Music Mode Toggle - Only show when connected */}
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4 space-y-3 border border-purple-200/50 dark:border-purple-700/30">
-            <h4 className="font-medium text-sm text-purple-900 dark:text-purple-100 flex items-center gap-2">
+          {/* Music Mode Toggle - Badge Style */}
+          <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+            <h4 className="font-medium text-sm flex items-center gap-2">
               <Compass className="w-4 h-4" />
               Music Discovery Mode
             </h4>
             
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  musicMode === 'personal' 
-                    ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-700' 
-                    : 'text-muted-foreground'
-                }`}>
-                  <User className="w-3 h-3" />
-                  Personal
-                </div>
-                
-                <Switch
-                  checked={musicMode === 'discovery'}
-                  onCheckedChange={(checked) => handleMusicModeToggle(checked ? 'discovery' : 'personal')}
-                  disabled={isSwitchingMode}
-                />
-                
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  musicMode === 'discovery' 
-                    ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-700' 
-                    : 'text-muted-foreground'
-                }`}>
-                  <Compass className="w-3 h-3" />
-                  Discovery
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleMusicModeToggle('personal')}
+                disabled={isSwitchingMode}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                  musicMode === 'personal'
+                    ? 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80'
+                    : 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                }`}
+              >
+                <User className="w-3 h-3" />
+                Personal
+              </button>
+              
+              <button
+                onClick={() => handleMusicModeToggle('discovery')}
+                disabled={isSwitchingMode}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                  musicMode === 'discovery'
+                    ? 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80'
+                    : 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                }`}
+              >
+                <Compass className="w-3 h-3" />
+                Discovery
+              </button>
             </div>
             
             <div className="text-xs text-muted-foreground leading-relaxed">
