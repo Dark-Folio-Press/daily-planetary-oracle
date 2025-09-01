@@ -345,12 +345,12 @@ export default function ChatPage() {
               {/* Slide-out Profile Card */}
               {showProfileCard && (
                 <div 
-                  className="fixed top-16 left-0 right-0 bg-black/75 backdrop-blur-md border-b border-white/20 p-6 shadow-2xl z-50 transform transition-all duration-200 ease-out"
+                  className="fixed top-16 left-0 right-0 bg-black/75 dark:bg-black/75 bg-white/85 backdrop-blur-md border-b border-white/20 dark:border-white/20 border-gray-300/30 p-6 shadow-2xl z-50 transform transition-all duration-200 ease-out"
                 >
                   {/* Close button */}
                   <button
                     onClick={() => setShowProfileCard(false)}
-                    className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
+                    className="absolute top-4 right-4 text-white/60 dark:text-white/60 text-gray-600/60 hover:text-white dark:hover:text-white hover:text-gray-900 transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
