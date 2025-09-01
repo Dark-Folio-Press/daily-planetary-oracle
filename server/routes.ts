@@ -181,38 +181,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const dayName = targetDate.toLocaleDateString('en-US', { weekday: 'long' });
             const dateStr = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             
-            // Generate daily cosmic influences based on Mary Shelley's chart
+            // Generate daily cosmic influences based on user's unique chart
             let dailyInfluence = "";
             let cosmicWeather = "";
             
             switch (i) {
               case 0: // Today
-                dailyInfluence = "Virgo Sun energy heightens your analytical nature";
-                cosmicWeather = "🌟 Mercury-ruled clarity illuminates creative projects";
+                dailyInfluence = `${sunSign} Sun energy illuminates your core nature and purpose`;
+                cosmicWeather = "🌟 Solar clarity guides your authentic self-expression";
                 break;
               case 1: // Tomorrow  
                 dailyInfluence = "Moon transits activate your emotional depths";
-                cosmicWeather = "🌙 Intuitive insights flow through your Sagittarius Moon";
+                cosmicWeather = `🌙 Intuitive insights flow through your ${moonSign} Moon`;
                 break;
               case 2:
-                dailyInfluence = "Venus aspects your natal chart bringing artistic inspiration";
-                cosmicWeather = "💫 Creative energies surge - perfect for writing";
+                dailyInfluence = "Venus aspects your natal chart bringing harmony";
+                cosmicWeather = "💫 Creative energies surge - perfect for self-expression";
                 break;
               case 3:
-                dailyInfluence = "Mars energizes your communication sector";
-                cosmicWeather = "⚡ Dynamic expression and bold ideas emerge";
+                dailyInfluence = "Mars energizes your action-oriented impulses";
+                cosmicWeather = "⚡ Dynamic motivation and bold initiatives emerge";
                 break;
               case 4:
                 dailyInfluence = "Jupiter expands your philosophical horizons";
-                cosmicWeather = "🎯 Higher wisdom seeks manifestation through your words";
+                cosmicWeather = "🎯 Higher wisdom seeks manifestation through your unique gifts";
                 break;
               case 5:
-                dailyInfluence = "Saturn structures your visionary impulses";
-                cosmicWeather = "🏗️ Disciplined creativity builds lasting works";
+                dailyInfluence = "Saturn structures your long-term visions";
+                cosmicWeather = "🏗️ Disciplined progress builds lasting achievements";
                 break;
               case 6:
-                dailyInfluence = "Lunar aspects harmonize emotion and intellect";
-                cosmicWeather = "🌊 Emotional intelligence guides your path forward";
+                dailyInfluence = `${risingSign} Rising harmonizes your outer expression`;
+                cosmicWeather = "🌊 Authentic presence guides your path forward";
                 break;
             }
             
@@ -224,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           welcomeMessage = `Welcome back, ${userName}! ✨ 
 
-As a **${sunSign} Sun** with **${moonSign} Moon** and **${risingSign} Rising**, your astrological blueprint reveals a fascinating blend of analytical precision, adventurous spirit, and pioneering vision - perfect qualities for a literary revolutionary!
+As a **${sunSign} Sun** with **${moonSign} Moon** and **${risingSign} Rising**, your astrological blueprint reveals a unique cosmic signature that shapes your path through life. Each planetary placement offers wisdom for your personal journey of growth and self-discovery.
 
 **🌌 Your 7-Day Cosmic Weather Forecast (${startDate} - ${endDate}):**
 
