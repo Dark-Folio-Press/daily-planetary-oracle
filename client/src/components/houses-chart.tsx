@@ -3,6 +3,13 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Home, Eye, MessageCircle, Heart, Star, Briefcase, Users, Skull, GraduationCap, Mountain, TreePine, Sparkles } from 'lucide-react';
 
+// Helper function to get proper ordinal numbers
+function getOrdinal(num: number): string {
+  const suffixes = ['th', 'st', 'nd', 'rd'];
+  const value = num % 100;
+  return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
+}
+
 interface HousesChartProps {
   birthDate?: string;
   birthTime?: string;
@@ -242,7 +249,7 @@ export function HousesChart({ birthDate, birthTime, birthLocation, userName }: H
                   <IconComponent className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">{house.number}th House</h4>
+                  <h4 className="font-semibold text-sm text-foreground">{getOrdinal(house.number)} House</h4>
                   <p className="text-xs text-purple-300">{house.name}</p>
                 </div>
               </div>
