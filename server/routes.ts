@@ -1930,7 +1930,7 @@ ${daily.horoscope}
               <div class="cta-section">
                 <p>Ready to explore your own cosmic journey?</p>
                 <a href="${appUrl}/signup" class="cta primary">🌟 Start Your Cosmic Chat</a>
-                <a href="${appUrl}" class="cta">🎵 Generate Your Playlist</a>
+                <a href="${appUrl}/signup" class="cta">🎵 Generate Your Playlist</a>
               </div>
             </div>
           </body>
