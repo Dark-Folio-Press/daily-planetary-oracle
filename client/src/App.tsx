@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -20,6 +20,10 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const { user, isLoading } = useAuth();
+  
+  // Debug logging
+  const [location] = useLocation();
+  console.log('Router state:', { user: user ? 'authenticated' : 'not authenticated', isLoading, hasProfile: user ? !!(user?.birthDate && user?.birthTime && user?.birthLocation) : false, currentPath: location });
 
   if (isLoading) {
     return (
