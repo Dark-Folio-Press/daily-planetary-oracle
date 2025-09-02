@@ -14,7 +14,7 @@ import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
 import FeedbackAnalytics from "@/pages/feedback-analytics";
 import { MoodAnalysisPage } from "@/pages/mood-analysis";
-import LearningPage from "@/pages/learning";
+import LearningSimple from "@/pages/learning-simple";
 import LessonPage from "@/pages/lesson";
 import NotFound from "@/pages/not-found";
 
@@ -53,9 +53,14 @@ function Router() {
         <>
           {/* Check if user needs to complete profile */}
           {!user?.birthDate || !user?.birthTime || !user?.birthLocation ? (
-            <Route path="/">
-              <ProfileSetupPage />
-            </Route>
+            <>
+              <Route path="/">
+                <ProfileSetupPage />
+              </Route>
+              <Route path="/learning">
+                <LearningSimple />
+              </Route>
+            </>
           ) : (
             <>
               <Route path="/">
@@ -68,7 +73,7 @@ function Router() {
                 <MoodAnalysisPage />
               </Route>
               <Route path="/learning">
-                <LearningPage />
+                <LearningSimple />
               </Route>
               <Route path="/learning/lesson/:lessonId">
                 <LessonPage />
