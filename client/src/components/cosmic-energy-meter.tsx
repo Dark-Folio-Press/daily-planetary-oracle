@@ -82,7 +82,7 @@ export function CosmicEnergyMeter({ className = '' }: CosmicEnergyMeterProps) {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-4 ${className}`}
+      className={`bg-white border border-gray-200 rounded-2xl p-4 shadow-sm ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -91,11 +91,11 @@ export function CosmicEnergyMeter({ className = '' }: CosmicEnergyMeterProps) {
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="w-5 h-5 text-purple-400" />
+            <Sparkles className="w-5 h-5 text-blue-500" />
           </motion.div>
-          <h3 className="text-sm font-medium text-purple-200">Cosmic Energy Field</h3>
+          <h3 className="text-sm font-medium text-gray-900">Cosmic Energy Field</h3>
         </div>
-        <div className="text-xs text-purple-300">
+        <div className="text-xs text-gray-600">
           {getEnergyLevel(overallEnergy)}
         </div>
       </div>
@@ -103,10 +103,10 @@ export function CosmicEnergyMeter({ className = '' }: CosmicEnergyMeterProps) {
       {/* Overall Energy Bar */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-xs text-purple-300">Overall Cosmic Energy</span>
-          <span className="text-xs text-purple-200">{Math.round(overallEnergy)}%</span>
+          <span className="text-xs text-gray-600">Overall Cosmic Energy</span>
+          <span className="text-xs text-gray-900">{Math.round(overallEnergy)}%</span>
         </div>
-        <div className="h-2 bg-purple-900/50 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400"
             initial={{ width: 0 }}
@@ -122,14 +122,14 @@ export function CosmicEnergyMeter({ className = '' }: CosmicEnergyMeterProps) {
           <div key={planet.name} className="group">
             <div className="flex justify-between items-center mb-1">
               <div className="flex items-center space-x-2">
-                <div className="text-purple-300">
+                <div className="text-gray-500">
                   {planet.icon}
                 </div>
-                <span className="text-xs text-purple-200">{planet.name}</span>
+                <span className="text-xs text-gray-700">{planet.name}</span>
               </div>
-              <span className="text-xs text-purple-300">{Math.round(planet.energy)}%</span>
+              <span className="text-xs text-gray-600">{Math.round(planet.energy)}%</span>
             </div>
-            <div className="h-1.5 bg-purple-900/30 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <motion.div
                 className={`h-full bg-gradient-to-r ${planet.color}`}
                 initial={{ width: 0 }}
@@ -138,7 +138,7 @@ export function CosmicEnergyMeter({ className = '' }: CosmicEnergyMeterProps) {
               />
             </div>
             {/* Hover tooltip */}
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-purple-300 mt-1">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-gray-600 mt-1">
               {planet.influence}
             </div>
           </div>
@@ -150,7 +150,7 @@ export function CosmicEnergyMeter({ className = '' }: CosmicEnergyMeterProps) {
         {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={`particle-${i}`}
-            className="absolute w-1 h-1 bg-purple-300/40 rounded-full"
+            className="absolute w-1 h-1 bg-blue-400/60 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
