@@ -501,6 +501,52 @@ class LearningService {
                 element: 'sun'
               }
             });
+          } else if (lesson.lessonNumber === 2) {
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.moonSign} Moon`,
+                content: this.getMoonSignInsights(chartData.moonSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'emotion-explorer',
+                sign: chartData.moonSign,
+                element: 'moon'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Moon in ${chartData.moonSign}`,
+                description: 'See how your Moon sign appears in your birth chart and its house placement for additional insight'
+              }
+            });
+          } else if (lesson.lessonNumber === 3) {
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.risingSign} Rising`,
+                content: this.getRisingSignInsights(chartData.risingSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'first-impression',
+                sign: chartData.risingSign,
+                element: 'rising'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `${chartData.risingSign} Rising`,
+                description: 'Your Rising sign determines your entire house system and sets the stage for your life themes'
+              }
+            });
           }
           break;
         
@@ -537,6 +583,44 @@ class LearningService {
     };
     
     return insights[sunSign] || 'Your sun sign shapes your core identity and life purpose in unique ways.';
+  }
+
+  private getMoonSignInsights(moonSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Aries Moon needs excitement and independence. You process emotions quickly and directly, requiring freedom to act on your instincts.',
+      'Taurus': 'With a Taurus Moon, you need stability and comfort. You process emotions slowly and thoroughly, finding security through routine and sensual pleasures.',
+      'Gemini': 'Your Gemini Moon needs variety and communication. You process emotions mentally, requiring intellectual stimulation and social connection to feel secure.',
+      'Cancer': 'Your Cancer Moon needs emotional safety and nurturing. You process feelings deeply and intuitively, requiring a secure home base and family connections.',
+      'Leo': 'With a Leo Moon, you need appreciation and creative expression. You process emotions dramatically, requiring recognition and outlets for your artistic nature.',
+      'Virgo': 'Your Virgo Moon needs order and usefulness. You process emotions analytically, finding comfort in helping others and creating practical solutions.',
+      'Libra': 'Your Libra Moon needs harmony and partnership. You process emotions through relationships, requiring balance and beauty in your environment.',
+      'Scorpio': 'With a Scorpio Moon, you need emotional depth and transformation. You process feelings intensely, requiring authentic connections and psychological understanding.',
+      'Sagittarius': 'Your Sagittarius Moon needs freedom and meaning. You process emotions philosophically, requiring adventure and spiritual exploration for emotional fulfillment.',
+      'Capricorn': 'Your Capricorn Moon needs achievement and structure. You process emotions practically, finding security through accomplishment and long-term goals.',
+      'Aquarius': 'With an Aquarius Moon, you need independence and innovation. You process emotions objectively, requiring intellectual freedom and humanitarian causes.',
+      'Pisces': 'Your Pisces Moon needs compassion and creativity. You process emotions intuitively and absorb others\' feelings, requiring artistic expression and spiritual connection.'
+    };
+    
+    return insights[moonSign] || 'Your moon sign shapes your emotional needs and instinctive responses in unique ways.';
+  }
+
+  private getRisingSignInsights(risingSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Aries Rising gives you a bold, energetic first impression. You approach new situations with confidence and directness, appearing as a natural leader.',
+      'Taurus': 'With Taurus Rising, you project stability and reliability. You approach new situations calmly and methodically, appearing grounded and trustworthy.',
+      'Gemini': 'Your Gemini Rising makes you appear curious and communicative. You approach new situations with questions and adaptability, seeming witty and intellectually engaged.',
+      'Cancer': 'Your Cancer Rising gives you a nurturing, protective first impression. You approach new situations with emotional sensitivity, appearing caring and intuitive.',
+      'Leo': 'With Leo Rising, you project confidence and warmth. You approach new situations with enthusiasm and creativity, appearing generous and naturally magnetic.',
+      'Virgo': 'Your Virgo Rising makes you appear helpful and organized. You approach new situations with practical analysis, seeming reliable and detail-oriented.',
+      'Libra': 'Your Libra Rising gives you a charming, diplomatic first impression. You approach new situations seeking harmony, appearing graceful and socially aware.',
+      'Scorpio': 'With Scorpio Rising, you project intensity and mystery. You approach new situations with keen observation, appearing powerful and psychologically perceptive.',
+      'Sagittarius': 'Your Sagittarius Rising makes you appear adventurous and optimistic. You approach new situations with enthusiasm for learning, seeming philosophical and open-minded.',
+      'Capricorn': 'Your Capricorn Rising gives you a serious, competent first impression. You approach new situations with realistic assessment, appearing responsible and ambitious.',
+      'Aquarius': 'With Aquarius Rising, you project uniqueness and innovation. You approach new situations with detached observation, appearing progressive and intellectually independent.',
+      'Pisces': 'Your Pisces Rising gives you a gentle, intuitive first impression. You approach new situations with empathy and adaptability, appearing compassionate and spiritually aware.'
+    };
+    
+    return insights[risingSign] || 'Your rising sign shapes how you present yourself to the world and approach new experiences.';
   }
 
   // Record lesson progress
