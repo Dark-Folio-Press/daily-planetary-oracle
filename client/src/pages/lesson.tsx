@@ -529,19 +529,46 @@ export default function LessonPage() {
                     </>
                   )}
 
-                  <Button 
-                    onClick={() => {
-                      setShowInteractiveModal(false);
-                      setCurrentSection(currentSection + 1);
-                      toast({
-                        title: "Interactive Complete!",
-                        description: `You've explored your ${interactiveContent?.sign} ${interactiveContent?.element} in detail`,
-                      });
-                    }}
-                    className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
-                  >
-                    Continue Learning
-                  </Button>
+                  {interactiveContent?.type === 'chart-focus' ? (
+                    <div className="flex gap-3 mt-4">
+                      <Button 
+                        onClick={() => {
+                          setShowInteractiveModal(false);
+                        }}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        Close Chart
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          setShowInteractiveModal(false);
+                          setCurrentSection(currentSection + 1);
+                          toast({
+                            title: "Chart Viewed!",
+                            description: `You've explored your ${interactiveContent?.element} placement`,
+                          });
+                        }}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                      >
+                        Continue Learning
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      onClick={() => {
+                        setShowInteractiveModal(false);
+                        setCurrentSection(currentSection + 1);
+                        toast({
+                          title: "Interactive Complete!",
+                          description: `You've explored your ${interactiveContent?.sign} ${interactiveContent?.element} in detail`,
+                        });
+                      }}
+                      className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
+                    >
+                      Continue Learning
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </div>
