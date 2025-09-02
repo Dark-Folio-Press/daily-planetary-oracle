@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   ArrowLeft, 
   Star, 
@@ -55,6 +56,8 @@ export default function LessonPage() {
   const [startTime] = useState(Date.now());
   const [currentSection, setCurrentSection] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showInteractiveModal, setShowInteractiveModal] = useState(false);
+  const [interactiveContent, setInteractiveContent] = useState<any>(null);
   const queryClient = useQueryClient();
   
   const lessonId = params?.lessonId ? parseInt(params.lessonId) : null;
@@ -80,13 +83,10 @@ export default function LessonPage() {
     }
   });
 
-  // Record lesson start
+  // Record lesson start (but don't mark as completed automatically)
   useEffect(() => {
     if (lessonData && !isCompleted) {
-      progressMutation.mutate({
-        lessonId: lessonData.lesson.id,
-        status: 'started'
-      });
+      // Only record that lesson was started, not completed
     }
   }, [lessonData]);
 
@@ -226,7 +226,7 @@ export default function LessonPage() {
             {personalizedContent.map((content, index) => (
               <div 
                 key={index} 
-                className={`transition-opacity ${index <= currentSection ? 'opacity-100' : 'opacity-30'}`}
+                className={`transition-opacity opacity-100`}
               >
                 {content.type === 'text' && (
                   <div className="prose prose-purple dark:prose-invert max-w-none">
@@ -256,11 +256,8 @@ export default function LessonPage() {
                           variant="outline" 
                           className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300"
                           onClick={() => {
-                            toast({
-                              title: "Interactive Tool Launched!",
-                              description: `Exploring ${content.data.sign} ${content.data.element} traits in detail`,
-                            });
-                            setCurrentSection(currentSection + 1);
+                            setShowInteractiveModal(true);
+                            setInteractiveContent(content.data);
                           }}
                         >
                           Launch Interactive Tool
@@ -285,11 +282,11 @@ export default function LessonPage() {
                           variant="outline" 
                           className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300"
                           onClick={() => {
-                            toast({
-                              title: "Chart Focus Activated!",
-                              description: `Highlighting ${content.data.element} in your birth chart`,
+                            setShowInteractiveModal(true);
+                            setInteractiveContent({
+                              ...content.data,
+                              type: 'chart-focus'
                             });
-                            setCurrentSection(currentSection + 1);
                           }}
                         >
                           View in Your Chart
@@ -359,6 +356,61 @@ export default function LessonPage() {
             </AlertDescription>
           </Alert>
         )}
+
+        {/* Interactive Modal */}
+        <Dialog open={showInteractiveModal} onOpenChange={setShowInteractiveModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-600" />
+                Interactive Learning: {interactiveContent?.type}
+              </DialogTitle>
+              <DialogDescription>
+                Explore your {interactiveContent?.sign} {interactiveContent?.element} traits through hands-on examples
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                <CardContent className="p-6">
+                  <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Sun in Action</h4>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                      <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 1: At Work</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        Your Virgo sun drives you to organize projects and help teammates improve their processes.
+                      </p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                      <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 2: In Relationships</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        You show love through practical acts of service and thoughtful attention to details.
+                      </p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                      <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 3: Personal Growth</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        You find fulfillment in continuous learning and making meaningful improvements.
+                      </p>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => {
+                      setShowInteractiveModal(false);
+                      setCurrentSection(currentSection + 1);
+                      toast({
+                        title: "Interactive Complete!",
+                        description: "You've explored your sun sign in action",
+                      });
+                    }}
+                    className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Continue Learning
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
