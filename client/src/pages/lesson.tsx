@@ -252,7 +252,17 @@ export default function LessonPage() {
                         <p className="text-blue-600 dark:text-blue-400 mb-4">
                           Explore your {content.data.sign} {content.data.element} through interactive examples
                         </p>
-                        <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300">
+                        <Button 
+                          variant="outline" 
+                          className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300"
+                          onClick={() => {
+                            toast({
+                              title: "Interactive Tool Launched!",
+                              description: `Exploring ${content.data.sign} ${content.data.element} traits in detail`,
+                            });
+                            setCurrentSection(currentSection + 1);
+                          }}
+                        >
                           Launch Interactive Tool
                         </Button>
                       </div>
@@ -271,7 +281,17 @@ export default function LessonPage() {
                         <p className="text-yellow-600 dark:text-yellow-400 mb-4">
                           {content.data.description}
                         </p>
-                        <Button variant="outline" className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300">
+                        <Button 
+                          variant="outline" 
+                          className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-600 dark:text-yellow-300"
+                          onClick={() => {
+                            toast({
+                              title: "Chart Focus Activated!",
+                              description: `Highlighting ${content.data.element} in your birth chart`,
+                            });
+                            setCurrentSection(currentSection + 1);
+                          }}
+                        >
                           View in Your Chart
                         </Button>
                       </div>
