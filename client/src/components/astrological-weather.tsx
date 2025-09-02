@@ -197,17 +197,17 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
 
   if (isLoading) {
     return (
-      <div className={`bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-sm border border-purple-500/30 rounded-xl p-4 ${className}`}>
+      <div className={`bg-white border border-gray-200 rounded-xl p-4 shadow-sm ${className}`}>
         <div className="flex items-center space-x-3">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="w-5 h-5 text-purple-400" />
+            <Sparkles className="w-5 h-5 text-blue-500" />
           </motion.div>
           <div>
-            <div className="text-sm font-medium text-purple-200">Reading cosmic weather...</div>
-            <div className="text-xs text-purple-300/60">Consulting the celestial currents</div>
+            <div className="text-sm font-medium text-gray-900">Reading cosmic weather...</div>
+            <div className="text-xs text-gray-600">Consulting the celestial currents</div>
           </div>
         </div>
       </div>
@@ -230,7 +230,7 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
 
   if (compact) {
     return (
-      <div className={`flex items-center space-x-2 bg-gradient-to-r from-purple-900/20 to-blue-900/20 backdrop-blur-sm border border-purple-500/30 rounded-full px-3 py-2 ${className}`}>
+      <div className={`flex items-center space-x-2 bg-white border border-gray-200 rounded-full px-3 py-2 shadow-sm ${className}`}>
         <motion.div
           animate={{ 
             scale: [1, 1.1, 1],
@@ -245,7 +245,7 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
         >
           {weather.primary.icon}
         </motion.div>
-        <div className="text-xs text-purple-200">
+        <div className="text-xs text-gray-700">
           {weather.primary.condition}
         </div>
       </div>
@@ -256,18 +256,18 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-sm border border-purple-500/30 rounded-xl p-4 ${intensityColors[weather.primary.intensity]} ${intensityGlow[weather.primary.intensity]} ${className}`}
+      className={`bg-white border border-gray-200 rounded-xl p-4 shadow-sm ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
-          <Sparkles className="w-4 h-4 text-purple-400" />
-          <h3 className="text-sm font-medium text-purple-200">Cosmic Weather</h3>
+          <Sparkles className="w-4 h-4 text-blue-500" />
+          <h3 className="text-sm font-medium text-gray-900">Cosmic Weather</h3>
         </div>
         <div className={`text-xs px-2 py-1 rounded-full border ${
-          weather.primary.intensity === 'intense' ? 'border-red-400/50 text-red-300 bg-red-900/20' :
-          weather.primary.intensity === 'moderate' ? 'border-yellow-400/50 text-yellow-300 bg-yellow-900/20' :
-          'border-green-400/50 text-green-300 bg-green-900/20'
+          weather.primary.intensity === 'intense' ? 'border-red-400 text-red-600 bg-red-50' :
+          weather.primary.intensity === 'moderate' ? 'border-yellow-400 text-yellow-600 bg-yellow-50' :
+          'border-green-400 text-green-600 bg-green-50'
         }`}>
           {weather.primary.intensity}
         </div>
@@ -290,15 +290,15 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
           {weather.primary.icon}
         </motion.div>
         <div>
-          <div className="text-sm font-medium text-purple-100">{weather.primary.condition}</div>
-          <div className="text-xs text-purple-300 mt-1">{weather.primary.description}</div>
+          <div className="text-sm font-medium text-gray-900">{weather.primary.condition}</div>
+          <div className="text-xs text-gray-600 mt-1">{weather.primary.description}</div>
         </div>
       </div>
 
       {/* Influences */}
       {weather.influences.length > 0 && (
-        <div className="border-t border-purple-500/20 pt-3">
-          <div className="text-xs text-purple-300 mb-2">Active influences:</div>
+        <div className="border-t border-gray-200 pt-3">
+          <div className="text-xs text-gray-600 mb-2">Active influences:</div>
           <div className="flex flex-wrap gap-2">
             {weather.influences.map((influence, index) => (
               <motion.div
@@ -306,13 +306,13 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center space-x-1 bg-purple-900/30 rounded-full px-2 py-1"
+                className="flex items-center space-x-1 bg-gray-100 rounded-full px-2 py-1"
               >
                 <div className={influence.color}>
                   {influence.icon}
                 </div>
-                <div className="text-xs text-purple-200">{influence.aspect}</div>
-                <div className="text-xs text-purple-300/80">{influence.effect}</div>
+                <div className="text-xs text-gray-700">{influence.aspect}</div>
+                <div className="text-xs text-gray-600">{influence.effect}</div>
               </motion.div>
             ))}
           </div>
@@ -324,7 +324,7 @@ export function AstrologicalWeather({ className = '', compact = false }: CosmicW
         {Array.from({ length: 5 }).map((_, i) => (
           <motion.div
             key={`weather-particle-${i}`}
-            className="absolute w-1 h-1 bg-purple-300/30 rounded-full"
+            className="absolute w-1 h-1 bg-blue-400/60 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
