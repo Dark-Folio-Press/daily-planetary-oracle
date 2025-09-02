@@ -467,6 +467,68 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.type === 'chart-focus' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
+                      <div className="space-y-4">
+                        {/* Simple Birth Chart Visualization */}
+                        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                          <div className="flex items-center justify-center">
+                            <div className="relative w-48 h-48 rounded-full border-4 border-indigo-300 dark:border-indigo-700 bg-white dark:bg-gray-900">
+                              {/* Chart Circle with highlighted element */}
+                              <div className="absolute inset-0 rounded-full">
+                                {/* Highlighted element position based on type */}
+                                {interactiveContent?.element?.toLowerCase().includes('moon') && (
+                                  <div className="absolute top-2 right-8 w-4 h-4 bg-yellow-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      🌙 {lessonData?.userChartData?.moonSign}
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('sun') && (
+                                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ☉ {lessonData?.userChartData?.sunSign}
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('rising') && (
+                                  <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ↗ {lessonData?.userChartData?.risingSign}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Center label */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="text-center">
+                                    <div className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">Your Chart</div>
+                                    <div className="text-xs text-indigo-600 dark:text-indigo-400">{lessonData?.userChartData?.birthData?.location}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-4 text-center">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {interactiveContent?.description || `See how your ${interactiveContent?.element} appears in your personal birth chart`}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Chart Insight</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            This placement shows how {interactiveContent?.element} influences your personality and life path. 
+                            The position relative to other elements creates your unique astrological blueprint.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   <Button 
                     onClick={() => {
                       setShowInteractiveModal(false);
