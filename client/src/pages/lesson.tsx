@@ -310,6 +310,7 @@ export default function LessonPage() {
             variant="outline"
             onClick={() => setCurrentSection(Math.max(0, currentSection - 1))}
             disabled={currentSection === 0}
+            data-testid="button-previous-section"
           >
             Previous Section
           </Button>
@@ -351,8 +352,24 @@ export default function LessonPage() {
         {isCompleted && (
           <Alert className="mt-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
             <CheckCircle2 className="w-4 h-4" />
-            <AlertDescription>
-              <strong>Lesson Complete!</strong> You've earned +{lesson.xpReward} XP. Ready for your next cosmic learning adventure?
+            <AlertDescription className="flex items-center justify-between">
+              <div>
+                <strong>Lesson Complete!</strong> You've earned +{lesson.xpReward} XP. Ready for your next cosmic learning adventure?
+              </div>
+              <div className="flex gap-2 ml-4">
+                <Link href="/learning">
+                  <Button variant="outline" size="sm">
+                    Back to Dashboard
+                  </Button>
+                </Link>
+                {lesson.lessonNumber < 3 && (
+                  <Link href={`/learning/lesson/${lesson.id + 1}`}>
+                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                      Next Lesson →
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </AlertDescription>
           </Alert>
         )}
