@@ -130,9 +130,9 @@ export function UserProfileCard() {
 
   if (showChartGenerator && astrologyData.sunSign) {
     return (
-      <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6 min-h-[90vh] max-h-[95vh] overflow-y-scroll" style={{ scrollbarWidth: 'thin', scrollbarColor: '#8b5cf6 #374151' }}>
-        <div className="flex justify-between items-center mb-6 sticky top-0 bg-white/5 backdrop-blur-md pb-4 border-b border-white/10">
-          <h3 className="text-lg font-semibold text-foreground">Share Your Big Three</h3>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 min-h-[90vh] max-h-[95vh] overflow-y-scroll" style={{ scrollbarWidth: 'thin', scrollbarColor: '#8b5cf6 #e5e7eb' }}>
+        <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Share Your Big Three</h3>
           <Button 
             variant="ghost" 
             size="sm" 
@@ -170,7 +170,7 @@ export function UserProfileCard() {
   }
 
   return (
-    <div className="bg-white/5 dark:bg-white/5 bg-gray-100/80 backdrop-blur-md border border-white/10 dark:border-white/10 border-gray-300/30 rounded-2xl p-6 mb-6 max-h-[90vh] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#8b5cf6 #374151' }}>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 max-h-[90vh] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#8b5cf6 #e5e7eb' }}>
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
           {/* User Avatar */}
@@ -210,14 +210,14 @@ export function UserProfileCard() {
           </div>
           
           <div>
-            <h3 className="font-semibold text-white dark:text-white text-gray-900 text-lg">
+            <h3 className="font-semibold text-gray-900 text-lg">
               {user.username || user.email}
             </h3>
-            <p className="text-sm text-gray-300 dark:text-gray-300 text-gray-600">{user.email}</p>
+            <p className="text-sm text-gray-600">{user.email}</p>
             {astrologyData.sunSign && (
               <div className="flex items-center mt-1">
                 <Star className="w-3 h-3 text-yellow-400 mr-1" />
-                <span className="text-sm text-gray-200 dark:text-gray-200 text-gray-700 font-medium">{astrologyData.sunSign}</span>
+                <span className="text-sm text-gray-700 font-medium">{astrologyData.sunSign}</span>
               </div>
             )}
           </div>
@@ -259,15 +259,15 @@ export function UserProfileCard() {
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="flex items-center text-sm">
           <Calendar className="w-4 h-4 text-blue-400 mr-2" />
-          <span className="text-muted-foreground">{user.birthDate || 'Not set'}</span>
+          <span className="text-gray-600">{user.birthDate || 'Not set'}</span>
         </div>
         <div className="flex items-center text-sm">
           <Clock className="w-4 h-4 text-green-400 mr-2" />
-          <span className="text-muted-foreground">{user.birthTime || 'Not set'}</span>
+          <span className="text-gray-600">{user.birthTime || 'Not set'}</span>
         </div>
         <div className="flex items-center text-sm">
           <MapPin className="w-4 h-4 text-purple-400 mr-2" />
-          <span className="text-muted-foreground">{user.birthLocation || 'Not set'}</span>
+          <span className="text-gray-600">{user.birthLocation || 'Not set'}</span>
         </div>
       </div>
 
@@ -276,10 +276,10 @@ export function UserProfileCard() {
         {/* Current Lunar Energy */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-sm font-medium text-purple-200">Current Lunar Energy</div>
+            <div className="text-sm font-medium text-gray-900">Current Lunar Energy</div>
             <MoonPhaseMoodRing size="md" />
           </div>
-          <div className="text-xs text-purple-300/80 text-center">
+          <div className="text-xs text-gray-600 text-center">
             {(() => {
               const now = new Date();
               const newMoon = new Date(2024, 0, 11); // Known new moon
@@ -306,8 +306,8 @@ export function UserProfileCard() {
         {/* Cosmic Analysis Cards */}
         {cosmicAnalysis && (
           <div className="space-y-2">
-            <div className="text-sm font-medium text-purple-200">Cosmic Mood Analysis</div>
-            <div className="text-xs text-purple-300/80 mb-3">
+            <div className="text-sm font-medium text-gray-900">Cosmic Mood Analysis</div>
+            <div className="text-xs text-gray-600 mb-3">
               Analysis period: {cosmicAnalysis.correlationPeriod}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -315,17 +315,17 @@ export function UserProfileCard() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
+                    <Card className="bg-white border-gray-200 py-2 cursor-pointer hover:bg-gray-50 transition-all duration-200 group shadow-sm" onClick={() => setLocation('/mood-analysis')}>
                       <CardContent className="flex items-center justify-between p-3">
                         <div>
-                          <div className="text-lg font-bold text-white">
+                          <div className="text-lg font-bold text-gray-900">
                             {cosmicAnalysis.totalEntries}
                           </div>
-                          <p className="text-xs text-purple-300/80">Journal Entries</p>
+                          <p className="text-xs text-gray-600">Journal Entries</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Activity className="h-4 w-4 text-muted-foreground" />
-                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Activity className="h-4 w-4 text-gray-500" />
+                          <ExternalLink className="h-3 w-3 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </CardContent>
                     </Card>
@@ -340,17 +340,17 @@ export function UserProfileCard() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
+                    <Card className="bg-white border-gray-200 py-2 cursor-pointer hover:bg-gray-50 transition-all duration-200 group shadow-sm" onClick={() => setLocation('/mood-analysis')}>
                       <CardContent className="flex items-center justify-between p-3">
                         <div>
-                          <div className="text-lg font-bold text-white">
+                          <div className="text-lg font-bold text-gray-900">
                             {Math.round(cosmicAnalysis.overallCorrelationScore * 100)}%
                           </div>
-                          <p className="text-xs text-purple-300/80">Mood & Transit Alignment Rate</p>
+                          <p className="text-xs text-gray-600">Mood & Transit Alignment Rate</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 text-purple-400" />
-                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Star className="h-4 w-4 text-purple-500" />
+                          <ExternalLink className="h-3 w-3 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </CardContent>
                     </Card>
@@ -365,20 +365,20 @@ export function UserProfileCard() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => {
+                    <Card className="bg-white border-gray-200 py-2 cursor-pointer hover:bg-gray-50 transition-all duration-200 group shadow-sm" onClick={() => {
                       setLocation('/mood-analysis');
                       // Note: Pattern tab navigation would require additional state management
                     }}>
                       <CardContent className="flex items-center justify-between p-3">
                         <div>
-                          <div className="text-lg font-bold text-white">
+                          <div className="text-lg font-bold text-gray-900">
                             {cosmicAnalysis.strongCorrelations.length}
                           </div>
-                          <p className="text-xs text-purple-300/80">Patterns Identified</p>
+                          <p className="text-xs text-gray-600">Patterns Identified</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <TrendingUp className="h-4 w-4 text-emerald-400" />
-                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <TrendingUp className="h-4 w-4 text-green-500" />
+                          <ExternalLink className="h-3 w-3 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </CardContent>
                     </Card>
@@ -393,17 +393,17 @@ export function UserProfileCard() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Card className="bg-white/5 border-white/10 py-2 cursor-pointer hover:bg-white/10 transition-all duration-200 group" onClick={() => setLocation('/mood-analysis')}>
+                    <Card className="bg-white border-gray-200 py-2 cursor-pointer hover:bg-gray-50 transition-all duration-200 group shadow-sm" onClick={() => setLocation('/mood-analysis')}>
                       <CardContent className="flex items-center justify-between p-3">
                         <div>
-                          <div className="text-sm font-bold text-purple-400">
+                          <div className="text-sm font-bold text-purple-600">
                             {cosmicAnalysis.planetaryInfluences?.dominantPlanet || 'N/A'}
                           </div>
-                          <p className="text-xs text-purple-300/80">Dominant Planetary Influencer</p>
+                          <p className="text-xs text-gray-600">Dominant Planetary Influencer</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Moon className="h-4 w-4 text-indigo-400" />
-                          <ExternalLink className="h-3 w-3 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Moon className="h-4 w-4 text-blue-500" />
+                          <ExternalLink className="h-3 w-3 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </CardContent>
                     </Card>
@@ -426,11 +426,11 @@ export function UserProfileCard() {
 
       {/* Edit Form */}
       {isEditingProfile && (
-        <div className="mt-6 border-t border-white/10 pt-4">
+        <div className="mt-6 border-t border-gray-200 pt-4">
           <form onSubmit={form.handleSubmit(handleProfileSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="text-sm font-medium text-foreground">Username</label>
+                <label className="text-sm font-medium text-gray-700">Username</label>
                 <Input
                   type="text"
                   placeholder="Enter username"
@@ -444,7 +444,7 @@ export function UserProfileCard() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm font-medium text-foreground">Birth Date</label>
+                <label className="text-sm font-medium text-gray-700">Birth Date</label>
                 <Input
                   type="date"
                   {...form.register('birthDate')}
@@ -455,7 +455,7 @@ export function UserProfileCard() {
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Birth Time</label>
+                <label className="text-sm font-medium text-gray-700">Birth Time</label>
                 <Input
                   type="time"
                   {...form.register('birthTime')}
@@ -466,7 +466,7 @@ export function UserProfileCard() {
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Birth Location</label>
+                <label className="text-sm font-medium text-gray-700">Birth Location</label>
                 <Input
                   type="text"
                   placeholder="City, Country"
@@ -483,7 +483,7 @@ export function UserProfileCard() {
                 type="submit"
                 size="sm"
                 disabled={updateProfileMutation.isPending}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
               >
                 {updateProfileMutation.isPending ? 'Updating...' : 'Update Profile'}
               </Button>
@@ -502,10 +502,10 @@ export function UserProfileCard() {
 
       {/* Delete Confirmation */}
       {showDeleteDialog && (
-        <div className="mt-6 border-t border-white/10 pt-4">
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-            <h4 className="font-medium text-red-400 mb-2">Delete Account</h4>
-            <p className="text-sm text-muted-foreground mb-4">
+        <div className="mt-6 border-t border-gray-200 pt-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h4 className="font-medium text-red-600 mb-2">Delete Account</h4>
+            <p className="text-sm text-gray-600 mb-4">
               This will permanently delete your account and all associated data. This action cannot be undone.
             </p>
             <div className="flex space-x-2">
