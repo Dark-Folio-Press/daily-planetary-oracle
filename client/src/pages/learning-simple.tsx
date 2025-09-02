@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, ArrowRight, Star, Target, Award } from "lucide-react";
+import { Link } from "wouter";
 
 export default function LearningSimple() {
   return (
@@ -26,43 +27,67 @@ export default function LearningSimple() {
                 Your personalized learning journey will teach you to interpret your birth chart
                 using your actual astrological data. Complete lessons to earn XP and unlock advanced features!
               </p>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                Start Your First Lesson
-              </Button>
+              <Link href="/learning/lesson/1">
+                <Button className="bg-purple-600 hover:bg-purple-700">
+                  Start Your First Lesson
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 dark:border-purple-800">
               <CardHeader>
-                <CardTitle className="text-lg">Basics Track</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Star className="w-5 h-5 text-purple-600" />
+                  Basics Track
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Learn about your Sun, Moon, and Rising signs
                 </p>
+                <Link href="/learning/lesson/1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Start Basics
+                    <ArrowRight className="w-3 h-3 ml-2" />
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 dark:border-blue-800 opacity-75">
               <CardHeader>
-                <CardTitle className="text-lg">Planetary Track</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Target className="w-5 h-5 text-blue-600" />
+                  Planetary Track
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Discover how each planet influences your personality
                 </p>
+                <Button variant="outline" size="sm" className="w-full" disabled>
+                  Complete Basics First
+                </Button>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-orange-200 dark:border-orange-800 opacity-75">
               <CardHeader>
-                <CardTitle className="text-lg">Houses Track</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Award className="w-5 h-5 text-orange-600" />
+                  Houses Track
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Understand the 12 houses and their meanings
                 </p>
+                <Button variant="outline" size="sm" className="w-full" disabled>
+                  Complete Previous Tracks
+                </Button>
               </CardContent>
             </Card>
           </div>
