@@ -33,74 +33,43 @@ function Router() {
     );
   }
 
+  const hasCompleteProfile = user?.birthDate && user?.birthTime && user?.birthLocation;
+
   return (
     <Switch>
-      {/* Always accessible routes first */}
-      <Route path="/login">
-        <LoginPage />
+      {/* Always accessible routes */}
+      <Route path="/login"><LoginPage /></Route>
+      <Route path="/signup"><SignupPage /></Route>
+      <Route path="/forgot-password"><ForgotPasswordPage /></Route>
+      <Route path="/reset-password"><ResetPasswordPage /></Route>
+      <Route path="/profile-setup"><ProfileSetupPage /></Route>
+      
+      {/* Learning route - accessible to authenticated users */}
+      <Route path="/learning">
+        {user ? <LearningSimple /> : <LoginPage />}
       </Route>
-      <Route path="/signup">
-        <SignupPage />
-      </Route>
-      <Route path="/forgot-password">
-        <ForgotPasswordPage />
-      </Route>
-      <Route path="/reset-password">
-        <ResetPasswordPage />
-      </Route>
-      <Route path="/profile-setup">
-        <ProfileSetupPage />
+      <Route path="/learning/lesson/:lessonId">
+        {user ? <LessonPage /> : <LoginPage />}
       </Route>
       
-      {/* User-dependent routes */}
-      {user ? (
-        <>
-          {/* Check if user needs to complete profile */}
-          {!user?.birthDate || !user?.birthTime || !user?.birthLocation ? (
-            <>
-              <Route path="/">
-                <ProfileSetupPage />
-              </Route>
-              <Route path="/learning">
-                <LearningSimple />
-              </Route>
-            </>
-          ) : (
-            <>
-              <Route path="/">
-                <ChatPage />
-              </Route>
-              <Route path="/feedback-analytics">
-                <FeedbackAnalytics />
-              </Route>
-              <Route path="/mood-analysis">
-                <MoodAnalysisPage />
-              </Route>
-              <Route path="/learning">
-                <LearningSimple />
-              </Route>
-              <Route path="/learning/lesson/:lessonId">
-                <LessonPage />
-              </Route>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          {/* Guest routes */}
-          <Route path="/">
-            <Landing />
-          </Route>
-          <Route path="/chat">
-            <LoginPage />
-          </Route>
-        </>
-      )}
-      
-      {/* Catch all - must be last */}
-      <Route>
-        <NotFound />
+      {/* Main routes */}
+      <Route path="/">
+        {!user ? <Landing /> : (!hasCompleteProfile ? <ProfileSetupPage /> : <ChatPage />)}
       </Route>
+      
+      {/* Other authenticated routes */}
+      <Route path="/feedback-analytics">
+        {user && hasCompleteProfile ? <FeedbackAnalytics /> : <LoginPage />}
+      </Route>
+      <Route path="/mood-analysis">
+        {user && hasCompleteProfile ? <MoodAnalysisPage /> : <LoginPage />}
+      </Route>
+      <Route path="/chat">
+        {user ? <LoginPage /> : <LoginPage />}
+      </Route>
+      
+      {/* Catch all */}
+      <Route><NotFound /></Route>
     </Switch>
   );
 }
