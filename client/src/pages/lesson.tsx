@@ -389,34 +389,91 @@ export default function LessonPage() {
             <div className="space-y-4">
               <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Sun in Action</h4>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                      <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 1: At Work</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Your Virgo sun drives you to organize projects and help teammates improve their processes.
-                      </p>
-                    </div>
-                    <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                      <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 2: In Relationships</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        You show love through practical acts of service and thoughtful attention to details.
-                      </p>
-                    </div>
-                    <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                      <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 3: Personal Growth</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        You find fulfillment in continuous learning and making meaningful improvements.
-                      </p>
-                    </div>
-                  </div>
+                  {interactiveContent?.element === 'sun' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Sun in Action</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 1: At Work</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Virgo sun drives you to organize projects and help teammates improve their processes.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 2: In Relationships</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You show love through practical acts of service and thoughtful attention to details.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Scenario 3: Personal Growth</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You find fulfillment in continuous learning and making meaningful improvements.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {interactiveContent?.element === 'moon' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Moon Emotions</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Emotional Response: Stress</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Pisces moon absorbs stress from others and needs creative escape and alone time to recharge.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Emotional Response: Joy</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You experience joy through artistic expression, spiritual connection, and helping others heal.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Emotional Response: Comfort</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You find comfort in water, music, meditation, and environments that honor your sensitivity.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'rising' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Rising First Impressions</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">First Meeting: Professional Setting</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Pisces rising makes you appear approachable and intuitive, often putting others at ease immediately.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">First Meeting: Social Gathering</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            People see you as mysteriously wise and compassionate, often seeking your advice or comfort.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">First Meeting: New Environment</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You adapt to new situations with fluid grace, reading the room and adjusting your energy accordingly.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   <Button 
                     onClick={() => {
                       setShowInteractiveModal(false);
                       setCurrentSection(currentSection + 1);
                       toast({
                         title: "Interactive Complete!",
-                        description: "You've explored your sun sign in action",
+                        description: `You've explored your ${interactiveContent?.sign} ${interactiveContent?.element} in detail`,
                       });
                     }}
                     className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
