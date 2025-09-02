@@ -97,6 +97,25 @@ export function VisualBirthChart({
     });
   };
 
+  const openChartInNewTab = () => {
+    if (!chartData?.svgChart) return;
+
+    const blob = new Blob([chartData.svgChart], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const newWindow = window.open(url, '_blank');
+    
+    if (newWindow) {
+      newWindow.document.title = `Birth Chart - ${userName || 'Chart'}`;
+      // Clean up the URL after a delay to allow the new window to load
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    toast({
+      title: "Chart Opened",
+      description: "Your birth chart has been opened in a new tab for better viewing.",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -141,6 +160,18 @@ export function VisualBirthChart({
             
             <div className="flex space-x-2">
               <Button
+                onClick={openChartInNewTab}
+                variant="outline"
+                size="sm"
+                className="border-purple-500 text-purple-300 hover:bg-purple-700"
+                data-testid="button-open-chart-tab"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Open Large View
+              </Button>
+              <Button
                 onClick={downloadChart}
                 variant="outline"
                 size="sm"
@@ -166,10 +197,15 @@ export function VisualBirthChart({
           {/* Chart Display */}
           <div className="border border-purple-500/30 rounded-lg p-4 bg-gradient-to-br from-purple-900/20 to-blue-900/20">
             <div
-              className="w-full flex justify-center"
+              className="w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={openChartInNewTab}
               dangerouslySetInnerHTML={{ __html: chartData.svgChart || '' }}
               data-testid="visual-birth-chart-display"
+              title="Click to open in large view"
             />
+            <p className="text-xs text-purple-300 text-center mt-2 opacity-70">
+              Click chart to view in full size
+            </p>
           </div>
 
           {/* Chart Info */}
