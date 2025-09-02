@@ -449,7 +449,29 @@ export default function ChatPage() {
                 </TooltipProvider>
               )}
 
-              {/* Feedback Analytics Button - After Cosmic Mood Analysis */}
+              {/* Learning System Button - After Cosmic Mood Analysis */}
+              {user && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.location.href = '/learning'}
+                        className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors flex-shrink-0"
+                        data-testid="button-learning"
+                      >
+                        <BookOpen className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                      ✨Learn Astrology✨
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+
+              {/* Feedback Analytics Button - After Learning */}
               {user && (
                 <TooltipProvider>
                   <Tooltip>

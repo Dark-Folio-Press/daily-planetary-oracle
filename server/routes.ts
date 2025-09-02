@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { openAIService } from "./services/openai";
 import { astrologyService } from "./services/astrology";
 import { spotifyService } from "./services/spotify";
+import { learningService } from "./services/learning";
 import { 
   insertChatSessionSchema, 
   insertChatMessageSchema, 
@@ -160,6 +161,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating music mode:", error);
       res.status(500).json({ message: "Failed to update music mode preference" });
+    }
+  });
+
+  // ====================== LEARNING SYSTEM ROUTES ======================
+  
+  // Initialize learning content (run once)
+  app.post("/api/learning/initialize", async (req, res) => {
+    try {
+      await learningService.initializeLearningContent();
+      res.json({ success: true, message: "Learning content initialized" });
+    } catch (error) {
+      console.error("Error initializing learning content:", error);
+      res.status(500).json({ message: "Failed to initialize learning content" });
+    }
+  });
+
+  // Get learning dashboard data
+  app.get("/api/learning/dashboard", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const dashboardData = await learningService.getDashboardData(userId);
+      res.json(dashboardData);
+    } catch (error) {
+      console.error("Error getting learning dashboard:", error);
+      res.status(500).json({ message: "Failed to get learning dashboard data" });
+    }
+  });
+
+  // Get available lessons
+  app.get("/api/learning/lessons", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const lessons = await learningService.getAvailableLessons(userId);
+      res.json(lessons);
+    } catch (error) {
+      console.error("Error getting lessons:", error);
+      res.status(500).json({ message: "Failed to get available lessons" });
+    }
+  });
+
+  // Get specific lesson with personalized content
+  app.get("/api/learning/lesson/:lessonId", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const lessonId = parseInt(req.params.lessonId);
+      
+      if (isNaN(lessonId)) {
+        return res.status(400).json({ message: "Invalid lesson ID" });
+      }
+
+      const personalizedLesson = await learningService.getPersonalizedLesson(lessonId, userId);
+      res.json(personalizedLesson);
+    } catch (error) {
+      console.error("Error getting lesson:", error);
+      res.status(500).json({ message: "Failed to get lesson" });
+    }
+  });
+
+  // Record lesson progress
+  app.post("/api/learning/progress", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const { lessonId, status, score, timeSpent } = req.body;
+      
+      if (!lessonId || !status) {
+        return res.status(400).json({ message: "Lesson ID and status are required" });
+      }
+
+      if (!['started', 'completed', 'mastered'].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+
+      await learningService.recordProgress(userId, lessonId, status, score, timeSpent);
+      
+      // Return updated dashboard data
+      const dashboardData = await learningService.getDashboardData(userId);
+      res.json({ success: true, dashboardData });
+    } catch (error) {
+      console.error("Error recording progress:", error);
+      res.status(500).json({ message: "Failed to record progress" });
+    }
+  });
+
+  // Get user badges
+  app.get("/api/learning/badges", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const badges = await learningService.getUserBadges(userId);
+      res.json(badges);
+    } catch (error) {
+      console.error("Error getting badges:", error);
+      res.status(500).json({ message: "Failed to get user badges" });
+    }
+  });
+
+  // Get user learning stats
+  app.get("/api/learning/stats", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.user as any).id;
+      const stats = await learningService.getUserStats(userId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error getting stats:", error);
+      res.status(500).json({ message: "Failed to get user stats" });
     }
   });
 

@@ -237,7 +237,7 @@ export const weeklyReflections = pgTable("weekly_reflections", {
 });
 
 // Relations
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
   chatSessions: many(chatSessions),
   chatMessages: many(chatMessages),
   playlists: many(playlists),
@@ -249,6 +249,10 @@ export const userRelations = relations(users, ({ many }) => ({
   dailyMoods: many(dailyMoods),
   contentFeedback: many(contentFeedback),
   weeklyReflections: many(weeklyReflections),
+  learningProgress: many(learningProgress),
+  learningUserBadges: many(learningUserBadges),
+  learningStats: one(learningStats),
+  learningQuizResults: many(learningQuizResults),
 }));
 
 export const sharedContentRelations = relations(sharedContent, ({ many, one }) => ({
@@ -405,6 +409,163 @@ export const insertSongUsageSchema = createInsertSchema(songUsage).omit({
 });
 export type SongUsage = typeof songUsage.$inferSelect;
 export type InsertSongUsage = z.infer<typeof insertSongUsageSchema>;
+
+// Learning System Tables
+export const learningLessons = pgTable("learning_lessons", {
+  id: serial("id").primaryKey(),
+  track: text("track").notNull(), // 'basics', 'planets', 'houses', 'aspects', 'advanced'
+  lessonNumber: integer("lesson_number").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  content: jsonb("content").notNull(), // Lesson content with interactive elements
+  requiredLessons: text("required_lessons").array(), // Prerequisites
+  xpReward: integer("xp_reward").default(10),
+  estimatedMinutes: integer("estimated_minutes").default(5),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const learningProgress = pgTable("learning_progress", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  lessonId: integer("lesson_id").notNull(),
+  status: text("status").notNull(), // 'started', 'completed', 'mastered'
+  score: integer("score"), // Quiz score if applicable
+  timeSpent: integer("time_spent"), // Minutes spent on lesson
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const learningBadges = pgTable("learning_badges", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  icon: text("icon").notNull(), // Icon name or emoji
+  track: text("track"), // Associated track if applicable
+  requirements: jsonb("requirements").notNull(), // Conditions to earn badge
+  xpReward: integer("xp_reward").default(50),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const learningUserBadges = pgTable("learning_user_badges", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  badgeId: integer("badge_id").notNull(),
+  earnedAt: timestamp("earned_at").defaultNow().notNull(),
+});
+
+export const learningStats = pgTable("learning_stats", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().unique(),
+  totalXp: integer("total_xp").default(0),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastActivityDate: text("last_activity_date"), // YYYY-MM-DD
+  completedLessons: integer("completed_lessons").default(0),
+  masteredLessons: integer("mastered_lessons").default(0),
+  totalTimeSpent: integer("total_time_spent").default(0), // Minutes
+  favoriteTrack: text("favorite_track"), // Track with most engagement
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const learningQuizResults = pgTable("learning_quiz_results", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  lessonId: integer("lesson_id").notNull(),
+  score: integer("score").notNull(), // Percentage score
+  answers: jsonb("answers").notNull(), // User's answers with correct/incorrect flags
+  timeSpent: integer("time_spent"), // Seconds spent on quiz
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Learning Relations
+export const learningProgressRelations = relations(learningProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [learningProgress.userId],
+    references: [users.id],
+  }),
+  lesson: one(learningLessons, {
+    fields: [learningProgress.lessonId],
+    references: [learningLessons.id],
+  }),
+}));
+
+export const learningUserBadgesRelations = relations(learningUserBadges, ({ one }) => ({
+  user: one(users, {
+    fields: [learningUserBadges.userId],
+    references: [users.id],
+  }),
+  badge: one(learningBadges, {
+    fields: [learningUserBadges.badgeId],
+    references: [learningBadges.id],
+  }),
+}));
+
+export const learningStatsRelations = relations(learningStats, ({ one }) => ({
+  user: one(users, {
+    fields: [learningStats.userId],
+    references: [users.id],
+  }),
+}));
+
+export const learningQuizResultsRelations = relations(learningQuizResults, ({ one }) => ({
+  user: one(users, {
+    fields: [learningQuizResults.userId],
+    references: [users.id],
+  }),
+  lesson: one(learningLessons, {
+    fields: [learningQuizResults.lessonId],
+    references: [learningLessons.id],
+  }),
+}));
+
+// Learning Schema Types
+export const insertLearningLessonSchema = createInsertSchema(learningLessons).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLearningProgressSchema = createInsertSchema(learningProgress).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLearningBadgeSchema = createInsertSchema(learningBadges).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLearningUserBadgeSchema = createInsertSchema(learningUserBadges).omit({
+  id: true,
+  earnedAt: true,
+});
+
+export const insertLearningStatsSchema = createInsertSchema(learningStats).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLearningQuizResultSchema = createInsertSchema(learningQuizResults).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Learning Types
+export type LearningLesson = typeof learningLessons.$inferSelect;
+export type InsertLearningLesson = z.infer<typeof insertLearningLessonSchema>;
+export type LearningProgress = typeof learningProgress.$inferSelect;
+export type InsertLearningProgress = z.infer<typeof insertLearningProgressSchema>;
+export type LearningBadge = typeof learningBadges.$inferSelect;
+export type InsertLearningBadge = z.infer<typeof insertLearningBadgeSchema>;
+export type LearningUserBadge = typeof learningUserBadges.$inferSelect;
+export type InsertLearningUserBadge = z.infer<typeof insertLearningUserBadgeSchema>;
+export type LearningStats = typeof learningStats.$inferSelect;
+export type InsertLearningStats = z.infer<typeof insertLearningStatsSchema>;
+export type LearningQuizResult = typeof learningQuizResults.$inferSelect;
+export type InsertLearningQuizResult = z.infer<typeof insertLearningQuizResultSchema>;
 
 // Additional types for the application
 export interface Song {
