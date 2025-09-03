@@ -49,6 +49,10 @@ interface PersonalizedLesson {
       location: string;
     };
   };
+  userProgress?: {
+    status: string;
+  };
+  nextLessonId?: number;
 }
 
 export default function LessonPage() {

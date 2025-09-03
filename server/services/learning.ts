@@ -732,6 +732,8 @@ class LearningService {
     if (!lesson) {
       throw new Error('Lesson not found');
     }
+    
+    console.log(`DEBUG: Getting lesson ${lessonId}: ${lesson.track} lesson ${lesson.lessonNumber} - ${lesson.title}`);
 
     // Get user's birth data for personalization
     const user = await db.select().from(users).where(eq(users.id, userId));
@@ -788,6 +790,7 @@ class LearningService {
 
   private personalizeContent(lesson: LearningLesson, chartData: any): LessonContent[] {
     const content: LessonContent[] = [];
+    console.log(`DEBUG: Personalizing content for ${lesson.track} lesson ${lesson.lessonNumber}`);
     
     if (!chartData) {
       // Generic content for users without birth data
@@ -912,6 +915,7 @@ class LearningService {
               }
             });
           } else if (lesson.lessonNumber === 6) { // Big Three Integration
+            console.log(`DEBUG: Generating Big Three Integration content for ${chartData.sunSign}-${chartData.moonSign}-${chartData.risingSign}`);
             content.push({
               type: 'text',
               data: {
@@ -1288,6 +1292,7 @@ class LearningService {
       }
     }
 
+    console.log(`DEBUG: Generated ${content.length} content pieces for ${lesson.track} lesson ${lesson.lessonNumber}`);
     return content;
   }
 
