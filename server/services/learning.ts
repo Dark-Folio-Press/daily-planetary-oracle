@@ -228,6 +228,111 @@ class LearningService {
         xpReward: 15,
         estimatedMinutes: 8
       },
+      {
+        track: 'planets',
+        lessonNumber: 4,
+        title: 'Jupiter: Your Growth and Expansion',
+        description: 'Discover how Jupiter brings luck, wisdom, and opportunities for growth into your life.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Jupiter is the planet of expansion, luck, wisdom, and higher learning, showing where you naturally grow and find abundance.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Learn how your Jupiter sign influences your philosophical outlook, teaching style, and where life brings you the most growth.'
+            }
+          ]
+        },
+        requiredLessons: ['planets-3'],
+        xpReward: 18,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'planets',
+        lessonNumber: 5,
+        title: 'Saturn: Your Discipline and Life Lessons',
+        description: 'Understand how Saturn teaches you responsibility, structure, and your most important life lessons.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Saturn represents discipline, responsibility, and the life lessons that help you build lasting foundations and achieve mastery.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Explore how your Saturn sign reveals your relationship with authority, your work ethic, and the challenges that ultimately make you stronger.'
+            }
+          ]
+        },
+        requiredLessons: ['planets-4'],
+        xpReward: 18,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'planets',
+        lessonNumber: 6,
+        title: 'Uranus: Your Innovation and Rebellion',
+        description: 'Learn how Uranus brings sudden changes, innovation, and your unique genius into your life.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Uranus represents innovation, rebellion, sudden changes, and your unique genius that sets you apart from others.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Discover how your Uranus sign influences your need for freedom, your innovative ideas, and where you break from tradition.'
+            }
+          ]
+        },
+        requiredLessons: ['planets-5'],
+        xpReward: 20,
+        estimatedMinutes: 12
+      },
+      {
+        track: 'planets',
+        lessonNumber: 7,
+        title: 'Neptune: Your Dreams and Spirituality',
+        description: 'Explore how Neptune connects you to dreams, intuition, and spiritual realms.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Neptune governs dreams, intuition, spirituality, and imagination, showing where you connect with the mystical and transcendent.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Learn how your Neptune sign influences your spiritual path, creative inspiration, and areas where you may experience illusion or confusion.'
+            }
+          ]
+        },
+        requiredLessons: ['planets-6'],
+        xpReward: 20,
+        estimatedMinutes: 12
+      },
+      {
+        track: 'planets',
+        lessonNumber: 8,
+        title: 'Pluto: Your Transformation and Power',
+        description: 'Understand how Pluto brings deep transformation, power, and rebirth into your life.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Pluto represents transformation, power, death and rebirth, revealing where you experience the most profound changes and access your deepest strength.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Discover how your Pluto sign influences your relationship with power, your capacity for transformation, and your ability to regenerate after challenges.'
+            }
+          ]
+        },
+        requiredLessons: ['planets-7'],
+        xpReward: 22,
+        estimatedMinutes: 15
+      },
 
       // HOUSES TRACK  
       {
@@ -271,6 +376,113 @@ class LearningService {
         requiredLessons: ['houses-1'],
         xpReward: 20,
         estimatedMinutes: 12
+      },
+
+      // LUNAR NODES TRACK
+      {
+        track: 'nodes',
+        lessonNumber: 1,
+        title: 'Understanding the Lunar Nodes: Your Soul\'s Journey',
+        description: 'Introduction to the North and South Nodes and their role in your karmic path.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The Lunar Nodes represent your soul\'s journey - where you\'re coming from (South Node) and where you\'re going (North Node).'
+            },
+            {
+              type: 'karmic-overview',
+              content: 'Learn how the nodes reveal your past life patterns and current life purpose.'
+            }
+          ]
+        },
+        requiredLessons: ['planets-8'],
+        xpReward: 25,
+        estimatedMinutes: 15
+      },
+      {
+        track: 'nodes',
+        lessonNumber: 2,
+        title: 'North Node Deep Dive: Your Life Purpose & Growth Edge',
+        description: 'Explore your North Node sign and house to understand your soul\'s growth direction.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Your North Node represents your soul\'s growth edge - the qualities you\'re developing in this lifetime.'
+            },
+            {
+              type: 'purpose-insight',
+              content: 'Discover how to embrace your North Node energy for spiritual evolution and life fulfillment.'
+            }
+          ]
+        },
+        requiredLessons: ['nodes-1'],
+        xpReward: 25,
+        estimatedMinutes: 15
+      },
+      {
+        track: 'nodes',
+        lessonNumber: 3,
+        title: 'South Node Mastery: Your Past Life Gifts & Patterns',
+        description: 'Understand your South Node talents while learning to release limiting patterns.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Your South Node represents your past life mastery - talents to use and patterns to transcend.'
+            },
+            {
+              type: 'balance-insight',
+              content: 'Learn how to honor your South Node gifts while avoiding over-reliance that blocks growth.'
+            }
+          ]
+        },
+        requiredLessons: ['nodes-2'],
+        xpReward: 25,
+        estimatedMinutes: 15
+      },
+      {
+        track: 'nodes',
+        lessonNumber: 4,
+        title: 'Nodes in Houses: Where Your Karma Plays Out',
+        description: 'Discover how the house positions of your nodes reveal specific life areas for growth.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The houses containing your nodes show exactly where your karmic lessons and growth opportunities appear in daily life.'
+            },
+            {
+              type: 'house-analysis',
+              content: 'Explore how your nodal house positions influence career, relationships, and life experiences.'
+            }
+          ]
+        },
+        requiredLessons: ['nodes-3'],
+        xpReward: 25,
+        estimatedMinutes: 15
+      },
+      {
+        track: 'nodes',
+        lessonNumber: 5,
+        title: 'Nodal Aspects: How Other Planets Support Your Path',
+        description: 'Learn how planets aspecting your nodes either support or challenge your soul\'s journey.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Planets making aspects to your nodes provide additional tools, challenges, or support for your karmic evolution.'
+            },
+            {
+              type: 'aspect-integration',
+              content: 'Understand how to work with nodal aspects for accelerated spiritual growth and life purpose alignment.'
+            }
+          ]
+        },
+        requiredLessons: ['nodes-4'],
+        xpReward: 30,
+        estimatedMinutes: 18
       }
     ];
 
@@ -683,6 +895,243 @@ class LearningService {
                 description: 'See where Mars is positioned in your chart and which life area drives your ambition and energy'
               }
             });
+          } else if (lesson.lessonNumber === 4) { // Jupiter
+            const jupiterData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Jupiter');
+            const jupiterSign = jupiterData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Jupiter in ${jupiterSign}`,
+                content: this.getJupiterSignInsights(jupiterSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'expansion-explorer',
+                sign: jupiterSign,
+                element: 'jupiter'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Jupiter in ${jupiterSign}`,
+                description: 'Discover where Jupiter brings luck and expansion to your life through its chart placement'
+              }
+            });
+          } else if (lesson.lessonNumber === 5) { // Saturn
+            const saturnData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Saturn');
+            const saturnSign = saturnData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Saturn in ${saturnSign}`,
+                content: this.getSaturnSignInsights(saturnSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'discipline-explorer',
+                sign: saturnSign,
+                element: 'saturn'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Saturn in ${saturnSign}`,
+                description: 'See where Saturn teaches your most important life lessons through its chart position'
+              }
+            });
+          } else if (lesson.lessonNumber === 6) { // Uranus
+            const uranusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Uranus');
+            const uranusSign = uranusData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Uranus in ${uranusSign}`,
+                content: this.getUranusSignInsights(uranusSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'innovation-explorer',
+                sign: uranusSign,
+                element: 'uranus'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Uranus in ${uranusSign}`,
+                description: 'Explore where Uranus brings sudden changes and innovation to your life path'
+              }
+            });
+          } else if (lesson.lessonNumber === 7) { // Neptune
+            const neptuneData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Neptune');
+            const neptuneSign = neptuneData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Neptune in ${neptuneSign}`,
+                content: this.getNeptuneSignInsights(neptuneSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'spirituality-explorer',
+                sign: neptuneSign,
+                element: 'neptune'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Neptune in ${neptuneSign}`,
+                description: 'Discover where Neptune connects you to dreams and spirituality in your chart'
+              }
+            });
+          } else if (lesson.lessonNumber === 8) { // Pluto
+            const plutoData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Pluto');
+            const plutoSign = plutoData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Pluto in ${plutoSign}`,
+                content: this.getPlutoSignInsights(plutoSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'transformation-explorer',
+                sign: plutoSign,
+                element: 'pluto'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Pluto in ${plutoSign}`,
+                description: 'See where Pluto brings deep transformation and power to your life journey'
+              }
+            });
+          }
+          break;
+
+        case 'nodes':
+          if (lesson.lessonNumber === 1) { // Understanding the Lunar Nodes
+            const northNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'North Node');
+            const southNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'South Node');
+            const northNodeSign = northNodeData?.sign || 'Aries';
+            const southNodeSign = southNodeData?.sign || 'Libra';
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Karmic Axis: ${northNodeSign} North Node - ${southNodeSign} South Node`,
+                content: this.getNodalAxisInsights(northNodeSign, southNodeSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'karmic-journey',
+                northNode: northNodeSign,
+                southNode: southNodeSign,
+                element: 'nodes'
+              }
+            });
+          } else if (lesson.lessonNumber === 2) { // North Node Deep Dive
+            const northNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'North Node');
+            const northNodeSign = northNodeData?.sign || 'Aries';
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your North Node in ${northNodeSign}`,
+                content: this.getNorthNodeInsights(northNodeSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'purpose-explorer',
+                sign: northNodeSign,
+                element: 'north-node'
+              }
+            });
+          } else if (lesson.lessonNumber === 3) { // South Node Mastery
+            const southNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'South Node');
+            const southNodeSign = southNodeData?.sign || 'Libra';
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your South Node in ${southNodeSign}`,
+                content: this.getSouthNodeInsights(southNodeSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'past-life-explorer',
+                sign: southNodeSign,
+                element: 'south-node'
+              }
+            });
+          } else if (lesson.lessonNumber === 4) { // Nodes in Houses
+            const northNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'North Node');
+            const southNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'South Node');
+            const northNodeHouse = northNodeData?.house || 1;
+            const southNodeHouse = southNodeData?.house || 7;
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Nodes in Houses: ${northNodeHouse}th House Growth - ${southNodeHouse}th House Release`,
+                content: this.getNodalHouseInsights(northNodeHouse, southNodeHouse)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'house-karma',
+                northHouse: northNodeHouse,
+                southHouse: southNodeHouse,
+                element: 'nodal-houses'
+              }
+            });
+          } else if (lesson.lessonNumber === 5) { // Nodal Aspects
+            const northNodeData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'North Node');
+            const aspects = chartData.detailedChart?.aspects?.filter((asp: any) => 
+              asp.planet1 === 'North Node' || asp.planet2 === 'North Node'
+            ) || [];
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Nodal Aspects: Planetary Support for Your Path`,
+                content: this.getNodalAspectsInsights(aspects)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'aspect-support',
+                aspects: aspects,
+                element: 'nodal-aspects'
+              }
+            });
           }
           break;
       }
@@ -860,6 +1309,223 @@ class LearningService {
     };
     
     return styles[marsSign] || 'Your Mars sign influences your unique approach to taking action and pursuing goals.';
+  }
+
+  private getJupiterSignInsights(jupiterSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Jupiter in Aries brings luck through leadership and pioneering ventures. You grow by taking bold initiatives, starting new projects, and inspiring others with your courage and enthusiasm.',
+      'Taurus': 'Jupiter in Taurus brings abundance through patience and practical wisdom. You grow by building stable foundations, appreciating beauty, and sharing your natural talents for creating lasting value.',
+      'Gemini': 'Jupiter in Gemini expands through communication and learning. You grow by connecting diverse ideas, teaching others, and exploring multiple interests with curiosity and adaptability.',
+      'Cancer': 'Jupiter in Cancer brings growth through nurturing and emotional wisdom. You expand by caring for others, honoring traditions, and creating secure, supportive environments.',
+      'Leo': 'Jupiter in Leo brings luck through creative expression and generous leadership. You grow by sharing your talents, inspiring others, and pursuing dramatic, heart-centered goals.',
+      'Virgo': 'Jupiter in Virgo expands through service and practical improvement. You grow by helping others, perfecting skills, and finding meaning in detailed, methodical work.',
+      'Libra': 'Jupiter in Libra brings abundance through relationships and justice. You grow by creating harmony, advocating for fairness, and building beautiful, balanced partnerships.',
+      'Scorpio': 'Jupiter in Scorpio expands through transformation and deep investigation. You grow by exploring hidden truths, embracing change, and developing psychological insight.',
+      'Sagittarius': 'Jupiter in Sagittarius brings natural luck through exploration and philosophy. You grow by seeking truth, traveling, teaching, and expanding your worldview.',
+      'Capricorn': 'Jupiter in Capricorn brings growth through disciplined achievement. You expand by setting ambitious goals, working systematically, and building respected authority.',
+      'Aquarius': 'Jupiter in Aquarius expands through innovation and humanitarian ideals. You grow by embracing unique perspectives, working for social progress, and connecting with diverse groups.',
+      'Pisces': 'Jupiter in Pisces brings spiritual growth and compassionate wisdom. You expand through intuition, artistic expression, and serving others with empathy and understanding.'
+    };
+    
+    return insights[jupiterSign] || 'Your Jupiter sign shows where you naturally find growth, luck, and expansion in life.';
+  }
+
+  private getSaturnSignInsights(saturnSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Saturn in Aries teaches patience and thoughtful action. Your lessons involve learning to plan before acting, developing self-discipline, and balancing independence with responsibility.',
+      'Taurus': 'Saturn in Taurus teaches flexibility and security balance. Your lessons involve overcoming stubbornness, building practical resources, and finding stability without becoming rigid.',
+      'Gemini': 'Saturn in Gemini teaches focused communication and deep learning. Your lessons involve concentrating on fewer subjects, speaking with authority, and developing structured thinking.',
+      'Cancer': 'Saturn in Cancer teaches emotional boundaries and mature nurturing. Your lessons involve balancing care for others with self-care, and developing emotional resilience.',
+      'Leo': 'Saturn in Leo teaches humble leadership and authentic expression. Your lessons involve earning recognition through merit, expressing creativity responsibly, and leading through service.',
+      'Virgo': 'Saturn in Virgo teaches perfect imperfection and practical wisdom. Your lessons involve accepting good enough, developing systematic approaches, and serving others effectively.',
+      'Libra': 'Saturn in Libra teaches authentic relationships and decision-making. Your lessons involve making difficult choices, building genuine partnerships, and finding inner balance.',
+      'Scorpio': 'Saturn in Scorpio teaches emotional mastery and transformation. Your lessons involve facing fears, developing psychological strength, and using power responsibly.',
+      'Sagittarius': 'Saturn in Sagittarius teaches focused wisdom and practical philosophy. Your lessons involve applying beliefs practically, developing expertise, and teaching with authority.',
+      'Capricorn': 'Saturn in Capricorn teaches authentic achievement and leadership. Your lessons involve building lasting success, taking responsibility, and creating meaningful structure.',
+      'Aquarius': 'Saturn in Aquarius teaches disciplined innovation and group responsibility. Your lessons involve balancing individuality with social duty, and manifesting progressive ideals.',
+      'Pisces': 'Saturn in Pisces teaches structured spirituality and grounded compassion. Your lessons involve developing practical mysticism, setting healthy boundaries, and serving others wisely.'
+    };
+    
+    return insights[saturnSign] || 'Your Saturn sign reveals your most important life lessons and areas for developing maturity.';
+  }
+
+  private getUranusSignInsights(uranusSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Uranus in Aries brings revolutionary leadership and pioneering innovation. You\'re part of a generation that breaks new ground in individual expression and personal freedom.',
+      'Taurus': 'Uranus in Taurus brings innovation to values and resources. You\'re part of a generation that revolutionizes money, earth connection, and what society considers valuable.',
+      'Gemini': 'Uranus in Gemini revolutionizes communication and learning. You\'re part of a generation that transforms how information spreads and how people connect intellectually.',
+      'Cancer': 'Uranus in Cancer brings innovation to home and family. You\'re part of a generation that revolutionizes domestic life, emotional expression, and nurturing approaches.',
+      'Leo': 'Uranus in Leo revolutionizes creativity and self-expression. You\'re part of a generation that transforms entertainment, leadership styles, and artistic innovation.',
+      'Virgo': 'Uranus in Virgo brings innovation to work and health. You\'re part of a generation that revolutionizes service, daily routines, and approaches to wellness and efficiency.',
+      'Libra': 'Uranus in Libra revolutionizes relationships and justice. You\'re part of a generation that transforms partnerships, legal systems, and concepts of fairness and beauty.',
+      'Scorpio': 'Uranus in Scorpio brings transformation to power and sexuality. You\'re part of a generation that revolutionizes psychology, hidden knowledge, and approaches to transformation.',
+      'Sagittarius': 'Uranus in Sagittarius revolutionizes philosophy and education. You\'re part of a generation that transforms belief systems, higher learning, and global perspectives.',
+      'Capricorn': 'Uranus in Capricorn brings innovation to structure and authority. You\'re part of a generation that revolutionizes government, business, and traditional hierarchies.',
+      'Aquarius': 'Uranus in Aquarius revolutionizes technology and humanity. You\'re part of a generation that transforms social systems, friendship, and technological advancement.',
+      'Pisces': 'Uranus in Pisces brings innovation to spirituality and compassion. You\'re part of a generation that revolutionizes mysticism, art, and approaches to universal love.'
+    };
+    
+    return insights[uranusSign] || 'Your Uranus sign reveals your generational role in bringing innovation and change to the world.';
+  }
+
+  private getNeptuneSignInsights(neptuneSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Neptune in Aries brings spiritual pioneering and mystical action. You\'re part of a generation that seeks new forms of spiritual expression and active compassion.',
+      'Taurus': 'Neptune in Taurus brings earthly spirituality and practical mysticism. You\'re part of a generation that finds the divine in nature and material beauty.',
+      'Gemini': 'Neptune in Gemini brings intuitive communication and psychic awareness. You\'re part of a generation that develops telepathic abilities and spiritual learning.',
+      'Cancer': 'Neptune in Cancer brings emotional spirituality and psychic sensitivity. You\'re part of a generation that connects deeply with ancestral wisdom and emotional healing.',
+      'Leo': 'Neptune in Leo brings creative spirituality and dramatic inspiration. You\'re part of a generation that expresses the divine through art, performance, and heart-centered leadership.',
+      'Virgo': 'Neptune in Virgo brings practical spirituality and healing service. You\'re part of a generation that finds the sacred in daily work and devoted service to others.',
+      'Libra': 'Neptune in Libra brings harmony-seeking spirituality and relationship mysticism. You\'re part of a generation that seeks the divine through partnership and artistic beauty.',
+      'Scorpio': 'Neptune in Scorpio brings transformative spirituality and psychic depth. You\'re part of a generation that explores the mysteries of death, rebirth, and hidden knowledge.',
+      'Sagittarius': 'Neptune in Sagittarius brings philosophical spirituality and global consciousness. You\'re part of a generation that seeks universal truth and worldwide spiritual connection.',
+      'Capricorn': 'Neptune in Capricorn brings structured spirituality and practical mysticism. You\'re part of a generation that builds lasting spiritual institutions and grounded wisdom.',
+      'Aquarius': 'Neptune in Aquarius brings humanitarian spirituality and technological mysticism. You\'re part of a generation that combines spiritual ideals with progressive innovation.',
+      'Pisces': 'Neptune in Pisces brings pure spirituality and universal compassion. You\'re part of a generation with heightened psychic abilities and deep connection to collective consciousness.'
+    };
+    
+    return insights[neptuneSign] || 'Your Neptune sign reveals your generational spiritual gifts and connection to universal consciousness.';
+  }
+
+  private getPlutoSignInsights(plutoSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Pluto in Aries brings transformative leadership and revolutionary power. You\'re part of a generation that transforms through direct action and pioneering change.',
+      'Taurus': 'Pluto in Taurus brings transformation through values and resources. You\'re part of a generation that revolutionizes money, possessions, and earth connection.',
+      'Gemini': 'Pluto in Gemini transforms communication and mental patterns. You\'re part of a generation that revolutionizes thinking, learning, and information exchange.',
+      'Cancer': 'Pluto in Cancer transforms family and emotional patterns. You\'re part of a generation that revolutionizes home life, nurturing, and emotional expression.',
+      'Leo': 'Pluto in Leo transforms creativity and self-expression. You\'re part of a generation that revolutionizes entertainment, leadership, and individual power.',
+      'Virgo': 'Pluto in Virgo transforms work and health systems. You\'re part of a generation that revolutionizes service, daily routines, and approaches to wellness.',
+      'Libra': 'Pluto in Libra transforms relationships and justice. You\'re part of a generation that revolutionizes partnerships, legal systems, and concepts of fairness.',
+      'Scorpio': 'Pluto in Scorpio brings deep personal transformation and power. You\'re part of a generation that revolutionizes psychology, sexuality, and hidden knowledge.',
+      'Sagittarius': 'Pluto in Sagittarius transforms belief systems and global perspectives. You\'re part of a generation that revolutionizes philosophy, education, and worldwide consciousness.',
+      'Capricorn': 'Pluto in Capricorn transforms structures and authority. You\'re part of a generation that revolutionizes government, business, and traditional power systems.',
+      'Aquarius': 'Pluto in Aquarius transforms technology and humanity. You\'re part of a generation that revolutionizes social systems, friendship, and collective consciousness.',
+      'Pisces': 'Pluto in Pisces transforms spirituality and compassion. You\'re part of a generation that revolutionizes mysticism, art, and universal love.'
+    };
+    
+    return insights[plutoSign] || 'Your Pluto sign reveals your generational role in deep transformation and evolutionary change.';
+  }
+
+  private getNodalAxisInsights(northNodeSign: string, southNodeSign: string): string {
+    const axisInsights: Record<string, string> = {
+      'Aries-Libra': 'Your karmic journey involves moving from excessive people-pleasing and relationship dependency (Libra South) toward developing independence, courage, and authentic self-assertion (Aries North). Learn to balance cooperation with healthy self-focus.',
+      'Taurus-Scorpio': 'Your soul path leads from intensity and emotional extremes (Scorpio South) toward stability, simplicity, and grounded values (Taurus North). Embrace practical wisdom and peaceful contentment over constant transformation.',
+      'Gemini-Sagittarius': 'Your evolution involves moving from dogmatic beliefs and philosophical preaching (Sagittarius South) toward curious learning, open dialogue, and gathering diverse perspectives (Gemini North). Value questions over absolute answers.',
+      'Cancer-Capricorn': 'Your growth path leads from rigid authority and cold ambition (Capricorn South) toward emotional intelligence, nurturing, and creating secure foundations (Cancer North). Balance achievement with heart-centered wisdom.',
+      'Leo-Aquarius': 'Your karmic journey moves from detached intellectualism and group-think (Aquarius South) toward creative self-expression, heart-centered leadership, and personal authenticity (Leo North). Embrace your unique spark.',
+      'Virgo-Pisces': 'Your soul evolution leads from vague idealism and martyrdom (Pisces South) toward practical service, organized healing, and grounded spirituality (Virgo North). Channel compassion through tangible help.'
+    };
+    
+    const reverseAxisInsights: Record<string, string> = {
+      'Libra-Aries': 'Your karmic journey involves moving from selfish independence and aggressive impulses (Aries South) toward cooperation, diplomacy, and relationship harmony (Libra North). Learn to balance personal needs with partnership.',
+      'Scorpio-Taurus': 'Your soul path leads from material obsession and stubborn resistance (Taurus South) toward emotional depth, transformation, and psychological insight (Scorpio North). Embrace change and explore life\'s mysteries.',
+      'Sagittarius-Gemini': 'Your evolution involves moving from scattered thinking and superficial knowledge (Gemini South) toward focused wisdom, teaching, and philosophical depth (Sagittarius North). Seek truth through experience.',
+      'Capricorn-Cancer': 'Your growth path leads from emotional neediness and clinging behavior (Cancer South) toward mature responsibility, structured achievement, and earned authority (Capricorn North). Build lasting foundations.',
+      'Aquarius-Leo': 'Your karmic journey moves from ego-driven drama and attention-seeking (Leo South) toward humanitarian service, progressive ideals, and group consciousness (Aquarius North). Serve the collective good.',
+      'Pisces-Virgo': 'Your soul evolution leads from perfectionist criticism and practical obsession (Virgo South) toward spiritual surrender, compassionate service, and intuitive wisdom (Pisces North). Trust your inner knowing.'
+    };
+    
+    const axis = `${northNodeSign}-${southNodeSign}`;
+    const reverseAxis = `${southNodeSign}-${northNodeSign}`;
+    
+    return axisInsights[axis] || reverseAxisInsights[reverseAxis] || 'Your nodal axis reveals the balance between past life mastery and current life growth.';
+  }
+
+  private getNorthNodeInsights(northNodeSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your North Node in Aries calls you to develop courage, independence, and pioneering spirit. Embrace leadership, take initiative, and trust your instincts. Your growth comes through bold action and authentic self-assertion.',
+      'Taurus': 'Your North Node in Taurus guides you toward stability, patience, and grounded values. Develop practical skills, appreciate beauty, and build lasting security. Your growth comes through steady progress and sensual awareness.',
+      'Gemini': 'Your North Node in Gemini calls for curiosity, communication, and adaptability. Embrace learning, ask questions, and connect diverse ideas. Your growth comes through gathering information and sharing knowledge.',
+      'Cancer': 'Your North Node in Cancer guides you toward emotional intelligence, nurturing, and creating security. Develop intuition, care for others, and honor feelings. Your growth comes through heart-centered compassion.',
+      'Leo': 'Your North Node in Leo calls you to embrace creativity, leadership, and authentic self-expression. Develop confidence, share your gifts, and inspire others. Your growth comes through heart-centered generosity.',
+      'Virgo': 'Your North Node in Virgo guides you toward service, organization, and practical healing. Develop skills, help others, and perfect your craft. Your growth comes through humble service and attention to detail.',
+      'Libra': 'Your North Node in Libra calls for cooperation, diplomacy, and relationship harmony. Develop partnership skills, seek balance, and create beauty. Your growth comes through collaboration and consideration.',
+      'Scorpio': 'Your North Node in Scorpio guides you toward emotional depth, transformation, and psychological insight. Embrace intensity, explore mysteries, and face fears. Your growth comes through profound change.',
+      'Sagittarius': 'Your North Node in Sagittarius calls for wisdom, exploration, and philosophical understanding. Develop broad perspectives, teach others, and seek truth. Your growth comes through expanding horizons.',
+      'Capricorn': 'Your North Node in Capricorn guides you toward responsibility, achievement, and building lasting structures. Develop discipline, earn authority, and create stability. Your growth comes through mature leadership.',
+      'Aquarius': 'Your North Node in Aquarius calls for innovation, humanitarian service, and progressive ideals. Develop unique perspectives, serve groups, and embrace change. Your growth comes through collective consciousness.',
+      'Pisces': 'Your North Node in Pisces guides you toward spirituality, compassion, and intuitive wisdom. Develop faith, serve others, and trust the flow. Your growth comes through surrendering and connecting to the divine.'
+    };
+    
+    return insights[northNodeSign] || 'Your North Node reveals the qualities you\'re developing for spiritual growth and life fulfillment.';
+  }
+
+  private getSouthNodeInsights(southNodeSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your South Node in Aries represents mastery of independence, courage, and leadership from past lives. While these are gifts, avoid over-relying on impulsive action, selfishness, or aggressive behavior that blocks growth.',
+      'Taurus': 'Your South Node in Taurus shows past life mastery of stability, practical skills, and material abundance. Honor these gifts but avoid stubbornness, material obsession, or resistance to change that limits evolution.',
+      'Gemini': 'Your South Node in Gemini represents expertise in communication, learning, and adaptability from previous incarnations. Use these talents but avoid scattered thinking, superficiality, or endless information gathering without depth.',
+      'Cancer': 'Your South Node in Cancer shows mastery of nurturing, emotional intelligence, and family bonds. These are valuable gifts, but avoid excessive emotionalism, clinging behavior, or letting feelings override reason.',
+      'Leo': 'Your South Node in Leo represents past life expertise in creativity, leadership, and self-expression. Honor your natural talents but avoid ego-driven behavior, attention-seeking, or dramatic manipulation.',
+      'Virgo': 'Your South Node in Virgo shows mastery of service, organization, and practical skills. Use these abilities wisely but avoid perfectionism, criticism, or getting lost in details that miss the bigger picture.',
+      'Libra': 'Your South Node in Libra represents expertise in relationships, diplomacy, and creating harmony. These are gifts to honor while avoiding people-pleasing, indecision, or losing yourself in others\' needs.',
+      'Scorpio': 'Your South Node in Scorpio shows past life mastery of transformation, psychology, and hidden knowledge. Use this wisdom carefully while avoiding manipulation, obsession, or dwelling in emotional intensity.',
+      'Sagittarius': 'Your South Node in Sagittarius represents expertise in wisdom, teaching, and philosophical understanding. Honor this knowledge but avoid dogmatism, preaching, or believing you have all the answers.',
+      'Capricorn': 'Your South Node in Capricorn shows mastery of leadership, structure, and achievement. These are valuable talents, but avoid rigid authority, emotional coldness, or sacrificing everything for status.',
+      'Aquarius': 'Your South Node in Aquarius represents past life expertise in innovation, group consciousness, and progressive ideals. Use these gifts while avoiding emotional detachment, rebelliousness, or intellectual superiority.',
+      'Pisces': 'Your South Node in Pisces shows mastery of spirituality, compassion, and intuitive wisdom. Honor these gifts but avoid escapism, victim mentality, or losing yourself in fantasy and illusion.'
+    };
+    
+    return insights[southNodeSign] || 'Your South Node represents past life mastery - gifts to honor while avoiding over-reliance that blocks growth.';
+  }
+
+  private getNodalHouseInsights(northHouse: number, southHouse: number): string {
+    const houseInsights: Record<string, string> = {
+      '1-7': 'Your growth involves moving from over-focus on relationships and others\' needs (7th house South) toward developing personal identity, independence, and self-reliance (1st house North). Balance partnership with authentic self-expression.',
+      '2-8': 'Your karmic path leads from intensity around shared resources and others\' values (8th house South) toward building personal security, developing your own talents, and creating stable abundance (2nd house North).',
+      '3-9': 'Your evolution involves moving from dogmatic beliefs and distant philosophies (9th house South) toward practical learning, local connections, and everyday communication (3rd house North). Embrace curious questioning.',
+      '4-10': 'Your growth path leads from excessive career focus and public achievement (10th house South) toward emotional security, family connections, and creating a nurturing foundation (4th house North).',
+      '5-11': 'Your karmic journey moves from group conformity and future worries (11th house South) toward creative self-expression, joy, and heart-centered authenticity (5th house North). Embrace your unique creative spark.',
+      '6-12': 'Your soul evolution leads from vague spirituality and escapist tendencies (12th house South) toward practical service, health awareness, and organized daily routines (6th house North). Ground your spiritual insights.',
+      '7-1': 'Your growth involves moving from excessive self-focus and independence (1st house South) toward cooperation, partnership, and considering others\' perspectives (7th house North). Learn the art of relationship.',
+      '8-2': 'Your karmic path leads from material stubbornness and possessiveness (2nd house South) toward transformation, shared resources, and psychological depth (8th house North). Embrace change and mystery.',
+      '9-3': 'Your evolution involves moving from scattered communication and superficial learning (3rd house South) toward wisdom, teaching, and philosophical understanding (9th house North). Seek deeper truth.',
+      '10-4': 'Your growth path leads from emotional dependency and family clinging (4th house South) toward professional achievement, public recognition, and earned authority (10th house North). Build your reputation.',
+      '11-5': 'Your karmic journey moves from ego-driven creativity and attention-seeking (5th house South) toward group service, friendship, and humanitarian ideals (11th house North). Serve the collective.',
+      '12-6': 'Your soul evolution leads from perfectionist criticism and practical obsession (6th house South) toward spiritual surrender, compassion, and intuitive service (12th house North). Trust divine guidance.'
+    };
+    
+    const axis = `${northHouse}-${southHouse}`;
+    
+    return houseInsights[axis] || `Your nodal houses show growth from ${southHouse}th house patterns toward ${northHouse}th house development.`;
+  }
+
+  private getNodalAspectsInsights(aspects: any[]): string {
+    if (!aspects || aspects.length === 0) {
+      return 'Your North Node stands free from major planetary aspects, giving you clear, unobstructed access to your soul\'s growth path. This is a blessing of direct karmic evolution.';
+    }
+
+    const aspectInsights = aspects.map(aspect => {
+      const planet = aspect.planet1 === 'North Node' ? aspect.planet2 : aspect.planet1;
+      const aspectType = aspect.aspect;
+      
+      const planetSupport: Record<string, string> = {
+        'Sun': 'illuminates your life purpose and gives confidence to follow your path',
+        'Moon': 'provides emotional support and intuitive guidance for your growth',
+        'Mercury': 'assists communication and learning aligned with your soul mission',
+        'Venus': 'brings harmony and attractive energy to support your evolution',
+        'Mars': 'energizes action and courage needed for your karmic development',
+        'Jupiter': 'expands opportunities and brings wisdom to your spiritual journey',
+        'Saturn': 'provides structure and discipline needed for mastering your path',
+        'Uranus': 'brings innovative insights and sudden awakenings to accelerate growth',
+        'Neptune': 'offers spiritual inspiration and intuitive guidance for your mission',
+        'Pluto': 'provides transformative power to break through karmic patterns'
+      };
+
+      const supportType = planetSupport[planet] || 'influences your karmic path';
+      
+      if (aspectType === 'conjunction') {
+        return `${planet} ${supportType} with direct, powerful energy.`;
+      } else if (aspectType === 'trine' || aspectType === 'sextile') {
+        return `${planet} ${supportType} with harmonious, flowing assistance.`;
+      } else if (aspectType === 'square' || aspectType === 'opposition') {
+        return `${planet} challenges you to integrate its energy constructively with your soul path.`;
+      } else {
+        return `${planet} ${supportType} in a unique way that supports your evolution.`;
+      }
+    });
+
+    return `Your North Node receives planetary support: ${aspectInsights.join(' ')} These aspects provide the cosmic tools needed for your spiritual evolution.`;
   }
 
   // Record lesson progress
