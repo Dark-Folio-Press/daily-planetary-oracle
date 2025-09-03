@@ -243,10 +243,10 @@ export default function LessonPage() {
             <CardDescription>{lesson.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {personalizedContent.map((content, index) => (
+            {personalizedContent.slice(0, currentSection + 1).map((content, index) => (
               <div 
                 key={index} 
-                className={`transition-opacity opacity-100`}
+                className={`transition-opacity duration-500 ${index === currentSection ? 'opacity-100' : 'opacity-75'}`}
               >
                 {content.type === 'text' && (
                   <div className="prose prose-purple dark:prose-invert max-w-none">
@@ -355,7 +355,7 @@ export default function LessonPage() {
             ) : (
               <Button
                 onClick={handleCompleteLesson}
-                disabled={isCompleted || progressMutation.isPending}
+                disabled={isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1}
                 className="bg-green-600 hover:bg-green-700"
               >
                 {isCompleted ? (
