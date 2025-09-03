@@ -108,7 +108,7 @@ export default function LearningPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-            Learn Your Birth Chart
+            🎓 Cosmic Academy Dashboard
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             Master the art of reading your own astrological chart through interactive lessons and earn cosmic rewards
