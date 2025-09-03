@@ -14,7 +14,7 @@ import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
 import FeedbackAnalytics from "@/pages/feedback-analytics";
 import { MoodAnalysisPage } from "@/pages/mood-analysis";
-import LearningSimple from "@/pages/learning-simple";
+import LearningPage from "@/pages/learning";
 import LessonPage from "@/pages/lesson";
 import NotFound from "@/pages/not-found";
 
@@ -43,7 +43,7 @@ function Router() {
       
       {/* Learning route - accessible to authenticated users */}
       <Route path="/learning">
-        {user ? <LearningSimple /> : <LoginPage />}
+        {user ? <LearningPage /> : <LoginPage />}
       </Route>
       <Route path="/learning/lesson/:lessonId">
         {user ? <LessonPage /> : <LoginPage />}

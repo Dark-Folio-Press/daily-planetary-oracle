@@ -54,9 +54,9 @@ export default function LearningSimple() {
                 Your personalized learning journey will teach you to interpret your birth chart
                 using your actual astrological data. Complete lessons to earn XP and unlock advanced features!
               </p>
-              <Link href="/learning/lesson/1">
-                <Button className="bg-purple-600 hover:bg-purple-700">
-                  Start Your First Lesson
+              <Link href="/learning">
+                <Button className="bg-purple-600 hover:bg-purple-700" data-testid="button-cosmic-academy">
+                  Enter Cosmic Academy
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
