@@ -377,12 +377,12 @@ export default function LessonPage() {
         </div>
 
         {/* Completion Message */}
-        {isCompleted && (
+        {(isCompleted || isAlreadyCompleted) && (
           <Alert className="mt-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
             <CheckCircle2 className="w-4 h-4" />
             <AlertDescription className="flex items-center justify-between">
               <div>
-                <strong>Lesson Complete!</strong> You've earned +{lesson.xpReward} XP. Ready for your next cosmic learning adventure?
+                <strong>{isAlreadyCompleted ? 'Lesson Previously Completed!' : 'Lesson Complete!'}</strong> You've earned +{lesson.xpReward} XP. Ready for your next cosmic learning adventure?
               </div>
               <div className="flex gap-2 ml-4">
                 <Link href="/learning">
