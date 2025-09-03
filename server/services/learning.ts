@@ -411,22 +411,20 @@ class LearningService {
     
     const completedLessonIds = userProgress
       .filter(p => p.status === 'completed' || p.status === 'mastered')
-      .map(p => {
-        const lesson = lessonMap.get(p.lessonId);
-        return lesson ? `${lesson.track}-${lesson.lessonNumber}` : null;
-      })
-      .filter(Boolean);
+      .map(p => p.lessonId);
     
     return allLessons.filter(lesson => {
-      const lessonId = `${lesson.track}-${lesson.lessonNumber}`;
-      
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
       }
       
       // Check if all prerequisites are completed
-      return lesson.requiredLessons.every(req => completedLessonIds.includes(req));
+      // Convert string prerequisites to numbers if needed
+      return lesson.requiredLessons.every(req => {
+        const reqId = typeof req === 'string' ? parseInt(req) : req;
+        return completedLessonIds.includes(reqId);
+      });
     });
   }
 
