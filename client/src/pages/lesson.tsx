@@ -145,6 +145,9 @@ export default function LessonPage() {
 
   const { lesson, personalizedContent, userChartData } = lessonData;
   
+  // Check if this lesson is already completed by the user
+  const isAlreadyCompleted = lesson.userProgress?.status === 'completed' || lesson.userProgress?.status === 'mastered';
+  
   const trackIcons: Record<string, any> = {
     basics: Star,
     planets: Target,
@@ -187,6 +190,23 @@ export default function LessonPage() {
             </div>
           </div>
         </div>
+
+        {/* Review Mode Banner */}
+        {isAlreadyCompleted && (
+          <Alert className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
+            <CheckCircle2 className="w-4 h-4 text-green-600" />
+            <AlertDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <strong className="text-green-800 dark:text-green-200">Review Mode</strong>
+                  <span className="text-green-700 dark:text-green-300 ml-2">
+                    You've already completed this lesson. Feel free to review your personalized insights anytime!
+                  </span>
+                </div>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Progress Bar */}
         <div className="mb-8">
@@ -323,6 +343,14 @@ export default function LessonPage() {
               >
                 Next Section
                 <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+              </Button>
+            ) : isAlreadyCompleted ? (
+              <Button
+                disabled
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Previously Completed
               </Button>
             ) : (
               <Button

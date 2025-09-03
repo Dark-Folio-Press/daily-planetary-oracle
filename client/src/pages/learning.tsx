@@ -226,10 +226,12 @@ export default function LearningPage() {
                         +{lesson.xpReward} XP
                       </div>
                       {lesson.userProgress?.status === 'completed' || lesson.userProgress?.status === 'mastered' ? (
-                        <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200" disabled>
-                          <CheckCircle2 className="w-4 h-4 mr-1" />
-                          Completed
-                        </Button>
+                        <Link href={`/learning/lesson/${lesson.id}`}>
+                          <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                            <CheckCircle2 className="w-4 h-4 mr-1" />
+                            Review
+                          </Button>
+                        </Link>
                       ) : (
                         <Link href={`/learning/lesson/${lesson.id}`}>
                           <Button size="sm" className="group-hover:bg-purple-600" data-testid={`button-start-lesson-${lesson.id}`}>
