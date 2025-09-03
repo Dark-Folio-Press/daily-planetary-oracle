@@ -428,6 +428,18 @@ class LearningService {
     });
   }
 
+  // Get the next lesson in the same track
+  async getNextLessonInTrack(currentTrack: string, currentLessonNumber: number): Promise<LearningLesson | null> {
+    const [nextLesson] = await db.select().from(learningLessons)
+      .where(and(
+        eq(learningLessons.track, currentTrack),
+        eq(learningLessons.lesson_number, currentLessonNumber + 1),
+        eq(learningLessons.is_active, true)
+      ));
+    
+    return nextLesson || null;
+  }
+
   // Get personalized lesson content using user's birth chart
   async getPersonalizedLesson(lessonId: number, userId: string): Promise<PersonalizedLesson> {
     const [lesson] = await db.select().from(learningLessons).where(eq(learningLessons.id, lessonId));

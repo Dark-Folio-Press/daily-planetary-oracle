@@ -143,7 +143,7 @@ export default function LessonPage() {
     );
   }
 
-  const { lesson, personalizedContent, userChartData } = lessonData;
+  const { lesson, personalizedContent, userChartData, nextLessonId } = lessonData;
   
   // Check if this lesson is already completed by the user
   const isAlreadyCompleted = lessonData.userProgress?.status === 'completed' || lessonData.userProgress?.status === 'mastered';
@@ -390,8 +390,8 @@ export default function LessonPage() {
                     Back to Dashboard
                   </Button>
                 </Link>
-                {lesson.lessonNumber < 3 && (
-                  <Link href={`/learning/lesson/${lesson.id + 1}`}>
+                {nextLessonId && (
+                  <Link href={`/learning/lesson/${nextLessonId}`}>
                     <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
                       Next Lesson →
                     </Button>

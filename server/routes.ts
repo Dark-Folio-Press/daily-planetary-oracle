@@ -212,7 +212,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const personalizedLesson = await learningService.getPersonalizedLesson(lessonId, userId);
-      res.json(personalizedLesson);
+      
+      // Also find the next lesson in the track
+      const nextLesson = await learningService.getNextLessonInTrack(
+        personalizedLesson.lesson.track,
+        personalizedLesson.lesson.lesson_number
+      );
+      
+      res.json({
+        ...personalizedLesson,
+        nextLessonId: nextLesson?.id || null
+      });
     } catch (error) {
       console.error("Error getting lesson:", error);
       res.status(500).json({ message: "Failed to get lesson" });
