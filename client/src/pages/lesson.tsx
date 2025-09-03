@@ -146,7 +146,7 @@ export default function LessonPage() {
   const { lesson, personalizedContent, userChartData } = lessonData;
   
   // Check if this lesson is already completed by the user
-  const isAlreadyCompleted = lesson.userProgress?.status === 'completed' || lesson.userProgress?.status === 'mastered';
+  const isAlreadyCompleted = lessonData.userProgress?.status === 'completed' || lessonData.userProgress?.status === 'mastered';
   
   const trackIcons: Record<string, any> = {
     basics: Star,
@@ -495,6 +495,84 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.element === 'venus' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Venus in Relationships</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Romantic Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your {interactiveContent?.sign} Venus seeks harmony and balance in love, preferring diplomatic partners who appreciate beauty and fairness.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Value System</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You value justice, aesthetic beauty, and partnership equality above all, finding fulfillment in creating harmonious environments.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Attraction Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You're drawn to charming, well-balanced individuals who share your love of culture, art, and peaceful connection.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'mercury' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Mercury Communication</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Speaking Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Mercury in {interactiveContent?.sign} makes you communicate with balance and consideration, always seeking the fair perspective.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Learning Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You learn best in peaceful, aesthetically pleasing environments with collaborative discussion and varied perspectives.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Decision Making</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You weigh all options carefully, seeking input from others and striving for decisions that benefit everyone involved.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'mars' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Mars Drive</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Action Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Mars in {interactiveContent?.sign} drives you to act through cooperation and diplomacy, preferring win-win solutions.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Motivation</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You're motivated by justice, beauty, and creating harmony in your environment and relationships.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Conflict Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You handle conflict by seeking mediation, avoiding direct confrontation, and working toward balanced resolutions.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {interactiveContent?.type === 'chart-focus' && (
                     <>
                       <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
@@ -524,6 +602,27 @@ export default function LessonPage() {
                                   <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg animate-pulse">
                                     <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
                                       ↗ {lessonData?.userChartData?.risingSign}
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('mercury') && (
+                                  <div className="absolute bottom-8 left-8 w-4 h-4 bg-blue-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ☿ Mercury
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('venus') && (
+                                  <div className="absolute bottom-2 right-1/4 w-4 h-4 bg-pink-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♀ Venus
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('mars') && (
+                                  <div className="absolute top-16 right-16 w-4 h-4 bg-red-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♂ Mars
                                     </div>
                                   </div>
                                 )}

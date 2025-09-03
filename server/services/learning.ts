@@ -471,13 +471,21 @@ class LearningService {
       };
     }
 
+    // Get user progress for this lesson
+    const [userProgress] = await db.select().from(learningProgress)
+      .where(and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.lessonId, lessonId)
+      ));
+
     // Personalize lesson content based on user's chart
     const personalizedContent = this.personalizeContent(lesson, userChartData);
 
     return {
-      lesson,
+      lesson: lesson as any, // Type assertion for now
       personalizedContent,
-      userChartData
+      userChartData,
+      userProgress: userProgress || null
     };
   }
 
