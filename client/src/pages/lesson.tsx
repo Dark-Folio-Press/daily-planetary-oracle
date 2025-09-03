@@ -382,7 +382,7 @@ export default function LessonPage() {
             <CheckCircle2 className="w-4 h-4" />
             <AlertDescription className="flex items-center justify-between">
               <div>
-                <strong>{isAlreadyCompleted ? 'Lesson Previously Completed!' : 'Lesson Complete!'}</strong> You've earned +{lesson.xpReward} XP. Ready for your next cosmic learning adventure?
+                <strong>{isAlreadyCompleted ? 'Lesson Previously Completed!' : 'Lesson Complete!'}</strong> You've earned +{lesson.xpReward} XP. {nextLessonId ? 'Ready for your next cosmic learning adventure?' : 'You\'ve completed all available lessons in this track!'}
               </div>
               <div className="flex gap-2 ml-4">
                 <Link href="/learning">
@@ -390,10 +390,16 @@ export default function LessonPage() {
                     Back to Dashboard
                   </Button>
                 </Link>
-                {nextLessonId && (
+                {nextLessonId ? (
                   <Link href={`/learning/lesson/${nextLessonId}`}>
                     <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
                       Next Lesson →
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/learning">
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                      ✨ Track Complete!
                     </Button>
                   </Link>
                 )}
