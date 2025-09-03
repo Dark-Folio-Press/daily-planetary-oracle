@@ -413,7 +413,13 @@ class LearningService {
       .filter(p => p.status === 'completed' || p.status === 'mastered')
       .map(p => p.lessonId);
     
-    return allLessons.filter(lesson => {
+    console.log('Debug getAvailableLessons:', {
+      userId,
+      completedLessonIds,
+      allLessonsCount: allLessons.length
+    });
+    
+    const availableLessons = allLessons.filter(lesson => {
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
@@ -421,11 +427,18 @@ class LearningService {
       
       // Check if all prerequisites are completed
       // Convert string prerequisites to numbers if needed
-      return lesson.requiredLessons.every(req => {
+      const isAvailable = lesson.requiredLessons.every(req => {
         const reqId = typeof req === 'string' ? parseInt(req) : req;
-        return completedLessonIds.includes(reqId);
+        const hasPrereq = completedLessonIds.includes(reqId);
+        console.log(`Lesson ${lesson.id} (${lesson.title}) requires ${reqId}, user has: ${hasPrereq}`);
+        return hasPrereq;
       });
+      
+      return isAvailable;
     });
+    
+    console.log('Available lessons:', availableLessons.map(l => ({ id: l.id, title: l.title, track: l.track })));
+    return availableLessons;
   }
 
   // Get personalized lesson content using user's birth chart
