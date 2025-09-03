@@ -413,13 +413,7 @@ class LearningService {
       .filter(p => p.status === 'completed' || p.status === 'mastered')
       .map(p => p.lessonId);
     
-    console.log('Debug getAvailableLessons:', {
-      userId,
-      completedLessonIds,
-      allLessonsCount: allLessons.length
-    });
-    
-    const availableLessons = allLessons.filter(lesson => {
+    return allLessons.filter(lesson => {
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
@@ -427,18 +421,11 @@ class LearningService {
       
       // Check if all prerequisites are completed
       // Convert string prerequisites to numbers if needed
-      const isAvailable = lesson.requiredLessons.every(req => {
+      return lesson.requiredLessons.every(req => {
         const reqId = typeof req === 'string' ? parseInt(req) : req;
-        const hasPrereq = completedLessonIds.includes(reqId);
-        console.log(`Lesson ${lesson.id} (${lesson.title}) requires ${reqId}, user has: ${hasPrereq}`);
-        return hasPrereq;
+        return completedLessonIds.includes(reqId);
       });
-      
-      return isAvailable;
     });
-    
-    console.log('Available lessons:', availableLessons.map(l => ({ id: l.id, title: l.title, track: l.track })));
-    return availableLessons;
   }
 
   // Get personalized lesson content using user's birth chart
@@ -801,10 +788,23 @@ class LearningService {
       .orderBy(desc(learningProgress.createdAt))
       .limit(5);
 
+    // Get user progress to include completion status
+    const userProgress = await db.select()
+      .from(learningProgress)
+      .where(eq(learningProgress.userId, userId));
+    
+    const progressMap = new Map(userProgress.map(p => [p.lessonId, p]));
+
+    // Add completion status to available lessons
+    const lessonsWithStatus = availableLessons.map(lesson => ({
+      ...lesson,
+      userProgress: progressMap.get(lesson.id) || null
+    }));
+
     return {
       stats,
       badges,
-      availableLessons: availableLessons.slice(0, 3), // Next 3 lessons
+      availableLessons: lessonsWithStatus,
       recentProgress,
       canAccessSynastry: await this.canAccessSynastry(userId)
     };

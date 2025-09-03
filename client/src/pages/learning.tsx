@@ -48,6 +48,10 @@ interface LearningLesson {
   description: string;
   xpReward: number;
   estimatedMinutes: number;
+  userProgress?: {
+    status: string;
+    completedAt: string | null;
+  } | null;
 }
 
 interface DashboardData {
@@ -221,12 +225,19 @@ export default function LearningPage() {
                         <Star className="w-4 h-4" />
                         +{lesson.xpReward} XP
                       </div>
-                      <Link href={`/learning/lesson/${lesson.id}`}>
-                        <Button size="sm" className="group-hover:bg-purple-600">
-                          Start
-                          <ChevronRight className="w-4 h-4 ml-1" />
+                      {lesson.userProgress?.status === 'completed' || lesson.userProgress?.status === 'mastered' ? (
+                        <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200" disabled>
+                          <CheckCircle2 className="w-4 h-4 mr-1" />
+                          Completed
                         </Button>
-                      </Link>
+                      ) : (
+                        <Link href={`/learning/lesson/${lesson.id}`}>
+                          <Button size="sm" className="group-hover:bg-purple-600" data-testid={`button-start-lesson-${lesson.id}`}>
+                            Start
+                            <ChevronRight className="w-4 h-4 ml-1" />
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
