@@ -36,6 +36,8 @@ export interface PersonalizedLesson {
   lesson: LearningLesson;
   personalizedContent: LessonContent[];
   userChartData?: any;
+  userProgress?: any;
+  nextLessonId?: number | null;
 }
 
 class LearningService {
@@ -433,8 +435,8 @@ class LearningService {
     const [nextLesson] = await db.select().from(learningLessons)
       .where(and(
         eq(learningLessons.track, currentTrack),
-        eq(learningLessons.lesson_number, currentLessonNumber + 1),
-        eq(learningLessons.is_active, true)
+        eq(learningLessons.lessonNumber, currentLessonNumber + 1),
+        eq(learningLessons.isActive, true)
       ));
     
     return nextLesson || null;
@@ -494,7 +496,7 @@ class LearningService {
     const personalizedContent = this.personalizeContent(lesson, userChartData);
 
     return {
-      lesson: lesson as any, // Type assertion for now
+      lesson,
       personalizedContent,
       userChartData,
       userProgress: userProgress || null

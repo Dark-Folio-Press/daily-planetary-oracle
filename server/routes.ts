@@ -216,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Also find the next lesson in the track
       const nextLesson = await learningService.getNextLessonInTrack(
         personalizedLesson.lesson.track,
-        personalizedLesson.lesson.lesson_number
+        personalizedLesson.lesson.lessonNumber
       );
       
       res.json({

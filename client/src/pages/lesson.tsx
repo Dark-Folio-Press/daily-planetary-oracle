@@ -143,10 +143,10 @@ export default function LessonPage() {
     );
   }
 
-  const { lesson, personalizedContent, userChartData, nextLessonId } = lessonData;
+  const { lesson, personalizedContent, userChartData, userProgress, nextLessonId } = lessonData;
   
   // Check if this lesson is already completed by the user
-  const isAlreadyCompleted = lessonData.userProgress?.status === 'completed' || lessonData.userProgress?.status === 'mastered';
+  const isAlreadyCompleted = userProgress?.status === 'completed' || userProgress?.status === 'mastered';
   
   const trackIcons: Record<string, any> = {
     basics: Star,
