@@ -441,15 +441,28 @@ class LearningService {
     let userChartData = null;
     
     if (user[0]?.birthDate && user[0]?.birthTime && user[0]?.birthLocation) {
-      // Calculate personalized astrological data
+      // Calculate personalized astrological data including planetary positions
       const sunSign = astrologyService.calculateSunSign(user[0].birthDate);
       const moonSign = astrologyService.calculateMoonSign(user[0].birthDate, user[0].birthTime);
       const risingSign = astrologyService.calculateRising(user[0].birthDate, user[0].birthTime, user[0].birthLocation);
+      
+      // Get detailed chart data for planetary positions
+      let detailedChart = null;
+      try {
+        detailedChart = await astrologyService.generateDetailedChartAccurate({
+          date: user[0].birthDate,
+          time: user[0].birthTime,
+          location: user[0].birthLocation
+        });
+      } catch (error) {
+        console.error('Failed to get detailed chart data:', error);
+      }
       
       userChartData = {
         sunSign,
         moonSign,
         risingSign,
+        detailedChart,
         birthData: {
           date: user[0].birthDate,
           time: user[0].birthTime,
@@ -549,14 +562,106 @@ class LearningService {
           break;
         
         case 'planets':
-          content.push({
-            type: 'chart-highlight',
-            data: {
-              element: lesson.title.toLowerCase().includes('mercury') ? 'mercury' : 
-                      lesson.title.toLowerCase().includes('venus') ? 'venus' : 'mars',
-              description: 'See this planet highlighted in your personal birth chart'
-            }
-          });
+          if (lesson.lessonNumber === 1) { // Mercury
+            const mercuryData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury');
+            const mercurySign = mercuryData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Mercury in ${mercurySign}`,
+                content: this.getMercurySignInsights(mercurySign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: 'Communication Style Analysis',
+                content: this.getMercuryCommunicationStyle(mercurySign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'communication-explorer',
+                sign: mercurySign,
+                element: 'mercury'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Mercury in ${mercurySign}`,
+                description: 'See where Mercury sits in your birth chart and which house governs your communication style'
+              }
+            });
+          } else if (lesson.lessonNumber === 2) { // Venus
+            const venusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Venus');
+            const venusSign = venusData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Venus in ${venusSign}`,
+                content: this.getVenusSignInsights(venusSign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: 'Love & Values Analysis',
+                content: this.getVenusLoveStyle(venusSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'relationship-explorer',
+                sign: venusSign,
+                element: 'venus'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Venus in ${venusSign}`,
+                description: 'Discover where Venus sits in your chart and which life area influences your relationships and values'
+              }
+            });
+          } else if (lesson.lessonNumber === 3) { // Mars
+            const marsData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mars');
+            const marsSign = marsData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Mars in ${marsSign}`,
+                content: this.getMarsSignInsights(marsSign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: 'Drive & Action Analysis',
+                content: this.getMarsActionStyle(marsSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'motivation-explorer',
+                sign: marsSign,
+                element: 'mars'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Mars in ${marsSign}`,
+                description: 'See where Mars is positioned in your chart and which life area drives your ambition and energy'
+              }
+            });
+          }
           break;
       }
     }
@@ -619,6 +724,120 @@ class LearningService {
     };
     
     return insights[risingSign] || 'Your rising sign shapes how you present yourself to the world and approach new experiences.';
+  }
+
+  private getMercurySignInsights(mercurySign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Mercury in Aries gives you quick, direct communication. You think fast, speak boldly, and prefer getting straight to the point. You learn best through action and competitive environments.',
+      'Taurus': 'With Mercury in Taurus, you communicate thoughtfully and practically. You think methodically, value concrete information, and learn best through hands-on experience and repetition.',
+      'Gemini': 'Your Mercury in Gemini makes you naturally curious and versatile in communication. You think quickly, enjoy wordplay, and learn best through variety and social interaction.',
+      'Cancer': 'Mercury in Cancer gives you intuitive, emotionally-aware communication. You think with your heart, remember personal details, and learn best in nurturing, supportive environments.',
+      'Leo': 'With Mercury in Leo, you communicate with flair and creativity. You think dramatically, enjoy storytelling, and learn best when you can express yourself and receive appreciation.',
+      'Virgo': 'Your Mercury in Virgo makes you precise and analytical in communication. You think systematically, pay attention to details, and learn best through organized, step-by-step methods.',
+      'Libra': 'Mercury in Libra gives you diplomatic, balanced communication. You think through different perspectives, seek harmony in discussions, and learn best in peaceful, aesthetic environments.',
+      'Scorpio': 'With Mercury in Scorpio, you communicate with depth and intensity. You think psychologically, uncover hidden meanings, and learn best through research and investigation.',
+      'Sagittarius': 'Your Mercury in Sagittarius makes you philosophical and enthusiastic in communication. You think big-picture, enjoy debates, and learn best through exploration and diverse experiences.',
+      'Capricorn': 'Mercury in Capricorn gives you structured, goal-oriented communication. You think strategically, value practical information, and learn best through traditional, authoritative sources.',
+      'Aquarius': 'With Mercury in Aquarius, you communicate in unique, innovative ways. You think independently, enjoy unconventional ideas, and learn best through experimentation and group discussions.',
+      'Pisces': 'Your Mercury in Pisces makes you intuitive and imaginative in communication. You think creatively, absorb subtle cues, and learn best through artistic and spiritual approaches.'
+    };
+    
+    return insights[mercurySign] || 'Your Mercury sign shapes how you think, learn, and communicate with the world.';
+  }
+
+  private getMercuryCommunicationStyle(mercurySign: string): string {
+    const styles: Record<string, string> = {
+      'Aries': 'You communicate with directness and urgency. In conversations, you jump quickly to conclusions and prefer active, dynamic exchanges. You excel at motivating others but may need to slow down for deeper discussions.',
+      'Taurus': 'You communicate slowly and deliberately, preferring to think before speaking. You excel at explaining practical matters and building consensus, but may resist changing your mind once decided.',
+      'Gemini': 'You communicate with wit and versatility, easily adapting your style to different audiences. You excel at gathering and sharing information but may struggle with in-depth focus on one topic.',
+      'Cancer': 'You communicate with emotional sensitivity, reading between the lines and remembering personal details. You excel at supportive conversations but may take criticism too personally.',
+      'Leo': 'You communicate with warmth and dramatic flair, naturally drawing attention in groups. You excel at inspiring and entertaining others but may dominate conversations.',
+      'Virgo': 'You communicate with precision and helpfulness, offering practical solutions and detailed explanations. You excel at teaching and problem-solving but may over-criticize or get lost in details.',
+      'Libra': 'You communicate with charm and diplomacy, seeking to please and maintain harmony. You excel at mediation and seeing all sides but may avoid difficult conversations.',
+      'Scorpio': 'You communicate with intensity and psychological insight, preferring meaningful over superficial exchanges. You excel at deep conversations but may be too probing or secretive.',
+      'Sagittarius': 'You communicate with enthusiasm and philosophical depth, sharing ideas and seeking truth. You excel at teaching and inspiring but may be too blunt or preachy.',
+      'Capricorn': 'You communicate with authority and structure, preferring formal, organized exchanges. You excel at leadership discussions but may seem too serious or rigid.',
+      'Aquarius': 'You communicate with originality and detachment, offering unique perspectives and innovative ideas. You excel at group discussions but may seem emotionally distant.',
+      'Pisces': 'You communicate with empathy and intuition, picking up on unspoken emotions and meanings. You excel at compassionate listening but may be unclear or overly indirect.'
+    };
+    
+    return styles[mercurySign] || 'Your Mercury sign influences your unique communication style and learning preferences.';
+  }
+
+  private getVenusSignInsights(venusSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Venus in Aries loves excitement and independence in relationships. You\'re attracted to confident, dynamic partners and value spontaneity, freedom, and passionate connections.',
+      'Taurus': 'With Venus in Taurus, you love stability and sensual pleasures. You\'re attracted to reliable, affectionate partners and value loyalty, comfort, and physical expressions of love.',
+      'Gemini': 'Your Venus in Gemini loves variety and intellectual connection. You\'re attracted to witty, communicative partners and value mental stimulation, friendship, and playful interactions.',
+      'Cancer': 'Venus in Cancer makes you love emotional security and nurturing. You\'re attracted to caring, family-oriented partners and value emotional intimacy, protection, and traditional romance.',
+      'Leo': 'With Venus in Leo, you love drama and appreciation in relationships. You\'re attracted to confident, creative partners and value admiration, generosity, and grand romantic gestures.',
+      'Virgo': 'Your Venus in Virgo loves practical care and improvement. You\'re attracted to helpful, reliable partners and value acts of service, health consciousness, and steady devotion.',
+      'Libra': 'Venus in Libra makes you love harmony and beauty. You\'re attracted to charming, balanced partners and value fairness, aesthetic appreciation, and peaceful relationships.',
+      'Scorpio': 'With Venus in Scorpio, you love depth and transformation. You\'re attracted to intense, mysterious partners and value emotional honesty, loyalty, and transformative connections.',
+      'Sagittarius': 'Your Venus in Sagittarius loves adventure and growth. You\'re attracted to optimistic, philosophical partners and value freedom, shared ideals, and expanding horizons together.',
+      'Capricorn': 'Venus in Capricorn makes you love structure and achievement. You\'re attracted to ambitious, responsible partners and value stability, long-term commitment, and building together.',
+      'Aquarius': 'With Venus in Aquarius, you love uniqueness and friendship. You\'re attracted to independent, innovative partners and value intellectual connection, freedom, and humanitarian values.',
+      'Pisces': 'Your Venus in Pisces loves compassion and spiritual connection. You\'re attracted to sensitive, artistic partners and value empathy, romance, and transcendent love experiences.'
+    };
+    
+    return insights[venusSign] || 'Your Venus sign shapes what you find attractive and how you express love and appreciation.';
+  }
+
+  private getVenusLoveStyle(venusSign: string): string {
+    const styles: Record<string, string> = {
+      'Aries': 'In love, you\'re direct and passionate, preferring to pursue rather than be pursued. You show affection through exciting adventures, competitive play, and bold gestures. You need partners who can match your energy and independence.',
+      'Taurus': 'In love, you\'re steady and devoted, preferring to build relationships slowly and securely. You show affection through physical touch, gifts, and creating comfort. You need partners who appreciate consistency and sensual experiences.',
+      'Gemini': 'In love, you\'re playful and communicative, preferring intellectual connections and variety. You show affection through words, humor, and shared interests. You need partners who can engage your mind and adapt to change.',
+      'Cancer': 'In love, you\'re nurturing and protective, preferring emotional depth and security. You show affection through caring gestures, cooking, and creating home together. You need partners who value family and emotional intimacy.',
+      'Leo': 'In love, you\'re generous and dramatic, preferring to be adored and appreciated. You show affection through grand gestures, gifts, and creative expressions. You need partners who celebrate and admire you.',
+      'Virgo': 'In love, you\'re helpful and devoted, preferring to serve and improve your partner\'s life. You show affection through practical care, remembering details, and solving problems. You need partners who appreciate your thoughtfulness.',
+      'Libra': 'In love, you\'re romantic and harmonious, preferring partnership and balance. You show affection through beauty, compromise, and creating peace. You need partners who value fairness and aesthetic experiences.',
+      'Scorpio': 'In love, you\'re intense and transformative, preferring deep emotional and physical bonds. You show affection through loyalty, depth, and complete devotion. You need partners who can handle intensity and commit fully.',
+      'Sagittarius': 'In love, you\'re adventurous and optimistic, preferring growth and exploration together. You show affection through shared adventures, philosophical discussions, and giving freedom. You need partners who love learning and traveling.',
+      'Capricorn': 'In love, you\'re committed and traditional, preferring long-term stability and building together. You show affection through responsibility, providing security, and achieving goals together. You need partners who share your ambitions.',
+      'Aquarius': 'In love, you\'re friendly and independent, preferring intellectual connection and personal freedom. You show affection through shared causes, unique experiences, and respecting independence. You need partners who understand your need for space.',
+      'Pisces': 'In love, you\'re romantic and intuitive, preferring spiritual and emotional connection. You show affection through empathy, creativity, and selfless devotion. You need partners who appreciate your sensitivity and imagination.'
+    };
+    
+    return styles[venusSign] || 'Your Venus sign influences how you give and receive love in relationships.';
+  }
+
+  private getMarsSignInsights(marsSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Mars in Aries gives you direct, impulsive energy. You act quickly on instincts, prefer to lead, and tackle challenges head-on with courage and competitive spirit.',
+      'Taurus': 'With Mars in Taurus, you have steady, persistent energy. You act deliberately, prefer practical goals, and tackle challenges with patience, determination, and methodical approaches.',
+      'Gemini': 'Your Mars in Gemini gives you versatile, intellectual energy. You act on multiple interests, prefer variety, and tackle challenges through communication, wit, and mental agility.',
+      'Cancer': 'Mars in Cancer gives you protective, emotional energy. You act when family or security is threatened, prefer defensive strategies, and tackle challenges with intuition and tenacity.',
+      'Leo': 'With Mars in Leo, you have dramatic, creative energy. You act with pride and flair, prefer leadership roles, and tackle challenges with confidence, generosity, and theatrical approaches.',
+      'Virgo': 'Your Mars in Virgo gives you precise, service-oriented energy. You act systematically, prefer helping others, and tackle challenges through careful analysis and practical solutions.',
+      'Libra': 'Mars in Libra gives you diplomatic, balanced energy. You act through cooperation, prefer win-win solutions, and tackle challenges by seeking harmony and considering all perspectives.',
+      'Scorpio': 'With Mars in Scorpio, you have intense, transformative energy. You act with focus and determination, prefer all-or-nothing approaches, and tackle challenges through depth and psychological insight.',
+      'Sagittarius': 'Your Mars in Sagittarius gives you adventurous, philosophical energy. You act on ideals and beliefs, prefer exploration, and tackle challenges with optimism and broad perspectives.',
+      'Capricorn': 'Mars in Capricorn gives you ambitious, structured energy. You act strategically, prefer traditional methods, and tackle challenges through discipline, planning, and long-term commitment.',
+      'Aquarius': 'With Mars in Aquarius, you have innovative, independent energy. You act on humanitarian ideals, prefer unique approaches, and tackle challenges through originality and group cooperation.',
+      'Pisces': 'Your Mars in Pisces gives you intuitive, compassionate energy. You act on feelings and inspiration, prefer indirect approaches, and tackle challenges through creativity and spiritual connection.'
+    };
+    
+    return insights[marsSign] || 'Your Mars sign shapes how you take action and pursue your goals in life.';
+  }
+
+  private getMarsActionStyle(marsSign: string): string {
+    const styles: Record<string, string> = {
+      'Aries': 'You take action impulsively and directly, jumping into challenges without extensive planning. Your motivation comes from competition, new beginnings, and the thrill of conquest. You work best in fast-paced, independent environments.',
+      'Taurus': 'You take action slowly and steadily, preferring to plan thoroughly before moving. Your motivation comes from building security, creating beauty, and achieving tangible results. You work best in stable, comfortable environments.',
+      'Gemini': 'You take action through communication and networking, tackling multiple projects simultaneously. Your motivation comes from learning, connecting ideas, and intellectual challenges. You work best in varied, social environments.',
+      'Cancer': 'You take action to protect and nurture, responding strongly when emotions are involved. Your motivation comes from family, security, and helping others. You work best in supportive, emotionally safe environments.',
+      'Leo': 'You take action with confidence and creativity, preferring to lead and inspire others. Your motivation comes from recognition, creative expression, and making a dramatic impact. You work best when appreciated and in the spotlight.',
+      'Virgo': 'You take action through careful analysis and practical service, preferring organized, systematic approaches. Your motivation comes from helping others, perfecting skills, and solving problems. You work best in orderly, purpose-driven environments.',
+      'Libra': 'You take action through cooperation and diplomacy, preferring to work with others toward balanced solutions. Your motivation comes from justice, beauty, and harmonious relationships. You work best in peaceful, collaborative environments.',
+      'Scorpio': 'You take action with intensity and focus, preferring to transform situations completely. Your motivation comes from depth, control, and uncovering truth. You work best in private, research-oriented environments.',
+      'Sagittarius': 'You take action through exploration and teaching, preferring big-picture goals and philosophical pursuits. Your motivation comes from freedom, truth, and expanding horizons. You work best in diverse, educational environments.',
+      'Capricorn': 'You take action through structure and ambition, preferring traditional methods and long-term goals. Your motivation comes from achievement, status, and building lasting structures. You work best in hierarchical, goal-oriented environments.',
+      'Aquarius': 'You take action through innovation and group work, preferring unique approaches and humanitarian goals. Your motivation comes from progress, friendship, and making the world better. You work best in progressive, collaborative environments.',
+      'Pisces': 'You take action through intuition and compassion, preferring to flow with circumstances and help others. Your motivation comes from spiritual connection, creativity, and serving a higher purpose. You work best in artistic, supportive environments.'
+    };
+    
+    return styles[marsSign] || 'Your Mars sign influences your unique approach to taking action and pursuing goals.';
   }
 
   // Record lesson progress

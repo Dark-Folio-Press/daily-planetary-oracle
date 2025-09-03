@@ -32,6 +32,28 @@ export function BirthChartGenerator({ user, sunSign, moonSign, risingSign }: Bir
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas context not available');
 
+    // Get detailed planetary data if we have birth info
+    let planetaryData: any = null;
+    if (user.birthDate && user.birthTime && user.birthLocation) {
+      try {
+        const response = await fetch('/api/chart/detailed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            birthDate: user.birthDate,
+            birthTime: user.birthTime,
+            birthLocation: user.birthLocation
+          })
+        });
+        const data = await response.json();
+        if (data.success) {
+          planetaryData = data.chart;
+        }
+      } catch (error) {
+        console.error('Failed to fetch planetary data:', error);
+      }
+    }
+
     // Set canvas size
     canvas.width = 800;
     canvas.height = 800;
@@ -87,17 +109,25 @@ export function BirthChartGenerator({ user, sunSign, moonSign, risingSign }: Bir
     ctx.fillText(`${user.birthDate} • ${user.birthTime}`, 400, 380);
     ctx.fillText(user.birthLocation || '', 400, 405);
 
-    // Draw big three
-    const bigThree = [
-      { label: 'Sun', sign: sunSign, y: 450 },
-      { label: 'Moon', sign: moonSign, y: 475 },
-      { label: 'Rising', sign: risingSign, y: 500 }
+    // Get planetary signs from detailed data or use defaults
+    const mercurySign = planetaryData?.planets?.find((p: any) => p.planet === 'Mercury')?.sign;
+    const venusSign = planetaryData?.planets?.find((p: any) => p.planet === 'Venus')?.sign;
+    const marsSign = planetaryData?.planets?.find((p: any) => p.planet === 'Mars')?.sign;
+
+    // Draw all planetary positions
+    const planets = [
+      { label: 'Sun', sign: sunSign, y: 430, color: '#fbbf24' },
+      { label: 'Moon', sign: moonSign, y: 450, color: '#e5e7eb' },
+      { label: 'Rising', sign: risingSign, y: 470, color: '#fbbf24' },
+      { label: 'Mercury', sign: mercurySign, y: 490, color: '#60a5fa' },
+      { label: 'Venus', sign: venusSign, y: 510, color: '#f472b6' },
+      { label: 'Mars', sign: marsSign, y: 530, color: '#ef4444' }
     ];
 
-    bigThree.forEach(({ label, sign, y }) => {
+    planets.forEach(({ label, sign, y, color }) => {
       if (sign) {
-        ctx.font = '20px Arial';
-        ctx.fillStyle = '#fbbf24';
+        ctx.font = '18px Arial';
+        ctx.fillStyle = color;
         ctx.fillText(`${label}: ${sign} ${ZODIAC_SYMBOLS[sign] || ''}`, 400, y);
       }
     });
