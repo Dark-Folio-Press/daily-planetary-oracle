@@ -115,7 +115,78 @@ class LearningService {
       },
       {
         track: 'basics',
+        lessonNumber: 2,
+        title: 'The Four Elements: Fire, Earth, Air & Water',
+        description: 'Learn about the elemental foundation of astrology and how your sun sign expresses its element.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The four elements (fire, earth, air, water) are the building blocks of astrology, each bringing distinct qualities and approaches to life.'
+            },
+            {
+              type: 'elemental-overview',
+              content: 'Understand how each element influences personality, behavior, and life approach.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Discover how your sun sign expresses its elemental nature and what this means for your personality.'
+            }
+          ]
+        },
+        requiredLessons: ['basics-1'],
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'basics',
         lessonNumber: 3,
+        title: 'The Three Modalities: Cardinal, Fixed & Mutable',
+        description: 'Explore how the three modalities describe different approaches to action and change.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The three modalities (cardinal, fixed, mutable) describe how signs initiate, sustain, and adapt to change.'
+            },
+            {
+              type: 'modality-overview',
+              content: 'Learn the unique characteristics and strengths of each modality.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Understand how your sun sign\'s modality influences your approach to goals, challenges, and life changes.'
+            }
+          ]
+        },
+        requiredLessons: ['basics-2'],
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'basics',
+        lessonNumber: 4,
+        title: 'Your Moon Sign: Emotional Nature',
+        description: 'Discover your inner emotional world and what makes you feel secure and nurtured.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Your moon sign represents your emotional nature, instinctive reactions, and deepest needs.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Explore how your moon sign influences your emotional responses and what nurtures your soul.'
+            }
+          ]
+        },
+        requiredLessons: ['basics-3'],
+        xpReward: 15,
+        estimatedMinutes: 8
+      },
+      {
+        track: 'basics',
+        lessonNumber: 5,
         title: 'Your Rising Sign: Your Outer Expression',
         description: 'Learn how your rising sign shapes first impressions and your approach to the world.',
         content: {
@@ -134,13 +205,13 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-2'],
+        requiredLessons: ['basics-4'],
         xpReward: 15,
         estimatedMinutes: 8
       },
       {
         track: 'basics',
-        lessonNumber: 4,
+        lessonNumber: 6,
         title: 'The Big Three Integration',
         description: 'See how your sun, moon, and rising signs work together to create your unique personality.',
         content: {
@@ -159,7 +230,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-3'],
+        requiredLessons: ['basics-5'],
         xpReward: 20,
         estimatedMinutes: 10
       },
@@ -182,7 +253,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-4'],
+        requiredLessons: ['basics-6'],
         xpReward: 15,
         estimatedMinutes: 8
       },
@@ -746,7 +817,55 @@ class LearningService {
                 element: 'sun'
               }
             });
-          } else if (lesson.lessonNumber === 2) {
+          } else if (lesson.lessonNumber === 2) { // Elements
+            const sunElement = this.getSignElement(chartData.sunSign);
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Four Elements in Astrology`,
+                content: this.getElementsOverview()
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.sunSign} Sun: ${sunElement.charAt(0).toUpperCase() + sunElement.slice(1)} Element Expression`,
+                content: this.getElementExpression(chartData.sunSign, sunElement)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'element-explorer',
+                sign: chartData.sunSign,
+                element: sunElement
+              }
+            });
+          } else if (lesson.lessonNumber === 3) { // Modalities
+            const sunModality = this.getSignModality(chartData.sunSign);
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Three Modalities in Astrology`,
+                content: this.getModalitiesOverview()
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.sunSign} Sun: ${sunModality.charAt(0).toUpperCase() + sunModality.slice(1)} Modality Expression`,
+                content: this.getModalityExpression(chartData.sunSign, sunModality)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'modality-explorer',
+                sign: chartData.sunSign,
+                modality: sunModality
+              }
+            });
+          } else if (lesson.lessonNumber === 4) { // Moon
             content.push({
               type: 'text',
               data: {
@@ -769,7 +888,7 @@ class LearningService {
                 description: 'See how your Moon sign appears in your birth chart and its house placement for additional insight'
               }
             });
-          } else if (lesson.lessonNumber === 3) {
+          } else if (lesson.lessonNumber === 5) { // Rising
             content.push({
               type: 'text',
               data: {
@@ -790,6 +909,38 @@ class LearningService {
               data: {
                 element: `${chartData.risingSign} Rising`,
                 description: 'Your Rising sign determines your entire house system and sets the stage for your life themes'
+              }
+            });
+          } else if (lesson.lessonNumber === 6) { // Big Three Integration
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Complete Astrological Identity`,
+                content: `Your Big Three create a complex interplay that forms your complete astrological identity. Understanding how your ${chartData.sunSign} Sun, ${chartData.moonSign} Moon, and ${chartData.risingSign} Rising work together reveals the full depth of your personality.`
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.sunSign}-${chartData.moonSign}-${chartData.risingSign} Synthesis`,
+                content: this.getBigThreeIntegration(chartData.sunSign, chartData.moonSign, chartData.risingSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'big-three-synthesis',
+                sun: chartData.sunSign,
+                moon: chartData.moonSign,
+                rising: chartData.risingSign,
+                element: 'big-three'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Your Complete Big Three`,
+                description: 'See how your Sun, Moon, and Rising signs are positioned in your birth chart and how they work together to create your unique astrological blueprint'
               }
             });
           }
@@ -1195,6 +1346,171 @@ class LearningService {
     };
     
     return insights[risingSign] || 'Your rising sign shapes how you present yourself to the world and approach new experiences.';
+  }
+
+  private getBigThreeIntegration(sunSign: string, moonSign: string, risingSign: string): string {
+    // Create a comprehensive integration based on the combination
+    const sunElement = this.getSignElement(sunSign);
+    const moonElement = this.getSignElement(moonSign);
+    const risingElement = this.getSignElement(risingSign);
+    
+    const sunModality = this.getSignModality(sunSign);
+    const moonModality = this.getSignModality(moonSign);
+    const risingModality = this.getSignModality(risingSign);
+
+    let integration = `Your ${sunSign} Sun, ${moonSign} Moon, and ${risingSign} Rising create a unique astrological signature. `;
+    
+    // Analyze element balance
+    const elements = [sunElement, moonElement, risingElement];
+    const elementCounts = elements.reduce((acc, el) => {
+      acc[el] = (acc[el] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const dominantElement = Object.keys(elementCounts).reduce((a, b) => 
+      elementCounts[a] > elementCounts[b] ? a : b
+    );
+    
+    if (elementCounts[dominantElement] >= 2) {
+      integration += `With ${elementCounts[dominantElement]} of your Big Three in ${dominantElement} signs, you have a strong ${dominantElement} emphasis, bringing ${this.getElementQualities(dominantElement)} to your core personality. `;
+    } else {
+      integration += `Your Big Three span different elements, creating a balanced but complex personality that draws from ${sunElement}, ${moonElement}, and ${risingElement} energies. `;
+    }
+
+    // Analyze potential conflicts and harmonies
+    if (sunSign === moonSign) {
+      integration += `Your Sun and Moon in the same sign create powerful internal alignment - your conscious goals and emotional needs work in harmony. `;
+    } else if (sunElement === moonElement) {
+      integration += `Though in different signs, your Sun and Moon share the ${sunElement} element, creating natural compatibility between your identity and emotions. `;
+    }
+
+    if (sunSign === risingSign) {
+      integration += `With your Sun and Rising in the same sign, your inner self and outer expression are perfectly aligned - what you see is what you get. `;
+    } else if (sunElement === risingElement) {
+      integration += `Your Sun and Rising share the ${sunElement} element, making it easier for you to express your true self authentically. `;
+    }
+
+    integration += `This combination makes you someone who ${this.getSynthesisDescription(sunSign, moonSign, risingSign)}.`;
+
+    return integration;
+  }
+
+  private getSignElement(sign: string): string {
+    const fireElements = ['Aries', 'Leo', 'Sagittarius'];
+    const earthElements = ['Taurus', 'Virgo', 'Capricorn'];
+    const airElements = ['Gemini', 'Libra', 'Aquarius'];
+    const waterElements = ['Cancer', 'Scorpio', 'Pisces'];
+    
+    if (fireElements.includes(sign)) return 'fire';
+    if (earthElements.includes(sign)) return 'earth';
+    if (airElements.includes(sign)) return 'air';
+    if (waterElements.includes(sign)) return 'water';
+    return 'fire'; // fallback
+  }
+
+  private getSignModality(sign: string): string {
+    const cardinalSigns = ['Aries', 'Cancer', 'Libra', 'Capricorn'];
+    const fixedSigns = ['Taurus', 'Leo', 'Scorpio', 'Aquarius'];
+    const mutableSigns = ['Gemini', 'Virgo', 'Sagittarius', 'Pisces'];
+    
+    if (cardinalSigns.includes(sign)) return 'cardinal';
+    if (fixedSigns.includes(sign)) return 'fixed';
+    if (mutableSigns.includes(sign)) return 'mutable';
+    return 'cardinal'; // fallback
+  }
+
+  private getElementQualities(element: string): string {
+    const qualities: Record<string, string> = {
+      'fire': 'enthusiasm, passion, and dynamic action',
+      'earth': 'stability, practicality, and grounded wisdom',
+      'air': 'intellectual curiosity, communication, and social connection',
+      'water': 'emotional depth, intuition, and empathetic understanding'
+    };
+    return qualities[element] || 'unique qualities';
+  }
+
+  private getSynthesisDescription(sunSign: string, moonSign: string, risingSign: string): string {
+    // This would be a complex function that considers many combinations
+    // For now, provide a general synthesis
+    return `outwardly appears as ${risingSign} energy while being driven by ${sunSign} core motivations and emotionally nurtured by ${moonSign} needs - a fascinating blend that creates your distinctive personality and approach to life`;
+  }
+
+  private getElementsOverview(): string {
+    return `The four elements form the foundation of astrology, each representing a fundamental energy type that influences how signs express themselves:
+
+**Fire Signs (Aries, Leo, Sagittarius):** Passionate, energetic, and dynamic. Fire element brings enthusiasm, creativity, and the drive to initiate and inspire. Fire signs are natural leaders who act on instinct and radiate warmth and confidence.
+
+**Earth Signs (Taurus, Virgo, Capricorn):** Practical, stable, and grounded. Earth element brings reliability, patience, and the ability to build lasting foundations. Earth signs value security, work steadily toward goals, and have a natural connection to the physical world.
+
+**Air Signs (Gemini, Libra, Aquarius):** Intellectual, communicative, and social. Air element brings curiosity, mental agility, and the ability to connect ideas and people. Air signs think before they act, value relationships and ideas, and excel at communication.
+
+**Water Signs (Cancer, Scorpio, Pisces):** Emotional, intuitive, and empathetic. Water element brings deep feeling, psychic sensitivity, and the ability to flow and adapt. Water signs lead with their hearts, possess strong intuition, and connect deeply with others' emotions.
+
+Each element has its own gifts and challenges, and understanding your elemental nature helps you work with your natural strengths while developing areas that don't come as easily.`;
+  }
+
+  private getElementExpression(sunSign: string, element: string): string {
+    const expressions: Record<string, Record<string, string>> = {
+      fire: {
+        'Aries': 'As an Aries, you express fire element through pioneering leadership and direct action. You\'re the spark that ignites new ventures, approaching life with courage, independence, and a "first to try" mentality. Your fire burns bright and fast, making you a natural initiator.',
+        'Leo': 'Your Leo fire shines through creative self-expression and generous leadership. You express fire element through drama, warmth, and the desire to inspire others. Your fire is steady and radiant, like the sun, drawing others to your natural magnetism and creative spirit.',
+        'Sagittarius': 'As a Sagittarius, you express fire element through exploration and philosophical enthusiasm. Your fire burns for truth, freedom, and adventure. You\'re the eternal student and teacher, expressing fire through your quest for meaning and your ability to inspire others with your optimism.'
+      },
+      earth: {
+        'Taurus': 'Your Taurus nature expresses earth element through stability and sensual appreciation. You approach life methodically, building security through patience and persistence. Your earth energy values quality, beauty, and lasting results, making you a master of creating comfort and abundance.',
+        'Virgo': 'As a Virgo, you express earth element through service and practical perfection. Your earth energy manifests as attention to detail, analytical thinking, and the desire to help and improve. You find satisfaction in making things work better and serving others through your skills.',
+        'Capricorn': 'Your Capricorn nature channels earth element through ambition and structured achievement. You express earth energy through discipline, responsibility, and the ability to climb any mountain. Your earth is like granite - strong, enduring, and capable of supporting great structures.'
+      },
+      air: {
+        'Gemini': 'As a Gemini, you express air element through curiosity and versatile communication. Your air energy manifests as mental agility, social connection, and the ability to gather and share information. You\'re like a breeze that carries ideas from one place to another, connecting people and concepts.',
+        'Libra': 'Your Libra nature expresses air element through harmony and diplomatic communication. You approach life seeking balance, beauty, and fair relationships. Your air energy flows through your ability to see all sides, mediate conflicts, and create peaceful, aesthetically pleasing environments.',
+        'Aquarius': 'As an Aquarius, you express air element through innovation and humanitarian ideals. Your air energy manifests as original thinking, group consciousness, and the vision to see possibilities others miss. You\'re like the wind of change, bringing fresh perspectives and progressive ideas.'
+      },
+      water: {
+        'Cancer': 'Your Cancer nature expresses water element through nurturing and emotional protection. You approach life through feelings, intuition, and the desire to care for others. Your water energy flows like a protective tide, creating safe harbors and emotional security for yourself and loved ones.',
+        'Scorpio': 'As a Scorpio, you express water element through emotional depth and transformative power. Your water energy is like an underground river - deep, powerful, and capable of reshaping landscapes. You feel everything intensely and have the ability to regenerate and transform through emotional experiences.',
+        'Pisces': 'Your Pisces nature channels water element through compassion and spiritual connection. You express water energy through empathy, imagination, and the ability to dissolve boundaries. Your water flows like the ocean - vast, intuitive, and connected to all life, making you naturally compassionate and spiritually aware.'
+      }
+    };
+
+    return expressions[element]?.[sunSign] || `Your ${sunSign} sun expresses the ${element} element in unique ways that influence your core personality and approach to life.`;
+  }
+
+  private getModalitiesOverview(): string {
+    return `The three modalities describe how signs handle energy and approach change, creating different styles of action and adaptation:
+
+**Cardinal Signs (Aries, Cancer, Libra, Capricorn):** The initiators and leaders. Cardinal modality brings the energy to start new projects, lead initiatives, and pioneer change. Cardinal signs are naturally motivated to begin things, take charge, and move forward. They excel at getting things started but may struggle with follow-through.
+
+**Fixed Signs (Taurus, Leo, Scorpio, Aquarius):** The sustainers and stabilizers. Fixed modality brings the energy to maintain, preserve, and see things through to completion. Fixed signs provide stability, determination, and the power to resist change when necessary. They excel at persistence and loyalty but may struggle with adaptability.
+
+**Mutable Signs (Gemini, Virgo, Sagittarius, Pisces):** The adapters and synthesizers. Mutable modality brings the energy to adjust, modify, and find flexible solutions. Mutable signs are naturally adaptable, able to see multiple perspectives, and skilled at bringing things to completion. They excel at change and versatility but may struggle with commitment.
+
+Each modality has its season and purpose in the natural cycle - cardinal begins, fixed maintains, and mutable completes and transforms. Understanding your modality helps you recognize your natural approach to goals, challenges, and life changes.`;
+  }
+
+  private getModalityExpression(sunSign: string, modality: string): string {
+    const expressions: Record<string, Record<string, string>> = {
+      cardinal: {
+        'Aries': 'As a Cardinal Fire sign, you\'re the ultimate initiator - impulsive, direct, and always ready to start something new. You lead through action and example, preferring to forge ahead rather than wait for permission. Your cardinal nature makes you a natural pioneer who thrives on beginnings and first attempts.',
+        'Cancer': 'Your Cardinal Water nature makes you an emotional leader who initiates through caring and protection. You start new ventures to create security for yourself and others. Your cardinal energy manifests as taking charge of emotional situations and pioneering new ways to nurture and support.',
+        'Libra': 'As a Cardinal Air sign, you initiate through relationships and social harmony. You\'re motivated to start projects that bring people together and create balance. Your cardinal nature expresses as taking the lead in partnerships and being the first to extend the olive branch or suggest compromise.',
+        'Capricorn': 'Your Cardinal Earth energy makes you an ambitious initiator who starts projects with long-term success in mind. You naturally take on leadership roles and responsibility, preferring to be in charge of your destiny. Your cardinal nature manifests as the drive to climb higher and achieve lasting accomplishments.'
+      },
+      fixed: {
+        'Taurus': 'As a Fixed Earth sign, you provide stability through consistency and determination. Once you commit to something, you see it through with remarkable persistence. Your fixed nature makes you reliable, loyal, and resistant to change - you\'d rather perfect what exists than start over.',
+        'Leo': 'Your Fixed Fire nature gives you the power to sustain creativity and maintain leadership over time. You have remarkable staying power in your creative endeavors and relationships. Your fixed energy manifests as loyalty, consistency in self-expression, and the ability to shine steadily rather than in brief bursts.',
+        'Scorpio': 'As a Fixed Water sign, you possess incredible emotional depth and transformative staying power. You don\'t just experience change - you sustain it until complete metamorphosis occurs. Your fixed nature gives you the ability to dive deep and stay committed to emotional or psychological transformation.',
+        'Aquarius': 'Your Fixed Air energy sustains innovative ideas and progressive ideals over time. You have the determination to stick with humanitarian causes and unique perspectives, even when others don\'t understand. Your fixed nature manifests as unwavering commitment to your principles and vision of the future.'
+      },
+      mutable: {
+        'Gemini': 'As a Mutable Air sign, you adapt through mental flexibility and communication skills. You easily adjust your thinking, gather new information, and find multiple solutions to problems. Your mutable nature makes you versatile, curious, and able to see situations from many angles.',
+        'Virgo': 'Your Mutable Earth energy expresses as practical adaptability and problem-solving skills. You can adjust systems, improve processes, and find workable solutions to everyday challenges. Your mutable nature manifests as the ability to refine, perfect, and adapt practical approaches until they work perfectly.',
+        'Sagittarius': 'As a Mutable Fire sign, you adapt through expanding your horizons and embracing new philosophies. You\'re flexible in your beliefs, always ready to learn something new that might change your perspective. Your mutable nature gives you the ability to synthesize different ideas into a broader understanding.',
+        'Pisces': 'Your Mutable Water nature provides emotional adaptability and intuitive flexibility. You can flow with changing circumstances and adapt your emotional responses to what\'s needed. Your mutable energy manifests as empathy, spiritual flexibility, and the ability to dissolve boundaries when connection is needed.'
+      }
+    };
+
+    return expressions[modality]?.[sunSign] || `Your ${sunSign} sun expresses the ${modality} modality in ways that influence how you approach goals, handle change, and interact with the world.`;
   }
 
   private getMercurySignInsights(mercurySign: string): string {
