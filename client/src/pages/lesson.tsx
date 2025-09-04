@@ -680,7 +680,10 @@ export default function LessonPage() {
                       <Button 
                         onClick={() => {
                           setShowInteractiveModal(false);
-                          setCurrentSection(currentSection + 1);
+                          // Only advance if there are more sections
+                          if (currentSection < personalizedContent.length - 1) {
+                            setCurrentSection(currentSection + 1);
+                          }
                           toast({
                             title: "Chart Viewed!",
                             description: `You've explored your ${interactiveContent?.element} placement`,
@@ -695,7 +698,10 @@ export default function LessonPage() {
                     <Button 
                       onClick={() => {
                         setShowInteractiveModal(false);
-                        setCurrentSection(currentSection + 1);
+                        // Only advance if there are more sections
+                        if (currentSection < personalizedContent.length - 1) {
+                          setCurrentSection(currentSection + 1);
+                        }
                         toast({
                           title: "Interactive Complete!",
                           description: `You've explored your ${interactiveContent?.sign} ${interactiveContent?.element} in detail`,
