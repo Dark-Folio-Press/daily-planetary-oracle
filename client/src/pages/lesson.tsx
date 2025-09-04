@@ -587,6 +587,136 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.element === 'jupiter' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Jupiter Growth</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Expansion Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Jupiter in {interactiveContent?.sign} brings growth through wisdom, higher learning, and expanding your philosophical horizons.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Luck & Opportunities</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Fortune comes to you through teaching, travel, cultural exchange, and sharing knowledge with others.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Wisdom Path</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You find meaning in exploring diverse belief systems, cultures, and experiences that broaden your understanding of life.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'saturn' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Saturn Lessons</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Life Discipline</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Saturn in {interactiveContent?.sign} teaches you discipline through structure, responsibility, and long-term commitment to your goals.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Challenges & Growth</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You master life lessons through patience, perseverance, and building solid foundations that last.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Authority & Mastery</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You develop expertise by respecting traditional wisdom while gradually building your own authoritative knowledge.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'uranus' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Uranus Innovation</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Revolutionary Spirit</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Uranus in {interactiveContent?.sign} brings sudden insights, innovative thinking, and a desire to break free from limitations.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Change & Freedom</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You seek independence and original expression, often surprising others with your unique perspective and unconventional approaches.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Future Vision</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You're drawn to progressive ideas, technology, and social causes that help humanity evolve and improve.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'neptune' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Neptune Dreams</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Spiritual Connection</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Neptune in {interactiveContent?.sign} connects you to higher realms through intuition, creativity, and spiritual practices.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Artistic Vision</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You express divine inspiration through art, music, poetry, or other creative mediums that touch the soul.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Compassion & Service</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You feel called to serve others, often through healing, charitable work, or bringing beauty into the world.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'pluto' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Pluto Transformation</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Deep Transformation</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Pluto in {interactiveContent?.sign} drives profound personal evolution through intense experiences and regeneration.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Power & Regeneration</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You possess the ability to rise from challenges stronger than before, transforming obstacles into sources of power.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Hidden Potential</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            You uncover hidden truths and tap into deep psychological insights that help you and others heal and transform.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {interactiveContent?.element === 'big-three' && (
                     <>
                       <h4 className="font-semibold mb-3">Your {interactiveContent?.sun}-{interactiveContent?.moon}-{interactiveContent?.rising} Integration</h4>
@@ -663,6 +793,41 @@ export default function LessonPage() {
                                   <div className="absolute top-16 right-16 w-4 h-4 bg-red-400 rounded-full shadow-lg animate-pulse">
                                     <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
                                       ♂ Mars
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('jupiter') && (
+                                  <div className="absolute bottom-16 left-16 w-4 h-4 bg-purple-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♃ Jupiter
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('saturn') && (
+                                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-amber-500 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♄ Saturn
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('uranus') && (
+                                  <div className="absolute top-4 left-4 w-4 h-4 bg-cyan-400 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♅ Uranus
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('neptune') && (
+                                  <div className="absolute bottom-4 right-4 w-4 h-4 bg-blue-500 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♆ Neptune
+                                    </div>
+                                  </div>
+                                )}
+                                {interactiveContent?.element?.toLowerCase().includes('pluto') && (
+                                  <div className="absolute bottom-8 right-8 w-4 h-4 bg-gray-600 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                      ♇ Pluto
                                     </div>
                                   </div>
                                 )}
