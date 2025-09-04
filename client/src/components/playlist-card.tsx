@@ -236,7 +236,7 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                   Feedback
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto [&>button]:opacity-100 [&>button]:bg-gray-100 [&>button]:hover:bg-gray-200 [&>button]:border [&>button]:border-gray-300">
                 <DialogHeader>
                   <DialogTitle>Rate this playlist</DialogTitle>
                 </DialogHeader>

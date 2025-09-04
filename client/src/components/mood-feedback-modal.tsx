@@ -20,7 +20,7 @@ export default function MoodTrackerModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto [&>button]:opacity-100 [&>button]:bg-gray-100 [&>button]:hover:bg-gray-200 [&>button]:border [&>button]:border-gray-300">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Heart className="w-5 h-5 text-pink-500" />

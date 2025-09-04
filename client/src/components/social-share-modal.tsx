@@ -81,7 +81,7 @@ export function SocialShareModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md [&>button]:opacity-100 [&>button]:bg-gray-100 [&>button]:hover:bg-gray-200 [&>button]:border [&>button]:border-gray-300">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <span>Share Your Birth Chart</span>

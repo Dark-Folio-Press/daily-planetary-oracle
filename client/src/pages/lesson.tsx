@@ -667,6 +667,27 @@ export default function LessonPage() {
                                   </div>
                                 )}
                                 
+                                {/* Big Three combination view */}
+                                {interactiveContent?.element?.toLowerCase().includes('big-three') && (
+                                  <>
+                                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-400 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☉ {interactiveContent?.sun}
+                                      </div>
+                                    </div>
+                                    <div className="absolute top-2 right-8 w-4 h-4 bg-yellow-400 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        🌙 {interactiveContent?.moon}
+                                      </div>
+                                    </div>
+                                    <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ↗ {interactiveContent?.rising}
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+                                
                                 {/* Center label */}
                                 <div className="absolute inset-0 flex items-center justify-center">
                                   <div className="text-center">
