@@ -226,13 +226,65 @@ export default function LessonPage() {
           />
         </div>
 
-        {/* User Chart Context */}
+        {/* Planet Context for User */}
         {userChartData && (
           <Alert className="mb-6 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-800">
             <Lightbulb className="w-4 h-4" />
             <AlertDescription>
-              <strong>Your Personal Chart Context:</strong> As someone with {userChartData.sunSign} Sun, {userChartData.moonSign} Moon, 
-              and {userChartData.risingSign} Rising, this lesson will use examples specific to your unique astrological makeup.
+              {lesson.track === 'planets' && lesson.title.includes('Mercury') && (
+                <div>
+                  <strong>Mercury & Your {userChartData.sunSign} Sun:</strong> Mercury governs communication, thinking, and learning style. 
+                  As a {userChartData.sunSign} Sun, Mercury influences how you express your core identity and process information in your unique way.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Venus') && (
+                <div>
+                  <strong>Venus & Your {userChartData.sunSign} Sun:</strong> Venus rules love, relationships, and what you value. 
+                  With your {userChartData.sunSign} Sun, Venus shapes how you approach romance and express affection through your core personality.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Mars') && (
+                <div>
+                  <strong>Mars & Your {userChartData.sunSign} Sun:</strong> Mars represents drive, ambition, and how you pursue goals. 
+                  Your {userChartData.sunSign} Sun colors how Mars energy manifests in your motivation and action style.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Jupiter') && (
+                <div>
+                  <strong>Jupiter & Your {userChartData.sunSign} Sun:</strong> Jupiter brings expansion, wisdom, and growth opportunities. 
+                  As a {userChartData.sunSign} Sun, Jupiter amplifies your natural traits and shows where you find luck and abundance.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Saturn') && (
+                <div>
+                  <strong>Saturn & Your {userChartData.sunSign} Sun:</strong> Saturn teaches discipline, responsibility, and life lessons. 
+                  Your {userChartData.sunSign} Sun influences how you approach Saturn's challenges and build lasting foundations.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Uranus') && (
+                <div>
+                  <strong>Uranus & Your {userChartData.sunSign} Sun:</strong> Uranus brings innovation, sudden change, and revolutionary thinking. 
+                  With your {userChartData.sunSign} Sun, Uranus shows how you express uniqueness and break free from limitations.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Neptune') && (
+                <div>
+                  <strong>Neptune & Your {userChartData.sunSign} Sun:</strong> Neptune governs dreams, spirituality, and intuition. 
+                  Your {userChartData.sunSign} Sun filters Neptune's mystical energy through your core identity and creative expression.
+                </div>
+              )}
+              {lesson.track === 'planets' && lesson.title.includes('Pluto') && (
+                <div>
+                  <strong>Pluto & Your {userChartData.sunSign} Sun:</strong> Pluto rules transformation, power, and regeneration. 
+                  As a {userChartData.sunSign} Sun, Pluto shows how you undergo deep personal evolution and embrace change.
+                </div>
+              )}
+              {lesson.track !== 'planets' && (
+                <div>
+                  <strong>Your Personal Chart Context:</strong> As someone with {userChartData.sunSign} Sun, {userChartData.moonSign} Moon, 
+                  and {userChartData.risingSign} Rising, this lesson will use examples specific to your unique astrological makeup.
+                </div>
+              )}
             </AlertDescription>
           </Alert>
         )}
