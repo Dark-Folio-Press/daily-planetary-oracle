@@ -414,7 +414,7 @@ export default function LessonPage() {
 
         {/* Interactive Modal */}
         <Dialog open={showInteractiveModal} onOpenChange={setShowInteractiveModal}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl [&>button]:opacity-100 [&>button]:bg-gray-100 [&>button]:hover:bg-gray-200 [&>button]:border [&>button]:border-gray-300">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-600" />
