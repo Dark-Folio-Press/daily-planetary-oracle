@@ -733,7 +733,6 @@ class LearningService {
       throw new Error('Lesson not found');
     }
     
-    console.log(`DEBUG: Getting lesson ${lessonId}: ${lesson.track} lesson ${lesson.lessonNumber} - ${lesson.title}`);
 
     // Get user's birth data for personalization
     const user = await db.select().from(users).where(eq(users.id, userId));
@@ -790,7 +789,6 @@ class LearningService {
 
   private personalizeContent(lesson: LearningLesson, chartData: any): LessonContent[] {
     const content: LessonContent[] = [];
-    console.log(`DEBUG: Personalizing content for ${lesson.track} lesson ${lesson.lessonNumber}`);
     
     if (!chartData) {
       // Generic content for users without birth data
@@ -868,29 +866,6 @@ class LearningService {
                 modality: sunModality
               }
             });
-          } else if (lesson.lessonNumber === 4) { // Moon
-            content.push({
-              type: 'text',
-              data: {
-                title: `Your ${chartData.moonSign} Moon`,
-                content: this.getMoonSignInsights(chartData.moonSign)
-              }
-            });
-            content.push({
-              type: 'interactive',
-              data: {
-                type: 'emotion-explorer',
-                sign: chartData.moonSign,
-                element: 'moon'
-              }
-            });
-            content.push({
-              type: 'chart-highlight',
-              data: {
-                element: `Moon in ${chartData.moonSign}`,
-                description: 'See how your Moon sign appears in your birth chart and its house placement for additional insight'
-              }
-            });
           } else if (lesson.lessonNumber === 5) { // Rising
             content.push({
               type: 'text',
@@ -915,7 +890,6 @@ class LearningService {
               }
             });
           } else if (lesson.lessonNumber === 4 || lesson.lessonNumber === 6) { // Big Three Integration (handle both old and new numbering)
-            console.log(`DEBUG: Generating Big Three Integration content for ${chartData.sunSign}-${chartData.moonSign}-${chartData.risingSign}`);
             content.push({
               type: 'text',
               data: {
@@ -1292,7 +1266,6 @@ class LearningService {
       }
     }
 
-    console.log(`DEBUG: Generated ${content.length} content pieces for ${lesson.track} lesson ${lesson.lessonNumber}`);
     return content;
   }
 
