@@ -421,7 +421,11 @@ export default function LessonPage() {
                 Interactive Learning: {interactiveContent?.type}
               </DialogTitle>
               <DialogDescription>
-                Explore your {interactiveContent?.sign} {interactiveContent?.element} traits through hands-on examples
+                {interactiveContent?.element === 'big-three' ? (
+                  `Explore your ${interactiveContent?.sun}-${interactiveContent?.moon}-${interactiveContent?.rising} combination through hands-on examples`
+                ) : (
+                  `Explore your ${interactiveContent?.sign} ${interactiveContent?.element} traits through hands-on examples`
+                )}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -583,6 +587,32 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.element === 'big-three' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sun}-{interactiveContent?.moon}-{interactiveContent?.rising} Integration</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Core Identity Integration</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your {interactiveContent?.sun} Sun provides your life purpose, while your {interactiveContent?.moon} Moon governs your emotional responses, and your {interactiveContent?.rising} Rising shapes how others perceive you.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Daily Life Expression</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            In daily interactions, people first see your {interactiveContent?.rising} Rising energy, then discover your {interactiveContent?.sun} Sun motivations, while your {interactiveContent?.moon} Moon influences how you process experiences privately.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Growth & Balance</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Personal growth comes from integrating these three energies - using your {interactiveContent?.rising} Rising to authentically express your {interactiveContent?.sun} Sun nature while honoring your {interactiveContent?.moon} Moon emotional needs.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {interactiveContent?.type === 'chart-focus' && (
                     <>
                       <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
@@ -704,7 +734,9 @@ export default function LessonPage() {
                         }
                         toast({
                           title: "Interactive Complete!",
-                          description: `You've explored your ${interactiveContent?.sign} ${interactiveContent?.element} in detail`,
+                          description: interactiveContent?.element === 'big-three' ? 
+                            `You've explored your ${interactiveContent?.sun}-${interactiveContent?.moon}-${interactiveContent?.rising} combination in detail` :
+                            `You've explored your ${interactiveContent?.sign} ${interactiveContent?.element} in detail`,
                         });
                       }}
                       className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
