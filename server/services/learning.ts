@@ -914,7 +914,7 @@ class LearningService {
                 description: 'Your Rising sign determines your entire house system and sets the stage for your life themes'
               }
             });
-          } else if (lesson.lessonNumber === 6) { // Big Three Integration
+          } else if (lesson.lessonNumber === 4 || lesson.lessonNumber === 6) { // Big Three Integration (handle both old and new numbering)
             console.log(`DEBUG: Generating Big Three Integration content for ${chartData.sunSign}-${chartData.moonSign}-${chartData.risingSign}`);
             content.push({
               type: 'text',
