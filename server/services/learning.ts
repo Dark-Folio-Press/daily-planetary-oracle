@@ -977,7 +977,342 @@ class LearningService {
           }
           break;
         case 'planets':
-          // Handle other lesson types
+          if (lesson.lessonNumber === 1) { // Mercury
+            const mercuryData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury');
+            const mercurySign = mercuryData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Mercury in ${mercurySign}`,
+                content: this.getMercurySignInsights(mercurySign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: 'Communication Style Analysis',
+                content: this.getMercuryCommunicationStyle(mercurySign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'communication-explorer',
+                sign: mercurySign,
+                element: 'mercury'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Mercury in ${mercurySign}`,
+                description: 'See where Mercury sits in your birth chart and which house governs your communication style'
+              }
+            });
+          } else if (lesson.lessonNumber === 2) { // Venus
+            const venusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Venus');
+            const venusSign = venusData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Venus in ${venusSign}`,
+                content: this.getVenusSignInsights(venusSign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: 'Love & Values Analysis',
+                content: this.getVenusLoveStyle(venusSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'relationship-explorer',
+                sign: venusSign,
+                element: 'venus'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Venus in ${venusSign}`,
+                description: 'Discover where Venus sits in your chart and which life area influences your relationships and values'
+              }
+            });
+          } else if (lesson.lessonNumber === 3) { // Mars
+            const marsData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mars');
+            const marsSign = marsData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Mars in ${marsSign}`,
+                content: this.getMarsSignInsights(marsSign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: 'Drive & Action Analysis',
+                content: this.getMarsActionStyle(marsSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'motivation-explorer',
+                sign: marsSign,
+                element: 'mars'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Mars in ${marsSign}`,
+                description: 'See where Mars is positioned in your chart and which life area drives your ambition and energy'
+              }
+            });
+          } else if (lesson.lessonNumber === 4) { // Jupiter
+            const jupiterData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Jupiter');
+            const jupiterSign = jupiterData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Jupiter in ${jupiterSign}`,
+                content: this.getJupiterSignInsights(jupiterSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'expansion-explorer',
+                sign: jupiterSign,
+                element: 'jupiter'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Jupiter in ${jupiterSign}`,
+                description: 'Discover where Jupiter brings luck and expansion to your life through its chart placement'
+              }
+            });
+          } else if (lesson.lessonNumber === 5) { // Saturn
+            const saturnData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Saturn');
+            const saturnSign = saturnData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Saturn in ${saturnSign}`,
+                content: this.getSaturnSignInsights(saturnSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'discipline-explorer',
+                sign: saturnSign,
+                element: 'saturn'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Saturn in ${saturnSign}`,
+                description: 'See where Saturn teaches your most important life lessons through its chart position'
+              }
+            });
+          } else if (lesson.lessonNumber === 6) { // Uranus
+            const uranusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Uranus');
+            const uranusSign = uranusData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Uranus in ${uranusSign}`,
+                content: this.getUranusSignInsights(uranusSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'innovation-explorer',
+                sign: uranusSign,
+                element: 'uranus'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Uranus in ${uranusSign}`,
+                description: 'Explore where Uranus brings sudden changes and innovation to your life path'
+              }
+            });
+          } else if (lesson.lessonNumber === 7) { // Neptune
+            const neptuneData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Neptune');
+            const neptuneSign = neptuneData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Neptune in ${neptuneSign}`,
+                content: this.getNeptuneSignInsights(neptuneSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'spirituality-explorer',
+                sign: neptuneSign,
+                element: 'neptune'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Neptune in ${neptuneSign}`,
+                description: 'Discover where Neptune connects you to dreams and spirituality in your chart'
+              }
+            });
+          } else if (lesson.lessonNumber === 8) { // Pluto
+            const plutoData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Pluto');
+            const plutoSign = plutoData?.sign || chartData.sunSign; // Fallback to sun sign
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Pluto in ${plutoSign}`,
+                content: this.getPlutoSignInsights(plutoSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'transformation-explorer',
+                sign: plutoSign,
+                element: 'pluto'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Pluto in ${plutoSign}`,
+                description: 'See where Pluto brings deep transformation and power to your life journey'
+              }
+            });
+          }
+          break;
+        case 'houses':
+          if (lesson.lessonNumber === 1) { // The 12 Houses: Life's Different Areas
+            content.push({
+              type: 'text',
+              data: {
+                title: `The 12 Houses of Astrology`,
+                content: this.getHousesOverview()
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `House Themes and Life Areas`,
+                content: this.getHouseThemesExplanation()
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'house-overview',
+                element: 'houses-general'
+              }
+            });
+          } else if (lesson.lessonNumber === 2) { // Personal Foundation: Houses 1-4
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Personal Foundation`,
+                content: `Your ${chartData.risingSign} Rising sets your entire house system. Here's what this means for you:
+
+${chartData.risingSign} rules your 1st house of identity, and from there, the rest of the houses follow in zodiac order around the wheel.
+
+This means your rising sign is like the "lens" through which all your other planetary energies are expressed. It determines which life areas each zodiac sign will influence for you specifically. Two people with the same sun sign but different rising signs will have completely different house systems and life patterns.
+
+The first four houses form your personal foundation - representing your inner circle of identity, values, communication, and emotional roots. Think of them as your most intimate and immediate life experiences.`
+              }
+            });
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Numerology of Houses 1-4`,
+                content: this.getNumerologyFoundation()
+              }
+            });
+            
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'personal-foundation',
+                element: 'personal-foundation',
+                houses: [1, 2, 3, 4]
+              }
+            });
+          } else if (lesson.lessonNumber === 3) { // Creative Expression: Houses 5-8
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Creative & Relational Power`,
+                content: `Houses 5-8 represent your creative expression and relational power. These houses show how you express yourself creatively, approach work and health, form partnerships, and navigate transformative experiences with others.`
+              }
+            });
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Numerology of Houses 5-8`,
+                content: this.getNumerologyExpression()
+              }
+            });
+
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'creative-expression',
+                element: 'creative-expression',
+                houses: [5, 6, 7, 8]
+              }
+            });
+          } else if (lesson.lessonNumber === 4) { // Higher Purpose: Houses 9-12
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Connection to the World`,
+                content: `Houses 9-12 connect you to the greater cosmos. These houses reveal your philosophy, public image, community connections, and spiritual path - showing how you contribute to and connect with the world beyond yourself.`
+              }
+            });
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Numerology of Houses 9-12`,
+                content: this.getNumerologyPurpose()
+              }
+            });
+
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'higher-purpose',
+                element: 'higher-purpose',
+                houses: [9, 10, 11, 12]
+              }
+            });
+          }
           break;
         default:
           // Default case for unhandled lesson tracks
@@ -1163,6 +1498,291 @@ class LearningService {
 
   private getModalitiesOverview(): string {
     return `The three modalities describe approaches to change: Cardinal (initiators), Fixed (sustainers), Mutable (adapters).`;
+  }
+
+  // Helper methods for planet insights
+  private getMercurySignInsights(mercurySign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Mercury in Aries gives you quick, direct communication. You think fast, speak boldly, and prefer getting straight to the point. You learn best through action and competitive environments.',
+      'Taurus': 'With Mercury in Taurus, you communicate thoughtfully and practically. You think methodically, value concrete information, and learn best through hands-on experience and repetition.',
+      'Gemini': 'Your Mercury in Gemini makes you naturally curious and versatile in communication. You think quickly, enjoy wordplay, and learn best through variety and social interaction.',
+      'Cancer': 'Mercury in Cancer gives you intuitive, emotionally-aware communication. You think with your heart, remember personal details, and learn best in nurturing, supportive environments.',
+      'Leo': 'With Mercury in Leo, you communicate with flair and creativity. You think dramatically, enjoy storytelling, and learn best when you can express yourself and receive appreciation.',
+      'Virgo': 'Your Mercury in Virgo makes you precise and analytical in communication. You think systematically, pay attention to details, and learn best through organized, step-by-step methods.',
+      'Libra': 'Mercury in Libra gives you diplomatic, balanced communication. You think through different perspectives, seek harmony in discussions, and learn best in peaceful, aesthetic environments.',
+      'Scorpio': 'With Mercury in Scorpio, you communicate with depth and intensity. You think psychologically, uncover hidden meanings, and learn best through research and investigation.',
+      'Sagittarius': 'Your Mercury in Sagittarius makes you philosophical and enthusiastic in communication. You think big-picture, enjoy debates, and learn best through exploration and diverse experiences.',
+      'Capricorn': 'Mercury in Capricorn gives you structured, goal-oriented communication. You think strategically, value practical information, and learn best through traditional, authoritative sources.',
+      'Aquarius': 'With Mercury in Aquarius, you communicate in unique, innovative ways. You think independently, enjoy unconventional ideas, and learn best through experimentation and group discussions.',
+      'Pisces': 'Your Mercury in Pisces makes you intuitive and imaginative in communication. You think creatively, absorb subtle cues, and learn best through artistic and spiritual approaches.'
+    };
+    
+    return insights[mercurySign] || 'Your Mercury sign shapes how you think, learn, and communicate with the world.';
+  }
+
+  private getMercuryCommunicationStyle(mercurySign: string): string {
+    const styles: Record<string, string> = {
+      'Aries': 'You communicate with directness and urgency. In conversations, you jump quickly to conclusions and prefer active, dynamic exchanges. You excel at motivating others but may need to slow down for deeper discussions.',
+      'Taurus': 'You communicate slowly and deliberately, preferring to think before speaking. You excel at explaining practical matters and building consensus, but may resist changing your mind once decided.',
+      'Gemini': 'You communicate with wit and versatility, easily adapting your style to different audiences. You excel at gathering and sharing information but may struggle with in-depth focus on one topic.',
+      'Cancer': 'You communicate with emotional sensitivity, reading between the lines and remembering personal details. You excel at supportive conversations but may take criticism too personally.',
+      'Leo': 'You communicate with warmth and dramatic flair, naturally drawing attention in groups. You excel at inspiring and entertaining others but may dominate conversations.',
+      'Virgo': 'You communicate with precision and helpfulness, offering practical solutions and detailed explanations. You excel at teaching and problem-solving but may over-criticize or get lost in details.',
+      'Libra': 'You communicate with charm and diplomacy, seeking to please and maintain harmony. You excel at mediation and seeing all sides but may avoid difficult conversations.',
+      'Scorpio': 'You communicate with intensity and psychological insight, preferring meaningful over superficial exchanges. You excel at deep conversations but may be too probing or secretive.',
+      'Sagittarius': 'You communicate with enthusiasm and philosophical depth, sharing ideas and seeking truth. You excel at teaching and inspiring but may be too blunt or preachy.',
+      'Capricorn': 'You communicate with authority and structure, preferring formal, organized exchanges. You excel at leadership discussions but may seem too serious or rigid.',
+      'Aquarius': 'You communicate with originality and detachment, offering unique perspectives and innovative ideas. You excel at group discussions but may seem emotionally distant.',
+      'Pisces': 'You communicate with empathy and intuition, picking up on unspoken emotions and meanings. You excel at compassionate listening but may be unclear or overly indirect.'
+    };
+    
+    return styles[mercurySign] || 'Your Mercury sign influences your unique communication style and learning preferences.';
+  }
+
+  private getVenusSignInsights(venusSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Venus in Aries loves excitement and independence in relationships. You\'re attracted to confident, dynamic partners and value spontaneity, freedom, and passionate connections.',
+      'Taurus': 'With Venus in Taurus, you love stability and sensual pleasures. You\'re attracted to reliable, affectionate partners and value loyalty, comfort, and physical expressions of love.',
+      'Gemini': 'Your Venus in Gemini loves variety and intellectual connection. You\'re attracted to witty, communicative partners and value mental stimulation, friendship, and playful interactions.',
+      'Cancer': 'Venus in Cancer makes you love emotional security and nurturing. You\'re attracted to caring, family-oriented partners and value emotional intimacy, protection, and traditional romance.',
+      'Leo': 'With Venus in Leo, you love drama and appreciation in relationships. You\'re attracted to confident, creative partners and value admiration, generosity, and grand romantic gestures.',
+      'Virgo': 'Your Venus in Virgo loves practical care and improvement. You\'re attracted to helpful, reliable partners and value acts of service, health consciousness, and steady devotion.',
+      'Libra': 'Venus in Libra makes you love harmony and beauty. You\'re attracted to charming, balanced partners and value fairness, aesthetic appreciation, and peaceful relationships.',
+      'Scorpio': 'With Venus in Scorpio, you love depth and transformation. You\'re attracted to intense, mysterious partners and value emotional honesty, loyalty, and transformative connections.',
+      'Sagittarius': 'Your Venus in Sagittarius loves adventure and growth. You\'re attracted to optimistic, philosophical partners and value freedom, shared ideals, and expanding horizons together.',
+      'Capricorn': 'Venus in Capricorn makes you love structure and achievement. You\'re attracted to ambitious, responsible partners and value stability, long-term commitment, and building together.',
+      'Aquarius': 'With Venus in Aquarius, you love uniqueness and friendship. You\'re attracted to independent, innovative partners and value intellectual connection, freedom, and humanitarian values.',
+      'Pisces': 'Your Venus in Pisces loves compassion and spiritual connection. You\'re attracted to sensitive, artistic partners and value empathy, romance, and transcendent love experiences.'
+    };
+    
+    return insights[venusSign] || 'Your Venus sign shapes what you find attractive and how you express love and appreciation.';
+  }
+
+  private getVenusLoveStyle(venusSign: string): string {
+    const styles: Record<string, string> = {
+      'Aries': 'In love, you\'re direct and passionate, preferring to pursue rather than be pursued. You show affection through exciting adventures, competitive play, and bold gestures. You need partners who can match your energy and independence.',
+      'Taurus': 'In love, you\'re steady and devoted, preferring to build relationships slowly and securely. You show affection through physical touch, gifts, and creating comfort. You need partners who appreciate consistency and sensual experiences.',
+      'Gemini': 'In love, you\'re playful and communicative, preferring intellectual connections and variety. You show affection through words, humor, and shared interests. You need partners who can engage your mind and adapt to change.',
+      'Cancer': 'In love, you\'re nurturing and protective, preferring emotional depth and security. You show affection through caring gestures, cooking, and creating home together. You need partners who value family and emotional intimacy.',
+      'Leo': 'In love, you\'re generous and dramatic, preferring to be adored and appreciated. You show affection through grand gestures, gifts, and creative expressions. You need partners who celebrate and admire you.',
+      'Virgo': 'In love, you\'re helpful and devoted, preferring to serve and improve your partner\'s life. You show affection through practical care, remembering details, and solving problems. You need partners who appreciate your thoughtfulness.',
+      'Libra': 'In love, you\'re romantic and harmonious, preferring partnership and balance. You show affection through beauty, compromise, and creating peace. You need partners who value fairness and aesthetic experiences.',
+      'Scorpio': 'In love, you\'re intense and transformative, preferring deep emotional and physical bonds. You show affection through loyalty, depth, and complete devotion. You need partners who can handle intensity and commit fully.',
+      'Sagittarius': 'In love, you\'re adventurous and optimistic, preferring growth and exploration together. You show affection through shared adventures, philosophical discussions, and giving freedom. You need partners who love learning and traveling.',
+      'Capricorn': 'In love, you\'re committed and traditional, preferring long-term stability and building together. You show affection through responsibility, providing security, and achieving goals together. You need partners who share your ambitions.',
+      'Aquarius': 'In love, you\'re friendly and independent, preferring intellectual connection and personal freedom. You show affection through shared causes, unique experiences, and respecting independence. You need partners who understand your need for space.',
+      'Pisces': 'In love, you\'re romantic and intuitive, preferring spiritual and emotional connection. You show affection through empathy, creativity, and selfless devotion. You need partners who appreciate your sensitivity and imagination.'
+    };
+    
+    return styles[venusSign] || 'Your Venus sign influences how you give and receive love in relationships.';
+  }
+
+  private getMarsSignInsights(marsSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your Mars in Aries gives you direct, impulsive energy. You act quickly on instincts, prefer to lead, and tackle challenges head-on with courage and competitive spirit.',
+      'Taurus': 'With Mars in Taurus, you have steady, persistent energy. You act deliberately, prefer practical goals, and tackle challenges with patience, determination, and methodical approaches.',
+      'Gemini': 'Your Mars in Gemini gives you versatile, intellectual energy. You act on multiple interests, prefer variety, and tackle challenges through communication, wit, and mental agility.',
+      'Cancer': 'Mars in Cancer gives you protective, emotional energy. You act when family or security is threatened, prefer defensive strategies, and tackle challenges with intuition and tenacity.',
+      'Leo': 'With Mars in Leo, you have dramatic, creative energy. You act with pride and flair, prefer leadership roles, and tackle challenges with confidence, generosity, and theatrical approaches.',
+      'Virgo': 'Your Mars in Virgo gives you precise, service-oriented energy. You act systematically, prefer helping others, and tackle challenges through careful analysis and practical solutions.',
+      'Libra': 'Mars in Libra gives you diplomatic, balanced energy. You act through cooperation, prefer win-win solutions, and tackle challenges by seeking harmony and considering all perspectives.',
+      'Scorpio': 'With Mars in Scorpio, you have intense, transformative energy. You act with focus and determination, prefer all-or-nothing approaches, and tackle challenges through depth and psychological insight.',
+      'Sagittarius': 'Your Mars in Sagittarius gives you adventurous, philosophical energy. You act on ideals and beliefs, prefer exploration, and tackle challenges with optimism and broad perspectives.',
+      'Capricorn': 'Mars in Capricorn gives you ambitious, structured energy. You act strategically, prefer traditional methods, and tackle challenges through discipline, planning, and long-term commitment.',
+      'Aquarius': 'With Mars in Aquarius, you have innovative, independent energy. You act on humanitarian ideals, prefer unique approaches, and tackle challenges through originality and group cooperation.',
+      'Pisces': 'Your Mars in Pisces gives you intuitive, compassionate energy. You act on feelings and inspiration, prefer indirect approaches, and tackle challenges through creativity and spiritual connection.'
+    };
+    
+    return insights[marsSign] || 'Your Mars sign shapes how you take action and pursue your goals in life.';
+  }
+
+  private getMarsActionStyle(marsSign: string): string {
+    const styles: Record<string, string> = {
+      'Aries': 'You take action impulsively and directly, jumping into challenges without extensive planning. Your motivation comes from competition, new beginnings, and the thrill of conquest. You work best in fast-paced, independent environments.',
+      'Taurus': 'You take action slowly and steadily, preferring to plan thoroughly before moving. Your motivation comes from building security, creating beauty, and achieving tangible results. You work best in stable, comfortable environments.',
+      'Gemini': 'You take action through communication and networking, tackling multiple projects simultaneously. Your motivation comes from learning, connecting ideas, and intellectual challenges. You work best in varied, social environments.',
+      'Cancer': 'You take action to protect and nurture, responding strongly when emotions are involved. Your motivation comes from family, security, and helping others. You work best in supportive, emotionally safe environments.',
+      'Leo': 'You take action with confidence and creativity, preferring to lead and inspire others. Your motivation comes from recognition, creative expression, and making a dramatic impact. You work best when appreciated and in the spotlight.',
+      'Virgo': 'You take action through careful analysis and practical service, preferring organized, systematic approaches. Your motivation comes from helping others, perfecting skills, and solving problems. You work best in orderly, purpose-driven environments.',
+      'Libra': 'You take action through cooperation and diplomacy, preferring to work with others toward balanced solutions. Your motivation comes from justice, beauty, and harmonious relationships. You work best in peaceful, collaborative environments.',
+      'Scorpio': 'You take action with intensity and focus, preferring to transform situations completely. Your motivation comes from depth, control, and uncovering truth. You work best in private, research-oriented environments.',
+      'Sagittarius': 'You take action through exploration and teaching, preferring big-picture goals and philosophical pursuits. Your motivation comes from freedom, truth, and expanding horizons. You work best in diverse, educational environments.',
+      'Capricorn': 'You take action through structure and ambition, preferring traditional methods and long-term goals. Your motivation comes from achievement, status, and building lasting structures. You work best in hierarchical, goal-oriented environments.',
+      'Aquarius': 'You take action through innovation and group work, preferring unique approaches and humanitarian goals. Your motivation comes from progress, friendship, and making the world better. You work best in progressive, collaborative environments.',
+      'Pisces': 'You take action through intuition and compassion, preferring to flow with circumstances and help others. Your motivation comes from spiritual connection, creativity, and serving a higher purpose. You work best in artistic, supportive environments.'
+    };
+    
+    return styles[marsSign] || 'Your Mars sign influences your unique approach to taking action and pursuing goals.';
+  }
+
+  private getJupiterSignInsights(jupiterSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Jupiter in Aries brings luck through leadership and pioneering ventures. You grow by taking bold initiatives, starting new projects, and inspiring others with your courage and enthusiasm.',
+      'Taurus': 'Jupiter in Taurus brings abundance through patience and practical wisdom. You grow by building stable foundations, appreciating beauty, and sharing your natural talents for creating lasting value.',
+      'Gemini': 'Jupiter in Gemini expands through communication and learning. You grow by connecting diverse ideas, teaching others, and exploring multiple interests with curiosity and adaptability.',
+      'Cancer': 'Jupiter in Cancer brings growth through nurturing and emotional wisdom. You expand by caring for others, honoring traditions, and creating secure, supportive environments.',
+      'Leo': 'Jupiter in Leo brings luck through creative expression and generous leadership. You grow by sharing your talents, inspiring others, and pursuing dramatic, heart-centered goals.',
+      'Virgo': 'Jupiter in Virgo expands through service and practical improvement. You grow by helping others, perfecting skills, and finding meaning in detailed, methodical work.',
+      'Libra': 'Jupiter in Libra brings abundance through relationships and justice. You grow by creating harmony, advocating for fairness, and building beautiful, balanced partnerships.',
+      'Scorpio': 'Jupiter in Scorpio expands through transformation and deep investigation. You grow by exploring hidden truths, embracing change, and developing psychological insight.',
+      'Sagittarius': 'Jupiter in Sagittarius brings natural luck through exploration and philosophy. You grow by seeking truth, traveling, teaching, and expanding your worldview.',
+      'Capricorn': 'Jupiter in Capricorn brings growth through disciplined achievement. You expand by setting ambitious goals, working systematically, and building respected authority.',
+      'Aquarius': 'Jupiter in Aquarius expands through innovation and humanitarian ideals. You grow by embracing unique perspectives, working for social progress, and connecting with diverse groups.',
+      'Pisces': 'Jupiter in Pisces brings spiritual growth and compassionate wisdom. You expand through intuition, artistic expression, and serving others with empathy and understanding.'
+    };
+    
+    return insights[jupiterSign] || 'Your Jupiter sign shows where you naturally find growth, luck, and expansion in life.';
+  }
+
+  private getSaturnSignInsights(saturnSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Saturn in Aries teaches patience and thoughtful action. Your lessons involve learning to plan before acting, developing self-discipline, and balancing independence with responsibility.',
+      'Taurus': 'Saturn in Taurus teaches flexibility and security balance. Your lessons involve overcoming stubbornness, building practical resources, and finding stability without becoming rigid.',
+      'Gemini': 'Saturn in Gemini teaches focused communication and deep learning. Your lessons involve concentrating on fewer subjects, speaking with authority, and developing structured thinking.',
+      'Cancer': 'Saturn in Cancer teaches emotional boundaries and mature nurturing. Your lessons involve balancing care for others with self-care, and developing emotional resilience.',
+      'Leo': 'Saturn in Leo teaches humble leadership and authentic expression. Your lessons involve earning recognition through merit, expressing creativity responsibly, and leading through service.',
+      'Virgo': 'Saturn in Virgo teaches perfect imperfection and practical wisdom. Your lessons involve accepting good enough, developing systematic approaches, and serving others effectively.',
+      'Libra': 'Saturn in Libra teaches authentic relationships and decision-making. Your lessons involve making difficult choices, building genuine partnerships, and finding inner balance.',
+      'Scorpio': 'Saturn in Scorpio teaches emotional mastery and transformation. Your lessons involve facing fears, developing psychological strength, and using power responsibly.',
+      'Sagittarius': 'Saturn in Sagittarius teaches focused wisdom and practical philosophy. Your lessons involve applying beliefs practically, developing expertise, and teaching with authority.',
+      'Capricorn': 'Saturn in Capricorn teaches authentic achievement and leadership. Your lessons involve building lasting success, taking responsibility, and creating meaningful structure.',
+      'Aquarius': 'Saturn in Aquarius teaches disciplined innovation and group responsibility. Your lessons involve balancing individuality with social duty, and manifesting progressive ideals.',
+      'Pisces': 'Saturn in Pisces teaches structured spirituality and grounded compassion. Your lessons involve developing practical mysticism, setting healthy boundaries, and serving others wisely.'
+    };
+    
+    return insights[saturnSign] || 'Your Saturn sign reveals your most important life lessons and areas for developing maturity.';
+  }
+
+  private getUranusSignInsights(uranusSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Uranus in Aries brings revolutionary leadership and pioneering innovation. You\'re part of a generation that breaks new ground in individual expression and personal freedom.',
+      'Taurus': 'Uranus in Taurus brings innovation to values and resources. You\'re part of a generation that revolutionizes money, earth connection, and what society considers valuable.',
+      'Gemini': 'Uranus in Gemini revolutionizes communication and learning. You\'re part of a generation that transforms how information spreads and how people connect intellectually.',
+      'Cancer': 'Uranus in Cancer brings innovation to home and family. You\'re part of a generation that revolutionizes domestic life, emotional expression, and nurturing approaches.',
+      'Leo': 'Uranus in Leo revolutionizes creativity and self-expression. You\'re part of a generation that transforms entertainment, leadership styles, and artistic innovation.',
+      'Virgo': 'Uranus in Virgo brings innovation to work and health. You\'re part of a generation that revolutionizes service, daily routines, and approaches to wellness and efficiency.',
+      'Libra': 'Uranus in Libra revolutionizes relationships and justice. You\'re part of a generation that transforms partnerships, legal systems, and concepts of fairness and beauty.',
+      'Scorpio': 'Uranus in Scorpio brings transformation to power and sexuality. You\'re part of a generation that revolutionizes psychology, hidden knowledge, and approaches to transformation.',
+      'Sagittarius': 'Uranus in Sagittarius revolutionizes philosophy and education. You\'re part of a generation that transforms belief systems, higher learning, and global perspectives.',
+      'Capricorn': 'Uranus in Capricorn brings innovation to structure and authority. You\'re part of a generation that revolutionizes government, business, and traditional hierarchies.',
+      'Aquarius': 'Uranus in Aquarius revolutionizes technology and humanity. You\'re part of a generation that transforms social systems, friendship, and technological advancement.',
+      'Pisces': 'Uranus in Pisces brings innovation to spirituality and compassion. You\'re part of a generation that revolutionizes mysticism, art, and approaches to universal love.'
+    };
+    
+    return insights[uranusSign] || 'Your Uranus sign reveals your generational role in bringing innovation and change to the world.';
+  }
+
+  private getNeptuneSignInsights(neptuneSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Neptune in Aries brings spiritual pioneering and mystical action. You\'re part of a generation that seeks new forms of spiritual expression and active compassion.',
+      'Taurus': 'Neptune in Taurus brings earthly spirituality and practical mysticism. You\'re part of a generation that finds the divine in nature and material beauty.',
+      'Gemini': 'Neptune in Gemini brings intuitive communication and psychic awareness. You\'re part of a generation that develops telepathic abilities and spiritual learning.',
+      'Cancer': 'Neptune in Cancer brings emotional spirituality and psychic sensitivity. You\'re part of a generation that connects deeply with ancestral wisdom and emotional healing.',
+      'Leo': 'Neptune in Leo brings creative spirituality and dramatic inspiration. You\'re part of a generation that expresses the divine through art, performance, and heart-centered leadership.',
+      'Virgo': 'Neptune in Virgo brings practical spirituality and healing service. You\'re part of a generation that finds the sacred in daily work and devoted service to others.',
+      'Libra': 'Neptune in Libra brings harmony-seeking spirituality and relationship mysticism. You\'re part of a generation that seeks the divine through partnership and artistic beauty.',
+      'Scorpio': 'Neptune in Scorpio brings transformative spirituality and psychic depth. You\'re part of a generation that explores the mysteries of death, rebirth, and hidden knowledge.',
+      'Sagittarius': 'Neptune in Sagittarius brings philosophical spirituality and global consciousness. You\'re part of a generation that seeks universal truth and worldwide spiritual connection.',
+      'Capricorn': 'Neptune in Capricorn brings structured spirituality and practical mysticism. You\'re part of a generation that builds lasting spiritual institutions and grounded wisdom.',
+      'Aquarius': 'Neptune in Aquarius brings humanitarian spirituality and technological mysticism. You\'re part of a generation that combines spiritual ideals with progressive innovation.',
+      'Pisces': 'Neptune in Pisces brings pure spirituality and universal compassion. You\'re part of a generation with heightened psychic abilities and deep connection to collective consciousness.'
+    };
+    
+    return insights[neptuneSign] || 'Your Neptune sign reveals your generational spiritual gifts and connection to universal consciousness.';
+  }
+
+  private getPlutoSignInsights(plutoSign: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Pluto in Aries brings transformative leadership and revolutionary power. You\'re part of a generation that transforms through direct action and pioneering change.',
+      'Taurus': 'Pluto in Taurus brings transformation through values and resources. You\'re part of a generation that revolutionizes money, possessions, and earth connection.',
+      'Gemini': 'Pluto in Gemini transforms communication and mental patterns. You\'re part of a generation that revolutionizes thinking, learning, and information exchange.',
+      'Cancer': 'Pluto in Cancer transforms family and emotional patterns. You\'re part of a generation that revolutionizes home life, nurturing, and emotional expression.',
+      'Leo': 'Pluto in Leo transforms creativity and self-expression. You\'re part of a generation that revolutionizes entertainment, leadership, and individual power.',
+      'Virgo': 'Pluto in Virgo transforms work and health systems. You\'re part of a generation that revolutionizes service, daily routines, and approaches to wellness.',
+      'Libra': 'Pluto in Libra transforms relationships and justice. You\'re part of a generation that revolutionizes partnerships, legal systems, and concepts of fairness.',
+      'Scorpio': 'Pluto in Scorpio brings deep personal transformation and power. You\'re part of a generation that revolutionizes psychology, sexuality, and hidden knowledge.',
+      'Sagittarius': 'Pluto in Sagittarius transforms belief systems and global perspectives. You\'re part of a generation that revolutionizes philosophy, education, and worldwide consciousness.',
+      'Capricorn': 'Pluto in Capricorn transforms structures and authority. You\'re part of a generation that revolutionizes government, business, and traditional power systems.',
+      'Aquarius': 'Pluto in Aquarius transforms technology and humanity. You\'re part of a generation that revolutionizes social systems, friendship, and collective consciousness.',
+      'Pisces': 'Pluto in Pisces transforms spirituality and compassion. You\'re part of a generation that revolutionizes mysticism, art, and universal love.'
+    };
+    
+    return insights[plutoSign] || 'Your Pluto sign reveals your generational role in deep transformation and evolutionary change.';
+  }
+
+  // Helper methods for houses insights
+  private getHousesOverview(): string {
+    return `The 12 houses are like the stage where your planets perform. Each house represents a different area of life experience - from your identity and resources to your relationships and spirituality. While the signs describe *how* you express energy, the houses show *where* that energy manifests in your actual life circumstances.
+
+Think of the houses as the departments of your life: the 1st house is your personal brand, the 2nd is your resources and values, the 7th is partnerships, the 10th is your career reputation, and so on. Understanding your house system reveals where you'll encounter your greatest challenges, opportunities, and life lessons.`;
+  }
+
+  private getHouseThemesExplanation(): string {
+    return `1st House: Your identity, appearance, first impressions
+
+2nd House: Money, possessions, self-worth, values  
+
+3rd House: Communication, siblings, local travel, learning
+
+4th House: Home, family, roots, emotional foundation
+
+5th House: Creativity, romance, children, self-expression
+
+6th House: Work, health, daily routines, service
+
+7th House: Marriage, partnerships, one-on-one relationships
+
+8th House: Shared resources, transformation, deep psychology
+
+9th House: Higher education, philosophy, long-distance travel
+
+10th House: Career, reputation, public image, achievements
+
+11th House: Friends, groups, hopes, social networks
+
+12th House: Spirituality, hidden enemies, subconscious, sacrifice
+
+Each house has specific themes, but how these play out depends on which signs rule your house cusps and which planets reside there.`;
+  }
+
+  private getNumerologyFoundation(): string {
+    return `Numbers 1-4 represent the fundamental building blocks of existence, mirroring the first four houses of your astrological chart.
+
+Number 1 (1st House - Identity): The beginning, the self, pure potential manifesting into form. Like Aries energy, it's the spark of individual consciousness emerging.
+
+Number 2 (2nd House - Resources): Duality and receptivity, the need to gather and build. This reflects our relationship with the material world and what we value.
+
+Number 3 (3rd House - Communication): Creative expression and connection, the urge to share and communicate our inner world with others around us.
+
+Number 4 (4th House - Foundation): Structure and stability, the container that holds and nurtures. This represents our roots and emotional security.`;
+  }
+
+  private getNumerologyExpression(): string {
+    return `Numbers 5-8 represent the expansion beyond personal foundation into creative and relational expression.
+
+Number 5 (5th House - Creativity): Freedom and creative self-expression, the joy of play and romance. This is where we risk and create.
+
+Number 6 (6th House - Service): Harmony and service, the refinement of skills and devotion to improvement. This perfects our daily experience.
+
+Number 7 (7th House - Partnership): Reflection and partnership, seeing ourselves through relationship with others. This completes our understanding.
+
+Number 8 (8th House - Transformation): Power and regeneration, the mastery of transformation and shared resources. This deepens our capacity for change.
+
+These numbers guide us from personal creativity (5) through service and refinement (6), into partnership reflection (7), and finally to transformative mastery (8).`;
+  }
+
+  private getNumerologyPurpose(): string {
+    return `Numbers 9-12 represent completion and transcendence, connecting us to universal purpose and cosmic consciousness.
+
+Number 9 (9th House - Philosophy): Universal wisdom and higher knowledge, the expansion of consciousness beyond personal limits into universal truth.
+
+Number 10 (10th House - Reputation): Completion and worldly achievement, the culmination of our efforts in the public sphere and social contribution.
+
+Number 11 (11th House - Community): Master number of inspiration and collective vision, connecting individual purpose with group consciousness and future dreams.
+
+Number 12 (12th House - Spirituality): Universal completion and dissolution, the return to source consciousness and connection with the infinite.
+
+The final numbers guide us from expanded awareness (9) through public achievement (10), into collective inspiration (11), and finally to spiritual transcendence (12).`;
   }
 
 }
