@@ -2028,13 +2028,13 @@ Each modality has its season and purpose in the natural cycle - cardinal begins,
   private getNumerologyFoundation(): string {
     return `Numbers 1-4 represent the fundamental building blocks of existence, mirroring the first four houses of your astrological chart.
 
-**Number 1 (1st House - Identity):** The beginning, the self, pure potential manifesting into form. Like Aries energy, it's the spark of individual consciousness emerging.
+Number 1 (1st House - Identity): The beginning, the self, pure potential manifesting into form. Like Aries energy, it's the spark of individual consciousness emerging.
 
-**Number 2 (2nd House - Resources):** Duality and receptivity, the need to gather and build. This reflects our relationship with the material world and what we value.
+Number 2 (2nd House - Resources): Duality and receptivity, the need to gather and build. This reflects our relationship with the material world and what we value.
 
-**Number 3 (3rd House - Communication):** Creative expression and connection, the urge to share and communicate our inner world with others around us.
+Number 3 (3rd House - Communication): Creative expression and connection, the urge to share and communicate our inner world with others around us.
 
-**Number 4 (4th House - Foundation):** Structure and stability, the container that holds and nurtures. This represents our roots and emotional security.
+Number 4 (4th House - Foundation): Structure and stability, the container that holds and nurtures. This represents our roots and emotional security.
 
 Numerology appears universally across divination and oracular systems - from Astrology and Tarot to Names & Words - and is a fascinating study in its own right. But here lies a key insight: Numerology is fundamental to mastering the language of symbols, providing the mathematical foundation that underlies all mystical traditions.`;
   }
@@ -2042,13 +2042,13 @@ Numerology appears universally across divination and oracular systems - from Ast
   private getNumerologyExpression(): string {
     return `Numbers 5-8 represent the expansion beyond personal foundation into creative and relational expression.
 
-**Number 5 (5th House - Creativity):** Freedom and creative self-expression, the joy of play and romance. This is where we risk and create.
+Number 5 (5th House - Creativity): Freedom and creative self-expression, the joy of play and romance. This is where we risk and create.
 
-**Number 6 (6th House - Service):** Harmony and service, the refinement of skills and devotion to improvement. This perfects our daily experience.
+Number 6 (6th House - Service): Harmony and service, the refinement of skills and devotion to improvement. This perfects our daily experience.
 
-**Number 7 (7th House - Partnership):** Reflection and partnership, seeing ourselves through relationship with others. This completes our understanding.
+Number 7 (7th House - Partnership): Reflection and partnership, seeing ourselves through relationship with others. This completes our understanding.
 
-**Number 8 (8th House - Transformation):** Power and regeneration, the mastery of transformation and shared resources. This deepens our capacity for change.
+Number 8 (8th House - Transformation): Power and regeneration, the mastery of transformation and shared resources. This deepens our capacity for change.
 
 These numbers guide us from personal creativity (5) through service and refinement (6), into partnership reflection (7), and finally to transformative mastery (8).`;
   }
@@ -2056,13 +2056,13 @@ These numbers guide us from personal creativity (5) through service and refineme
   private getNumerologyPurpose(): string {
     return `Numbers 9-12 represent completion and transcendence, connecting us to universal purpose and cosmic consciousness.
 
-**Number 9 (9th House - Philosophy):** Universal wisdom and higher knowledge, the expansion of consciousness beyond personal limits into universal truth.
+Number 9 (9th House - Philosophy): Universal wisdom and higher knowledge, the expansion of consciousness beyond personal limits into universal truth.
 
-**Number 10 (10th House - Reputation):** Completion and worldly achievement, the culmination of our efforts in the public sphere and social contribution.
+Number 10 (10th House - Reputation): Completion and worldly achievement, the culmination of our efforts in the public sphere and social contribution.
 
-**Number 11 (11th House - Community):** Master number of inspiration and collective vision, connecting individual purpose with group consciousness and future dreams.
+Number 11 (11th House - Community): Master number of inspiration and collective vision, connecting individual purpose with group consciousness and future dreams.
 
-**Number 12 (12th House - Spirituality):** Universal completion and dissolution, the return to source consciousness and connection with the infinite.
+Number 12 (12th House - Spirituality): Universal completion and dissolution, the return to source consciousness and connection with the infinite.
 
 The final numbers guide us from expanded awareness (9) through public achievement (10), into collective inspiration (11), and finally to spiritual transcendence (12).`;
   }
