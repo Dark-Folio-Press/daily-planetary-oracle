@@ -941,8 +941,6 @@ class LearningService {
               }
             });
           } else if (lesson.title.includes('Big Three') || lesson.title.includes('Integration')) { // Big Three Integration lesson
-            console.log('🎯 Big Three Integration lesson detected:', lesson.title);
-            console.log('🎯 Chart data:', chartData.sunSign, chartData.moonSign, chartData.risingSign);
             content.push({
               type: 'text',
               data: {
