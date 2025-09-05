@@ -1068,7 +1068,7 @@ class LearningService {
     
     // Check for element harmony
     const elements = [sunElement, moonElement, risingElement];
-    const uniqueElements = [...new Set(elements)];
+    const uniqueElements = Array.from(new Set(elements));
     
     if (uniqueElements.length === 1) {
       return `Your Big Three all share the ${sunElement} element, creating a harmonious and focused energy. This gives you a strong, consistent approach to life where your emotions (${moonSign} Moon), identity (${sunSign} Sun), and outer expression (${risingSign} Rising) all work in sync. You have a clear, unified energy that others can easily understand and relate to.`;
@@ -1079,124 +1079,6 @@ class LearningService {
     }
   }
 
-  // Essential methods for the learning service to function
-  async getDashboardData(userId: string): Promise<any> {
-    const stats = await this.getUserStats(userId);
-    const badges = await this.getUserBadges(userId);
-    const availableLessons = await this.getAvailableLessons(userId);
-    
-    return {
-      stats,
-      badges,
-      availableLessons,
-      recentProgress: [],
-      canAccessSynastry: false
-    };
-  }
-
-  async getUserStats(userId: string): Promise<LearningStats> {
-    let [stats] = await db.select().from(learningStats).where(eq(learningStats.userId, userId));
-    
-    if (!stats) {
-      // Create initial stats for new user
-      [stats] = await db.insert(learningStats).values({
-        userId,
-        totalXp: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        lastActivityDate: null,
-        completedLessons: 0,
-        masteredLessons: 0,
-        totalTimeSpent: 0
-      }).returning();
-    }
-    
-    return stats;
-  }
-
-  async getAvailableLessons(userId: string): Promise<LearningLesson[]> {
-    const userProgress = await db.select()
-      .from(learningProgress)
-      .where(eq(learningProgress.userId, userId));
-    
-    // Get all lessons to build completion map
-    const allLessons = await db.select()
-      .from(learningLessons)
-      .where(eq(learningLessons.isActive, true))
-      .orderBy(learningLessons.track, learningLessons.lessonNumber);
-    
-    const lessonMap = new Map(allLessons.map(l => [l.id, l]));
-    
-    const completedLessonIds = userProgress
-      .filter(p => p.status === 'completed' || p.status === 'mastered')
-      .map(p => p.lessonId);
-    
-    return allLessons.filter(lesson => {
-      // If no prerequisites, it's available
-      if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
-        return true;
-      }
-      
-      // Check if all prerequisites are completed
-      // Convert string prerequisites to numbers if needed
-      return lesson.requiredLessons.every(req => {
-        const reqId = typeof req === 'string' ? parseInt(req) : req;
-        return completedLessonIds.includes(reqId);
-      });
-    });
-  }
-
-  async getUserBadges(userId: string): Promise<LearningBadge[]> {
-    const userBadges = await db.select({
-      badge: learningBadges,
-      earnedAt: learningUserBadges.earnedAt
-    })
-    .from(learningUserBadges)
-    .innerJoin(learningBadges, eq(learningUserBadges.badgeId, learningBadges.id))
-    .where(eq(learningUserBadges.userId, userId));
-    
-    return userBadges.map(ub => ({
-      ...ub.badge,
-      earnedAt: ub.earnedAt
-    }));
-  }
-
-  async recordProgress(userId: string, lessonId: number, status: string, score?: number, timeSpent?: number): Promise<void> {
-    // Check if progress record exists
-    const existingProgress = await db.select().from(learningProgress)
-      .where(and(
-        eq(learningProgress.userId, userId),
-        eq(learningProgress.lessonId, lessonId)
-      ));
-
-    if (existingProgress.length > 0) {
-      // Update existing progress
-      await db.update(learningProgress)
-        .set({
-          status,
-          score,
-          timeSpent,
-          completedAt: status === 'completed' || status === 'mastered' ? new Date() : null
-        })
-        .where(and(
-          eq(learningProgress.userId, userId),
-          eq(learningProgress.lessonId, lessonId)
-        ));
-    } else {
-      // Create new progress record
-      await db.insert(learningProgress).values({
-        userId,
-        lessonId,
-        status,
-        score,
-        timeSpent,
-        completedAt: status === 'completed' || status === 'mastered' ? new Date() : null
-      });
-    }
-
-    // Update user stats
-    await this.updateUserStats(userId, status);
-  }
 
   private async updateUserStats(userId: string, status: string): Promise<void> {
     const stats = await this.getUserStats(userId);
@@ -1204,26 +1086,13 @@ class LearningService {
     if (status === 'completed' || status === 'mastered') {
       await db.update(learningStats)
         .set({
-          completedLessons: stats.completedLessons + 1,
-          masteredLessons: status === 'mastered' ? stats.masteredLessons + 1 : stats.masteredLessons,
-          totalXp: stats.totalXp + 15, // Base XP for lesson completion
-          lastActivityDate: new Date()
+          completedLessons: (stats.completedLessons || 0) + 1,
+          masteredLessons: status === 'mastered' ? (stats.masteredLessons || 0) + 1 : (stats.masteredLessons || 0),
+          totalXp: (stats.totalXp || 0) + 15, // Base XP for lesson completion
+          lastActivityDate: new Date().toISOString()
         })
         .where(eq(learningStats.userId, userId));
     }
-  }
-
-  async getNextLessonInTrack(currentTrack: string, currentLessonNumber: number): Promise<LearningLesson | null> {
-    const nextLesson = await db.select()
-      .from(learningLessons)
-      .where(and(
-        eq(learningLessons.track, currentTrack),
-        eq(learningLessons.lessonNumber, currentLessonNumber + 1),
-        eq(learningLessons.isActive, true)
-      ))
-      .limit(1);
-
-    return nextLesson[0] || null;
   }
 
   private getSunSignInsights(sunSign: string): string {
@@ -1242,17 +1111,10 @@ class LearningService {
     return `The four elements form the foundation of astrology: Fire (passion), Earth (stability), Air (communication), Water (emotion).`;
   }
 
-  private getElementExpression(sunSign: string, element: string): string {
-    return `Your ${sunSign} sun expresses ${element} energy in unique ways.`;
-  }
-
   private getModalitiesOverview(): string {
     return `The three modalities describe approaches to change: Cardinal (initiators), Fixed (sustainers), Mutable (adapters).`;
   }
 
-  private getModalityExpression(sunSign: string, modality: string): string {
-    return `Your ${sunSign} sun expresses ${modality} energy through your natural approach to goals and challenges.`;
-  }
 }
 
 export const learningService = new LearningService();
