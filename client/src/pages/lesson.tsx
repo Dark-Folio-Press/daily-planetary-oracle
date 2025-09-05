@@ -630,6 +630,38 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.type === 'big-three-integration' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sun}-{interactiveContent?.moon}-{interactiveContent?.rising} Big Three Synthesis</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Core Identity (Sun)</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your {interactiveContent?.sun} Sun represents your essential self - the core identity you're developing throughout life and how you shine in the world.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Emotional Nature (Moon)</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your {interactiveContent?.moon} Moon governs your inner emotional world - how you feel safe, what nurtures you, and your instinctive reactions.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Outer Expression (Rising)</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your {interactiveContent?.rising} Rising is your social persona - how others first see you and the energy you project when meeting new people.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Integration Dynamic</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your Big Three create a unique blend of {interactiveContent?.sun} identity, {interactiveContent?.moon} emotions, and {interactiveContent?.rising} expression. This combination shapes how you navigate relationships, work, and personal growth.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {interactiveContent?.element === 'venus' && (
                     <>
                       <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Venus in Relationships</h4>

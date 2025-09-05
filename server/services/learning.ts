@@ -956,6 +956,31 @@ class LearningService {
                 element: 'rising'
               }
             });
+          } else if (lesson.title.includes('Big Three') || lesson.title.includes('Integration')) { // Big Three Integration lesson
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.sunSign}-${chartData.moonSign}-${chartData.risingSign} Combination`,
+                content: this.getBigThreeIntegration(chartData.sunSign, chartData.moonSign, chartData.risingSign)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `How Your Big Three Work Together`,
+                content: this.getBigThreeInterplay(chartData.sunSign, chartData.moonSign, chartData.risingSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'big-three-integration',
+                sun: chartData.sunSign,
+                moon: chartData.moonSign,
+                rising: chartData.risingSign,
+                element: 'big-three'
+              }
+            });
           } else {
             // Fallback for any other basics lessons that don't have specific handling
             content.push({
@@ -1029,6 +1054,29 @@ class LearningService {
     };
 
     return `Modalities describe how zodiac signs approach action and change - Cardinal (initiators), Fixed (sustainers), and Mutable (adapters). Your ${sunSign} sun is a ${modality.charAt(0).toUpperCase() + modality.slice(1)} sign, which means ${modalityDescriptions[modality]} This ${modality.charAt(0).toUpperCase() + modality.slice(1)} modality influences how you handle goals, challenges, and life changes.`;
+  }
+
+  private getBigThreeIntegration(sunSign: string, moonSign: string, risingSign: string): string {
+    return `Your ${sunSign} Sun represents your core identity and conscious will - your essential self that seeks growth and self-expression. Your ${moonSign} Moon governs your emotional nature, instinctive reactions, and what makes you feel safe and nurtured. Your ${risingSign} Rising is your social mask and the energy you project to the world - how others first perceive you and how you navigate new situations. Together, these three form your unique astrological fingerprint, creating a complex interplay between your inner self (Moon), outer self (Rising), and core identity (Sun).`;
+  }
+
+  private getBigThreeInterplay(sunSign: string, moonSign: string, risingSign: string): string {
+    // Get elements for analysis
+    const sunElement = this.getSignElement(sunSign);
+    const moonElement = this.getSignElement(moonSign);
+    const risingElement = this.getSignElement(risingSign);
+    
+    // Check for element harmony
+    const elements = [sunElement, moonElement, risingElement];
+    const uniqueElements = [...new Set(elements)];
+    
+    if (uniqueElements.length === 1) {
+      return `Your Big Three all share the ${sunElement} element, creating a harmonious and focused energy. This gives you a strong, consistent approach to life where your emotions (${moonSign} Moon), identity (${sunSign} Sun), and outer expression (${risingSign} Rising) all work in sync. You have a clear, unified energy that others can easily understand and relate to.`;
+    } else if (uniqueElements.length === 2) {
+      return `Your Big Three blend two elements (${uniqueElements.join(' and ')}), creating an interesting dynamic between different approaches to life. Your ${sunSign} Sun brings ${sunElement} energy to your core identity, while your ${moonSign} Moon adds ${moonElement} emotional patterns, and your ${risingSign} Rising projects ${risingElement} energy to the world. This combination gives you versatility and the ability to adapt your energy to different situations.`;
+    } else {
+      return `Your Big Three span three different elements (${sunElement}, ${moonElement}, and ${risingElement}), making you incredibly versatile and multi-faceted. Your ${sunSign} Sun brings ${sunElement} energy to your identity, your ${moonSign} Moon adds ${moonElement} emotional depth, and your ${risingSign} Rising projects ${risingElement} energy outwardly. This rich elemental blend means you can understand and connect with many different types of people and situations.`;
+    }
   }
 
   // Essential methods for the learning service to function
