@@ -1651,13 +1651,13 @@ class LearningService {
   private getElementsOverview(): string {
     return `The four elements form the foundation of astrology, each representing a fundamental energy type that influences how signs express themselves:
 
-**Fire Signs (Aries, Leo, Sagittarius):** Passionate, energetic, and dynamic. Fire element brings enthusiasm, creativity, and the drive to initiate and inspire. Fire signs are natural leaders who act on instinct and radiate warmth and confidence.
+Fire Signs (Aries, Leo, Sagittarius): Passionate, energetic, and dynamic. Fire element brings enthusiasm, creativity, and the drive to initiate and inspire. Fire signs are natural leaders who act on instinct and radiate warmth and confidence.
 
-**Earth Signs (Taurus, Virgo, Capricorn):** Practical, stable, and grounded. Earth element brings reliability, patience, and the ability to build lasting foundations. Earth signs value security, work steadily toward goals, and have a natural connection to the physical world.
+Earth Signs (Taurus, Virgo, Capricorn): Practical, stable, and grounded. Earth element brings reliability, patience, and the ability to build lasting foundations. Earth signs value security, work steadily toward goals, and have a natural connection to the physical world.
 
-**Air Signs (Gemini, Libra, Aquarius):** Intellectual, communicative, and social. Air element brings curiosity, mental agility, and the ability to connect ideas and people. Air signs think before they act, value relationships and ideas, and excel at communication.
+Air Signs (Gemini, Libra, Aquarius): Intellectual, communicative, and social. Air element brings curiosity, mental agility, and the ability to connect ideas and people. Air signs think before they act, value relationships and ideas, and excel at communication.
 
-**Water Signs (Cancer, Scorpio, Pisces):** Emotional, intuitive, and empathetic. Water element brings deep feeling, psychic sensitivity, and the ability to flow and adapt. Water signs lead with their hearts, possess strong intuition, and connect deeply with others' emotions.
+Water Signs (Cancer, Scorpio, Pisces): Emotional, intuitive, and empathetic. Water element brings deep feeling, psychic sensitivity, and the ability to flow and adapt. Water signs lead with their hearts, possess strong intuition, and connect deeply with others' emotions.
 
 Each element has its own gifts and challenges, and understanding your elemental nature helps you work with your natural strengths while developing areas that don't come as easily.`;
   }
@@ -1692,11 +1692,11 @@ Each element has its own gifts and challenges, and understanding your elemental 
   private getModalitiesOverview(): string {
     return `The three modalities describe how signs handle energy and approach change, creating different styles of action and adaptation:
 
-**Cardinal Signs (Aries, Cancer, Libra, Capricorn):** The initiators and leaders. Cardinal modality brings the energy to start new projects, lead initiatives, and pioneer change. Cardinal signs are naturally motivated to begin things, take charge, and move forward. They excel at getting things started but may struggle with follow-through.
+Cardinal Signs (Aries, Cancer, Libra, Capricorn): The initiators and leaders. Cardinal modality brings the energy to start new projects, lead initiatives, and pioneer change. Cardinal signs are naturally motivated to begin things, take charge, and move forward. They excel at getting things started but may struggle with follow-through.
 
-**Fixed Signs (Taurus, Leo, Scorpio, Aquarius):** The sustainers and stabilizers. Fixed modality brings the energy to maintain, preserve, and see things through to completion. Fixed signs provide stability, determination, and the power to resist change when necessary. They excel at persistence and loyalty but may struggle with adaptability.
+Fixed Signs (Taurus, Leo, Scorpio, Aquarius): The sustainers and stabilizers. Fixed modality brings the energy to maintain, preserve, and see things through to completion. Fixed signs provide stability, determination, and the power to resist change when necessary. They excel at persistence and loyalty but may struggle with adaptability.
 
-**Mutable Signs (Gemini, Virgo, Sagittarius, Pisces):** The adapters and synthesizers. Mutable modality brings the energy to adjust, modify, and find flexible solutions. Mutable signs are naturally adaptable, able to see multiple perspectives, and skilled at bringing things to completion. They excel at change and versatility but may struggle with commitment.
+Mutable Signs (Gemini, Virgo, Sagittarius, Pisces): The adapters and synthesizers. Mutable modality brings the energy to adjust, modify, and find flexible solutions. Mutable signs are naturally adaptable, able to see multiple perspectives, and skilled at bringing things to completion. They excel at change and versatility but may struggle with commitment.
 
 Each modality has its season and purpose in the natural cycle - cardinal begins, fixed maintains, and mutable completes and transforms. Understanding your modality helps you recognize your natural approach to goals, challenges, and life changes.`;
   }
@@ -2072,18 +2072,29 @@ Think of the houses as the departments of your life: the 1st house is your perso
   }
 
   private getHouseThemesExplanation(): string {
-    return `**1st House:** Your identity, appearance, first impressions
-**2nd House:** Money, possessions, self-worth, values  
-**3rd House:** Communication, siblings, local travel, learning
-**4th House:** Home, family, roots, emotional foundation
-**5th House:** Creativity, romance, children, self-expression
-**6th House:** Work, health, daily routines, service
-**7th House:** Marriage, partnerships, one-on-one relationships
-**8th House:** Shared resources, transformation, deep psychology
-**9th House:** Higher education, philosophy, long-distance travel
-**10th House:** Career, reputation, public image, achievements
-**11th House:** Friends, groups, hopes, social networks
-**12th House:** Spirituality, hidden enemies, subconscious, sacrifice
+    return `1st House: Your identity, appearance, first impressions
+
+2nd House: Money, possessions, self-worth, values  
+
+3rd House: Communication, siblings, local travel, learning
+
+4th House: Home, family, roots, emotional foundation
+
+5th House: Creativity, romance, children, self-expression
+
+6th House: Work, health, daily routines, service
+
+7th House: Marriage, partnerships, one-on-one relationships
+
+8th House: Shared resources, transformation, deep psychology
+
+9th House: Higher education, philosophy, long-distance travel
+
+10th House: Career, reputation, public image, achievements
+
+11th House: Friends, groups, hopes, social networks
+
+12th House: Spirituality, hidden enemies, subconscious, sacrifice
 
 Each house has specific themes, but how these play out depends on which signs rule your house cusps and which planets reside there.`;
   }
