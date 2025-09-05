@@ -79,9 +79,16 @@ export default function LessonPage() {
       timeSpent?: number;
     }) => apiRequest("POST", `/api/learning/progress`, progressData),
     onSuccess: () => {
+      // Invalidate all learning-related queries to ensure UI updates
       queryClient.invalidateQueries({ queryKey: ["/api/learning/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/learning/lessons"] });
       queryClient.invalidateQueries({ queryKey: ["/api/learning/lesson"] });
-      queryClient.invalidateQueries({ queryKey: ["learning"] });
+      queryClient.invalidateQueries({ predicate: (query) => 
+        query.queryKey.some(key => 
+          typeof key === 'string' && 
+          (key.includes('/api/learning/') || key === 'learning')
+        )
+      });
       toast({
         title: "Progress recorded!",
         description: `You earned +${lessonData?.lesson.xpReward} XP`,
