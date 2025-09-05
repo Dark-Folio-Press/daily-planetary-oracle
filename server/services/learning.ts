@@ -1254,13 +1254,26 @@ The first four houses form your personal foundation - representing your inner ci
               }
             });
             
+            // Transform house data to format expected by frontend
+            const transformedHouseData: Record<string, any> = {};
+            if (chartData.detailedChart?.houses) {
+              for (const house of chartData.detailedChart.houses) {
+                transformedHouseData[`house_${house.number}`] = {
+                  sign: house.sign,
+                  degree: house.degree,
+                  ruler: house.ruler,
+                  themes: house.themes
+                };
+              }
+            }
+            
             content.push({
               type: 'interactive',
               data: {
                 type: 'personal-foundation',
                 element: 'personal-foundation',
                 houses: [1, 2, 3, 4],
-                houseData: chartData.detailedChart?.houses || null
+                houseData: Object.keys(transformedHouseData).length > 0 ? transformedHouseData : null
               }
             });
           } else if (lesson.lessonNumber === 3) { // Creative Expression: Houses 5-8
@@ -1280,13 +1293,26 @@ The first four houses form your personal foundation - representing your inner ci
               }
             });
 
+            // Transform house data to format expected by frontend
+            const transformedHouseData2: Record<string, any> = {};
+            if (chartData.detailedChart?.houses) {
+              for (const house of chartData.detailedChart.houses) {
+                transformedHouseData2[`house_${house.number}`] = {
+                  sign: house.sign,
+                  degree: house.degree,
+                  ruler: house.ruler,
+                  themes: house.themes
+                };
+              }
+            }
+            
             content.push({
               type: 'interactive',
               data: {
                 type: 'creative-expression',
                 element: 'creative-expression',
                 houses: [5, 6, 7, 8],
-                houseData: chartData.detailedChart?.houses || null
+                houseData: Object.keys(transformedHouseData2).length > 0 ? transformedHouseData2 : null
               }
             });
           } else if (lesson.lessonNumber === 4) { // Higher Purpose: Houses 9-12
@@ -1306,13 +1332,26 @@ The first four houses form your personal foundation - representing your inner ci
               }
             });
 
+            // Transform house data to format expected by frontend
+            const transformedHouseData3: Record<string, any> = {};
+            if (chartData.detailedChart?.houses) {
+              for (const house of chartData.detailedChart.houses) {
+                transformedHouseData3[`house_${house.number}`] = {
+                  sign: house.sign,
+                  degree: house.degree,
+                  ruler: house.ruler,
+                  themes: house.themes
+                };
+              }
+            }
+            
             content.push({
               type: 'interactive',
               data: {
                 type: 'higher-purpose',
                 element: 'higher-purpose',
                 houses: [9, 10, 11, 12],
-                houseData: chartData.detailedChart?.houses || null
+                houseData: Object.keys(transformedHouseData3).length > 0 ? transformedHouseData3 : null
               }
             });
           }
