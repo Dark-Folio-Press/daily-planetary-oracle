@@ -78,8 +78,13 @@ export default function LessonPage() {
       score?: number;
       timeSpent?: number;
     }) => apiRequest("POST", `/api/learning/progress`, progressData),
-    onSuccess: () => {
-      // Invalidate all learning-related queries to ensure UI updates
+    onSuccess: (data: any) => {
+      // Update the dashboard cache with the returned data
+      if (data.dashboardData) {
+        queryClient.setQueryData(["/api/learning/dashboard"], data.dashboardData);
+      }
+      
+      // Also invalidate queries as backup
       queryClient.invalidateQueries({ queryKey: ["/api/learning/dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["/api/learning/lessons"] });
       queryClient.invalidateQueries({ queryKey: ["/api/learning/lesson"] });
@@ -89,6 +94,7 @@ export default function LessonPage() {
           (key.includes('/api/learning/') || key === 'learning')
         )
       });
+      
       toast({
         title: "Progress recorded!",
         description: `You earned +${lessonData?.lesson.xpReward} XP`,
