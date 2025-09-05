@@ -804,28 +804,50 @@ export default function LessonPage() {
 
                   {interactiveContent?.element === 'personal-houses' && (
                     <>
-                      <h4 className="font-semibold mb-3">Your Personal House System</h4>
+                      <h4 className="font-semibold mb-3">Your Complete Personal House System</h4>
                       <div className="space-y-3">
                         {interactiveContent?.houseData ? (
                           <>
-                            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">1st House Identity</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Your {interactiveContent.houseData?.house_1?.sign} 1st house shapes how you present yourself to the world and your natural approach to new situations.
-                              </p>
-                            </div>
-                            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">7th House Partnerships</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Your {interactiveContent.houseData?.house_7?.sign} 7th house influences your approach to partnerships and what you seek in close relationships.
-                              </p>
-                            </div>
-                            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">10th House Career</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Your {interactiveContent.houseData?.house_10?.sign} 10th house reveals your natural approach to career, reputation, and public image.
-                              </p>
-                            </div>
+                            {Array.from({ length: 12 }, (_, i) => {
+                              const houseNumber = i + 1;
+                              const houseKey = `house_${houseNumber}`;
+                              const houseInfo = interactiveContent.houseData[houseKey];
+                              const getOrdinal = (num: number): string => {
+                                const suffixes = ['th', 'st', 'nd', 'rd'];
+                                const value = num % 100;
+                                return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
+                              };
+                              const getHouseDescription = (num: number, sign: string): { theme: string, description: string } => {
+                                const descriptions = {
+                                  1: { theme: 'Identity & Appearance', description: `shapes how you present yourself to the world and your natural approach to new situations` },
+                                  2: { theme: 'Resources & Values', description: `influences your relationship with money, possessions, and what you truly value in life` },
+                                  3: { theme: 'Communication & Learning', description: `affects how you communicate, learn, and connect with siblings and your local environment` },
+                                  4: { theme: 'Home & Family', description: `governs your emotional foundation, family relationships, and sense of home and security` },
+                                  5: { theme: 'Creativity & Romance', description: `influences your creative expression, romantic relationships, and approach to fun and self-expression` },
+                                  6: { theme: 'Work & Health', description: `affects your daily routines, work environment, health habits, and service to others` },
+                                  7: { theme: 'Partnerships & Marriage', description: `influences your approach to partnerships, marriage, and what you seek in close relationships` },
+                                  8: { theme: 'Transformation & Shared Resources', description: `governs deep transformation, shared finances, and how you handle life's intense experiences` },
+                                  9: { theme: 'Philosophy & Higher Learning', description: `influences your beliefs, higher education, travel, and quest for meaning and wisdom` },
+                                  10: { theme: 'Career & Reputation', description: `reveals your natural approach to career, reputation, and how you want to be known publicly` },
+                                  11: { theme: 'Friends & Social Networks', description: `affects your friendships, group involvements, and hopes and dreams for the future` },
+                                  12: { theme: 'Spirituality & Subconscious', description: `governs your spiritual life, hidden strengths, and connection to the collective unconscious` }
+                                };
+                                return descriptions[num as keyof typeof descriptions] || { theme: 'Life Area', description: 'influences this area of your life' };
+                              };
+                              
+                              if (houseInfo) {
+                                const { theme, description } = getHouseDescription(houseNumber, houseInfo.sign);
+                                return (
+                                  <div key={houseNumber} className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                                    <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{getOrdinal(houseNumber)} House - {theme}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                      Your <span className="font-medium">{houseInfo.sign}</span> {getOrdinal(houseNumber).toLowerCase()} house {description}.
+                                    </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })}
                           </>
                         ) : (
                           <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
