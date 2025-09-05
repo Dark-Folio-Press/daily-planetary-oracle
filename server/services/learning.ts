@@ -774,32 +774,65 @@ class LearningService {
         ));
       
       if (progress) {
-        // Return a minimal lesson for completed lessons that don't have full data
-        return {
-          lesson: {
-            id: lessonId,
-            title: `Completed Lesson ${lessonId}`,
-            description: "You have already completed this lesson successfully.",
-            track: this.getLessonTrackById(lessonId),
-            lessonNumber: lessonId,
-            xpReward: 50,
-            estimatedMinutes: 15,
-            prerequisites: null,
-            content: {},
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            isActive: true,
-            requiredLessons: null
-          },
-          content: [{
-            type: 'text',
-            data: {
-              title: `Review: Lesson ${lessonId}`,
-              content: `Congratulations! You completed this lesson on ${progress.completedAt ? new Date(progress.completedAt).toLocaleDateString() : 'a previous date'}. You earned ${progress.score || 50} XP and spent ${Math.round((progress.timeSpent || 900) / 60)} minutes learning.`
+        // Create a proper lesson object for completed lessons using the same pattern as lesson 29
+        const lessonInfo = this.getLessonInfoById(lessonId);
+        const mockLesson = {
+          id: lessonId,
+          title: lessonInfo.title,
+          description: lessonInfo.description,
+          track: lessonInfo.track,
+          lessonNumber: lessonId,
+          xpReward: 50,
+          estimatedMinutes: 15,
+          prerequisites: null,
+          content: {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isActive: true,
+          requiredLessons: null
+        };
+
+        // Get user's birth data for personalization (same as working lesson 29)
+        const user = await db.select().from(users).where(eq(users.id, userId));
+        let userChartData = null;
+        
+        if (user[0]?.birthDate && user[0]?.birthTime && user[0]?.birthLocation) {
+          const sunSign = astrologyService.calculateSunSign(user[0].birthDate);
+          const moonSign = astrologyService.calculateMoonSign(user[0].birthDate, user[0].birthTime);
+          const risingSign = astrologyService.calculateRising(user[0].birthDate, user[0].birthTime, user[0].birthLocation);
+          
+          let detailedChart = null;
+          try {
+            detailedChart = await astrologyService.generateDetailedChartAccurate({
+              date: user[0].birthDate,
+              time: user[0].birthTime,
+              location: user[0].birthLocation
+            });
+          } catch (error) {
+            console.error('Failed to get detailed chart data:', error);
+          }
+          
+          userChartData = {
+            sunSign,
+            moonSign,
+            risingSign,
+            detailedChart,
+            birthData: {
+              date: user[0].birthDate,
+              time: user[0].birthTime,
+              location: user[0].birthLocation
             }
-          }],
-          userProgress: progress,
-          personalizedInsights: [`Great work completing Lesson ${lessonId}! You're making excellent progress in your astrological learning journey.`]
+          };
+        }
+
+        // Generate personalized content using the same method as lesson 29
+        const personalizedContent = await this.personalizeContent(mockLesson, userChartData);
+
+        return {
+          lesson: mockLesson,
+          personalizedContent,
+          userChartData,
+          userProgress: progress
         };
       }
       
@@ -1680,6 +1713,57 @@ The first four houses form your personal foundation - representing your inner ci
     if (lessonId <= 12) return "planets";
     if (lessonId <= 24) return "houses";
     return "advanced";
+  }
+
+  private getLessonInfoById(lessonId: number): { title: string; description: string; track: string } {
+    const track = this.getLessonTrackById(lessonId);
+    
+    // Comprehensive lesson catalog based on astrological curriculum
+    const lessonCatalog: Record<number, { title: string; description: string }> = {
+      // Basics Track (1-3)
+      1: { title: "Your Sun Sign: The Core of Who You Are", description: "Discover your fundamental personality traits and life purpose through your sun sign" },
+      2: { title: "Your Moon Sign: Your Emotional Nature", description: "Explore your inner world, emotions, and instinctive responses" },
+      3: { title: "Your Rising Sign: How You Appear to Others", description: "Learn about your outer personality and first impressions" },
+      
+      // Planets Track (4-12) 
+      4: { title: "Mercury: Your Communication Style", description: "Understanding how you think, learn, and communicate" },
+      5: { title: "Venus: Your Love Language", description: "Discover what you value in relationships and beauty" },
+      6: { title: "Mars: Your Drive and Ambition", description: "Explore your energy, passion, and how you take action" },
+      7: { title: "Jupiter: Your Growth and Expansion", description: "Learn about luck, opportunities, and personal growth" },
+      8: { title: "Saturn: Your Discipline and Structure", description: "Understanding life lessons, responsibility, and achievements" },
+      9: { title: "Uranus: Your Innovation and Freedom", description: "Discover your unique qualities and desire for independence" },
+      10: { title: "Neptune: Your Dreams and Intuition", description: "Explore spirituality, creativity, and psychic abilities" },
+      11: { title: "Pluto: Your Transformation Power", description: "Understanding deep change, regeneration, and personal power" },
+      12: { title: "Planetary Aspects: How Your Planets Interact", description: "Learn how planetary relationships create your unique personality blend" },
+      
+      // Houses Track (13-24)
+      13: { title: "1st House: Your Identity and Appearance", description: "The house of self, personality, and first impressions" },
+      14: { title: "2nd House: Your Values and Resources", description: "Understanding money, possessions, and self-worth" },
+      15: { title: "3rd House: Your Communication and Learning", description: "Siblings, short trips, and everyday interactions" },
+      16: { title: "4th House: Your Home and Family", description: "Roots, family dynamics, and emotional foundation" },
+      17: { title: "5th House: Your Creativity and Romance", description: "Self-expression, children, and recreational activities" },
+      18: { title: "6th House: Your Work and Health", description: "Daily routines, service to others, and physical wellness" },
+      19: { title: "7th House: Your Partnerships and Marriage", description: "One-on-one relationships and business partnerships" },
+      20: { title: "8th House: Your Transformation and Shared Resources", description: "Intimacy, shared finances, and life-changing experiences" },
+      21: { title: "9th House: Your Philosophy and Higher Learning", description: "Travel, education, religion, and personal beliefs" },
+      22: { title: "10th House: Your Career and Public Image", description: "Professional life, reputation, and life goals" },
+      23: { title: "11th House: Your Friendships and Hopes", description: "Social groups, wishes, and humanitarian causes" },
+      24: { title: "12th House: Your Spirituality and Subconscious", description: "Hidden aspects, karma, and spiritual development" },
+      
+      // Advanced Track (25-29)
+      25: { title: "Elements: Fire, Earth, Air, Water", description: "Understanding the four fundamental energies in astrology" },
+      26: { title: "Modalities: Cardinal, Fixed, Mutable", description: "How the three approaches to change shape your personality" },
+      27: { title: "Polarities: Understanding Opposite Signs", description: "Learning from the complementary nature of opposing energies" },
+      28: { title: "Birth Chart Integration: Your Complete Cosmic Picture", description: "Synthesizing all elements of your chart into a cohesive understanding" },
+      29: { title: "Your Sun Sign: The Core of Who You Are", description: "Discover your fundamental personality traits and life purpose through your sun sign" }
+    };
+
+    const info = lessonCatalog[lessonId];
+    return {
+      title: info ? info.title : `Advanced Lesson ${lessonId}`,
+      description: info ? info.description : `Explore advanced astrological concepts and deepen your understanding`,
+      track
+    };
   }
 
   async getDashboardData(userId: string): Promise<any> {
