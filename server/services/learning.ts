@@ -1232,7 +1232,7 @@ class LearningService {
               type: 'text',
               data: {
                 title: `Your Personal Foundation`,
-                content: `Your ${chartData.risingSign} Rising sets your entire house system. Here's what this means for you.
+                content: `Your ${chartData.risingSign} Rising sets your entire house system. Here's what this means for you:
 
 ${chartData.risingSign} rules your 1st house of identity, and from there, the rest of the houses follow in zodiac order around the wheel.
 
