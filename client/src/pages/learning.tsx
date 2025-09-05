@@ -95,9 +95,6 @@ export default function LearningPage() {
   }
 
   const { stats, badges, availableLessons, completedLessons = [], canAccessSynastry } = dashboardData;
-  
-  // Check if all lessons are completed (for congratulations message)
-  const allLessonsCompleted = availableLessons.length === 0 && completedLessons.length > 0;
 
   const trackOptions = [
     { value: "all", label: "All Tracks", icon: BookOpen },
@@ -184,48 +181,27 @@ export default function LearningPage() {
 
           {/* Lessons Tab */}
           <TabsContent value="lessons" className="space-y-6">
-            {allLessonsCompleted ? (
-              <Card className="text-center py-16 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-blue-900/20 border-2 border-dashed border-purple-200 dark:border-purple-800">
-                <CardContent>
-                  <div className="text-6xl mb-6">🎉</div>
-                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    Congratulations!
-                  </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-                    You've completed the Master Your Birth Chart Modules!
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">
-                    More cosmic learning adventures are coming soon.
-                  </p>
-                  <div className="flex items-center justify-center gap-2 text-sm text-purple-600 dark:text-purple-400">
-                    <Star className="w-4 h-4" />
-                    <span>{completedLessons.length} lessons mastered</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                {/* Track Filter */}
-                <div className="flex flex-wrap gap-2">
-                  {trackOptions.map((track) => {
-                    const Icon = track.icon;
-                    return (
-                      <Button
-                        key={track.value}
-                        variant={selectedTrack === track.value ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedTrack(track.value)}
-                        className="flex items-center gap-2"
-                      >
-                        <Icon className="w-4 h-4" />
-                        {track.label}
-                      </Button>
-                    );
-                  })}
-                </div>
+            {/* Track Filter */}
+            <div className="flex flex-wrap gap-2">
+              {trackOptions.map((track) => {
+                const Icon = track.icon;
+                return (
+                  <Button
+                    key={track.value}
+                    variant={selectedTrack === track.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedTrack(track.value)}
+                    className="flex items-center gap-2"
+                  >
+                    <Icon className="w-4 h-4" />
+                    {track.label}
+                  </Button>
+                );
+              })}
+            </div>
 
-                {/* Available Lessons */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Available Lessons */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredLessons.map((lesson) => (
                 <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardHeader className="pb-3">
@@ -270,43 +246,41 @@ export default function LearningPage() {
                   </CardContent>
                 </Card>
               ))}
-                </div>
+            </div>
 
-                {filteredLessons.length === 0 && (
-                  <Card className="text-center py-12">
-                    <CardContent>
-                      <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">No lessons available</h3>
-                      <p className="text-gray-500">
-                        Complete prerequisite lessons to unlock more content in this track.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
+            {filteredLessons.length === 0 && (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No lessons available</h3>
+                  <p className="text-gray-500">
+                    Complete prerequisite lessons to unlock more content in this track.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
-                {/* Synastry Unlock Card */}
-                {canAccessSynastry && (
-                  <Card className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border-pink-200 dark:border-pink-800">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-pink-700 dark:text-pink-300">
-                        <Trophy className="w-5 h-5" />
-                        🎉 Congratulations! Synastry Module Unlocked
-                      </CardTitle>
-                      <CardDescription>
-                        You've mastered the fundamentals! Now you can add a second birth chart to explore relationship compatibility.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Link href="/learning/synastry">
-                        <Button className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
-                          Explore Synastry
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                )}
-              </>
+            {/* Synastry Unlock Card */}
+            {canAccessSynastry && (
+              <Card className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border-pink-200 dark:border-pink-800">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-pink-700 dark:text-pink-300">
+                    <Trophy className="w-5 h-5" />
+                    🎉 Congratulations! Synastry Module Unlocked
+                  </CardTitle>
+                  <CardDescription>
+                    You've mastered the fundamentals! Now you can add a second birth chart to explore relationship compatibility.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link href="/learning/synastry">
+                    <Button className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
+                      Explore Synastry
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
             )}
           </TabsContent>
 
