@@ -1588,9 +1588,14 @@ The first four houses form your personal foundation - representing your inner ci
     
     // Get the lesson details for completed lessons
     const completedLessonIds = userProgress.map(p => p.lessonId);
+    
+    if (completedLessonIds.length === 0) {
+      return [];
+    }
+    
     const completedLessons = await db.select()
       .from(learningLessons)
-      .where(sql`id = ANY(ARRAY[${completedLessonIds.join(',')}])`)
+      .where(sql`${learningLessons.id} IN (${completedLessonIds.join(',')})`)
       .orderBy(learningLessons.track, learningLessons.lessonNumber);
     
     // Attach progress data to lessons
