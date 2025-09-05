@@ -79,21 +79,18 @@ export default function LessonPage() {
       timeSpent?: number;
     }) => apiRequest("POST", `/api/learning/progress`, progressData),
     onSuccess: (data: any) => {
+      console.log('Progress mutation success, received data:', data);
+      
       // Update the dashboard cache with the returned data
       if (data.dashboardData) {
+        console.log('Updating dashboard cache with:', data.dashboardData);
         queryClient.setQueryData(["/api/learning/dashboard"], data.dashboardData);
+      } else {
+        console.log('No dashboardData in response, invalidating cache instead');
       }
       
-      // Also invalidate queries as backup
-      queryClient.invalidateQueries({ queryKey: ["/api/learning/dashboard"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/learning/lessons"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/learning/lesson"] });
-      queryClient.invalidateQueries({ predicate: (query) => 
-        query.queryKey.some(key => 
-          typeof key === 'string' && 
-          (key.includes('/api/learning/') || key === 'learning')
-        )
-      });
+      // Force immediate refetch of dashboard
+      queryClient.invalidateQueries({ queryKey: ["/api/learning/dashboard"], refetchType: 'active' });
       
       toast({
         title: "Progress recorded!",

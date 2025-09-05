@@ -243,10 +243,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid status" });
       }
 
+      console.log(`Recording progress for user ${userId}, lesson ${lessonId}, status: ${status}`);
       await learningService.recordProgress(userId, lessonId, status, score, timeSpent);
       
       // Return updated dashboard data
       const dashboardData = await learningService.getDashboardData(userId);
+      console.log('Returning dashboard data with lessons:', dashboardData.availableLessons.length);
+      
+      // Log specific lesson progress for debugging
+      const thisLesson = dashboardData.availableLessons.find((l: any) => l.id === lessonId);
+      if (thisLesson) {
+        console.log(`Lesson ${lessonId} progress after update:`, thisLesson.userProgress);
+      }
+      
       res.json({ success: true, dashboardData });
     } catch (error) {
       console.error("Error recording progress:", error);
