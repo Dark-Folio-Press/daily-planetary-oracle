@@ -2034,9 +2034,7 @@ Number 2 (2nd House - Resources): Duality and receptivity, the need to gather an
 
 Number 3 (3rd House - Communication): Creative expression and connection, the urge to share and communicate our inner world with others around us.
 
-Number 4 (4th House - Foundation): Structure and stability, the container that holds and nurtures. This represents our roots and emotional security.
-
-Numerology appears universally across divination and oracular systems - from Astrology and Tarot to Names & Words - and is a fascinating study in its own right. But here lies a key insight: Numerology is fundamental to mastering the language of symbols, providing the mathematical foundation that underlies all mystical traditions.`;
+Number 4 (4th House - Foundation): Structure and stability, the container that holds and nurtures. This represents our roots and emotional security.`;
   }
 
   private getNumerologyExpression(): string {
