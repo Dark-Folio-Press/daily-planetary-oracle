@@ -430,23 +430,65 @@ class LearningService {
       {
         track: 'houses',
         lessonNumber: 2,
-        title: 'Your Personal Houses',
-        description: 'Discover what signs rule your houses and what this means for your life.',
+        title: 'Personal Foundation: Houses 1-4',
+        description: 'Explore your identity, resources, communication, and emotional foundation through houses 1-4.',
         content: {
           sections: [
             {
               type: 'introduction',
-              content: 'Each house in your chart is ruled by a specific sign, coloring that area of life.'
+              content: 'The first four houses form your personal foundation - your inner circle of identity, values, communication, and roots.'
             },
             {
-              type: 'personal-houses',
-              content: 'Explore your unique house rulers and their meanings.'
+              type: 'personal-foundation',
+              content: 'Discover how houses 1-4 shape your core self and personal experiences.'
             }
           ]
         },
         requiredLessons: ['houses-1'],
-        xpReward: 20,
-        estimatedMinutes: 12
+        xpReward: 25,
+        estimatedMinutes: 15
+      },
+      {
+        track: 'houses',
+        lessonNumber: 3,
+        title: 'Creative Expression: Houses 5-8',
+        description: 'Discover your creativity, work, relationships, and transformation through houses 5-8.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Houses 5-8 govern your creative and relational power - how you express yourself and connect with others.'
+            },
+            {
+              type: 'creative-expression',
+              content: 'Explore how houses 5-8 shape your self-expression and relationships.'
+            }
+          ]
+        },
+        requiredLessons: ['houses-2'],
+        xpReward: 25,
+        estimatedMinutes: 15
+      },
+      {
+        track: 'houses',
+        lessonNumber: 4,
+        title: 'Higher Purpose: Houses 9-12',
+        description: 'Understand your beliefs, career, community, and spirituality through houses 9-12.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Houses 9-12 connect you to the world - your philosophy, public image, community, and spiritual path.'
+            },
+            {
+              type: 'higher-purpose',
+              content: 'Discover how houses 9-12 reveal your connection to the greater cosmos.'
+            }
+          ]
+        },
+        requiredLessons: ['houses-3'],
+        xpReward: 25,
+        estimatedMinutes: 15
       },
 
       // LUNAR NODES TRACK
@@ -1180,44 +1222,52 @@ class LearningService {
                 element: 'houses-general'
               }
             });
-          } else if (lesson.lessonNumber === 2) { // Your Personal Houses
+          } else if (lesson.lessonNumber === 2) { // Personal Foundation: Houses 1-4
             // Get personalized house data
             const houseData = chartData.birthData?.date && chartData.birthData?.time && chartData.birthData?.location 
               ? await this.getPersonalizedHouses(chartData.birthData.date, chartData.birthData.time, chartData.birthData.location)
               : null;
             
-            
             content.push({
               type: 'text',
               data: {
-                title: `Your Personal House System`,
-                content: `Your ${chartData.risingSign} Rising sets your entire house system. Each house cusp is ruled by a different sign, creating a unique blueprint for how life areas unfold for you.`
+                title: `Your Personal Foundation`,
+                content: `Your ${chartData.risingSign} Rising sets your entire house system. The first four houses form your personal foundation - representing your inner circle of identity, values, communication, and emotional roots.`
+              }
+            });
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Numerology of Houses 1-4`,
+                content: this.getNumerologyFoundation()
               }
             });
             
             if (houseData && houseData.houses) {
-              // Add detailed house-by-house breakdown
-              const housesArray = Object.entries(houseData.houses).slice(0, 4); // Show first 4 houses as examples
+              // Show first 4 houses with clean formatting
+              const housesArray = Object.entries(houseData.houses).slice(0, 4);
               const houseDescriptions = housesArray.map(([houseKey, houseInfo]: [string, any]) => {
                 const houseNumber = parseInt(houseKey.replace('house_', ''));
                 const houseTheme = this.getHouseTheme(houseNumber);
-                return `**${this.getOrdinal(houseNumber)} House (${houseTheme}):** ${houseInfo.sign} rules this area, ${this.getHouseSignMeaning(houseInfo.sign, houseNumber)}`;
+                return `${this.getOrdinal(houseNumber)} House (${houseTheme}): Your ${houseInfo.sign} ${this.getOrdinal(houseNumber).toLowerCase()} house ${this.getHouseSignMeaning(houseInfo.sign, houseNumber)}.`;
               }).join('\n\n');
               
               content.push({
                 type: 'text',
                 data: {
-                  title: `Your Key House Rulers`,
-                  content: houseDescriptions + `\n\n*Note: This lesson introduces your house system with the first 4 houses. The interactive section below shows all 12 houses organized into 3 logical groups for easier learning.*`
+                  title: `Your Foundation Houses`,
+                  content: houseDescriptions
                 }
               });
               
               content.push({
                 type: 'interactive',
                 data: {
-                  type: 'personal-houses',
+                  type: 'personal-foundation',
                   houseData: houseData.houses,
-                  element: 'personal-houses'
+                  element: 'personal-foundation',
+                  houses: [1, 2, 3, 4]
                 }
               });
             } else {
@@ -1226,6 +1276,116 @@ class LearningService {
                 data: {
                   title: `Complete Birth Information Needed`,
                   content: `To show your personalized house system, we need your complete birth date, time, and location. This lesson will show general house meanings until you complete your profile.`
+                }
+              });
+            }
+          } else if (lesson.lessonNumber === 3) { // Creative Expression: Houses 5-8
+            const houseData = chartData.birthData?.date && chartData.birthData?.time && chartData.birthData?.location 
+              ? await this.getPersonalizedHouses(chartData.birthData.date, chartData.birthData.time, chartData.birthData.location)
+              : null;
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Creative & Relational Power`,
+                content: `Houses 5-8 represent your creative expression and relational power. These houses show how you express yourself creatively, approach work and health, form partnerships, and navigate transformative experiences with others.`
+              }
+            });
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Numerology of Houses 5-8`,
+                content: this.getNumerologyExpression()
+              }
+            });
+
+            if (houseData && houseData.houses) {
+              const housesArray = Object.entries(houseData.houses).slice(4, 8);
+              const houseDescriptions = housesArray.map(([houseKey, houseInfo]: [string, any]) => {
+                const houseNumber = parseInt(houseKey.replace('house_', ''));
+                const houseTheme = this.getHouseTheme(houseNumber);
+                return `${this.getOrdinal(houseNumber)} House (${houseTheme}): Your ${houseInfo.sign} ${this.getOrdinal(houseNumber).toLowerCase()} house ${this.getHouseSignMeaning(houseInfo.sign, houseNumber)}.`;
+              }).join('\n\n');
+              
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your Expression Houses`,
+                  content: houseDescriptions
+                }
+              });
+              
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'creative-expression',
+                  houseData: houseData.houses,
+                  element: 'creative-expression',
+                  houses: [5, 6, 7, 8]
+                }
+              });
+            } else {
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Complete Birth Information Needed`,
+                  content: `To show your personalized house system, we need your complete birth date, time, and location.`
+                }
+              });
+            }
+          } else if (lesson.lessonNumber === 4) { // Higher Purpose: Houses 9-12
+            const houseData = chartData.birthData?.date && chartData.birthData?.time && chartData.birthData?.location 
+              ? await this.getPersonalizedHouses(chartData.birthData.date, chartData.birthData.time, chartData.birthData.location)
+              : null;
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Connection to the World`,
+                content: `Houses 9-12 connect you to the greater cosmos. These houses reveal your philosophy, public image, community connections, and spiritual path - showing how you contribute to and connect with the world beyond yourself.`
+              }
+            });
+
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Numerology of Houses 9-12`,
+                content: this.getNumerologyPurpose()
+              }
+            });
+
+            if (houseData && houseData.houses) {
+              const housesArray = Object.entries(houseData.houses).slice(8, 12);
+              const houseDescriptions = housesArray.map(([houseKey, houseInfo]: [string, any]) => {
+                const houseNumber = parseInt(houseKey.replace('house_', ''));
+                const houseTheme = this.getHouseTheme(houseNumber);
+                return `${this.getOrdinal(houseNumber)} House (${houseTheme}): Your ${houseInfo.sign} ${this.getOrdinal(houseNumber).toLowerCase()} house ${this.getHouseSignMeaning(houseInfo.sign, houseNumber)}.`;
+              }).join('\n\n');
+              
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your Purpose Houses`,
+                  content: houseDescriptions
+                }
+              });
+              
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'higher-purpose',
+                  houseData: houseData.houses,
+                  element: 'higher-purpose',
+                  houses: [9, 10, 11, 12]
+                }
+              });
+            } else {
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Complete Birth Information Needed`,
+                  content: `To show your personalized house system, we need your complete birth date, time, and location.`
                 }
               });
             }
@@ -1863,6 +2023,48 @@ Each modality has its season and purpose in the natural cycle - cardinal begins,
     const suffixes = ['th', 'st', 'nd', 'rd'];
     const value = num % 100;
     return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
+  }
+
+  private getNumerologyFoundation(): string {
+    return `Numbers 1-4 represent the fundamental building blocks of existence, mirroring the first four houses of your astrological chart.
+
+**Number 1 (1st House - Identity):** The beginning, the self, pure potential manifesting into form. Like Aries energy, it's the spark of individual consciousness emerging.
+
+**Number 2 (2nd House - Resources):** Duality and receptivity, the need to gather and build. This reflects our relationship with the material world and what we value.
+
+**Number 3 (3rd House - Communication):** Creative expression and connection, the urge to share and communicate our inner world with others around us.
+
+**Number 4 (4th House - Foundation):** Structure and stability, the container that holds and nurtures. This represents our roots and emotional security.
+
+Numerology appears universally across divination and oracular systems - from Astrology and Tarot to Names & Words - and is a fascinating study in its own right. But here lies a key insight: Numerology is fundamental to mastering the language of symbols, providing the mathematical foundation that underlies all mystical traditions.`;
+  }
+
+  private getNumerologyExpression(): string {
+    return `Numbers 5-8 represent the expansion beyond personal foundation into creative and relational expression.
+
+**Number 5 (5th House - Creativity):** Freedom and creative self-expression, the joy of play and romance. This is where we risk and create.
+
+**Number 6 (6th House - Service):** Harmony and service, the refinement of skills and devotion to improvement. This perfects our daily experience.
+
+**Number 7 (7th House - Partnership):** Reflection and partnership, seeing ourselves through relationship with others. This completes our understanding.
+
+**Number 8 (8th House - Transformation):** Power and regeneration, the mastery of transformation and shared resources. This deepens our capacity for change.
+
+These numbers guide us from personal creativity (5) through service and refinement (6), into partnership reflection (7), and finally to transformative mastery (8).`;
+  }
+
+  private getNumerologyPurpose(): string {
+    return `Numbers 9-12 represent completion and transcendence, connecting us to universal purpose and cosmic consciousness.
+
+**Number 9 (9th House - Philosophy):** Universal wisdom and higher knowledge, the expansion of consciousness beyond personal limits into universal truth.
+
+**Number 10 (10th House - Reputation):** Completion and worldly achievement, the culmination of our efforts in the public sphere and social contribution.
+
+**Number 11 (11th House - Community):** Master number of inspiration and collective vision, connecting individual purpose with group consciousness and future dreams.
+
+**Number 12 (12th House - Spirituality):** Universal completion and dissolution, the return to source consciousness and connection with the infinite.
+
+The final numbers guide us from expanded awareness (9) through public achievement (10), into collective inspiration (11), and finally to spiritual transcendence (12).`;
   }
 
   private getHousesOverview(): string {

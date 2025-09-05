@@ -802,13 +802,18 @@ export default function LessonPage() {
                     </>
                   )}
 
-                  {interactiveContent?.element === 'personal-houses' && (
+                  {(interactiveContent?.element === 'personal-foundation' || 
+                    interactiveContent?.element === 'creative-expression' || 
+                    interactiveContent?.element === 'higher-purpose') && (
                     <>
-                      <h4 className="font-semibold mb-3">Your Personal House System</h4>
-                      <div className="space-y-6">
+                      <h4 className="font-semibold mb-3">
+                        {interactiveContent?.element === 'personal-foundation' && 'Your Personal Foundation (Houses 1-4)'}
+                        {interactiveContent?.element === 'creative-expression' && 'Your Creative Expression (Houses 5-8)'}
+                        {interactiveContent?.element === 'higher-purpose' && 'Your Higher Purpose (Houses 9-12)'}
+                      </h4>
+                      <div className="space-y-4">
                         {interactiveContent?.houseData ? (
                           <>
-                            {/* Helper functions */}
                             {(() => {
                               const getOrdinal = (num: number): string => {
                                 const suffixes = ['th', 'st', 'nd', 'rd'];
@@ -834,39 +839,28 @@ export default function LessonPage() {
                                 return descriptions[num as keyof typeof descriptions] || { theme: 'Life Area', description: 'influences this area of your life' };
                               };
 
-                              const renderHouseGroup = (startHouse: number, endHouse: number, groupTitle: string, groupDescription: string) => (
-                                <div className="border rounded-lg p-4 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
-                                  <h5 className="font-semibold text-lg mb-2 text-purple-800 dark:text-purple-300">{groupTitle}</h5>
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{groupDescription}</p>
-                                  <div className="space-y-3">
-                                    {Array.from({ length: endHouse - startHouse + 1 }, (_, i) => {
-                                      const houseNumber = startHouse + i;
-                                      const houseKey = `house_${houseNumber}`;
-                                      const houseInfo = interactiveContent.houseData[houseKey];
-                                      
-                                      if (houseInfo) {
-                                        const { theme, description } = getHouseDescription(houseNumber);
-                                        return (
-                                          <div key={houseNumber} className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{getOrdinal(houseNumber)} House - {theme}</p>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                              Your <span className="font-medium">{houseInfo.sign}</span> {getOrdinal(houseNumber).toLowerCase()} house {description}.
-                                            </p>
-                                          </div>
-                                        );
-                                      }
-                                      return null;
-                                    })}
-                                  </div>
-                                </div>
-                              );
-
+                              const housesToShow = interactiveContent?.houses || [];
+                              
                               return (
-                                <>
-                                  {renderHouseGroup(1, 4, "Personal Foundation (Houses 1-4)", "Your inner circle - how you see yourself, what you value, how you connect, and where you come from.")}
-                                  {renderHouseGroup(5, 8, "Creative Expression (Houses 5-8)", "Your creative and relational power - expressing yourself, building relationships, and navigating shared experiences.")}
-                                  {renderHouseGroup(9, 12, "Higher Purpose (Houses 9-12)", "Your connection to the world - your philosophy, place in society, community, and spiritual path.")}
-                                </>
+                                <div className="max-h-96 overflow-y-auto space-y-3">
+                                  {housesToShow.map((houseNumber: number) => {
+                                    const houseKey = `house_${houseNumber}`;
+                                    const houseInfo = interactiveContent.houseData[houseKey];
+                                    
+                                    if (houseInfo) {
+                                      const { theme, description } = getHouseDescription(houseNumber);
+                                      return (
+                                        <div key={houseNumber} className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-lg border">
+                                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">{getOrdinal(houseNumber)} House - {theme}</p>
+                                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Your <span className="font-medium">{houseInfo.sign}</span> {getOrdinal(houseNumber).toLowerCase()} house {description}.
+                                          </p>
+                                        </div>
+                                      );
+                                    }
+                                    return null;
+                                  })}
+                                </div>
                               );
                             })()}
                           </>
