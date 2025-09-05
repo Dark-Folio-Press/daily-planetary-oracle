@@ -446,7 +446,17 @@ export default function LessonPage() {
               </Button>
             ) : (
               <Button
-                onClick={handleCompleteLesson}
+                onClick={(e) => {
+                  console.log('Complete button clicked!', {
+                    isCompleted,
+                    isPending: progressMutation.isPending,
+                    currentSection,
+                    totalSections: personalizedContent.length,
+                    isOnLastSection: currentSection >= personalizedContent.length - 1,
+                    isDisabled: isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1
+                  });
+                  handleCompleteLesson();
+                }}
                 disabled={isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1}
                 className="bg-green-600 hover:bg-green-700"
                 data-testid="button-complete-lesson"
