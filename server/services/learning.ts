@@ -1587,7 +1587,7 @@ The first four houses form your personal foundation - representing your inner ci
     }
     
     // Get the lesson details for completed lessons
-    const completedLessonIds = userProgress.map(p => p.lessonId);
+    const completedLessonIds = userProgress.map(p => parseInt(String(p.lessonId)));
     
     if (completedLessonIds.length === 0) {
       return [];
