@@ -1232,7 +1232,13 @@ class LearningService {
               type: 'text',
               data: {
                 title: `Your Personal Foundation`,
-                content: `Your ${chartData.risingSign} Rising sets your entire house system. The first four houses form your personal foundation - representing your inner circle of identity, values, communication, and emotional roots.`
+                content: `Your ${chartData.risingSign} Rising sets your entire house system. Here's what this means for you.
+
+${chartData.risingSign} rules your 1st house of identity, and from there, the rest of the houses follow in zodiac order around the wheel.
+
+This means your rising sign is like the "lens" through which all your other planetary energies are expressed. It determines which life areas each zodiac sign will influence for you specifically. Two people with the same sun sign but different rising signs will have completely different house systems and life patterns.
+
+The first four houses form your personal foundation - representing your inner circle of identity, values, communication, and emotional roots. Think of them as your most intimate and immediate life experiences.`
               }
             });
 
