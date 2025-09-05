@@ -1198,16 +1198,16 @@ class LearningService {
               // Add detailed house-by-house breakdown
               const housesArray = Object.entries(houseData.houses).slice(0, 4); // Show first 4 houses as examples
               const houseDescriptions = housesArray.map(([houseKey, houseInfo]: [string, any]) => {
-                const houseNumber = houseKey.replace('house_', '');
-                const houseTheme = this.getHouseTheme(parseInt(houseNumber));
-                return `**${houseNumber}th House (${houseTheme}):** ${houseInfo.sign} rules this area, ${this.getHouseSignMeaning(houseInfo.sign, parseInt(houseNumber))}`;
+                const houseNumber = parseInt(houseKey.replace('house_', ''));
+                const houseTheme = this.getHouseTheme(houseNumber);
+                return `**${this.getOrdinal(houseNumber)} House (${houseTheme}):** ${houseInfo.sign} rules this area, ${this.getHouseSignMeaning(houseInfo.sign, houseNumber)}`;
               }).join('\n\n');
               
               content.push({
                 type: 'text',
                 data: {
-                  title: `Your House Rulers (Sample)`,
-                  content: houseDescriptions
+                  title: `Your Key House Rulers`,
+                  content: houseDescriptions + `\n\n*Note: This lesson introduces your house system with the first 4 houses. You'll explore all 12 houses as you progress through the complete astrology curriculum.*`
                 }
               });
               
@@ -1856,6 +1856,12 @@ Each modality has its season and purpose in the natural cycle - cardinal begins,
     const axis = `${northHouse}-${southHouse}`;
     
     return houseInsights[axis] || `Your nodal houses show growth from ${southHouse}th house patterns toward ${northHouse}th house development.`;
+  }
+
+  private getOrdinal(num: number): string {
+    const suffixes = ['th', 'st', 'nd', 'rd'];
+    const value = num % 100;
+    return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
   }
 
   private getHousesOverview(): string {
