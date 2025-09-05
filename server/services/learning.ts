@@ -844,39 +844,7 @@ class LearningService {
       // Personalized content based on chart data
       switch (lesson.track) {
         case 'basics':
-          if (lesson.lessonNumber === 1) {
-            content.push({
-              type: 'text',
-              data: {
-                title: `Your ${chartData.sunSign} Sun`,
-                content: this.getSunSignInsights(chartData.sunSign)
-              }
-            });
-            content.push({
-              type: 'interactive',
-              data: {
-                type: 'trait-explorer',
-                sign: chartData.sunSign,
-                element: 'sun'
-              }
-            });
-          } else if (lesson.lessonNumber === 2 && lesson.title.includes('Moon')) { // Moon Signs lesson
-            content.push({
-              type: 'text',
-              data: {
-                title: `Your ${chartData.moonSign} Moon`,
-                content: this.getMoonSignInsights(chartData.moonSign)
-              }
-            });
-            content.push({
-              type: 'interactive',
-              data: {
-                type: 'emotion-explorer',
-                sign: chartData.moonSign,
-                element: 'moon'
-              }
-            });
-          } else if (lesson.title.includes('Elements') || lesson.title.includes('Fire, Earth, Air')) { // Elements lesson
+          if (lesson.title.includes('Elements') || lesson.title.includes('Fire, Earth, Air')) { // Elements lesson - check title FIRST
             const sunElement = this.getSignElement(chartData.sunSign);
             content.push({
               type: 'text',
@@ -924,7 +892,23 @@ class LearningService {
                 modality: sunModality
               }
             });
-          } else if (lesson.lessonNumber === 5 && lesson.title.includes('Moon')) { // Moon lesson (lesson 5)
+          } else if (lesson.title.includes('Sun Sign') || lesson.title.includes('Core of Who You Are')) { // Sun Sign lesson
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.sunSign} Sun`,
+                content: this.getSunSignInsights(chartData.sunSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'trait-explorer',
+                sign: chartData.sunSign,
+                element: 'sun'
+              }
+            });
+          } else if (lesson.title.includes('Moon') && lesson.title.includes('Inner Emotional')) { // First Moon lesson (lesson 4)
             content.push({
               type: 'text',
               data: {
@@ -940,7 +924,23 @@ class LearningService {
                 element: 'moon'
               }
             });
-          } else if (lesson.lessonNumber === 6 && lesson.title.includes('Rising')) { // Rising lesson (lesson 6)
+          } else if (lesson.title.includes('Moon') && (lesson.title.includes('Emotional Nature') || lesson.lessonNumber === 6)) { // Second Moon lesson (lesson 6)
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.moonSign} Moon - Deeper Insights`,
+                content: this.getMoonSignInsights(chartData.moonSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'emotion-explorer',
+                sign: chartData.moonSign,
+                element: 'moon'
+              }
+            });
+          } else if (lesson.title.includes('Rising')) { // Rising lesson (lesson 5)
             content.push({
               type: 'text',
               data: {
