@@ -924,22 +924,6 @@ class LearningService {
                 element: 'moon'
               }
             });
-          } else if (lesson.title.includes('Moon') && (lesson.title.includes('Emotional Nature') || lesson.lessonNumber === 6)) { // Second Moon lesson (lesson 6)
-            content.push({
-              type: 'text',
-              data: {
-                title: `Your ${chartData.moonSign} Moon - Deeper Insights`,
-                content: this.getMoonSignInsights(chartData.moonSign)
-              }
-            });
-            content.push({
-              type: 'interactive',
-              data: {
-                type: 'emotion-explorer',
-                sign: chartData.moonSign,
-                element: 'moon'
-              }
-            });
           } else if (lesson.title.includes('Rising')) { // Rising lesson (lesson 5)
             content.push({
               type: 'text',
@@ -957,6 +941,8 @@ class LearningService {
               }
             });
           } else if (lesson.title.includes('Big Three') || lesson.title.includes('Integration')) { // Big Three Integration lesson
+            console.log('🎯 Big Three Integration lesson detected:', lesson.title);
+            console.log('🎯 Chart data:', chartData.sunSign, chartData.moonSign, chartData.risingSign);
             content.push({
               type: 'text',
               data: {
