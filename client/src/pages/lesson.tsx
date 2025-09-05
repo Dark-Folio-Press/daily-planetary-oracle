@@ -805,6 +805,7 @@ export default function LessonPage() {
                   {interactiveContent?.element === 'personal-houses' && (
                     <>
                       <h4 className="font-semibold mb-3">Your Complete Personal House System</h4>
+                      {console.log('DEBUG: personal-houses interactive content:', interactiveContent)}
                       <div className="space-y-3">
                         {interactiveContent?.houseData ? (
                           <>

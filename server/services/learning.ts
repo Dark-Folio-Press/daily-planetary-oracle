@@ -1186,6 +1186,8 @@ class LearningService {
               ? await this.getPersonalizedHouses(chartData.birthData.date, chartData.birthData.time, chartData.birthData.location)
               : null;
             
+            console.log('Houses lesson - houseData:', JSON.stringify(houseData, null, 2));
+            
             content.push({
               type: 'text',
               data: {
