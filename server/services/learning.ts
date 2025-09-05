@@ -721,6 +721,11 @@ class LearningService {
       .map(p => p.lessonId);
     
     const availableLessons = allLessons.filter(lesson => {
+      // Filter out already completed lessons
+      if (completedLessonIds.includes(lesson.id)) {
+        return false;
+      }
+      
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
