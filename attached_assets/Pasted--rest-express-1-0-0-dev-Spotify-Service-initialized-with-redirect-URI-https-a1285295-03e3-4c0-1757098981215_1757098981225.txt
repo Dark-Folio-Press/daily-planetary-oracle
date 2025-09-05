@@ -1,0 +1,106 @@
+
+> rest-express@1.0.0 dev
+Spotify Service initialized with redirect URI: https://a1285295-03e3-4c08-ad18-e393998dfbbf-00-1pq3m4lguiu3a.kirk.replit.dev/api/spotify/callback
+Google OAuth Callback URL: https://a1285295-03e3-4c08-ad18-e393998dfbbf-00-1pq3m4lguiu3a.kirk.replit.dev/api/auth/google/callback
+7:00:59 PM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+7:01:03 PM [express] GET /api/auth/user 401 in 2ms
+7:01:08 PM [express] GET /api/auth/user 304 in 115ms :: {"id":"test_user_123","email":"test@example.…
+Moon calculation input: { date: '1797-08-30', time: '23:20' }
+Parsed birth date: 1797-08-30T00:00:00.000Z
+Converted time: { hours: 23, minutes: 20 }
+Moon calculation details: {
+  julianDay: 624479.4722222222,
+  T: -50.02232793368317,
+  moonLongitude: 359.1029249764979,
+  signIndex: 11,
+  calculatedMoonSign: 'Pisces'
+}
+Rising calculation input: { date: '1797-08-30', time: '23:20', location: 'London, England' }
+Rising time calculation: { hours: 23, minutes: 20, timeDecimal: 23.333333333333332 }
+Rising calculation details: {
+  latitude: 51.5074,
+  longitude: -0.1278,
+  julianDay: 624479.4722222222,
+  lst: 328.9812573194504,
+  ascendantDegree: 354.73495731945036,
+  signIndex: 11,
+  calculatedRising: 'Pisces'
+}
+7:01:09 PM [express] POST /api/chat/session 200 in 349ms :: {"session":{"id":1222,"sessionId":"sessi…
+7:01:09 PM [express] GET /api/user/big-three 304 in 412ms :: {"sunSign":"Virgo","moonSign":"Sagittar…
+7:01:09 PM [express] GET /api/chat/session_1757098877154_0.8534831757874229/messages 200 in 95ms :: …
+7:01:10 PM [express] GET /api/user/generation-status 304 in 356ms :: {"canGenerate":{"playlist":true…
+7:01:27 PM [express] GET /api/auth/user 304 in 88ms :: {"id":"test_user_123","email":"test@example.c…
+7:01:28 PM [express] GET /api/learning/dashboard 304 in 151ms :: {"stats":{"id":1,"userId":"test_use…
+Moon calculation input: { date: '1797-08-30', time: '23:20' }
+Parsed birth date: 1797-08-30T00:00:00.000Z
+Converted time: { hours: 23, minutes: 20 }
+Moon calculation details: {
+  julianDay: 624479.4722222222,
+  T: -50.02232793368317,
+  moonLongitude: 359.1029249764979,
+  signIndex: 11,
+  calculatedMoonSign: 'Pisces'
+}
+Rising calculation input: { date: '1797-08-30', time: '23:20', location: 'London, England' }
+Rising time calculation: { hours: 23, minutes: 20, timeDecimal: 23.333333333333332 }
+Rising calculation details: {
+  latitude: 51.5074,
+  longitude: -0.1278,
+  julianDay: 624479.4722222222,
+  lst: 328.9812573194504,
+  ascendantDegree: 354.73495731945036,
+  signIndex: 11,
+  calculatedRising: 'Pisces'
+}
+7:01:32 PM [express] GET /api/learning/lesson/22 304 in 466ms :: {"lesson":{"id":22,"track":"basics"…
+Moon calculation input: { date: '1797-08-30', time: '23:20' }
+Parsed birth date: 1797-08-30T00:00:00.000Z
+Converted time: { hours: 23, minutes: 20 }
+Moon calculation details: {
+  julianDay: 624479.4722222222,
+  T: -50.02232793368317,
+  moonLongitude: 359.1029249764979,
+  signIndex: 11,
+  calculatedMoonSign: 'Pisces'
+}
+Rising calculation input: { date: '1797-08-30', time: '23:20', location: 'London, England' }
+Rising time calculation: { hours: 23, minutes: 20, timeDecimal: 23.333333333333332 }
+Rising calculation details: {
+  latitude: 51.5074,
+  longitude: -0.1278,
+  julianDay: 624479.4722222222,
+  lst: 328.9812573194504,
+  ascendantDegree: 354.73495731945036,
+  signIndex: 11,
+  calculatedRising: 'Pisces'
+}
+7:01:46 PM [express] GET /api/learning/lesson/23 304 in 603ms :: {"lesson":{"id":23,"track":"basics"…
+Moon calculation input: { date: '1797-08-30', time: '23:20' }
+Parsed birth date: 1797-08-30T00:00:00.000Z
+Converted time: { hours: 23, minutes: 20 }
+Moon calculation details: {
+  julianDay: 624479.4722222222,
+  T: -50.02232793368317,
+  moonLongitude: 359.1029249764979,
+  signIndex: 11,
+  calculatedMoonSign: 'Pisces'
+}
+Rising calculation input: { date: '1797-08-30', time: '23:20', location: 'London, England' }
+Rising time calculation: { hours: 23, minutes: 20, timeDecimal: 23.333333333333332 }
+Rising calculation details: {
+  latitude: 51.5074,
+  longitude: -0.1278,
+  julianDay: 624479.4722222222,
+  lst: 328.9812573194504,
+  ascendantDegree: 354.73495731945036,
+  signIndex: 11,
+  calculatedRising: 'Pisces'
+}
+7:01:55 PM [express] GET /api/learning/lesson/24 304 in 430ms :: {"lesson":{"id":24,"track":"basics"…
+7:02:12 PM [express] GET /api/auth/user 304 in 94ms :: {"id":"test_user_123","email":"test@example.c…
+7:02:13 PM [express] GET /api/learning/dashboard 304 in 146ms :: {"stats":{"id":1,"userId":"test_use…
+^A

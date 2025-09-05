@@ -107,9 +107,18 @@ export default function LessonPage() {
   }, [lessonData]);
 
   const handleCompleteLesson = () => {
-    if (!lessonData) return;
+    console.log('handleCompleteLesson called');
+    if (!lessonData) {
+      console.log('No lessonData available');
+      return;
+    }
     
     const timeSpent = Math.floor((Date.now() - startTime) / 1000 / 60); // minutes
+    console.log('About to call progressMutation.mutate with:', {
+      lessonId: lessonData.lesson.id,
+      status: 'completed',
+      timeSpent
+    });
     
     progressMutation.mutate({
       lessonId: lessonData.lesson.id,
@@ -440,6 +449,7 @@ export default function LessonPage() {
                 onClick={handleCompleteLesson}
                 disabled={isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1}
                 className="bg-green-600 hover:bg-green-700"
+                data-testid="button-complete-lesson"
               >
                 {isCompleted ? (
                   <>
