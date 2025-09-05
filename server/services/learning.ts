@@ -84,7 +84,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: [],
+        requiredLessons: null,
         xpReward: 15,
         estimatedMinutes: 8
       },
@@ -109,7 +109,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-1'],
+        requiredLessons: null,
         xpReward: 15,
         estimatedMinutes: 8
       },
@@ -134,7 +134,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-1'],
+        requiredLessons: null,
         xpReward: 15,
         estimatedMinutes: 10
       },
@@ -605,6 +605,13 @@ class LearningService {
   }
 
   private async createDefaultBadges(): Promise<void> {
+    // Check if badges already exist
+    const existingBadges = await db.select().from(learningBadges).limit(1);
+    if (existingBadges.length > 0) {
+      console.log('Learning badges already exist, skipping badge creation');
+      return;
+    }
+
     const badges = [
       {
         name: 'First Steps',
@@ -1469,6 +1476,76 @@ The first four houses form your personal foundation - representing your inner ci
     }
   }
 
+  async checkAndAwardBadges(userId: string): Promise<void> {
+    // Get user's current progress and stats
+    const userProgress = await db.select()
+      .from(learningProgress)
+      .where(eq(learningProgress.userId, userId));
+    
+    const userStats = await this.getUserStats(userId);
+    const currentBadges = await this.getUserBadges(userId);
+    const currentBadgeIds = new Set(currentBadges.map(b => b.id));
+    
+    // Get all available badges
+    const allBadges = await db.select().from(learningBadges);
+    
+    for (const badge of allBadges) {
+      // Skip if user already has this badge
+      if (currentBadgeIds.has(badge.id!)) {
+        continue;
+      }
+      
+      const requirements = badge.requirements as any;
+      let shouldAward = false;
+      
+      // Check badge requirements
+      if (requirements.completedLessons && userStats.completedLessons >= requirements.completedLessons) {
+        if (requirements.track) {
+          // Check track-specific completion
+          const trackProgress = userProgress.filter(p => {
+            // Need to get lesson info to check track
+            return (p.status === 'completed' || p.status === 'mastered');
+          });
+          shouldAward = trackProgress.length >= requirements.completedLessons;
+        } else {
+          shouldAward = true;
+        }
+      }
+      
+      if (requirements.masteredLessons) {
+        // Check if specific lessons are mastered
+        const masteredLessonIds = userProgress
+          .filter(p => p.status === 'mastered')
+          .map(p => p.lessonId);
+        
+        // For now, simplified check based on lesson count
+        shouldAward = masteredLessonIds.length > 0;
+      }
+      
+      if (requirements.completedTrack) {
+        // Check if specific track is completed
+        // For now, simplified: if user has many completed lessons
+        shouldAward = userStats.completedLessons >= 10;
+      }
+      
+      if (requirements.completedTracks) {
+        // Check if multiple tracks are completed
+        shouldAward = userStats.completedLessons >= 15;
+      }
+      
+      // Award the badge
+      if (shouldAward) {
+        await db.insert(learningUserBadges).values({
+          userId,
+          badgeId: badge.id!,
+          earnedAt: new Date()
+        });
+        
+        console.log(`Awarded badge "${badge.name}" to user ${userId}`);
+      }
+    }
+  }
+
   async getUserBadges(userId: string): Promise<LearningBadge[]> {
     const userBadges = await db.select({
       badge: learningBadges,
@@ -1519,6 +1596,9 @@ The first four houses form your personal foundation - representing your inner ci
 
     // Update user stats
     await this.updateUserStats(userId, status);
+    
+    // Check and award badges
+    await this.checkAndAwardBadges(userId);
   }
 
   async getDashboardData(userId: string): Promise<any> {
