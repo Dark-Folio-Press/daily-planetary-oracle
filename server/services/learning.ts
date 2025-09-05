@@ -115,7 +115,7 @@ class LearningService {
       },
       {
         track: 'basics',
-        lessonNumber: 2,
+        lessonNumber: 3,
         title: 'The Four Elements: Fire, Earth, Air & Water',
         description: 'Learn about the elemental foundation of astrology and how your sun sign expresses its element.',
         content: {
@@ -140,7 +140,7 @@ class LearningService {
       },
       {
         track: 'basics',
-        lessonNumber: 3,
+        lessonNumber: 4,
         title: 'The Three Modalities: Cardinal, Fixed & Mutable',
         description: 'Explore how the three modalities describe different approaches to action and change.',
         content: {
@@ -159,13 +159,13 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-2'],
+        requiredLessons: ['basics-3'],
         xpReward: 15,
         estimatedMinutes: 10
       },
       {
         track: 'basics',
-        lessonNumber: 4,
+        lessonNumber: 5,
         title: 'Your Moon Sign: Emotional Nature',
         description: 'Discover your inner emotional world and what makes you feel secure and nurtured.',
         content: {
@@ -180,13 +180,13 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-3'],
+        requiredLessons: ['basics-4'],
         xpReward: 15,
         estimatedMinutes: 8
       },
       {
         track: 'basics',
-        lessonNumber: 5,
+        lessonNumber: 6,
         title: 'Your Rising Sign: Your Outer Expression',
         description: 'Learn how your rising sign shapes first impressions and your approach to the world.',
         content: {
@@ -205,13 +205,13 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-4'],
+        requiredLessons: ['basics-5'],
         xpReward: 15,
         estimatedMinutes: 8
       },
       {
         track: 'basics',
-        lessonNumber: 6,
+        lessonNumber: 7,
         title: 'The Big Three Integration',
         description: 'See how your sun, moon, and rising signs work together to create your unique personality.',
         content: {
@@ -230,7 +230,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-5'],
+        requiredLessons: ['basics-6'],
         xpReward: 20,
         estimatedMinutes: 10
       },
@@ -253,7 +253,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-6'],
+        requiredLessons: ['basics-7'],
         xpReward: 15,
         estimatedMinutes: 8
       },
@@ -893,13 +893,6 @@ class LearningService {
               }
             });
             content.push({
-              type: 'text',
-              data: {
-                title: `Your ${chartData.sunSign} Sun: ${sunElement.charAt(0).toUpperCase() + sunElement.slice(1)} Element Expression`,
-                content: this.getElementExpression(chartData.sunSign, sunElement)
-              }
-            });
-            content.push({
               type: 'interactive',
               data: {
                 type: 'element-explorer',
@@ -924,13 +917,6 @@ class LearningService {
               }
             });
             content.push({
-              type: 'text',
-              data: {
-                title: `Your ${chartData.sunSign} Sun: ${sunModality.charAt(0).toUpperCase() + sunModality.slice(1)} Modality Expression`,
-                content: this.getModalityExpression(chartData.sunSign, sunModality)
-              }
-            });
-            content.push({
               type: 'interactive',
               data: {
                 type: 'modality-explorer',
@@ -938,7 +924,23 @@ class LearningService {
                 modality: sunModality
               }
             });
-          } else if (lesson.lessonNumber === 5) { // Rising
+          } else if (lesson.lessonNumber === 5 && lesson.title.includes('Moon')) { // Moon lesson (lesson 5)
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${chartData.moonSign} Moon`,
+                content: this.getMoonSignInsights(chartData.moonSign)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'emotion-explorer',
+                sign: chartData.moonSign,
+                element: 'moon'
+              }
+            });
+          } else if (lesson.lessonNumber === 6 && lesson.title.includes('Rising')) { // Rising lesson (lesson 6)
             content.push({
               type: 'text',
               data: {
@@ -949,16 +951,9 @@ class LearningService {
             content.push({
               type: 'interactive',
               data: {
-                type: 'first-impression',
+                type: 'rising-explorer',
                 sign: chartData.risingSign,
                 element: 'rising'
-              }
-            });
-            content.push({
-              type: 'chart-highlight',
-              data: {
-                element: `${chartData.risingSign} Rising`,
-                description: 'Your Rising sign determines your entire house system and sets the stage for your life themes'
               }
             });
           } else {
@@ -1051,34 +1046,136 @@ class LearningService {
     };
   }
 
-  async getUserStats(userId: string): Promise<any> {
-    return {
-      id: 1,
-      userId,
-      totalXp: 0,
-      currentStreak: 0,
-      longestStreak: 0,
-      lastActivityDate: null,
-      completedLessons: 0,
-      masteredLessons: 0,
-      totalTimeSpent: 0
-    };
+  async getUserStats(userId: string): Promise<LearningStats> {
+    let [stats] = await db.select().from(learningStats).where(eq(learningStats.userId, userId));
+    
+    if (!stats) {
+      // Create initial stats for new user
+      [stats] = await db.insert(learningStats).values({
+        userId,
+        totalXp: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        lastActivityDate: null,
+        completedLessons: 0,
+        masteredLessons: 0,
+        totalTimeSpent: 0
+      }).returning();
+    }
+    
+    return stats;
   }
 
-  async getAvailableLessons(userId: string): Promise<any[]> {
-    return [];
+  async getAvailableLessons(userId: string): Promise<LearningLesson[]> {
+    const userProgress = await db.select()
+      .from(learningProgress)
+      .where(eq(learningProgress.userId, userId));
+    
+    // Get all lessons to build completion map
+    const allLessons = await db.select()
+      .from(learningLessons)
+      .where(eq(learningLessons.isActive, true))
+      .orderBy(learningLessons.track, learningLessons.lessonNumber);
+    
+    const lessonMap = new Map(allLessons.map(l => [l.id, l]));
+    
+    const completedLessonIds = userProgress
+      .filter(p => p.status === 'completed' || p.status === 'mastered')
+      .map(p => p.lessonId);
+    
+    return allLessons.filter(lesson => {
+      // If no prerequisites, it's available
+      if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
+        return true;
+      }
+      
+      // Check if all prerequisites are completed
+      // Convert string prerequisites to numbers if needed
+      return lesson.requiredLessons.every(req => {
+        const reqId = typeof req === 'string' ? parseInt(req) : req;
+        return completedLessonIds.includes(reqId);
+      });
+    });
   }
 
-  async getUserBadges(userId: string): Promise<any[]> {
-    return [];
+  async getUserBadges(userId: string): Promise<LearningBadge[]> {
+    const userBadges = await db.select({
+      badge: learningBadges,
+      earnedAt: learningUserBadges.earnedAt
+    })
+    .from(learningUserBadges)
+    .innerJoin(learningBadges, eq(learningUserBadges.badgeId, learningBadges.id))
+    .where(eq(learningUserBadges.userId, userId));
+    
+    return userBadges.map(ub => ({
+      ...ub.badge,
+      earnedAt: ub.earnedAt
+    }));
   }
 
   async recordProgress(userId: string, lessonId: number, status: string, score?: number, timeSpent?: number): Promise<void> {
-    // Implementation for recording progress
+    // Check if progress record exists
+    const existingProgress = await db.select().from(learningProgress)
+      .where(and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.lessonId, lessonId)
+      ));
+
+    if (existingProgress.length > 0) {
+      // Update existing progress
+      await db.update(learningProgress)
+        .set({
+          status,
+          score,
+          timeSpent,
+          completedAt: status === 'completed' || status === 'mastered' ? new Date() : null
+        })
+        .where(and(
+          eq(learningProgress.userId, userId),
+          eq(learningProgress.lessonId, lessonId)
+        ));
+    } else {
+      // Create new progress record
+      await db.insert(learningProgress).values({
+        userId,
+        lessonId,
+        status,
+        score,
+        timeSpent,
+        completedAt: status === 'completed' || status === 'mastered' ? new Date() : null
+      });
+    }
+
+    // Update user stats
+    await this.updateUserStats(userId, status);
   }
 
-  async getNextLessonInTrack(currentTrack: string, currentLessonNumber: number): Promise<any> {
-    return null;
+  private async updateUserStats(userId: string, status: string): Promise<void> {
+    const stats = await this.getUserStats(userId);
+    
+    if (status === 'completed' || status === 'mastered') {
+      await db.update(learningStats)
+        .set({
+          completedLessons: stats.completedLessons + 1,
+          masteredLessons: status === 'mastered' ? stats.masteredLessons + 1 : stats.masteredLessons,
+          totalXp: stats.totalXp + 15, // Base XP for lesson completion
+          lastActivityDate: new Date()
+        })
+        .where(eq(learningStats.userId, userId));
+    }
+  }
+
+  async getNextLessonInTrack(currentTrack: string, currentLessonNumber: number): Promise<LearningLesson | null> {
+    const nextLesson = await db.select()
+      .from(learningLessons)
+      .where(and(
+        eq(learningLessons.track, currentTrack),
+        eq(learningLessons.lessonNumber, currentLessonNumber + 1),
+        eq(learningLessons.isActive, true)
+      ))
+      .limit(1);
+
+    return nextLesson[0] || null;
   }
 
   private getSunSignInsights(sunSign: string): string {
