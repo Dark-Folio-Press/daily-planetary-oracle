@@ -473,7 +473,7 @@ export default function LessonPage() {
 
         {/* Interactive Modal */}
         <Dialog open={showInteractiveModal} onOpenChange={setShowInteractiveModal}>
-          <DialogContent className="max-w-2xl [&>button]:opacity-100 [&>button]:bg-gray-100 [&>button]:hover:bg-gray-200 [&>button]:border [&>button]:border-gray-300">
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col [&>button]:opacity-100 [&>button]:bg-gray-100 [&>button]:hover:bg-gray-200 [&>button]:border [&>button]:border-gray-300">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-600" />
@@ -487,7 +487,7 @@ export default function LessonPage() {
                 )}
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto flex-1 pr-2">
               <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
                 <CardContent className="p-6">
                   {interactiveContent?.element === 'sun' && (
@@ -632,32 +632,32 @@ export default function LessonPage() {
 
                   {interactiveContent?.type === 'big-three-integration' && (
                     <>
-                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sun}-{interactiveContent?.moon}-{interactiveContent?.rising} Big Three Synthesis</h4>
-                      <div className="space-y-3">
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sun}-{interactiveContent?.moon}-{interactiveContent?.rising} Big Three</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Core Identity (Sun)</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Your {interactiveContent?.sun} Sun represents your essential self - the core identity you're developing throughout life and how you shine in the world.
-                          </p>
-                        </div>
-                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Emotional Nature (Moon)</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Your {interactiveContent?.moon} Moon governs your inner emotional world - how you feel safe, what nurtures you, and your instinctive reactions.
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{interactiveContent?.sun} Sun</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            Core identity & self-expression
                           </p>
                         </div>
                         <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Outer Expression (Rising)</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Your {interactiveContent?.rising} Rising is your social persona - how others first see you and the energy you project when meeting new people.
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{interactiveContent?.moon} Moon</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            Emotions & inner needs
                           </p>
                         </div>
-                        <div className="p-3 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border">
-                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Integration Dynamic</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Your Big Three create a unique blend of {interactiveContent?.sun} identity, {interactiveContent?.moon} emotions, and {interactiveContent?.rising} expression. This combination shapes how you navigate relationships, work, and personal growth.
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{interactiveContent?.rising} Rising</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            First impressions & social mask
                           </p>
                         </div>
+                      </div>
+                      <div className="p-3 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border mt-3">
+                        <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your Unique Blend</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          {interactiveContent?.sun} identity + {interactiveContent?.moon} emotions + {interactiveContent?.rising} expression = Your complete astrological personality
+                        </p>
                       </div>
                     </>
                   )}
