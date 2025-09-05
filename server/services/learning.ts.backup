@@ -990,7 +990,10 @@ class LearningService {
     return content;
   }
 
-  // Additional helper methods for lesson content
+  // Handle remaining basics lessons like Big Three Integration separately if needed
+  private handleBigThreeLesson(chartData: any): LessonContent[] {
+    const content: LessonContent[] = [];
+    if (chartData) {
             content.push({
               type: 'text',
               data: {
