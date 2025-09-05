@@ -1259,7 +1259,8 @@ The first four houses form your personal foundation - representing your inner ci
               data: {
                 type: 'personal-foundation',
                 element: 'personal-foundation',
-                houses: [1, 2, 3, 4]
+                houses: [1, 2, 3, 4],
+                houseData: chartData.detailedChart?.houses || null
               }
             });
           } else if (lesson.lessonNumber === 3) { // Creative Expression: Houses 5-8
@@ -1284,7 +1285,8 @@ The first four houses form your personal foundation - representing your inner ci
               data: {
                 type: 'creative-expression',
                 element: 'creative-expression',
-                houses: [5, 6, 7, 8]
+                houses: [5, 6, 7, 8],
+                houseData: chartData.detailedChart?.houses || null
               }
             });
           } else if (lesson.lessonNumber === 4) { // Higher Purpose: Houses 9-12
@@ -1309,7 +1311,8 @@ The first four houses form your personal foundation - representing your inner ci
               data: {
                 type: 'higher-purpose',
                 element: 'higher-purpose',
-                houses: [9, 10, 11, 12]
+                houses: [9, 10, 11, 12],
+                houseData: chartData.detailedChart?.houses || null
               }
             });
           }
