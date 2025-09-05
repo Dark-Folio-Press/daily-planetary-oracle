@@ -860,7 +860,7 @@ class LearningService {
                 element: 'sun'
               }
             });
-          } else if (lesson.lessonNumber === 2) { // Elements
+          } else if (lesson.title.includes('Elements') || lesson.title.includes('Fire, Earth, Air')) { // Elements lesson
             const sunElement = this.getSignElement(chartData.sunSign);
             content.push({
               type: 'text',
@@ -891,7 +891,7 @@ class LearningService {
                 element: sunElement
               }
             });
-          } else if (lesson.lessonNumber === 3) { // Modalities
+          } else if (lesson.title.includes('Modalities') || lesson.title.includes('Cardinal, Fixed')) { // Modalities lesson
             const sunModality = this.getSignModality(chartData.sunSign);
             content.push({
               type: 'text',
