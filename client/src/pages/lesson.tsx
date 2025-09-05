@@ -838,7 +838,7 @@ export default function LessonPage() {
                                 <div className="border rounded-lg p-4 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
                                   <h5 className="font-semibold text-lg mb-2 text-purple-800 dark:text-purple-300">{groupTitle}</h5>
                                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{groupDescription}</p>
-                                  <div className="space-y-3 max-h-80 overflow-y-auto">
+                                  <div className="space-y-3">
                                     {Array.from({ length: endHouse - startHouse + 1 }, (_, i) => {
                                       const houseNumber = startHouse + i;
                                       const houseKey = `house_${houseNumber}`;
