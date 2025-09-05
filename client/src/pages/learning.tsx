@@ -58,6 +58,7 @@ interface DashboardData {
   stats: LearningStats;
   badges: LearningBadge[];
   availableLessons: LearningLesson[];
+  completedLessons: LearningLesson[];
   canAccessSynastry: boolean;
 }
 
@@ -93,7 +94,7 @@ export default function LearningPage() {
     );
   }
 
-  const { stats, badges, availableLessons, canAccessSynastry } = dashboardData;
+  const { stats, badges, availableLessons, completedLessons = [], canAccessSynastry } = dashboardData;
 
   const trackOptions = [
     { value: "all", label: "All Tracks", icon: BookOpen },
@@ -171,8 +172,9 @@ export default function LearningPage() {
         </div>
 
         <Tabs defaultValue="lessons" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="lessons">Available Lessons</TabsTrigger>
+            <TabsTrigger value="completed">Completed Lessons</TabsTrigger>
             <TabsTrigger value="badges">Badges & Achievements</TabsTrigger>
             <TabsTrigger value="progress">Progress Overview</TabsTrigger>
           </TabsList>
@@ -277,6 +279,69 @@ export default function LearningPage() {
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>
                   </Link>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Completed Lessons Tab */}
+          <TabsContent value="completed" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {completedLessons.map((lesson) => (
+                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
+                        {lesson.track}
+                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          {lesson.estimatedMinutes}min
+                        </div>
+                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
+                      {lesson.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      {lesson.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm font-medium text-green-600">
+                        <Star className="w-4 h-4" />
+                        +{lesson.xpReward} XP
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {lesson.userProgress?.completedAt && (
+                          <span className="text-xs text-gray-500">
+                            {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                        <Link href={`/learning/lesson/${lesson.id}`}>
+                          <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                            <CheckCircle2 className="w-4 h-4 mr-1" />
+                            Review
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {completedLessons.length === 0 && (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <CheckCircle2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No completed lessons yet</h3>
+                  <p className="text-gray-500">
+                    Complete your first lesson to see it here for easy review access.
+                  </p>
                 </CardContent>
               </Card>
             )}

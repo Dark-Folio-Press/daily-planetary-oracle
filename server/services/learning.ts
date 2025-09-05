@@ -1573,15 +1573,46 @@ The first four houses form your personal foundation - representing your inner ci
     await this.checkAndAwardBadges(userId);
   }
 
+  async getCompletedLessons(userId: string): Promise<LearningLesson[]> {
+    // Get user's completed progress
+    const userProgress = await db.select()
+      .from(learningProgress)
+      .where(and(
+        eq(learningProgress.userId, userId),
+        sql`status IN ('completed', 'mastered')`
+      ));
+    
+    if (userProgress.length === 0) {
+      return [];
+    }
+    
+    // Get the lesson details for completed lessons
+    const completedLessonIds = userProgress.map(p => p.lessonId);
+    const completedLessons = await db.select()
+      .from(learningLessons)
+      .where(sql`id = ANY(ARRAY[${completedLessonIds.join(',')}])`)
+      .orderBy(learningLessons.track, learningLessons.lessonNumber);
+    
+    // Attach progress data to lessons
+    const progressMap = new Map(userProgress.map(p => [p.lessonId, p]));
+    
+    return completedLessons.map(lesson => ({
+      ...lesson,
+      userProgress: progressMap.get(lesson.id) || null
+    }));
+  }
+
   async getDashboardData(userId: string): Promise<any> {
     const stats = await this.getUserStats(userId);
     const badges = await this.getUserBadges(userId);
     const availableLessons = await this.getAvailableLessons(userId);
+    const completedLessons = await this.getCompletedLessons(userId);
     
     return {
       stats,
       badges,
       availableLessons,
+      completedLessons,
       recentProgress: [],
       canAccessSynastry: false
     };
