@@ -1186,7 +1186,6 @@ class LearningService {
               ? await this.getPersonalizedHouses(chartData.birthData.date, chartData.birthData.time, chartData.birthData.location)
               : null;
             
-            console.log('Houses lesson - houseData:', JSON.stringify(houseData, null, 2));
             
             content.push({
               type: 'text',
@@ -1209,7 +1208,7 @@ class LearningService {
                 type: 'text',
                 data: {
                   title: `Your Key House Rulers`,
-                  content: houseDescriptions + `\n\n*Note: This lesson introduces your house system with the first 4 houses. You'll explore all 12 houses as you progress through the complete astrology curriculum.*`
+                  content: houseDescriptions + `\n\n*Note: This lesson introduces your house system with the first 4 houses. The interactive section below shows all 12 houses organized into 3 logical groups for easier learning.*`
                 }
               });
               
