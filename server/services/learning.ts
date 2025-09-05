@@ -865,6 +865,13 @@ class LearningService {
             content.push({
               type: 'text',
               data: {
+                title: `Your ${sunElement.charAt(0).toUpperCase() + sunElement.slice(1)} Element`,
+                content: this.getPersonalizedElementIntro(chartData.sunSign, sunElement)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
                 title: `The Four Elements in Astrology`,
                 content: this.getElementsOverview()
               }
@@ -886,6 +893,13 @@ class LearningService {
             });
           } else if (lesson.lessonNumber === 3) { // Modalities
             const sunModality = this.getSignModality(chartData.sunSign);
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${sunModality.charAt(0).toUpperCase() + sunModality.slice(1)} Modality`,
+                content: this.getPersonalizedModalityIntro(chartData.sunSign, sunModality)
+              }
+            });
             content.push({
               type: 'text',
               data: {
@@ -1652,6 +1666,27 @@ The first four houses form your personal foundation - representing your inner ci
     // This would be a complex function that considers many combinations
     // For now, provide a general synthesis
     return `outwardly appears as ${risingSign} energy while being driven by ${sunSign} core motivations and emotionally nurtured by ${moonSign} needs - a fascinating blend that creates your distinctive personality and approach to life`;
+  }
+
+  private getPersonalizedElementIntro(sunSign: string, element: string): string {
+    const elementDescriptions: Record<string, string> = {
+      'fire': 'passionate, energetic, and dynamic energy to your core personality. Fire signs are natural leaders who act on instinct and radiate warmth and confidence.',
+      'earth': 'practical, stable, and grounded energy to your core personality. Earth signs value security, work steadily toward goals, and have a natural connection to building lasting foundations.',
+      'air': 'intellectual, communicative, and social energy to your core personality. Air signs think before they act, value relationships and ideas, and excel at connecting people and concepts.',
+      'water': 'emotional, intuitive, and empathetic energy to your core personality. Water signs lead with their hearts, possess strong intuition, and connect deeply with others\' emotions.'
+    };
+
+    return `Elements are the fundamental building blocks of astrology - Fire, Earth, Air, and Water. Your ${sunSign} sun means you're a ${element.charAt(0).toUpperCase() + element.slice(1)} sign, which brings ${elementDescriptions[element]} This ${element.charAt(0).toUpperCase() + element.slice(1)} element shapes how you approach life and express your essential nature.`;
+  }
+
+  private getPersonalizedModalityIntro(sunSign: string, modality: string): string {
+    const modalityDescriptions: Record<string, string> = {
+      'cardinal': 'you naturally initiate, lead, and pioneer change. Cardinal signs are motivated to begin things, take charge, and move forward with confidence.',
+      'fixed': 'you naturally sustain, preserve, and see things through to completion. Fixed signs provide stability, determination, and the power to maintain focus over time.',
+      'mutable': 'you naturally adapt, adjust, and find flexible solutions. Mutable signs are versatile, able to see multiple perspectives, and skilled at refining and perfecting.'
+    };
+
+    return `Modalities describe how zodiac signs approach action and change - Cardinal (initiators), Fixed (sustainers), and Mutable (adapters). Your ${sunSign} sun is a ${modality.charAt(0).toUpperCase() + modality.slice(1)} sign, which means ${modalityDescriptions[modality]} This ${modality.charAt(0).toUpperCase() + modality.slice(1)} modality influences how you handle goals, challenges, and life changes.`;
   }
 
   private getElementsOverview(): string {
