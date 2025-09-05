@@ -972,7 +972,15 @@ class LearningService {
                 element: 'sun'
               }
             });
-          } else if (lesson.title.includes('Moon') && lesson.title.includes('Inner Emotional')) { // First Moon lesson (lesson 4)
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'sun-highlight',
+                sign: chartData.sunSign,
+                element: 'sun'
+              }
+            });
+          } else if (lesson.title.includes('Moon Sign') || lesson.title.includes('Emotional Nature')) { // Moon Sign lesson
             content.push({
               type: 'text',
               data: {
@@ -988,7 +996,15 @@ class LearningService {
                 element: 'moon'
               }
             });
-          } else if (lesson.title.includes('Rising')) { // Rising lesson (lesson 5)
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'moon-highlight',
+                sign: chartData.moonSign,
+                element: 'moon'
+              }
+            });
+          } else if (lesson.title.includes('Rising Sign') || lesson.title.includes('How You Appear')) { // Rising Sign lesson
             content.push({
               type: 'text',
               data: {
@@ -1000,6 +1016,14 @@ class LearningService {
               type: 'interactive',
               data: {
                 type: 'rising-explorer',
+                sign: chartData.risingSign,
+                element: 'rising'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'rising-highlight',
                 sign: chartData.risingSign,
                 element: 'rising'
               }
@@ -1065,6 +1089,14 @@ class LearningService {
                 type: 'communication-explorer',
                 sign: mercurySign,
                 element: 'mercury'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'mercury-highlight',
+                sign: mercurySign,
+                planet: 'Mercury'
               }
             });
             content.push({
@@ -1273,7 +1305,45 @@ class LearningService {
           }
           break;
         case 'houses':
-          if (lesson.lessonNumber === 1) { // The 12 Houses: Life's Different Areas
+          // Handle individual house lessons (13-24)
+          const houseNumber = lesson.lessonNumber - 12; // Convert lesson number to house number
+          if (houseNumber >= 1 && houseNumber <= 12) {
+            const houseData = chartData.detailedChart?.houses?.find((h: any) => h.number === houseNumber);
+            const houseSign = houseData?.sign || 'Aries'; // Fallback
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${houseNumber}${this.getOrdinalSuffix(houseNumber)} House in ${houseSign}`,
+                content: this.getHousePersonalizedInsights(houseNumber, houseSign, chartData)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `Understanding the ${houseNumber}${this.getOrdinalSuffix(houseNumber)} House`,
+                content: this.getHouseGeneralInsights(houseNumber)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'house-explorer',
+                houseNumber: houseNumber,
+                sign: houseSign,
+                element: `house-${houseNumber}`
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'house-highlight',
+                houseNumber: houseNumber,
+                sign: houseSign,
+                description: `See where your ${houseNumber}${this.getOrdinalSuffix(houseNumber)} house sits in your birth chart and how ${houseSign} influences this life area`
+              }
+            });
+          } else if (lesson.lessonNumber === 1) { // The 12 Houses: Life's Different Areas
             content.push({
               type: 'text',
               data: {
@@ -1756,7 +1826,7 @@ The first four houses form your personal foundation - representing your inner ci
       26: { title: "Modalities: Cardinal, Fixed, Mutable", description: "How the three approaches to change shape your personality" },
       27: { title: "Polarities: Understanding Opposite Signs", description: "Learning from the complementary nature of opposing energies" },
       28: { title: "Birth Chart Integration: Your Complete Cosmic Picture", description: "Synthesizing all elements of your chart into a cohesive understanding" },
-      29: { title: "Your Sun Sign: The Core of Who You Are", description: "Discover your fundamental personality traits and life purpose through your sun sign" }
+      29: { title: "Advanced Sun Sign Mastery", description: "Master advanced concepts and nuances of your sun sign expression" }
     };
 
     const info = lessonCatalog[lessonId];
@@ -1797,6 +1867,54 @@ The first four houses form your personal foundation - representing your inner ci
 
   private getElementsOverview(): string {
     return `The four elements form the foundation of astrology: Fire (passion), Earth (stability), Air (communication), Water (emotion).`;
+  }
+
+  private getOrdinalSuffix(num: number): string {
+    if (num % 100 >= 11 && num % 100 <= 13) return 'th';
+    switch (num % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
+
+  private getHousePersonalizedInsights(houseNumber: number, houseSign: string, chartData: any): string {
+    const houseThemes: Record<number, string> = {
+      1: `identity and first impressions`,
+      2: `values, money, and possessions`,
+      3: `communication and siblings`,
+      4: `home, family, and emotional foundation`,
+      5: `creativity, romance, and children`,
+      6: `work, health, and daily routines`,
+      7: `partnerships and marriage`,
+      8: `transformation and shared resources`,
+      9: `philosophy, travel, and higher learning`,
+      10: `career and public reputation`,
+      11: `friendships and future goals`,
+      12: `spirituality and hidden aspects`
+    };
+
+    return `Your ${houseNumber}${this.getOrdinalSuffix(houseNumber)} house is in ${houseSign}, which means your approach to ${houseThemes[houseNumber]} is influenced by ${houseSign}'s energy. This placement shows how you naturally express yourself in this life area and what experiences you're likely to encounter here.`;
+  }
+
+  private getHouseGeneralInsights(houseNumber: number): string {
+    const houseDescriptions: Record<number, string> = {
+      1: `The 1st house represents your identity, personality, and how you appear to others. It's ruled by your rising sign and shows your natural approach to life.`,
+      2: `The 2nd house governs your values, money, possessions, and self-worth. It reveals what you find valuable and how you handle material resources.`,
+      3: `The 3rd house rules communication, siblings, short trips, and learning. It shows how you process information and connect with your immediate environment.`,
+      4: `The 4th house represents home, family, roots, and your emotional foundation. It reveals your inner world and where you find security.`,
+      5: `The 5th house governs creativity, romance, children, and self-expression. It shows how you play, create, and express your unique personality.`,
+      6: `The 6th house rules work, health, daily routines, and service. It reveals how you approach responsibility and maintain your physical wellbeing.`,
+      7: `The 7th house represents partnerships, marriage, and one-on-one relationships. It shows what you seek in others and how you relate to people.`,
+      8: `The 8th house governs transformation, shared resources, intimacy, and the occult. It reveals your relationship with deep change and hidden matters.`,
+      9: `The 9th house rules philosophy, higher education, travel, and spiritual beliefs. It shows how you expand your understanding of the world.`,
+      10: `The 10th house represents career, reputation, and your public image. It reveals your life direction and how you want to be known in the world.`,
+      11: `The 11th house governs friendships, groups, hopes, and wishes. It shows your social connections and dreams for the future.`,
+      12: `The 12th house rules spirituality, the subconscious, karma, and hidden enemies. It reveals your connection to the divine and unconscious patterns.`
+    };
+
+    return houseDescriptions[houseNumber] || `The ${houseNumber}${this.getOrdinalSuffix(houseNumber)} house is an important area of life experience in astrology.`;
   }
 
   private getModalitiesOverview(): string {
