@@ -224,11 +224,11 @@ export default function LessonPage() {
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Progress</span>
             <span className="text-sm text-gray-500">
-              {Math.min(currentSection + 1, personalizedContent.length)} of {personalizedContent.length}
+              {Math.min(currentSection + 1, personalizedContent?.length || 0)} of {personalizedContent?.length || 0}
             </span>
           </div>
           <Progress 
-            value={(Math.min(currentSection + 1, personalizedContent.length) / personalizedContent.length) * 100} 
+            value={personalizedContent?.length ? (Math.min(currentSection + 1, personalizedContent.length) / personalizedContent.length) * 100 : 0} 
             className="h-2"
           />
         </div>
@@ -313,7 +313,7 @@ export default function LessonPage() {
             <CardDescription>{lesson.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {personalizedContent.slice(0, currentSection + 1).map((content, index) => (
+            {(personalizedContent || []).slice(0, currentSection + 1).map((content, index) => (
               <div 
                 key={index} 
                 className={`transition-opacity duration-500 ${index === currentSection ? 'opacity-100' : 'opacity-75'}`}
@@ -394,7 +394,7 @@ export default function LessonPage() {
                   </Card>
                 )}
 
-                {index < personalizedContent.length - 1 && (
+                {index < (personalizedContent?.length || 0) - 1 && (
                   <Separator className="my-6" />
                 )}
               </div>
@@ -414,7 +414,7 @@ export default function LessonPage() {
           </Button>
 
           <div className="flex gap-2">
-            {currentSection < personalizedContent.length - 1 ? (
+            {currentSection < (personalizedContent?.length || 0) - 1 ? (
               <Button
                 onClick={() => setCurrentSection(currentSection + 1)}
                 className="bg-purple-600 hover:bg-purple-700"
@@ -433,7 +433,7 @@ export default function LessonPage() {
             ) : (
               <Button
                 onClick={handleCompleteLesson}
-                disabled={isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1}
+                disabled={isCompleted || progressMutation.isPending || currentSection < (personalizedContent?.length || 0) - 1}
                 className="bg-green-600 hover:bg-green-700"
                 data-testid="button-complete-lesson"
               >
@@ -1166,7 +1166,7 @@ export default function LessonPage() {
                         onClick={() => {
                           setShowInteractiveModal(false);
                           // Only advance if there are more sections
-                          if (currentSection < personalizedContent.length - 1) {
+                          if (currentSection < (personalizedContent?.length || 0) - 1) {
                             setCurrentSection(currentSection + 1);
                           }
                           toast({
@@ -1184,7 +1184,7 @@ export default function LessonPage() {
                       onClick={() => {
                         setShowInteractiveModal(false);
                         // Only advance if there are more sections
-                        if (currentSection < personalizedContent.length - 1) {
+                        if (currentSection < (personalizedContent?.length || 0) - 1) {
                           setCurrentSection(currentSection + 1);
                         }
                         toast({
