@@ -720,13 +720,9 @@ class LearningService {
       .filter(p => p.status === 'completed' || p.status === 'mastered')
       .map(p => p.lessonId);
     
-    console.log('DEBUG: completedLessonIds:', completedLessonIds);
-    console.log('DEBUG: allLessons:', allLessons.map(l => ({ id: l.id, title: l.title })));
-    
     const availableLessons = allLessons.filter(lesson => {
       // Filter out already completed lessons
       if (completedLessonIds.includes(lesson.id)) {
-        console.log(`DEBUG: Filtering out completed lesson ${lesson.id}: ${lesson.title}`);
         return false;
       }
       
@@ -742,8 +738,6 @@ class LearningService {
         return completedLessonIds.includes(reqId);
       });
     });
-    
-    console.log('DEBUG: Final availableLessons:', availableLessons.map(l => ({ id: l.id, title: l.title })));
     
     // Attach user progress to each lesson
     return availableLessons.map(lesson => {
