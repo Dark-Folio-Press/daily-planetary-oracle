@@ -763,7 +763,46 @@ class LearningService {
   async getPersonalizedLesson(lessonId: number, userId: string): Promise<PersonalizedLesson> {
     const [lesson] = await db.select().from(learningLessons).where(eq(learningLessons.id, lessonId));
     
+    // If lesson not found in learning_lessons, check if it's a completed lesson
     if (!lesson) {
+      const [progress] = await db.select()
+        .from(learningProgress)
+        .where(and(
+          eq(learningProgress.lessonId, lessonId),
+          eq(learningProgress.userId, userId),
+          sql`status IN ('completed', 'mastered')`
+        ));
+      
+      if (progress) {
+        // Return a minimal lesson for completed lessons that don't have full data
+        return {
+          lesson: {
+            id: lessonId,
+            title: `Completed Lesson ${lessonId}`,
+            description: "You have already completed this lesson successfully.",
+            track: this.getLessonTrackById(lessonId),
+            lessonNumber: lessonId,
+            xpReward: 50,
+            estimatedMinutes: 15,
+            prerequisites: null,
+            content: {},
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            isActive: true,
+            requiredLessons: null
+          },
+          content: [{
+            type: 'text',
+            data: {
+              title: `Review: Lesson ${lessonId}`,
+              content: `Congratulations! You completed this lesson on ${progress.completedAt ? new Date(progress.completedAt).toLocaleDateString() : 'a previous date'}. You earned ${progress.score || 50} XP and spent ${Math.round((progress.timeSpent || 900) / 60)} minutes learning.`
+            }
+          }],
+          userProgress: progress,
+          personalizedInsights: [`Great work completing Lesson ${lessonId}! You're making excellent progress in your astrological learning journey.`]
+        };
+      }
+      
       throw new Error('Lesson not found');
     }
     
