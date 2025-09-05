@@ -16,7 +16,7 @@ import {
   type InsertLearningQuizResult
 } from "@shared/schema";
 import { db } from "../db";
-import { eq, and, sql, desc } from "drizzle-orm";
+import { eq, and, sql, desc, inArray } from "drizzle-orm";
 import { astrologyService } from "./astrology";
 
 export interface LessonContent {
@@ -1595,7 +1595,7 @@ The first four houses form your personal foundation - representing your inner ci
     
     const completedLessons = await db.select()
       .from(learningLessons)
-      .where(sql`${learningLessons.id} IN (${completedLessonIds.join(',')})`)
+      .where(inArray(learningLessons.id, completedLessonIds))
       .orderBy(learningLessons.track, learningLessons.lessonNumber);
     
     // Attach progress data to lessons
