@@ -777,7 +777,7 @@ class LearningService {
       ));
 
     // Personalize lesson content based on user's chart
-    const personalizedContent = this.personalizeContent(lesson, userChartData);
+    const personalizedContent = await this.personalizeContent(lesson, userChartData);
 
     return {
       lesson,
@@ -787,7 +787,7 @@ class LearningService {
     };
   }
 
-  private personalizeContent(lesson: LearningLesson, chartData: any): LessonContent[] {
+  private async personalizeContent(lesson: LearningLesson, chartData: any): Promise<LessonContent[]> {
     const content: LessonContent[] = [];
     
     if (!chartData) {
@@ -1154,6 +1154,80 @@ class LearningService {
                 description: 'See where Pluto brings deep transformation and power to your life journey'
               }
             });
+          }
+          break;
+
+        case 'houses':
+          if (lesson.lessonNumber === 1) { // The 12 Houses: Life's Different Areas
+            content.push({
+              type: 'text',
+              data: {
+                title: `The 12 Houses of Astrology`,
+                content: this.getHousesOverview()
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `House Themes and Life Areas`,
+                content: this.getHouseThemesExplanation()
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'house-overview',
+                element: 'houses-general'
+              }
+            });
+          } else if (lesson.lessonNumber === 2) { // Your Personal Houses
+            // Get personalized house data
+            const houseData = chartData.birthData?.date && chartData.birthData?.time && chartData.birthData?.location 
+              ? await this.getPersonalizedHouses(chartData.birthData.date, chartData.birthData.time, chartData.birthData.location)
+              : null;
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Personal House System`,
+                content: `Your ${chartData.risingSign} Rising sets your entire house system. Each house cusp is ruled by a different sign, creating a unique blueprint for how life areas unfold for you.`
+              }
+            });
+            
+            if (houseData && houseData.houses) {
+              // Add detailed house-by-house breakdown
+              const housesArray = Object.entries(houseData.houses).slice(0, 4); // Show first 4 houses as examples
+              const houseDescriptions = housesArray.map(([houseKey, houseInfo]: [string, any]) => {
+                const houseNumber = houseKey.replace('house_', '');
+                const houseTheme = this.getHouseTheme(parseInt(houseNumber));
+                return `**${houseNumber}th House (${houseTheme}):** ${houseInfo.sign} rules this area, ${this.getHouseSignMeaning(houseInfo.sign, parseInt(houseNumber))}`;
+              }).join('\n\n');
+              
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your House Rulers (Sample)`,
+                  content: houseDescriptions
+                }
+              });
+              
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'personal-houses',
+                  houseData: houseData.houses,
+                  element: 'personal-houses'
+                }
+              });
+            } else {
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Complete Birth Information Needed`,
+                  content: `To show your personalized house system, we need your complete birth date, time, and location. This lesson will show general house meanings until you complete your profile.`
+                }
+              });
+            }
           }
           break;
 
@@ -1782,6 +1856,123 @@ Each modality has its season and purpose in the natural cycle - cardinal begins,
     const axis = `${northHouse}-${southHouse}`;
     
     return houseInsights[axis] || `Your nodal houses show growth from ${southHouse}th house patterns toward ${northHouse}th house development.`;
+  }
+
+  private getHousesOverview(): string {
+    return `The 12 houses are like the stage where your planets perform. Each house represents a different area of life experience - from your identity and resources to your relationships and spirituality. While the signs describe *how* you express energy, the houses show *where* that energy manifests in your actual life circumstances.
+
+Think of the houses as the departments of your life: the 1st house is your personal brand, the 2nd is your resources and values, the 7th is partnerships, the 10th is your career reputation, and so on. Understanding your house system reveals where you'll encounter your greatest challenges, opportunities, and life lessons.`;
+  }
+
+  private getHouseThemesExplanation(): string {
+    return `**1st House:** Your identity, appearance, first impressions
+**2nd House:** Money, possessions, self-worth, values  
+**3rd House:** Communication, siblings, local travel, learning
+**4th House:** Home, family, roots, emotional foundation
+**5th House:** Creativity, romance, children, self-expression
+**6th House:** Work, health, daily routines, service
+**7th House:** Marriage, partnerships, one-on-one relationships
+**8th House:** Shared resources, transformation, deep psychology
+**9th House:** Higher education, philosophy, long-distance travel
+**10th House:** Career, reputation, public image, achievements
+**11th House:** Friends, groups, hopes, social networks
+**12th House:** Spirituality, hidden enemies, subconscious, sacrifice
+
+Each house has specific themes, but how these play out depends on which signs rule your house cusps and which planets reside there.`;
+  }
+
+  private getHouseTheme(houseNumber: number): string {
+    const themes = {
+      1: 'Identity & Appearance',
+      2: 'Resources & Values', 
+      3: 'Communication & Learning',
+      4: 'Home & Family',
+      5: 'Creativity & Romance',
+      6: 'Work & Health',
+      7: 'Partnerships & Marriage',
+      8: 'Transformation & Shared Resources',
+      9: 'Philosophy & Higher Learning',
+      10: 'Career & Reputation',
+      11: 'Friends & Social Networks',
+      12: 'Spirituality & Subconscious'
+    };
+    return themes[houseNumber as keyof typeof themes] || `House ${houseNumber}`;
+  }
+
+  private getHouseSignMeaning(sign: string, houseNumber: number): string {
+    const meanings = {
+      'Aries': 'bringing bold, pioneering energy to this life area',
+      'Taurus': 'creating stability and building lasting value here',
+      'Gemini': 'adding curiosity, variety, and communication skills',
+      'Cancer': 'bringing nurturing, intuition, and emotional depth',
+      'Leo': 'adding creativity, drama, and self-expression',
+      'Virgo': 'bringing organization, service, and attention to detail',
+      'Libra': 'seeking balance, harmony, and partnership',
+      'Scorpio': 'bringing intensity, transformation, and depth',
+      'Sagittarius': 'adding adventure, wisdom, and philosophical growth',
+      'Capricorn': 'bringing structure, ambition, and long-term planning',
+      'Aquarius': 'adding innovation, independence, and humanitarian ideals',
+      'Pisces': 'bringing intuition, compassion, and spiritual connection'
+    };
+    return meanings[sign as keyof typeof meanings] || `coloring this area with ${sign} energy`;
+  }
+
+  private async getPersonalizedHouses(date?: string, time?: string, location?: string) {
+    if (!date || !time || !location) {
+      return null;
+    }
+    
+    try {
+      // Use the same astrology service that the API endpoint uses
+      const chartData = await astrologyService.calculateBigThreeAccurate({
+        date,
+        time, 
+        location
+      });
+      
+      // Extract houses data similar to the API endpoint
+      const housesData: Record<string, any> = {};
+      
+      if (chartData && (chartData as any).planets) {
+        const planetsData = (chartData as any).planets || {};
+        
+        // Extract house information for each house (1-12)  
+        for (let i = 1; i <= 12; i++) {
+          const houseKey = `house_${i}`;
+          const planetsInHouse = [];
+          let houseSign = '';
+          
+          // Find planets in this house from planets data
+          for (const [planetName, planetData] of Object.entries(planetsData)) {
+            if (typeof planetData === 'object' && planetData && (planetData as any).house === i) {
+              planetsInHouse.push(planetName);
+            }
+          }
+          
+          // Try to get house cusp sign - for now use a simplified approach
+          // The astrology service should be enhanced to return house cusps
+          if (i === 1) {
+            houseSign = (chartData as any).risingSign || 'Aries';
+          } else {
+            // Simplified: each house advances by one sign typically
+            const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+            const risingIndex = signs.indexOf((chartData as any).risingSign || 'Aries');
+            const houseSignIndex = (risingIndex + i - 1) % 12;
+            houseSign = signs[houseSignIndex];
+          }
+          
+          housesData[houseKey] = {
+            sign: houseSign,
+            planets: planetsInHouse
+          };
+        }
+      }
+      
+      return { houses: housesData };
+    } catch (error) {
+      console.error('Error getting personalized houses:', error);
+      return null;
+    }
   }
 
   private getNodalAspectsInsights(aspects: any[]): string {

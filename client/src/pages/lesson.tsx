@@ -279,7 +279,14 @@ export default function LessonPage() {
                   As a {userChartData.sunSign} Sun, Pluto shows how you undergo deep personal evolution and embrace change.
                 </div>
               )}
-              {lesson.track !== 'planets' && (
+              {lesson.track === 'houses' && (
+                <div>
+                  <strong>The House System:</strong> The 12 houses represent different life areas and experiences in your chart. 
+                  Each house governs specific themes - from identity and resources to relationships and career - 
+                  showing where planetary energies manifest in your daily life.
+                </div>
+              )}
+              {lesson.track !== 'planets' && lesson.track !== 'houses' && (
                 <div>
                   <strong>Your Personal Chart Context:</strong> As someone with {userChartData.sunSign} Sun, {userChartData.moonSign} Moon, 
                   and {userChartData.risingSign} Rising, this lesson will use examples specific to your unique astrological makeup.
@@ -765,6 +772,69 @@ export default function LessonPage() {
                             You uncover hidden truths and tap into deep psychological insights that help you and others heal and transform.
                           </p>
                         </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'houses-general' && (
+                    <>
+                      <h4 className="font-semibold mb-3">The 12 Houses Overview</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Houses 1-4: Personal Foundation</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            The first four houses focus on your personal development - identity, resources, communication, and emotional foundation.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Houses 5-8: Personal Expression</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            These houses govern how you express yourself - creativity, work, relationships, and shared resources.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Houses 9-12: Universal Connection</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            The final houses connect you to the wider world - philosophy, career, community, and spirituality.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'personal-houses' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your Personal House System</h4>
+                      <div className="space-y-3">
+                        {interactiveContent?.houseData ? (
+                          <>
+                            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">1st House Identity</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                Your {interactiveContent.houseData?.house_1?.sign} 1st house shapes how you present yourself to the world and your natural approach to new situations.
+                              </p>
+                            </div>
+                            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">7th House Partnerships</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                Your {interactiveContent.houseData?.house_7?.sign} 7th house influences your approach to partnerships and what you seek in close relationships.
+                              </p>
+                            </div>
+                            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">10th House Career</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                Your {interactiveContent.houseData?.house_10?.sign} 10th house reveals your natural approach to career, reputation, and public image.
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Complete Your Birth Profile</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                              Add your birth time and location to see your personalized house system and how each life area is influenced by specific zodiac signs.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </>
                   )}
