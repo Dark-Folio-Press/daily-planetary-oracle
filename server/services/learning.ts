@@ -1095,6 +1095,20 @@ class LearningService {
     }
   }
 
+  async getDashboardData(userId: string): Promise<any> {
+    const stats = await this.getUserStats(userId);
+    const badges = await this.getUserBadges(userId);
+    const availableLessons = await this.getAvailableLessons(userId);
+    
+    return {
+      stats,
+      badges,
+      availableLessons,
+      recentProgress: [],
+      canAccessSynastry: false
+    };
+  }
+
   private getSunSignInsights(sunSign: string): string {
     return `Your ${sunSign} sun represents your core identity and essential nature.`;
   }
