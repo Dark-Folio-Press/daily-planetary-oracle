@@ -413,16 +413,17 @@ export type InsertSongUsage = z.infer<typeof insertSongUsageSchema>;
 // Learning System Tables
 export const learningLessons = pgTable("learning_lessons", {
   id: serial("id").primaryKey(),
-  track: text("track").notNull(), // 'basics', 'planets', 'houses', 'aspects', 'advanced'
+  track: varchar("track").notNull(), // 'basics', 'planets', 'houses', 'aspects', 'advanced'
   lessonNumber: integer("lesson_number").notNull(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
+  title: varchar("title").notNull(),
+  description: text("description"),
   content: jsonb("content").notNull(), // Lesson content with interactive elements
-  requiredLessons: text("required_lessons").array(), // Prerequisites
   xpReward: integer("xp_reward").default(10),
   estimatedMinutes: integer("estimated_minutes").default(5),
+  prerequisites: text("prerequisites").array(), // Prerequisites
+  createdAt: timestamp("created_at").defaultNow(),
   isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  requiredLessons: text("required_lessons").array(),
 });
 
 export const learningProgress = pgTable("learning_progress", {
@@ -438,14 +439,16 @@ export const learningProgress = pgTable("learning_progress", {
 
 export const learningBadges = pgTable("learning_badges", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  icon: text("icon").notNull(), // Icon name or emoji
-  track: text("track"), // Associated track if applicable
-  requirements: jsonb("requirements").notNull(), // Conditions to earn badge
+  name: varchar("name").notNull(),
+  description: text("description"),
+  icon: varchar("icon"),
+  requirementType: varchar("requirement_type").notNull(),
+  requirementValue: integer("requirement_value").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  track: text("track"),
+  requirements: jsonb("requirements").notNull().default("{}"),
   xpReward: integer("xp_reward").default(50),
   isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const learningUserBadges = pgTable("learning_user_badges", {

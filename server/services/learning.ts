@@ -617,6 +617,8 @@ class LearningService {
         name: 'First Steps',
         description: 'Complete your first astrology lesson',
         icon: '🌟',
+        requirementType: 'completedLessons',
+        requirementValue: 1,
         track: 'basics',
         requirements: { completedLessons: 1 },
         xpReward: 25
@@ -625,30 +627,18 @@ class LearningService {
         name: 'Sun Explorer', 
         description: 'Master your sun sign knowledge',
         icon: '☀️',
+        requirementType: 'masteredLessons',
+        requirementValue: 1,
         track: 'basics',
         requirements: { masteredLessons: ['basics-1'] },
-        xpReward: 50
-      },
-      {
-        name: 'Moon Whisperer',
-        description: 'Understand your lunar nature',
-        icon: '🌙',
-        track: 'basics', 
-        requirements: { masteredLessons: ['basics-2'] },
-        xpReward: 50
-      },
-      {
-        name: 'Rising Star',
-        description: 'Master your ascendant knowledge',
-        icon: '🌅',
-        track: 'basics',
-        requirements: { masteredLessons: ['basics-3'] },
         xpReward: 50
       },
       {
         name: 'Big Three Master',
         description: 'Complete the entire basics track',
         icon: '🏆',
+        requirementType: 'completedLessons',
+        requirementValue: 10,
         track: 'basics',
         requirements: { completedTrack: 'basics' },
         xpReward: 100
@@ -657,38 +647,18 @@ class LearningService {
         name: 'Planetary Student',
         description: 'Begin exploring planetary influences',
         icon: '🪐',
+        requirementType: 'completedLessons',
+        requirementValue: 1,
         track: 'planets',
         requirements: { completedLessons: 1, track: 'planets' },
         xpReward: 50
       },
       {
-        name: 'Communication Expert',
-        description: 'Master Mercury\'s influence in your chart',
-        icon: '💬',
-        track: 'planets',
-        requirements: { masteredLessons: ['planets-1'] },
-        xpReward: 75
-      },
-      {
-        name: 'Love & Values Guide',
-        description: 'Understand Venus in your chart',
-        icon: '💖',
-        track: 'planets',
-        requirements: { masteredLessons: ['planets-2'] },
-        xpReward: 75
-      },
-      {
-        name: 'Ambitious Achiever',
-        description: 'Master Mars energy in your chart',
-        icon: '⚡',
-        track: 'planets',
-        requirements: { masteredLessons: ['planets-3'] },
-        xpReward: 75
-      },
-      {
         name: 'House Hunter',
         description: 'Begin exploring the houses',
         icon: '🏠',
+        requirementType: 'completedLessons',
+        requirementValue: 1,
         track: 'houses',
         requirements: { completedLessons: 1, track: 'houses' },
         xpReward: 50
@@ -697,6 +667,8 @@ class LearningService {
         name: 'Chart Interpreter',
         description: 'Complete all foundational learning tracks',
         icon: '🔮',
+        requirementType: 'completedLessons',
+        requirementValue: 15,
         track: null,
         requirements: { completedTracks: ['basics', 'planets', 'houses'] },
         xpReward: 200
@@ -1499,7 +1471,7 @@ The first four houses form your personal foundation - representing your inner ci
       let shouldAward = false;
       
       // Check badge requirements
-      if (requirements.completedLessons && userStats.completedLessons >= requirements.completedLessons) {
+      if (requirements.completedLessons && (userStats.completedLessons || 0) >= requirements.completedLessons) {
         if (requirements.track) {
           // Check track-specific completion
           const trackProgress = userProgress.filter(p => {
@@ -1525,12 +1497,12 @@ The first four houses form your personal foundation - representing your inner ci
       if (requirements.completedTrack) {
         // Check if specific track is completed
         // For now, simplified: if user has many completed lessons
-        shouldAward = userStats.completedLessons >= 10;
+        shouldAward = (userStats.completedLessons || 0) >= 10;
       }
       
       if (requirements.completedTracks) {
         // Check if multiple tracks are completed
-        shouldAward = userStats.completedLessons >= 15;
+        shouldAward = (userStats.completedLessons || 0) >= 15;
       }
       
       // Award the badge
