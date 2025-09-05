@@ -728,19 +728,20 @@ class LearningService {
       .from(learningProgress)
       .where(eq(learningProgress.userId, userId));
     
+    // Create a map of lesson progress for quick lookup
+    const progressMap = new Map(userProgress.map(p => [p.lessonId, p]));
+    
     // Get all lessons to build completion map
     const allLessons = await db.select()
       .from(learningLessons)
       .where(eq(learningLessons.isActive, true))
       .orderBy(learningLessons.track, learningLessons.lessonNumber);
     
-    const lessonMap = new Map(allLessons.map(l => [l.id, l]));
-    
     const completedLessonIds = userProgress
       .filter(p => p.status === 'completed' || p.status === 'mastered')
       .map(p => p.lessonId);
     
-    return allLessons.filter(lesson => {
+    const availableLessons = allLessons.filter(lesson => {
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
@@ -752,6 +753,18 @@ class LearningService {
         const reqId = typeof req === 'string' ? parseInt(req) : req;
         return completedLessonIds.includes(reqId);
       });
+    });
+    
+    // Attach user progress to each lesson
+    return availableLessons.map(lesson => {
+      const progress = progressMap.get(lesson.id);
+      return {
+        ...lesson,
+        userProgress: progress ? {
+          status: progress.status,
+          completedAt: progress.completedAt?.toISOString() || null
+        } : null
+      };
     });
   }
 

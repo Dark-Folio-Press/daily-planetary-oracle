@@ -79,14 +79,9 @@ export default function LessonPage() {
       timeSpent?: number;
     }) => apiRequest("POST", `/api/learning/progress`, progressData),
     onSuccess: (data: any) => {
-      console.log('Progress mutation success, received data:', data);
-      
       // Update the dashboard cache with the returned data
       if (data.dashboardData) {
-        console.log('Updating dashboard cache with:', data.dashboardData);
         queryClient.setQueryData(["/api/learning/dashboard"], data.dashboardData);
-      } else {
-        console.log('No dashboardData in response, invalidating cache instead');
       }
       
       // Force immediate refetch of dashboard
@@ -107,18 +102,9 @@ export default function LessonPage() {
   }, [lessonData]);
 
   const handleCompleteLesson = () => {
-    console.log('handleCompleteLesson called');
-    if (!lessonData) {
-      console.log('No lessonData available');
-      return;
-    }
+    if (!lessonData) return;
     
     const timeSpent = Math.floor((Date.now() - startTime) / 1000 / 60); // minutes
-    console.log('About to call progressMutation.mutate with:', {
-      lessonId: lessonData.lesson.id,
-      status: 'completed',
-      timeSpent
-    });
     
     progressMutation.mutate({
       lessonId: lessonData.lesson.id,
@@ -446,17 +432,7 @@ export default function LessonPage() {
               </Button>
             ) : (
               <Button
-                onClick={(e) => {
-                  console.log('Complete button clicked!', {
-                    isCompleted,
-                    isPending: progressMutation.isPending,
-                    currentSection,
-                    totalSections: personalizedContent.length,
-                    isOnLastSection: currentSection >= personalizedContent.length - 1,
-                    isDisabled: isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1
-                  });
-                  handleCompleteLesson();
-                }}
+                onClick={handleCompleteLesson}
                 disabled={isCompleted || progressMutation.isPending || currentSection < personalizedContent.length - 1}
                 className="bg-green-600 hover:bg-green-700"
                 data-testid="button-complete-lesson"
