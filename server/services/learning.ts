@@ -1095,6 +1095,58 @@ class LearningService {
     }
   }
 
+  async getUserBadges(userId: string): Promise<LearningBadge[]> {
+    const userBadges = await db.select({
+      badge: learningBadges,
+      earnedAt: learningUserBadges.earnedAt
+    })
+    .from(learningUserBadges)
+    .innerJoin(learningBadges, eq(learningUserBadges.badgeId, learningBadges.id))
+    .where(eq(learningUserBadges.userId, userId));
+    
+    return userBadges.map(ub => ({
+      ...ub.badge,
+      earnedAt: ub.earnedAt
+    }));
+  }
+
+  async recordProgress(userId: string, lessonId: number, status: string, score?: number, timeSpent?: number): Promise<void> {
+    // Check if progress record exists
+    const existingProgress = await db.select().from(learningProgress)
+      .where(and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.lessonId, lessonId)
+      ));
+
+    if (existingProgress.length > 0) {
+      // Update existing progress
+      await db.update(learningProgress)
+        .set({
+          status,
+          score,
+          timeSpent,
+          completedAt: status === 'completed' || status === 'mastered' ? new Date() : null
+        })
+        .where(and(
+          eq(learningProgress.userId, userId),
+          eq(learningProgress.lessonId, lessonId)
+        ));
+    } else {
+      // Create new progress record
+      await db.insert(learningProgress).values({
+        userId,
+        lessonId,
+        status,
+        score,
+        timeSpent,
+        completedAt: status === 'completed' || status === 'mastered' ? new Date() : null
+      });
+    }
+
+    // Update user stats
+    await this.updateUserStats(userId, status);
+  }
+
   async getDashboardData(userId: string): Promise<any> {
     const stats = await this.getUserStats(userId);
     const badges = await this.getUserBadges(userId);
