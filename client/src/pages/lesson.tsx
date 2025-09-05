@@ -80,6 +80,8 @@ export default function LessonPage() {
     }) => apiRequest("POST", `/api/learning/progress`, progressData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/learning/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/learning/lesson"] });
+      queryClient.invalidateQueries({ queryKey: ["learning"] });
       toast({
         title: "Progress recorded!",
         description: `You earned +${lessonData?.lesson.xpReward} XP`,
@@ -333,7 +335,15 @@ export default function LessonPage() {
                           Interactive Element: {content.data.type}
                         </h4>
                         <p className="text-blue-600 dark:text-blue-400 mb-4">
-                          Explore your {content.data.sign} {content.data.element} through interactive examples
+                          {content.data.element === 'personal-foundation' ? (
+                            'Explore your personal-foundation traits through interactive examples'
+                          ) : content.data.element === 'creative-expression' ? (
+                            'Explore your creative-expression traits through interactive examples'
+                          ) : content.data.element === 'higher-purpose' ? (
+                            'Explore your higher-purpose traits through interactive examples'
+                          ) : (
+                            `Explore your ${content.data.sign} ${content.data.element} through interactive examples`
+                          )}
                         </p>
                         <Button 
                           variant="outline" 
