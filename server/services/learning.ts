@@ -16,7 +16,7 @@ import {
   type InsertLearningQuizResult
 } from "@shared/schema";
 import { db } from "../db";
-import { eq, and, sql, desc, inArray } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 import { astrologyService } from "./astrology";
 
 export interface LessonContent {
@@ -721,11 +721,6 @@ class LearningService {
       .map(p => p.lessonId);
     
     const availableLessons = allLessons.filter(lesson => {
-      // Filter out already completed lessons
-      if (completedLessonIds.includes(lesson.id)) {
-        return false;
-      }
-      
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
@@ -1592,7 +1587,7 @@ The first four houses form your personal foundation - representing your inner ci
     }
     
     // Get the lesson details for completed lessons
-    const completedLessonIds = userProgress.map(p => parseInt(String(p.lessonId)));
+    const completedLessonIds = userProgress.map(p => p.lessonId);
     
     if (completedLessonIds.length === 0) {
       return [];
@@ -1600,7 +1595,7 @@ The first four houses form your personal foundation - representing your inner ci
     
     const completedLessons = await db.select()
       .from(learningLessons)
-      .where(inArray(learningLessons.id, completedLessonIds))
+      .where(sql`${learningLessons.id} IN (${completedLessonIds.join(',')})`)
       .orderBy(learningLessons.track, learningLessons.lessonNumber);
     
     // Attach progress data to lessons
