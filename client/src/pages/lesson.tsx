@@ -568,6 +568,68 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.type === 'element-explorer' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.element.charAt(0).toUpperCase() + interactiveContent?.element.slice(1)} Element Exploration</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Element Characteristics</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {interactiveContent?.element === 'earth' && 'Earth signs are practical, grounded, and focused on building stable foundations. They value security, work steadily toward goals, and bring reliability to everything they do.'}
+                            {interactiveContent?.element === 'fire' && 'Fire signs are passionate, energetic, and spontaneous. They lead with confidence, act on instinct, and bring enthusiasm and inspiration to their pursuits.'}
+                            {interactiveContent?.element === 'air' && 'Air signs are intellectual, social, and communicative. They think before acting, value ideas and relationships, and excel at connecting people and concepts.'}
+                            {interactiveContent?.element === 'water' && 'Water signs are emotional, intuitive, and empathetic. They lead with their hearts, possess strong psychic abilities, and connect deeply with others\' feelings.'}
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your {interactiveContent?.sign} Expression</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            As a {interactiveContent?.sign} sun, you express {interactiveContent?.element} energy through your core personality, bringing {interactiveContent?.element} qualities to how you approach life and relationships.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Daily Application</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {interactiveContent?.element === 'earth' && 'You naturally organize your environment, create practical solutions, and build lasting structures in your work and relationships.'}
+                            {interactiveContent?.element === 'fire' && 'You initiate new projects with enthusiasm, inspire others with your passion, and approach challenges with courage and optimism.'}
+                            {interactiveContent?.element === 'air' && 'You connect ideas and people, communicate effectively, and approach problems through analysis and collaboration.'}
+                            {interactiveContent?.element === 'water' && 'You navigate life through intuition, create emotional connections, and offer healing and compassion to those around you.'}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.type === 'modality-explorer' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.modality.charAt(0).toUpperCase() + interactiveContent?.modality.slice(1)} Modality Exploration</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Modality Approach</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {interactiveContent?.modality === 'cardinal' && 'Cardinal signs are natural initiators and leaders. You excel at starting new projects, taking charge of situations, and pioneering change.'}
+                            {interactiveContent?.modality === 'fixed' && 'Fixed signs are determined and persistent. You excel at sustaining projects, providing stability, and seeing things through to completion.'}
+                            {interactiveContent?.modality === 'mutable' && 'Mutable signs are adaptable and flexible. You excel at adjusting to change, finding creative solutions, and helping others transition.'}
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Your {interactiveContent?.sign} Style</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            As a {interactiveContent?.modality} sign, your {interactiveContent?.sign} sun approaches goals and challenges with {interactiveContent?.modality} energy, making you naturally {interactiveContent?.modality === 'cardinal' ? 'driven to lead and initiate' : interactiveContent?.modality === 'fixed' ? 'determined to maintain and perfect' : 'adaptable and versatile'}.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Life Application</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {interactiveContent?.modality === 'cardinal' && 'You naturally step up as a leader, start new initiatives, and motivate others to action. People look to you to get things moving.'}
+                            {interactiveContent?.modality === 'fixed' && 'You provide consistency and reliability, perfect existing systems, and offer unwavering support. People count on your steady presence.'}
+                            {interactiveContent?.modality === 'mutable' && 'You help others adapt to change, find flexible solutions, and bridge different perspectives. People appreciate your versatility.'}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {interactiveContent?.element === 'venus' && (
                     <>
                       <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Venus in Relationships</h4>
