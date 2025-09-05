@@ -1685,12 +1685,13 @@ The first four houses form your personal foundation - representing your inner ci
           userProgress: progress
         };
       } else {
-        // Create a minimal lesson object from progress data
+        // Create a lesson object using proper lesson info
+        const lessonInfo = this.getLessonInfoById(progress.lessonId);
         return {
           id: progress.lessonId,
-          title: `Completed Lesson ${progress.lessonId}`,
-          description: "Previously completed lesson",
-          track: this.getLessonTrackById(progress.lessonId),
+          title: lessonInfo.title,
+          description: lessonInfo.description,
+          track: lessonInfo.track,
           lessonNumber: progress.lessonId,
           xpReward: 50, // Default XP
           estimatedMinutes: 15, // Default time
