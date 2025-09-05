@@ -1593,18 +1593,54 @@ The first four houses form your personal foundation - representing your inner ci
       return [];
     }
     
-    const completedLessons = await db.select()
+    // Try to get lesson details from learning_lessons table
+    const actualLessons = await db.select()
       .from(learningLessons)
       .where(inArray(learningLessons.id, completedLessonIds))
       .orderBy(learningLessons.track, learningLessons.lessonNumber);
     
-    // Attach progress data to lessons
-    const progressMap = new Map(userProgress.map(p => [p.lessonId, p]));
+    // Create a map of actual lesson data
+    const lessonsMap = new Map(actualLessons.map(lesson => [lesson.id, lesson]));
     
-    return completedLessons.map(lesson => ({
-      ...lesson,
-      userProgress: progressMap.get(lesson.id) || null
-    }));
+    // Create lesson objects for all completed progress, using actual data when available
+    return userProgress.map(progress => {
+      const actualLesson = lessonsMap.get(progress.lessonId);
+      
+      if (actualLesson) {
+        // Use actual lesson data
+        return {
+          ...actualLesson,
+          userProgress: progress
+        };
+      } else {
+        // Create a minimal lesson object from progress data
+        return {
+          id: progress.lessonId,
+          title: `Completed Lesson ${progress.lessonId}`,
+          description: "Previously completed lesson",
+          track: this.getLessonTrackById(progress.lessonId),
+          lessonNumber: progress.lessonId,
+          xpReward: 50, // Default XP
+          estimatedMinutes: 15, // Default time
+          difficulty: "beginner" as const,
+          prerequisites: null,
+          content: {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isActive: true,
+          requiredLessons: null,
+          userProgress: progress
+        };
+      }
+    }).sort((a, b) => a.lessonNumber - b.lessonNumber);
+  }
+  
+  private getLessonTrackById(lessonId: number): string {
+    // Map lesson IDs to tracks based on typical curriculum structure
+    if (lessonId <= 3) return "basics";
+    if (lessonId <= 12) return "planets";
+    if (lessonId <= 24) return "houses";
+    return "advanced";
   }
 
   async getDashboardData(userId: string): Promise<any> {
