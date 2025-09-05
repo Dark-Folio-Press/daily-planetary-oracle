@@ -1035,6 +1035,8 @@ class LearningService {
 
     return `Modalities describe how zodiac signs approach action and change - Cardinal (initiators), Fixed (sustainers), and Mutable (adapters). Your ${sunSign} sun is a ${modality.charAt(0).toUpperCase() + modality.slice(1)} sign, which means ${modalityDescriptions[modality]} This ${modality.charAt(0).toUpperCase() + modality.slice(1)} modality influences how you handle goals, challenges, and life changes.`;
   }
+            content.push({
+              type: 'text',
 }
 
 export const learningService = new LearningService();
