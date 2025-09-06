@@ -21,6 +21,7 @@ import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
+import LessonQuiz from "@/components/lesson-quiz";
 
 interface LessonContent {
   type: 'text' | 'interactive' | 'chart-highlight' | 'quiz';
@@ -62,6 +63,9 @@ export default function LessonPage() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showInteractiveModal, setShowInteractiveModal] = useState(false);
   const [interactiveContent, setInteractiveContent] = useState<any>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [quizPassed, setQuizPassed] = useState(false);
   const queryClient = useQueryClient();
   
   const lessonId = params?.lessonId ? parseInt(params.lessonId) : null;
@@ -104,11 +108,42 @@ export default function LessonPage() {
   const handleCompleteLesson = () => {
     if (!lessonData) return;
     
-    const timeSpent = Math.floor((Date.now() - startTime) / 1000 / 60); // minutes
+    // Check if lesson has quiz content
+    const hasQuiz = lessonData.personalizedContent.some(section => section.type === 'quiz');
+    
+    if (hasQuiz && quizScore === null) {
+      // Show quiz first before completion
+      setShowQuiz(true);
+    } else {
+      // Complete lesson directly (no quiz or quiz already completed)
+      const timeSpent = Math.floor((Date.now() - startTime) / 1000 / 60); // minutes
+      const status = quizPassed ? 'mastered' : 'completed';
+      const xpBonus = quizPassed ? 10 : 0;
+      
+      progressMutation.mutate({
+        lessonId: lessonData.lesson.id,
+        status,
+        score: quizScore || undefined,
+        timeSpent
+      });
+      
+      setIsCompleted(true);
+    }
+  };
+
+  const handleQuizComplete = (score: number, totalQuestions: number, passed: boolean) => {
+    setQuizScore(score);
+    setQuizPassed(passed);
+    setShowQuiz(false);
+    
+    // Auto-complete lesson after quiz
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000 / 60);
+    const status = passed ? 'mastered' : 'completed';
     
     progressMutation.mutate({
-      lessonId: lessonData.lesson.id,
-      status: 'completed',
+      lessonId: lessonData!.lesson.id,
+      status,
+      score,
       timeSpent
     });
     
@@ -1407,6 +1442,34 @@ export default function LessonPage() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Quiz Modal */}
+        {showQuiz && lessonData && (
+          <Dialog open={showQuiz} onOpenChange={() => setShowQuiz(false)}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-center">
+                  🧠 Knowledge Check
+                </DialogTitle>
+                <DialogDescription className="text-center">
+                  Test your understanding to complete this lesson and potentially achieve mastery!
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex-1 overflow-y-auto p-4">
+                {(() => {
+                  const quizSection = lessonData.personalizedContent.find(section => section.type === 'quiz');
+                  return quizSection ? (
+                    <LessonQuiz
+                      questions={quizSection.data.questions}
+                      onQuizComplete={handleQuizComplete}
+                      lessonTitle={lessonData.lesson.title}
+                    />
+                  ) : null;
+                })()}
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
