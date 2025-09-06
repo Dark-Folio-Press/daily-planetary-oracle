@@ -1011,13 +1011,33 @@ class LearningService {
         xpReward: 50
       },
       {
+        name: 'Pattern Spotter',
+        description: 'Begin exploring chart patterns and shapes',
+        icon: '🔷',
+        requirementType: 'completedLessons',
+        requirementValue: 1,
+        track: 'patterns',
+        requirements: { completedLessons: 1, track: 'patterns' },
+        xpReward: 50
+      },
+      {
+        name: 'Shape Master',
+        description: 'Complete the entire patterns track',
+        icon: '🎯',
+        requirementType: 'completedLessons',
+        requirementValue: 3,
+        track: 'patterns',
+        requirements: { completedTrack: 'patterns' },
+        xpReward: 75
+      },
+      {
         name: 'Chart Interpreter',
         description: 'Complete all foundational learning tracks',
         icon: '🔮',
         requirementType: 'completedLessons',
         requirementValue: 15,
         track: null,
-        requirements: { completedTracks: ['basics', 'planets', 'houses'] },
+        requirements: { completedTracks: ['basics', 'planets', 'houses', 'patterns'] },
         xpReward: 200
       }
     ];
@@ -2741,6 +2761,69 @@ The first four houses form your personal foundation - representing your inner ci
     };
     
     return insights[plutoSign] || 'Your Pluto sign reveals your generational role in deep transformation and evolutionary change.';
+  }
+
+  // Helper methods for chart patterns and shapes
+  private getChartPatternsOverview(): string {
+    return `The seven chart patterns each reveal different approaches to life:
+
+**Bowl Pattern (180°)**: Half the chart occupied - Purposeful, self-contained personalities seeking wholeness and completion. These individuals focus intensely on filling what's missing in their lives.
+
+**Bucket Pattern (Bowl + Singleton)**: Bowl formation with one outlier planet - Focused, driven by one key life mission. The singleton planet represents their primary tool for achieving their purpose.
+
+**Locomotive Pattern (240°)**: Two-thirds of chart occupied - Energetic, determined, momentum-driven individuals who power through life with consistent drive and determination.
+
+**Seesaw Pattern**: Two opposing clusters - Dualistic personalities who experience life as a balancing act between opposing forces. They seek integration and harmony.
+
+**Splash Pattern**: Evenly scattered planets - Versatile, curious individuals interested in everything. May lack focus but have broad life experiences and understanding.
+
+**Splay Pattern**: Scattered with clusters - Individualistic, multi-talented, non-linear thinkers who stand out from conventional patterns and create their own unique path.
+
+**Bundle Pattern (120°)**: All planets in one-third of chart - Specialized, intense focus on specific areas of life. These individuals develop deep expertise through concentrated effort.`;
+  }
+
+  private getHemisphericOverview(): string {
+    return `Your birth chart is divided into four hemispheres by two key lines:
+
+**The Ascendant-Descendant Line (Horizontal)**:
+- **Upper Hemisphere (South)**: Public life, career, recognition, achievement - How you engage with the outer world
+- **Lower Hemisphere (North)**: Private life, home, inner reflection, personal foundation - Your inner world and emotional base
+
+**The IC-MC Line (Vertical)**:
+- **Eastern Hemisphere**: Self-starting, independent, initiating action - Personal will and autonomous decision-making  
+- **Western Hemisphere**: Relational, responsive to others, collaborative - Partnerships and social awareness
+
+**Combined Hemispheric Themes**:
+- **Upper + Eastern**: Public leadership and independent achievement
+- **Upper + Western**: Public service and collaborative leadership  
+- **Lower + Eastern**: Private independence and self-reliance
+- **Lower + Western**: Intimate relationships and emotional responsiveness
+
+The concentration of planets in specific hemispheres reveals your natural focus and approach to life experiences.`;
+  }
+
+  private getPersonalPatternAnalysis(chartData: any): string {
+    // This would be a placeholder for now - actual pattern analysis would require
+    // examining planetary positions and calculating degrees between them
+    if (!chartData.detailedChart?.planets) {
+      return 'Complete birth information needed for accurate pattern analysis.';
+    }
+
+    return `Based on your birth chart data, we can analyze the distribution of your planets to determine your unique chart pattern. This analysis considers:
+
+**Planetary Distribution**: How your planets are spread across the 360 degrees of your birth chart
+**Clustering Patterns**: Whether your planets form groups or are evenly distributed  
+**Empty Spaces**: The significance of areas in your chart with no planetary emphasis
+**Hemispheric Balance**: How your planets distribute across the four life quadrants
+
+Your personal pattern reveals fundamental insights about:
+- How you naturally focus and distribute energy
+- Your approach to goals and life experiences  
+- Whether you specialize deeply or explore broadly
+- Your balance between self-focus and relationship-focus
+- Your orientation toward private vs. public life
+
+This pattern analysis, combined with your specific planetary placements, creates a comprehensive framework for understanding your unique approach to life and personal growth.`;
   }
 
   // Helper methods for houses insights
