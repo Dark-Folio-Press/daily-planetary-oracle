@@ -1331,6 +1331,43 @@ ${daily.horoscope}
     }
   });
 
+  // Get detailed chart data for chart generator
+  app.post('/api/chart/detailed', async (req: any, res: any) => {
+    try {
+      const { birthDate, birthTime, birthLocation } = req.body;
+      
+      if (!birthDate || !birthTime || !birthLocation) {
+        return res.status(400).json({
+          error: 'Please provide birth date, time, and location'
+        });
+      }
+
+      // Get detailed chart data including lunar nodes
+      const detailedChart = await astrologyService.generateDetailedChartAccurate({
+        date: birthDate,
+        time: birthTime,
+        location: birthLocation
+      });
+
+      // Calculate lunar nodes
+      const lunarNodes = astrologyService.calculateLunarNodes(birthDate, birthTime);
+
+      res.json({
+        success: true,
+        chart: {
+          ...detailedChart,
+          lunarNodes: {
+            northNode: lunarNodes.northNode,
+            southNode: lunarNodes.southNode
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error getting detailed chart:', error);
+      res.status(500).json({ error: 'Failed to get detailed chart data' });
+    }
+  });
+
   // Generate chart PDF for download
   app.post('/api/chart/pdf', async (req: any, res) => {
     try {

@@ -113,6 +113,8 @@ export function BirthChartGenerator({ user, sunSign, moonSign, risingSign }: Bir
     const mercurySign = planetaryData?.planets?.find((p: any) => p.planet === 'Mercury')?.sign;
     const venusSign = planetaryData?.planets?.find((p: any) => p.planet === 'Venus')?.sign;
     const marsSign = planetaryData?.planets?.find((p: any) => p.planet === 'Mars')?.sign;
+    const northNodeSign = planetaryData?.lunarNodes?.northNode;
+    const southNodeSign = planetaryData?.lunarNodes?.southNode;
 
     // Draw all planetary positions
     const planets = [
@@ -121,7 +123,9 @@ export function BirthChartGenerator({ user, sunSign, moonSign, risingSign }: Bir
       { label: 'Rising', sign: risingSign, y: 470, color: '#fbbf24' },
       { label: 'Mercury', sign: mercurySign, y: 490, color: '#60a5fa' },
       { label: 'Venus', sign: venusSign, y: 510, color: '#f472b6' },
-      { label: 'Mars', sign: marsSign, y: 530, color: '#ef4444' }
+      { label: 'Mars', sign: marsSign, y: 530, color: '#ef4444' },
+      { label: 'North Node', sign: northNodeSign, y: 550, color: '#10b981' },
+      { label: 'South Node', sign: southNodeSign, y: 570, color: '#f59e0b' }
     ];
 
     planets.forEach(({ label, sign, y, color }) => {

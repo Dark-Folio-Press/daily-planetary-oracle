@@ -295,8 +295,8 @@ export default function LessonPage() {
               )}
               {lesson.track === 'nodes' && (
                 <div>
-                  <strong>Your Lunar Nodes:</strong> Your North Node in {userChartData.northNode || 'your sign'} shows your soul's growth direction, 
-                  while your South Node in {userChartData.southNode || 'the opposite sign'} represents past-life gifts and talents. 
+                  <strong>Your Lunar Nodes:</strong> Your North Node in {(userChartData as any)?.northNode || 'your sign'} shows your soul's growth direction, 
+                  while your South Node in {(userChartData as any)?.southNode || 'the opposite sign'} represents past-life gifts and talents. 
                   Together, they reveal your karmic path and life purpose in this incarnation.
                 </div>
               )}
