@@ -353,8 +353,18 @@ export default function LessonPage() {
                             'Explore your creative-expression traits through interactive examples'
                           ) : content.data.element === 'higher-purpose' ? (
                             'Explore your higher-purpose traits through interactive examples'
+                          ) : content.data.element === 'lunar-nodes' ? (
+                            `Explore your ${content.data.northNode} North Node and ${content.data.southNode} South Node axis`
+                          ) : content.data.element === 'north-node' ? (
+                            `Explore your North Node in ${content.data.sign} growth path and life lessons`
+                          ) : content.data.element === 'south-node' ? (
+                            `Explore your South Node in ${content.data.sign} gifts and natural talents`
+                          ) : content.data.element === 'nodal-houses' ? (
+                            `Explore your ${content.data.northNode} and ${content.data.southNode} nodal house placements`
+                          ) : content.data.element === 'nodal-aspects' ? (
+                            `Explore your ${content.data.northNode} and ${content.data.southNode} nodal aspects patterns`
                           ) : (
-                            `Explore your ${content.data.sign} ${content.data.element} through interactive examples`
+                            `Explore your ${content.data.sign || 'astrological'} ${content.data.element} through interactive examples`
                           )}
                         </p>
                         <Button 
