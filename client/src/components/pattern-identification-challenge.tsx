@@ -344,20 +344,25 @@ export function PatternIdentificationChallenge({ chartData, birthData }: Pattern
           })}
           
           {/* Real planetary positions */}
-          {detailedChart.planets.map((planet) => {
+          {detailedChart.planets.map((planet, index) => {
             const position = getChartPosition(planet.sign, planet.degree);
             const symbol = PLANET_SYMBOLS[planet.planet as keyof typeof PLANET_SYMBOLS] || planet.planet[0];
             const color = PLANET_COLORS[planet.planet as keyof typeof PLANET_COLORS] || '#6b7280';
             
+            // Stagger overlapping planets slightly
+            const offsetAngle = index * 8; // Small offset to prevent complete overlap
+            const adjustedX = position.x + Math.cos(offsetAngle * Math.PI / 180) * 2;
+            const adjustedY = position.y + Math.sin(offsetAngle * Math.PI / 180) * 2;
+            
             return (
               <div
                 key={planet.planet}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2"
-                style={{ left: position.x, top: position.y }}
-                title={`${planet.planet} in ${planet.sign}`}
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10"
+                style={{ left: adjustedX, top: adjustedY }}
+                title={`${planet.planet} in ${planet.sign} (${planet.degree}°)`}
               >
                 <div 
-                  className="w-5 h-5 rounded-full shadow-lg border-2 border-white flex items-center justify-center text-xs font-bold text-white"
+                  className="w-6 h-6 rounded-full shadow-lg border-2 border-white flex items-center justify-center text-xs font-bold text-white hover:scale-110 transition-transform cursor-pointer"
                   style={{ backgroundColor: color }}
                 >
                   {symbol}
