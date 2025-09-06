@@ -1139,6 +1139,76 @@ export default function LessonPage() {
                                   </>
                                 )}
                                 
+                                {/* Lunar Nodes visualization */}
+                                {interactiveContent?.element?.toLowerCase().includes('lunar-nodes') && (
+                                  <>
+                                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-green-500 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☊ {interactiveContent?.northNode}
+                                      </div>
+                                    </div>
+                                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-500 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☋ {interactiveContent?.southNode}
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+                                
+                                {/* North Node focus */}
+                                {interactiveContent?.element?.toLowerCase().includes('north-node') && (
+                                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-green-500 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-6 font-semibold text-indigo-700">
+                                      ☊ {interactiveContent?.sign}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* South Node focus */}
+                                {interactiveContent?.element?.toLowerCase().includes('south-node') && (
+                                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-orange-500 rounded-full shadow-lg animate-pulse">
+                                    <div className="text-xs text-center mt-6 font-semibold text-indigo-700">
+                                      ☋ {interactiveContent?.sign}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Nodal Houses visualization */}
+                                {interactiveContent?.element?.toLowerCase().includes('nodal-houses') && (
+                                  <>
+                                    <div className="absolute top-6 left-6 w-4 h-4 bg-green-500 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☊ {interactiveContent?.northNode}
+                                      </div>
+                                    </div>
+                                    <div className="absolute bottom-6 right-6 w-4 h-4 bg-orange-500 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☋ {interactiveContent?.southNode}
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+                                
+                                {/* Nodal Aspects visualization */}
+                                {interactiveContent?.element?.toLowerCase().includes('nodal-aspects') && (
+                                  <>
+                                    <div className="absolute top-8 left-8 w-4 h-4 bg-green-500 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☊ {interactiveContent?.northNode}
+                                      </div>
+                                    </div>
+                                    <div className="absolute bottom-8 right-8 w-4 h-4 bg-orange-500 rounded-full shadow-lg animate-pulse">
+                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
+                                        ☋ {interactiveContent?.southNode}
+                                      </div>
+                                    </div>
+                                    {/* Add connecting lines for aspects */}
+                                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                                      <line x1="25%" y1="25%" x2="75%" y2="75%" stroke="#8b5cf6" strokeWidth="1" strokeDasharray="2,2" opacity="0.6"/>
+                                    </svg>
+                                  </>
+                                )}
+                                
                                 {/* Center label */}
                                 <div className="absolute inset-0 flex items-center justify-center">
                                   <div className="text-center">
