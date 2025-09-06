@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Lock,
   CheckCircle2,
-  Calendar
+  Calendar,
+  GitBranch,
+  Shapes
 } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
@@ -104,6 +106,8 @@ export default function LearningPage() {
     { value: "basics", label: "Basics", icon: Star },
     { value: "planets", label: "Planets", icon: Target },
     { value: "houses", label: "Houses", icon: Award },
+    { value: "nodes", label: "Nodes", icon: GitBranch },
+    { value: "patterns", label: "Patterns & Shapes", icon: Shapes },
   ];
 
   const filteredLessons = selectedTrack === "all" 
