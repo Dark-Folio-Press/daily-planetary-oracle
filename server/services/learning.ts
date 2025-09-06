@@ -800,6 +800,7 @@ class LearningService {
           const sunSign = astrologyService.calculateSunSign(user[0].birthDate);
           const moonSign = astrologyService.calculateMoonSign(user[0].birthDate, user[0].birthTime);
           const risingSign = astrologyService.calculateRising(user[0].birthDate, user[0].birthTime, user[0].birthLocation);
+          const lunarNodes = astrologyService.calculateLunarNodes(user[0].birthDate, user[0].birthTime);
           
           let detailedChart = null;
           try {
@@ -816,6 +817,8 @@ class LearningService {
             sunSign,
             moonSign,
             risingSign,
+            northNode: lunarNodes.northNode,
+            southNode: lunarNodes.southNode,
             detailedChart,
             birthData: {
               date: user[0].birthDate,
@@ -850,6 +853,9 @@ class LearningService {
       const moonSign = astrologyService.calculateMoonSign(user[0].birthDate, user[0].birthTime);
       const risingSign = astrologyService.calculateRising(user[0].birthDate, user[0].birthTime, user[0].birthLocation);
       
+      // Calculate lunar nodes for nodes lessons
+      const lunarNodes = astrologyService.calculateLunarNodes(user[0].birthDate, user[0].birthTime);
+      
       // Get detailed chart data for planetary positions
       let detailedChart = null;
       try {
@@ -866,6 +872,8 @@ class LearningService {
         sunSign,
         moonSign,
         risingSign,
+        northNode: lunarNodes.northNode,
+        southNode: lunarNodes.southNode,
         detailedChart,
         birthData: {
           date: user[0].birthDate,
@@ -1486,6 +1494,117 @@ The first four houses form your personal foundation - representing your inner ci
                 element: 'higher-purpose',
                 houses: [9, 10, 11, 12],
                 houseData: Object.keys(transformedHouseData3).length > 0 ? transformedHouseData3 : null
+              }
+            });
+          }
+          break;
+        case 'nodes':
+          // Handle lunar nodes lessons with personalized content
+          if (chartData.detailedChart?.lunarNodes || chartData.northNode) {
+            const northNode = chartData.detailedChart?.lunarNodes?.northNode || chartData.northNode;
+            const southNode = chartData.detailedChart?.lunarNodes?.southNode || chartData.southNode;
+            
+            if (lesson.lessonNumber === 1) { // Understanding the Lunar Nodes
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your Lunar Nodes: ${northNode} North ↗ ${southNode} South ↙`,
+                  content: this.getLunarNodesOverview(northNode, southNode)
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: 'Your Soul\'s Journey',
+                  content: this.getNodalJourneyInsights(northNode, southNode)
+                }
+              });
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'nodes-overview',
+                  northNode: northNode,
+                  southNode: southNode,
+                  element: 'lunar-nodes'
+                }
+              });
+            } else if (lesson.lessonNumber === 2) { // North Node Deep Dive
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your North Node in ${northNode}: Your Life Purpose`,
+                  content: this.getNorthNodeInsights(northNode)
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: 'Growth Path & Life Lessons',
+                  content: this.getNorthNodeGrowthPath(northNode)
+                }
+              });
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'north-node-explorer',
+                  sign: northNode,
+                  element: 'north-node'
+                }
+              });
+            } else if (lesson.lessonNumber === 3) { // South Node Deep Dive
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your South Node in ${southNode}: Your Past Life Gifts`,
+                  content: this.getSouthNodeInsights(southNode)
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: 'Balancing Past Gifts with Future Growth',
+                  content: this.getSouthNodeBalance(southNode, northNode)
+                }
+              });
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'south-node-explorer',
+                  sign: southNode,
+                  element: 'south-node'
+                }
+              });
+            } else if (lesson.lessonNumber === 4) { // Nodes in Houses
+              content.push({
+                type: 'text',
+                data: {
+                  title: 'Your Nodal Axis in Action',
+                  content: this.getNodalHousesInsights(northNode, southNode)
+                }
+              });
+            } else if (lesson.lessonNumber === 5) { // Nodal Aspects
+              content.push({
+                type: 'text',
+                data: {
+                  title: 'Planetary Support for Your Soul\'s Journey',
+                  content: this.getNodalAspectsInsights(northNode, southNode)
+                }
+              });
+            }
+            
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                element: `Lunar Nodes: ${northNode} ↗ ${southNode} ↙`,
+                description: 'See your North and South Nodes in your birth chart and how they guide your soul\'s evolution'
+              }
+            });
+          } else {
+            content.push({
+              type: 'text',
+              data: {
+                title: lesson.title,
+                content: 'To see your personalized nodal insights, please ensure your birth information is complete in your profile.'
               }
             });
           }
@@ -2204,6 +2323,87 @@ Number 11 (11th House - Community): Master number of inspiration and collective 
 Number 12 (12th House - Spirituality): Universal completion and dissolution, the return to source consciousness and connection with the infinite.
 
 The final numbers guide us from expanded awareness (9) through public achievement (10), into collective inspiration (11), and finally to spiritual transcendence (12).`;
+  }
+
+  // Lunar Nodes personalization helper methods
+  private getLunarNodesOverview(northNode: string, southNode: string): string {
+    return `Your lunar nodes represent your soul's karmic journey in this lifetime. Your South Node in ${southNode} reveals the gifts and patterns you've mastered in past lives, while your North Node in ${northNode} shows the qualities you're developing now. The nodes are always opposite each other, creating a dynamic tension between your comfort zone (South Node) and your growth edge (North Node). Understanding this axis helps you balance your natural talents with your evolutionary path.`;
+  }
+
+  private getNodalJourneyInsights(northNode: string, southNode: string): string {
+    const northElement = this.getSignElement(northNode);
+    const southElement = this.getSignElement(southNode);
+    
+    return `Your soul's journey involves moving from the ${southElement} energy of ${southNode} toward the ${northElement} energy of ${northNode}. This doesn't mean abandoning your South Node gifts, but rather using them as a foundation to develop new skills. The tension between these two signs creates opportunities for profound spiritual growth and life purpose fulfillment.`;
+  }
+
+  private getNorthNodeInsights(northNode: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your North Node in Aries calls you to develop independence, leadership, and the courage to be authentically yourself. This lifetime is about learning to initiate action, trust your instincts, and pioneer new paths rather than always seeking consensus or approval.',
+      'Taurus': 'Your North Node in Taurus invites you to cultivate stability, patience, and appreciation for simple pleasures. This lifetime is about grounding yourself in the physical world, building lasting foundations, and learning to slow down and savor life\'s experiences.',
+      'Gemini': 'Your North Node in Gemini encourages you to embrace curiosity, communication, and mental flexibility. This lifetime is about learning to gather information, connect with others through dialogue, and adapt your perspectives based on new knowledge.',
+      'Cancer': 'Your North Node in Cancer calls you to develop emotional intelligence, nurturing abilities, and connection to family and home. This lifetime is about learning to lead with your heart, create emotional security, and honor your intuitive wisdom.',
+      'Leo': 'Your North Node in Leo invites you to embrace creative self-expression, personal recognition, and heart-centered leadership. This lifetime is about learning to shine your unique light, take center stage when appropriate, and express your authentic creative gifts.',
+      'Virgo': 'Your North Node in Virgo encourages you to develop practical skills, attention to detail, and service to others. This lifetime is about learning to refine your abilities, create helpful systems, and contribute to the world through meaningful work.',
+      'Libra': 'Your North Node in Libra calls you to cultivate diplomacy, partnership skills, and aesthetic appreciation. This lifetime is about learning to cooperate, create harmony, and see multiple perspectives rather than imposing your own will.',
+      'Scorpio': 'Your North Node in Scorpio invites you to embrace emotional depth, transformation, and psychological insight. This lifetime is about learning to go beyond surface appearances, heal deep wounds, and develop authentic intimacy with others.',
+      'Sagittarius': 'Your North Node in Sagittarius encourages you to expand your horizons, seek higher wisdom, and embrace adventure. This lifetime is about learning to think bigger, explore different philosophies, and share your knowledge with enthusiasm.',
+      'Capricorn': 'Your North Node in Capricorn calls you to develop discipline, responsibility, and professional mastery. This lifetime is about learning to build lasting achievements, take charge of your destiny, and contribute to society through your expertise.',
+      'Aquarius': 'Your North Node in Aquarius invites you to embrace innovation, group consciousness, and humanitarian ideals. This lifetime is about learning to work with others for the greater good, embrace your uniqueness, and contribute to progressive change.',
+      'Pisces': 'Your North Node in Pisces encourages you to develop compassion, intuition, and spiritual connection. This lifetime is about learning to trust your inner knowing, serve others with unconditional love, and dissolve the ego boundaries that separate you from universal consciousness.'
+    };
+    
+    return insights[northNode] || `Your North Node in ${northNode} represents your soul's growth direction in this lifetime.`;
+  }
+
+  private getNorthNodeGrowthPath(northNode: string): string {
+    const growthPaths: Record<string, string> = {
+      'Aries': 'Develop courage to act independently, learn to trust your first instincts, practice making decisions quickly, embrace leadership opportunities, and cultivate self-reliance.',
+      'Taurus': 'Learn to slow down and be present, develop patience with natural timing, build practical skills and resources, appreciate sensory experiences, and create stable foundations.',
+      'Gemini': 'Cultivate curiosity about diverse topics, practice active listening and communication, develop mental flexibility, gather information before forming opinions, and connect with your local community.',
+      'Cancer': 'Honor your emotional needs and intuition, learn to nurture yourself and others, create a sense of home and belonging, develop empathy and caring, and trust your inner wisdom.',
+      'Leo': 'Express your unique creative gifts, learn to receive recognition gracefully, develop confidence in your talents, practice generous leadership, and share your light with joy.',
+      'Virgo': 'Focus on practical service and improvement, develop attention to detail, learn healthy routines and habits, refine your skills through practice, and contribute through meaningful work.',
+      'Libra': 'Learn to cooperate and compromise, develop aesthetic appreciation, practice seeing all sides of situations, create harmony in relationships, and cultivate diplomatic skills.',
+      'Scorpio': 'Embrace emotional transformation, learn to go deeper in relationships, develop psychological insight, practice authentic vulnerability, and use your power for healing.',
+      'Sagittarius': 'Expand your philosophical understanding, embrace adventure and learning, develop teaching abilities, practice optimism and enthusiasm, and share wisdom gained through experience.',
+      'Capricorn': 'Take responsibility for your life direction, develop long-term planning skills, build professional expertise, practice discipline and commitment, and create lasting achievements.',
+      'Aquarius': 'Contribute to group causes and humanitarian efforts, embrace your unique perspective, develop innovative thinking, practice detached wisdom, and work for collective progress.',
+      'Pisces': 'Develop spiritual practices and connection, learn to serve others compassionately, trust your intuition and dreams, practice forgiveness and acceptance, and dissolve ego boundaries.'
+    };
+    
+    return growthPaths[northNode] || `Focus on developing the positive qualities of ${northNode} energy.`;
+  }
+
+  private getSouthNodeInsights(southNode: string): string {
+    const insights: Record<string, string> = {
+      'Aries': 'Your South Node in Aries indicates mastery of independence, leadership, and pioneering action from past lives. You naturally know how to initiate, compete, and assert yourself. However, overusing these traits can lead to impulsiveness, aggression, or excessive self-focus.',
+      'Taurus': 'Your South Node in Taurus shows past-life mastery of stability, practicality, and material security. You naturally understand resources, patience, and sensory pleasures. However, over-reliance on these gifts can lead to stubbornness, materialism, or resistance to change.',
+      'Gemini': 'Your South Node in Gemini reveals past-life expertise in communication, adaptability, and information gathering. You naturally excel at networking, learning, and mental agility. However, overdoing these traits can lead to superficiality, scattered energy, or gossiping.',
+      'Cancer': 'Your South Node in Cancer indicates mastery of nurturing, emotional sensitivity, and family devotion from past lives. You naturally understand caring, intuition, and creating emotional security. However, overusing these gifts can lead to moodiness, over-protecting others, or emotional manipulation.',
+      'Leo': 'Your South Node in Leo shows past-life mastery of creative expression, leadership, and personal recognition. You naturally know how to perform, inspire, and shine brightly. However, over-reliance on these traits can lead to ego inflation, attention-seeking, or dramatic behavior.',
+      'Virgo': 'Your South Node in Virgo reveals past-life expertise in service, perfectionism, and practical skills. You naturally excel at organization, analysis, and improvement. However, overdoing these gifts can lead to criticism, anxiety, or getting lost in details.',
+      'Libra': 'Your South Node in Libra indicates mastery of diplomacy, partnership, and aesthetic harmony from past lives. You naturally understand cooperation, beauty, and balance. However, overusing these traits can lead to indecision, people-pleasing, or avoiding conflict.',
+      'Scorpio': 'Your South Node in Scorpio shows past-life mastery of transformation, intensity, and psychological depth. You naturally know how to penetrate mysteries, handle power, and facilitate change. However, over-reliance can lead to manipulation, obsession, or emotional extremes.',
+      'Sagittarius': 'Your South Node in Sagittarius reveals past-life expertise in philosophy, teaching, and adventure. You naturally excel at big-picture thinking, inspiring others, and seeking truth. However, overdoing these gifts can lead to preaching, over-promising, or avoiding practical details.',
+      'Capricorn': 'Your South Node in Capricorn indicates mastery of authority, structure, and professional achievement from past lives. You naturally understand responsibility, hierarchy, and long-term planning. However, overusing these traits can lead to workaholism, coldness, or authoritarian behavior.',
+      'Aquarius': 'Your South Node in Aquarius shows past-life mastery of innovation, group dynamics, and humanitarian ideals. You naturally know how to work with groups, think originally, and champion causes. However, over-reliance can lead to emotional detachment, rebelliousness, or elitist attitudes.',
+      'Pisces': 'Your South Node in Pisces reveals past-life expertise in spirituality, compassion, and universal connection. You naturally excel at empathy, artistic expression, and mystical understanding. However, overdoing these gifts can lead to escapism, martyrdom, or losing boundaries.'
+    };
+    
+    return insights[southNode] || `Your South Node in ${southNode} represents your natural talents and past-life mastery.`;
+  }
+
+  private getSouthNodeBalance(southNode: string, northNode: string): string {
+    return `The key to working with your South Node in ${southNode} is not to abandon these gifts, but to use them wisely as a foundation for developing your North Node in ${northNode}. When you find yourself falling into the shadow expressions of ${southNode} - such as overusing these traits or using them to avoid growth - redirect that energy toward your ${northNode} development. Your ${southNode} talents are meant to support your journey toward ${northNode} mastery, not replace it.`;
+  }
+
+  private getNodalHousesInsights(northNode: string, southNode: string): string {
+    return `Understanding which houses contain your North Node (${northNode}) and South Node (${southNode}) reveals the specific life areas where your karmic work unfolds. The house positions show where you'll encounter the most growth opportunities and where your past-life patterns are most likely to surface. While we're working on adding house position calculations to your personalized content, focus on how the energies of ${northNode} and ${southNode} play out in different areas of your life experience.`;
+  }
+
+  private getNodalAspectsInsights(northNode: string, southNode: string): string {
+    return `Planetary aspects to your lunar nodes provide additional tools, challenges, and support for your soul's evolution from ${southNode} to ${northNode}. Planets making harmonious aspects (trines, sextiles) to your nodes offer natural gifts that support your karmic journey, while challenging aspects (squares, oppositions) present obstacles that ultimately strengthen your growth. Conjunctions to your nodes indicate planets that are intimately connected to your life purpose and karmic lessons.`;
   }
 
 }
