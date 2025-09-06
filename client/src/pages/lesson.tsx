@@ -1413,7 +1413,7 @@ export default function LessonPage() {
                     <>
                       <h4 className="font-semibold mb-3">Chart Pattern Recognition Training</h4>
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
                           <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
                             <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Bowl Pattern</h5>
                             <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
@@ -1422,7 +1422,7 @@ export default function LessonPage() {
                               <div className="absolute bottom-6 right-3 w-2 h-2 bg-blue-500 rounded-full"></div>
                               <div className="absolute bottom-2 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">180° spread - Self-contained, purposeful</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">180° spread - Self-contained, purposeful</p>
                           </div>
                           <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
                             <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Bucket Pattern</h5>
@@ -1433,17 +1433,7 @@ export default function LessonPage() {
                               <div className="absolute bottom-2 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
                               <div className="absolute top-4 left-1 w-2 h-2 bg-orange-500 rounded-full"></div>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">Bowl + Singleton - Mission-focused</p>
-                          </div>
-                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
-                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Seesaw Pattern</h5>
-                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
-                              <div className="absolute top-2 left-2 w-2 h-2 bg-blue-500 rounded-full"></div>
-                              <div className="absolute top-4 left-1 w-2 h-2 bg-blue-500 rounded-full"></div>
-                              <div className="absolute bottom-2 right-2 w-2 h-2 bg-green-500 rounded-full"></div>
-                              <div className="absolute bottom-4 right-1 w-2 h-2 bg-green-500 rounded-full"></div>
-                            </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">Opposing clusters - Dualistic balance</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">Bowl + Singleton - Mission-focused</p>
                           </div>
                           <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
                             <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Bundle Pattern</h5>
@@ -1453,14 +1443,60 @@ export default function LessonPage() {
                               <div className="absolute top-6 left-7 w-2 h-2 bg-purple-500 rounded-full"></div>
                               <div className="absolute top-8 left-5 w-2 h-2 bg-purple-500 rounded-full"></div>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">120° cluster - Specialized focus</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">120° cluster - Specialized focus</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Locomotive Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-1 left-6 w-2 h-2 bg-green-500 rounded-full"></div>
+                              <div className="absolute top-3 right-2 w-2 h-2 bg-green-500 rounded-full"></div>
+                              <div className="absolute top-8 right-1 w-2 h-2 bg-green-500 rounded-full"></div>
+                              <div className="absolute bottom-3 right-4 w-2 h-2 bg-green-500 rounded-full"></div>
+                              <div className="absolute bottom-1 left-8 w-2 h-2 bg-green-500 rounded-full"></div>
+                              <div className="absolute top-6 left-2 w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">240° progression - Steady drive</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Seesaw Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-2 left-2 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute top-4 left-1 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute bottom-2 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
+                              <div className="absolute bottom-4 right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">Opposing clusters - Dualistic balance</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Splay Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-1 left-4 w-2 h-2 bg-yellow-500 rounded-full"></div>
+                              <div className="absolute top-4 right-6 w-2 h-2 bg-yellow-500 rounded-full"></div>
+                              <div className="absolute top-8 left-1 w-2 h-2 bg-yellow-500 rounded-full"></div>
+                              <div className="absolute bottom-3 right-2 w-2 h-2 bg-yellow-500 rounded-full"></div>
+                              <div className="absolute bottom-1 left-8 w-2 h-2 bg-yellow-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">Irregular spread - Individualistic</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border md:col-span-2 lg:col-span-1">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Splash Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-1 left-10 w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <div className="absolute top-3 right-4 w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <div className="absolute top-6 left-2 w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <div className="absolute top-8 right-7 w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <div className="absolute bottom-3 left-6 w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <div className="absolute bottom-1 right-1 w-2 h-2 bg-teal-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">Even distribution - Universal interests</p>
                           </div>
                         </div>
-                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                          <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Pattern Recognition Exercise</p>
-                          <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                            Study these four main patterns. Each reveals different approaches to life: Bowl (purposeful completion), 
-                            Bucket (single mission), Seesaw (balancing opposites), Bundle (concentrated expertise).
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <p className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">Pattern Recognition Exercise</p>
+                          <p className="text-sm text-blue-600 dark:text-blue-400 leading-relaxed">
+                            Study all seven chart patterns. Each reveals different approaches to life: Bowl (purposeful completion), 
+                            Bucket (single mission), Bundle (concentrated expertise), Locomotive (steady progress), 
+                            Seesaw (balancing opposites), Splay (individualistic), and Splash (universal interests).
                           </p>
                         </div>
                       </div>

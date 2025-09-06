@@ -404,10 +404,12 @@ export function PatternIdentificationChallenge({ chartData, birthData }: Pattern
           )}
           
           {/* Center label */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center bg-white dark:bg-gray-800 px-3 py-1 rounded-full border shadow-sm">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="text-center bg-white/90 dark:bg-gray-800/90 px-3 py-1 rounded-full border shadow-sm backdrop-blur-sm">
               <div className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">Your Chart</div>
-              <div className="text-xs text-indigo-600 dark:text-indigo-400">{birthData?.birthLocation}</div>
+              <div className="text-xs text-indigo-600 dark:text-indigo-400 max-w-24 truncate">
+                {birthData?.birthLocation || birthData?.location || 'Chart'}
+              </div>
             </div>
           </div>
         </div>
@@ -419,32 +421,17 @@ export function PatternIdentificationChallenge({ chartData, birthData }: Pattern
           <p className="text-center text-sm font-medium text-gray-700 dark:text-gray-300">
             Which pattern do you see in your chart?
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            {CHART_PATTERNS.slice(0, 4).map((pattern) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+            {CHART_PATTERNS.map((pattern) => (
               <Button
                 key={pattern.id}
                 variant="outline"
-                className="h-auto p-3 text-left border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-700 dark:hover:border-purple-500 dark:hover:bg-purple-900/20"
+                className="h-auto p-4 text-left border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-700 dark:hover:border-purple-500 dark:hover:bg-purple-900/20 min-h-[80px] flex-col items-start justify-start"
                 onClick={() => handlePatternGuess(pattern.id)}
               >
-                <div>
-                  <div className="font-semibold text-purple-700 dark:text-purple-300">{pattern.name}</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{pattern.description}</div>
-                </div>
-              </Button>
-            ))}
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {CHART_PATTERNS.slice(4).map((pattern) => (
-              <Button
-                key={pattern.id}
-                variant="outline"
-                className="h-auto p-3 text-left border-purple-200 hover:border-purple-400 hover:bg-purple-50 dark:border-purple-700 dark:hover:border-purple-500 dark:hover:bg-purple-900/20"
-                onClick={() => handlePatternGuess(pattern.id)}
-              >
-                <div>
-                  <div className="font-semibold text-purple-700 dark:text-purple-300">{pattern.name}</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{pattern.description}</div>
+                <div className="w-full">
+                  <div className="font-semibold text-purple-700 dark:text-purple-300 mb-1">{pattern.name}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{pattern.description}</div>
                 </div>
               </Button>
             ))}
