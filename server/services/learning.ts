@@ -16,7 +16,7 @@ import {
   type InsertLearningQuizResult
 } from "@shared/schema";
 import { db } from "../db";
-import { eq, and, sql, desc, inArray } from "drizzle-orm";
+import { eq, and, sql, desc, inArray, like } from "drizzle-orm";
 import { astrologyService } from "./astrology";
 
 export interface LessonContent {
@@ -49,7 +49,8 @@ class LearningService {
     // Check if content already exists
     const existingLessons = await db.select().from(learningLessons).limit(1);
     if (existingLessons.length > 0) {
-      console.log('Learning content already exists, skipping initialization');
+      console.log('Learning content already exists, checking for updates...');
+      await this.updateBasicsTrackStructure();
       return;
     }
 
@@ -58,6 +59,106 @@ class LearningService {
     await this.createDefaultBadges();
     
     console.log('Learning content initialized successfully');
+  }
+
+  private async updateBasicsTrackStructure(): Promise<void> {
+    console.log('Updating basics track structure...');
+    
+    // Check if the structure needs updating by looking for the old duplicate lesson
+    const duplicateLesson = await db.select()
+      .from(learningLessons)
+      .where(and(
+        eq(learningLessons.track, 'basics'),
+        eq(learningLessons.lessonNumber, 5),
+        like(learningLessons.title, '%Moon Sign%')
+      ));
+    
+    if (duplicateLesson.length === 0) {
+      console.log('Basics track structure is already up to date');
+      return;
+    }
+    
+    // Update the structure: Remove duplicate moon lesson (lesson 5), 
+    // move rising from 6 to 3, elements from 3 to 4, modalities from 4 to 5, big three from 7 to 6
+    
+    // First, update lesson numbers and content for the reorganized lessons
+    await db.update(learningLessons)
+      .set({
+        lessonNumber: 3,
+        title: 'Your Rising Sign: Your Outer Expression',
+        description: 'Learn how your rising sign shapes first impressions and your approach to the world.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Your rising sign is your social mask, affecting how others see you and how you navigate the world.'
+            },
+            {
+              type: 'personal-insight', 
+              content: 'Discover how your rising sign influences your personality and behavior.'
+            },
+            {
+              type: 'interactive-element',
+              element: 'rising-expression-explorer'
+            }
+          ]
+        },
+        requiredLessons: null
+      })
+      .where(and(
+        eq(learningLessons.track, 'basics'),
+        eq(learningLessons.lessonNumber, 6)
+      ));
+    
+    await db.update(learningLessons)
+      .set({
+        lessonNumber: 4,
+        requiredLessons: ['basics-3']
+      })
+      .where(and(
+        eq(learningLessons.track, 'basics'),
+        eq(learningLessons.lessonNumber, 3)
+      ));
+    
+    await db.update(learningLessons)
+      .set({
+        lessonNumber: 5,
+        requiredLessons: ['basics-4']
+      })
+      .where(and(
+        eq(learningLessons.track, 'basics'),
+        eq(learningLessons.lessonNumber, 4)
+      ));
+    
+    await db.update(learningLessons)
+      .set({
+        lessonNumber: 6,
+        requiredLessons: ['basics-5']
+      })
+      .where(and(
+        eq(learningLessons.track, 'basics'),
+        eq(learningLessons.lessonNumber, 7)
+      ));
+    
+    // Remove the duplicate moon lesson (lesson 5)
+    await db.delete(learningLessons)
+      .where(and(
+        eq(learningLessons.track, 'basics'),
+        eq(learningLessons.lessonNumber, 5),
+        like(learningLessons.title, '%Moon Sign%')
+      ));
+    
+    // Update planets track dependency
+    await db.update(learningLessons)
+      .set({
+        requiredLessons: ['basics-6']
+      })
+      .where(and(
+        eq(learningLessons.track, 'planets'),
+        eq(learningLessons.lessonNumber, 1)
+      ));
+    
+    console.log('Basics track structure updated successfully');
   }
 
   private async createDefaultLessons(): Promise<void> {
@@ -116,77 +217,6 @@ class LearningService {
       {
         track: 'basics',
         lessonNumber: 3,
-        title: 'The Four Elements: Fire, Earth, Air & Water',
-        description: 'Learn about the elemental foundation of astrology and how your sun sign expresses its element.',
-        content: {
-          sections: [
-            {
-              type: 'introduction',
-              content: 'The four elements (fire, earth, air, water) are the building blocks of astrology, each bringing distinct qualities and approaches to life.'
-            },
-            {
-              type: 'elemental-overview',
-              content: 'Understand how each element influences personality, behavior, and life approach.'
-            },
-            {
-              type: 'personal-insight',
-              content: 'Discover how your sun sign expresses its elemental nature and what this means for your personality.'
-            }
-          ]
-        },
-        requiredLessons: null,
-        xpReward: 15,
-        estimatedMinutes: 10
-      },
-      {
-        track: 'basics',
-        lessonNumber: 4,
-        title: 'The Three Modalities: Cardinal, Fixed & Mutable',
-        description: 'Explore how the three modalities describe different approaches to action and change.',
-        content: {
-          sections: [
-            {
-              type: 'introduction',
-              content: 'The three modalities (cardinal, fixed, mutable) describe how signs initiate, sustain, and adapt to change.'
-            },
-            {
-              type: 'modality-overview',
-              content: 'Learn the unique characteristics and strengths of each modality.'
-            },
-            {
-              type: 'personal-insight',
-              content: 'Understand how your sun sign\'s modality influences your approach to goals, challenges, and life changes.'
-            }
-          ]
-        },
-        requiredLessons: ['basics-3'],
-        xpReward: 15,
-        estimatedMinutes: 10
-      },
-      {
-        track: 'basics',
-        lessonNumber: 5,
-        title: 'Your Moon Sign: Emotional Nature',
-        description: 'Discover your inner emotional world and what makes you feel secure and nurtured.',
-        content: {
-          sections: [
-            {
-              type: 'introduction',
-              content: 'Your moon sign represents your emotional nature, instinctive reactions, and deepest needs.'
-            },
-            {
-              type: 'personal-insight',
-              content: 'Explore how your moon sign influences your emotional responses and what nurtures your soul.'
-            }
-          ]
-        },
-        requiredLessons: ['basics-4'],
-        xpReward: 15,
-        estimatedMinutes: 8
-      },
-      {
-        track: 'basics',
-        lessonNumber: 6,
         title: 'Your Rising Sign: Your Outer Expression',
         description: 'Learn how your rising sign shapes first impressions and your approach to the world.',
         content: {
@@ -205,13 +235,63 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-5'],
+        requiredLessons: null,
         xpReward: 15,
         estimatedMinutes: 8
       },
       {
         track: 'basics',
-        lessonNumber: 7,
+        lessonNumber: 4,
+        title: 'The Four Elements: Fire, Earth, Air & Water',
+        description: 'Learn about the elemental foundation of astrology and how your sun sign expresses its element.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The four elements (fire, earth, air, water) are the building blocks of astrology, each bringing distinct qualities and approaches to life.'
+            },
+            {
+              type: 'elemental-overview',
+              content: 'Understand how each element influences personality, behavior, and life approach.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Discover how your sun sign expresses its elemental nature and what this means for your personality.'
+            }
+          ]
+        },
+        requiredLessons: ['basics-3'],
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'basics',
+        lessonNumber: 5,
+        title: 'The Three Modalities: Cardinal, Fixed & Mutable',
+        description: 'Explore how the three modalities describe different approaches to action and change.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The three modalities (cardinal, fixed, mutable) describe how signs initiate, sustain, and adapt to change.'
+            },
+            {
+              type: 'modality-overview',
+              content: 'Learn the unique characteristics and strengths of each modality.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Understand how your sun sign\'s modality influences your approach to goals, challenges, and life changes.'
+            }
+          ]
+        },
+        requiredLessons: ['basics-4'],
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'basics',
+        lessonNumber: 6,
         title: 'The Big Three Integration',
         description: 'See how your sun, moon, and rising signs work together to create your unique personality.',
         content: {
@@ -230,7 +310,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-6'],
+        requiredLessons: ['basics-5'],
         xpReward: 20,
         estimatedMinutes: 10
       },
@@ -253,7 +333,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['basics-7'],
+        requiredLessons: ['basics-6'],
         xpReward: 15,
         estimatedMinutes: 8
       },
