@@ -1824,8 +1824,8 @@ The first four houses form your personal foundation - representing your inner ci
     }
     
     // Process original lesson content sections (including quiz)
-    if (lesson.content && lesson.content.sections) {
-      for (const section of lesson.content.sections) {
+    if (lesson.content && (lesson.content as any).sections) {
+      for (const section of (lesson.content as any).sections) {
         if (section.type === 'quiz') {
           content.push({
             type: 'quiz',
