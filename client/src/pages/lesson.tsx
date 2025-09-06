@@ -293,7 +293,14 @@ export default function LessonPage() {
                   showing where planetary energies manifest in your daily life.
                 </div>
               )}
-              {lesson.track !== 'planets' && lesson.track !== 'houses' && (
+              {lesson.track === 'nodes' && (
+                <div>
+                  <strong>Your Lunar Nodes:</strong> Your North Node in {userChartData.northNode || 'your sign'} shows your soul's growth direction, 
+                  while your South Node in {userChartData.southNode || 'the opposite sign'} represents past-life gifts and talents. 
+                  Together, they reveal your karmic path and life purpose in this incarnation.
+                </div>
+              )}
+              {lesson.track !== 'planets' && lesson.track !== 'houses' && lesson.track !== 'nodes' && (
                 <div>
                   <strong>Your Personal Chart Context:</strong> As someone with {userChartData.sunSign} Sun, {userChartData.moonSign} Moon, 
                   and {userChartData.risingSign} Rising, this lesson will use examples specific to your unique astrological makeup.
