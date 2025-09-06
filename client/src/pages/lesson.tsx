@@ -1029,6 +1029,122 @@ export default function LessonPage() {
                     </>
                   )}
 
+                  {interactiveContent?.element === 'south-node-explorer' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} South Node Journey</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Past Life Gifts</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your South Node in {interactiveContent?.sign} represents natural talents and abilities you've developed. 
+                            These are your comfort zone skills that come easily to you.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Potential Pitfalls</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            While these {interactiveContent?.sign} qualities serve you well, over-relying on them can keep you stuck. 
+                            Growth comes from balancing these with your North Node development.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Integration Strategy</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Use your {interactiveContent?.sign} South Node wisdom as a foundation, but don't let it limit your growth. 
+                            These gifts support your journey toward your North Node purpose.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'north-node-explorer' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} North Node Path</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-green-600 dark:text-green-400">Soul's Purpose</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your North Node in {interactiveContent?.sign} represents your soul's growth direction in this lifetime. 
+                            This is where you're meant to develop new skills and perspectives.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-green-600 dark:text-green-400">Growth Challenges</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Developing {interactiveContent?.sign} qualities may feel uncomfortable at first because they're unfamiliar. 
+                            This discomfort is actually a sign you're growing in the right direction.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-green-600 dark:text-green-400">Fulfillment Path</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            True fulfillment comes from embracing {interactiveContent?.sign} energy while using your South Node gifts as support. 
+                            This creates a balanced approach to your soul's evolution.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'nodal-houses-explorer' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your Nodal House Placements</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Life Area Focus</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Your North Node in {interactiveContent?.northNode} and South Node in {interactiveContent?.southNode} show 
+                            the life areas where you're learning to balance past experience with future growth.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">House Axis Meaning</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            The house positions reveal where you naturally excel (South Node house) and where you need to develop 
+                            new approaches (North Node house). Both areas are important for your complete evolution.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Practical Application</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Look for opportunities to apply {interactiveContent?.northNode} energy in daily life while drawing on 
+                            your {interactiveContent?.southNode} wisdom. This creates a powerful foundation for growth.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {interactiveContent?.element === 'nodal-aspects-explorer' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your Nodal Aspects & Connections</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">Planetary Support</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Planets aspecting your {interactiveContent?.northNode} North Node and {interactiveContent?.southNode} South Node 
+                            provide additional tools and challenges for your karmic journey.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">Aspect Patterns</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            The geometric relationships between planets and your nodes create specific energy patterns that 
+                            influence how you experience your karmic lessons and growth opportunities.
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                          <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">Integration Guide</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Understanding these planetary connections helps you recognize when you're being called to grow 
+                            and provides insights into the best ways to work with your nodal energy.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {interactiveContent?.type === 'chart-focus' && (
                     <>
                       <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
