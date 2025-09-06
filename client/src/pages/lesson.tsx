@@ -404,6 +404,12 @@ export default function LessonPage() {
                             `Explore your ${content.data.northNode} and ${content.data.southNode} nodal house placements`
                           ) : content.data.element === 'nodal-aspects' ? (
                             `Explore your ${content.data.northNode} and ${content.data.southNode} nodal aspects patterns`
+                          ) : content.data.element === 'pattern-exploration' ? (
+                            'Learn to identify the seven chart patterns through interactive pattern recognition'
+                          ) : content.data.element === 'hemisphere-focus' ? (
+                            'Explore how your planets distribute across the four hemispheres of life'
+                          ) : content.data.element === 'your-chart-pattern' ? (
+                            'Discover your personal birth chart pattern with visual analysis and overlay'
                           ) : (
                             `Explore your ${content.data.sign || 'astrological'} ${content.data.element} through interactive examples`
                           )}
@@ -556,6 +562,12 @@ export default function LessonPage() {
               <DialogDescription>
                 {interactiveContent?.element === 'big-three' ? (
                   `Explore your ${interactiveContent?.sun}-${interactiveContent?.moon}-${interactiveContent?.rising} combination through hands-on examples`
+                ) : interactiveContent?.element === 'pattern-exploration' ? (
+                  'Learn to recognize the seven chart patterns through visual examples and interactive training'
+                ) : interactiveContent?.element === 'hemisphere-focus' ? (
+                  'Explore how planetary distribution across hemispheres reveals your life focus and approach'
+                ) : interactiveContent?.element === 'your-chart-pattern' ? (
+                  'Discover your personal birth chart pattern with visual analysis and interpretation'
                 ) : (
                   `Explore your ${interactiveContent?.sign} ${interactiveContent?.element} traits through hands-on examples`
                 )}
@@ -1390,6 +1402,192 @@ export default function LessonPage() {
                             This placement shows how {interactiveContent?.element} influences your personality and life path. 
                             The position relative to other elements creates your unique astrological blueprint.
                           </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Pattern Recognition Interactive */}
+                  {interactiveContent?.element === 'pattern-exploration' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Chart Pattern Recognition Training</h4>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Bowl Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-2 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute top-6 right-3 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute bottom-6 right-3 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute bottom-2 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">180° spread - Self-contained, purposeful</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Bucket Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-2 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute top-6 right-3 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute bottom-6 right-3 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute bottom-2 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute top-4 left-1 w-2 h-2 bg-orange-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">Bowl + Singleton - Mission-focused</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Seesaw Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-2 left-2 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute top-4 left-1 w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="absolute bottom-2 right-2 w-2 h-2 bg-green-500 rounded-full"></div>
+                              <div className="absolute bottom-4 right-1 w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">Opposing clusters - Dualistic balance</p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <h5 className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">Bundle Pattern</h5>
+                            <div className="relative w-20 h-20 mx-auto border-2 border-gray-300 rounded-full">
+                              <div className="absolute top-2 left-6 w-2 h-2 bg-purple-500 rounded-full"></div>
+                              <div className="absolute top-4 left-8 w-2 h-2 bg-purple-500 rounded-full"></div>
+                              <div className="absolute top-6 left-7 w-2 h-2 bg-purple-500 rounded-full"></div>
+                              <div className="absolute top-8 left-5 w-2 h-2 bg-purple-500 rounded-full"></div>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">120° cluster - Specialized focus</p>
+                          </div>
+                        </div>
+                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Pattern Recognition Exercise</p>
+                          <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                            Study these four main patterns. Each reveals different approaches to life: Bowl (purposeful completion), 
+                            Bucket (single mission), Seesaw (balancing opposites), Bundle (concentrated expertise).
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Hemisphere Analysis Interactive */}
+                  {interactiveContent?.element === 'hemisphere-focus' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Hemispheric Analysis Tool</h4>
+                      <div className="space-y-4">
+                        <div className="relative w-64 h-64 mx-auto border-2 border-gray-400 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                          {/* Hemisphere dividers */}
+                          <div className="absolute w-full h-0.5 bg-gray-400 top-1/2 transform -translate-y-px"></div>
+                          <div className="absolute h-full w-0.5 bg-gray-400 left-1/2 transform -translate-x-px"></div>
+                          
+                          {/* Hemisphere labels */}
+                          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-blue-700">Upper (Public)</div>
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-green-700">Lower (Private)</div>
+                          <div className="absolute top-1/2 left-2 transform -translate-y-1/2 -rotate-90 text-xs font-semibold text-purple-700">Eastern (Self)</div>
+                          <div className="absolute top-1/2 right-2 transform -translate-y-1/2 rotate-90 text-xs font-semibold text-orange-700">Western (Others)</div>
+                          
+                          {/* Sample planetary placements */}
+                          <div className="absolute top-8 left-16 w-3 h-3 bg-yellow-500 rounded-full shadow-lg" title="Sun"></div>
+                          <div className="absolute top-12 right-20 w-3 h-3 bg-gray-300 rounded-full shadow-lg" title="Moon"></div>
+                          <div className="absolute bottom-8 left-20 w-3 h-3 bg-red-500 rounded-full shadow-lg" title="Mars"></div>
+                          <div className="absolute bottom-12 right-16 w-3 h-3 bg-green-500 rounded-full shadow-lg" title="Venus"></div>
+                          <div className="absolute top-16 left-32 w-3 h-3 bg-blue-500 rounded-full shadow-lg" title="Mercury"></div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Upper Hemisphere</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                              Career, public recognition, achievement, outer world focus
+                            </p>
+                          </div>
+                          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-green-700 dark:text-green-300">Lower Hemisphere</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                              Home, inner life, personal foundation, private reflection
+                            </p>
+                          </div>
+                          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Eastern Hemisphere</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                              Self-initiation, independence, personal will, autonomous action
+                            </p>
+                          </div>
+                          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-orange-700 dark:text-orange-300">Western Hemisphere</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                              Relationships, partnerships, responsiveness to others, collaboration
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Personal Chart Pattern Viewer */}
+                  {interactiveContent?.element === 'your-chart-pattern' && (
+                    <>
+                      <h4 className="font-semibold mb-3">Your Personal Chart Pattern Analysis</h4>
+                      <div className="space-y-4">
+                        <div className="relative w-80 h-80 mx-auto border-2 border-indigo-400 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
+                          {/* Chart wheel background */}
+                          <div className="absolute inset-4 border border-gray-300 rounded-full"></div>
+                          <div className="absolute inset-8 border border-gray-200 rounded-full"></div>
+                          
+                          {/* Hemisphere dividers */}
+                          <div className="absolute w-full h-0.5 bg-indigo-300 top-1/2 transform -translate-y-px"></div>
+                          <div className="absolute h-full w-0.5 bg-indigo-300 left-1/2 transform -translate-x-px"></div>
+                          
+                          {/* Sample planetary pattern - this would be dynamic based on user's chart */}
+                          <div className="absolute top-12 left-20 w-4 h-4 bg-yellow-500 rounded-full shadow-lg border-2 border-white" title="Sun">
+                            <div className="text-xs text-center mt-4 font-bold">☉</div>
+                          </div>
+                          <div className="absolute top-16 left-32 w-4 h-4 bg-gray-300 rounded-full shadow-lg border-2 border-white" title="Moon">
+                            <div className="text-xs text-center mt-4 font-bold">☽</div>
+                          </div>
+                          <div className="absolute top-24 left-24 w-4 h-4 bg-red-500 rounded-full shadow-lg border-2 border-white" title="Mars">
+                            <div className="text-xs text-center mt-4 font-bold">♂</div>
+                          </div>
+                          <div className="absolute top-20 right-28 w-4 h-4 bg-green-500 rounded-full shadow-lg border-2 border-white" title="Venus">
+                            <div className="text-xs text-center mt-4 font-bold">♀</div>
+                          </div>
+                          <div className="absolute top-28 left-36 w-4 h-4 bg-blue-500 rounded-full shadow-lg border-2 border-white" title="Mercury">
+                            <div className="text-xs text-center mt-4 font-bold">☿</div>
+                          </div>
+                          
+                          {/* Pattern overlay - example showing a partial bowl pattern */}
+                          <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                            <path d="M 80 80 A 80 80 0 0 1 240 120" stroke="#8b5cf6" strokeWidth="3" fill="none" strokeDasharray="4,4" opacity="0.7"/>
+                            <path d="M 240 120 A 80 80 0 0 1 200 240" stroke="#8b5cf6" strokeWidth="3" fill="none" strokeDasharray="4,4" opacity="0.7"/>
+                          </svg>
+                          
+                          {/* Center label */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center bg-white dark:bg-gray-800 px-3 py-1 rounded-full border shadow-sm">
+                              <div className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">Your Pattern</div>
+                              <div className="text-xs text-indigo-600 dark:text-indigo-400">Bowl Shape</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Detected Pattern: Bowl Formation</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                              Your planets occupy approximately 180° of the chart, creating a Bowl pattern. This suggests you have a purposeful, 
+                              self-contained approach to life with a strong drive to "fill" what's missing in the empty hemisphere.
+                            </p>
+                          </div>
+                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Hemispheric Emphasis</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                              Your chart shows emphasis in the {interactiveContent?.chartData ? 'Eastern and Upper' : 'Lower and Western'} hemispheres, 
+                              indicating a focus on {interactiveContent?.chartData ? 'independent achievement and public recognition' : 'relationships and private inner development'}.
+                            </p>
+                          </div>
+                          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                            <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Pattern Insights</p>
+                            <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                              This pattern suggests you approach life with focused intention, working to develop the qualities represented 
+                              by the empty portion of your chart through conscious effort and experience.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </>
