@@ -182,12 +182,50 @@ class LearningService {
             {
               type: 'interactive-element',
               element: 'sun-traits-explorer'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "What does your sun sign represent in astrology?",
+                  options: [
+                    "Your emotional responses and instincts",
+                    "Your core identity and essential nature",
+                    "How others see you when they first meet you",
+                    "Your career and life direction"
+                  ],
+                  correct: 1,
+                  explanation: "Your sun sign represents your core identity, ego, and the essence of who you are becoming."
+                },
+                {
+                  question: "When is your sun sign determined?",
+                  options: [
+                    "The time you were born",
+                    "The location where you were born", 
+                    "The date you were born",
+                    "Your name and birth certificate"
+                  ],
+                  correct: 2,
+                  explanation: "Your sun sign is determined by the date you were born, as the sun moves through the zodiac signs throughout the year."
+                },
+                {
+                  question: "How many zodiac signs are there in total?",
+                  options: [
+                    "10",
+                    "11", 
+                    "12",
+                    "13"
+                  ],
+                  correct: 2,
+                  explanation: "There are 12 zodiac signs that the sun moves through during the year: Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, and Pisces."
+                }
+              ]
             }
           ]
         },
         requiredLessons: null,
         xpReward: 15,
-        estimatedMinutes: 8
+        estimatedMinutes: 10
       },
       {
         track: 'basics',
@@ -207,12 +245,50 @@ class LearningService {
             {
               type: 'interactive-element',
               element: 'moon-emotion-explorer'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "What does your moon sign primarily govern?",
+                  options: [
+                    "Your career ambitions and public image",
+                    "Your emotional responses and inner needs", 
+                    "Your physical appearance and first impressions",
+                    "Your communication style and learning"
+                  ],
+                  correct: 1,
+                  explanation: "Your moon sign governs your emotional responses, subconscious patterns, and inner emotional needs."
+                },
+                {
+                  question: "How often does the moon change signs?",
+                  options: [
+                    "Every day",
+                    "Every 2-3 days",
+                    "Every week",
+                    "Every month"
+                  ],
+                  correct: 1,
+                  explanation: "The moon moves quickly through the zodiac, changing signs approximately every 2-3 days."
+                },
+                {
+                  question: "Why is your moon sign considered your 'inner world'?",
+                  options: [
+                    "Because it's hidden from others",
+                    "Because it influences your private emotional responses",
+                    "Because it affects your dreams and sleep",
+                    "Because it controls your subconscious mind"
+                  ],
+                  correct: 1,
+                  explanation: "Your moon sign represents your inner emotional world - how you process feelings privately and what you need for emotional security."
+                }
+              ]
             }
           ]
         },
         requiredLessons: null,
         xpReward: 15,
-        estimatedMinutes: 8
+        estimatedMinutes: 10
       },
       {
         track: 'basics',
