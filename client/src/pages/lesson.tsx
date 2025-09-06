@@ -91,9 +91,15 @@ export default function LessonPage() {
       // Force immediate refetch of dashboard
       queryClient.invalidateQueries({ queryKey: ["/api/learning/dashboard"], refetchType: 'active' });
       
+      const isMastered = data.status === 'mastered' || quizPassed;
+      const baseXP = lessonData?.lesson.xpReward || 15;
+      const bonusXP = isMastered ? 10 : 0;
+      const totalXP = baseXP + bonusXP;
+      
       toast({
-        title: "Progress recorded!",
-        description: `You earned +${lessonData?.lesson.xpReward} XP`,
+        title: isMastered ? "Lesson Mastered! 🏆" : "Lesson Completed! ✨",
+        description: `You earned +${totalXP} XP${bonusXP > 0 ? ` (${baseXP} + ${bonusXP} mastery bonus)` : ''}`,
+        duration: 5000,
       });
     }
   });

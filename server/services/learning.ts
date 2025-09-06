@@ -1823,6 +1823,20 @@ The first four houses form your personal foundation - representing your inner ci
       }
     }
     
+    // Process original lesson content sections (including quiz)
+    if (lesson.content && lesson.content.sections) {
+      for (const section of lesson.content.sections) {
+        if (section.type === 'quiz') {
+          content.push({
+            type: 'quiz',
+            data: {
+              questions: section.questions
+            }
+          });
+        }
+      }
+    }
+    
     return content;
   }
 
@@ -1900,11 +1914,15 @@ The first four houses form your personal foundation - representing your inner ci
     const stats = await this.getUserStats(userId);
     
     if (status === 'completed' || status === 'mastered') {
+      const baseXP = 15;
+      const masteryBonus = status === 'mastered' ? 10 : 0;
+      const totalXP = baseXP + masteryBonus;
+      
       await db.update(learningStats)
         .set({
           completedLessons: (stats.completedLessons || 0) + 1,
           masteredLessons: status === 'mastered' ? (stats.masteredLessons || 0) + 1 : (stats.masteredLessons || 0),
-          totalXp: (stats.totalXp || 0) + 15, // Base XP for lesson completion
+          totalXp: (stats.totalXp || 0) + totalXP,
           lastActivityDate: new Date().toISOString()
         })
         .where(eq(learningStats.userId, userId));
