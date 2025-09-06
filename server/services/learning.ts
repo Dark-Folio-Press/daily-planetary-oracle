@@ -752,6 +752,197 @@ class LearningService {
         requiredLessons: ['nodes-4'],
         xpReward: 30,
         estimatedMinutes: 18
+      },
+
+      // PATTERNS AND SHAPES TRACK
+      {
+        track: 'patterns',
+        lessonNumber: 1,
+        title: 'Chart Shapes: The Seven Jones Patterns',
+        description: 'Learn to identify the 7 main birth chart shapes and their psychological implications.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Chart shapes describe the overall distribution of planets in a natal chart, reflecting how a person focuses energy and experiences the world. Introduced by astrologer Marc Edmund Jones, these 7 patterns help astrologers understand major life dynamics at a glance.'
+            },
+            {
+              type: 'pattern-overview',
+              content: 'The seven chart patterns each have unique characteristics: Bowl (purposeful, self-contained), Bucket (focused with one key goal), Locomotive (energetic, momentum-driven), Seesaw (dualistic, balanced or conflicted), Splash (versatile, curious), Splay (individualistic, multi-talented), and Bundle (specialized, intensely focused).'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Understanding your birth chart\'s pattern reveals fundamental themes about how you approach goals, relationships, and life experiences.'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "What defines a Bowl chart pattern?",
+                  options: [
+                    "All planets scattered evenly around the chart",
+                    "All planets within 180 degrees of the chart",
+                    "Two opposing clusters of planets",
+                    "All planets within 120 degrees"
+                  ],
+                  correct: 1,
+                  explanation: "A Bowl pattern has all planets within 180 degrees, creating a self-contained, purposeful personality seeking wholeness."
+                },
+                {
+                  question: "How is a Bucket pattern different from a Bowl pattern?",
+                  options: [
+                    "It has planets scattered randomly",
+                    "It has two opposing groups",
+                    "It has a Bowl formation plus one outlier planet (singleton)",
+                    "It has all planets in one sign"
+                  ],
+                  correct: 2,
+                  explanation: "A Bucket pattern is like a Bowl with one outlier planet acting as a 'handle' or singleton, representing a focused life mission."
+                },
+                {
+                  question: "Which chart shape indicates someone who may be pulled between two different life approaches?",
+                  options: [
+                    "Splash",
+                    "Bundle", 
+                    "Seesaw",
+                    "Locomotive"
+                  ],
+                  correct: 2,
+                  explanation: "A Seesaw pattern has two opposing clusters of planets, indicating someone who experiences dualistic themes and seeks balance between opposing forces."
+                }
+              ]
+            }
+          ]
+        },
+        requiredLessons: null,
+        xpReward: 15,
+        estimatedMinutes: 12
+      },
+      {
+        track: 'patterns',
+        lessonNumber: 2,
+        title: 'Hemispheric Emphasis: Understanding Life Focus',
+        description: 'Explore how the four hemispheres of your birth chart influence your approach to life.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Birth charts are divided by the Ascendant-Descendant line (horizontal) and the IC-MC line (vertical), creating four hemispheres that reveal whether you focus on self vs. others, and private vs. public life.'
+            },
+            {
+              type: 'hemisphere-breakdown',
+              content: 'Upper hemisphere (South) emphasizes public life, career, and recognition with outward, goal-driven traits. Lower hemisphere (North) focuses on home, inner life, and reflection. Eastern hemisphere emphasizes self-starting independence, while Western hemisphere focuses on relationships and responsiveness to others.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Hemispheric dominance amplifies the meaning of your chart shape, showing where you naturally direct your energy and attention.'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "What does upper hemisphere (South) dominance suggest about a person?",
+                  options: [
+                    "They prefer private, inner reflection",
+                    "They focus on public life, career, and recognition", 
+                    "They are highly relationship-oriented",
+                    "They are self-contained and independent"
+                  ],
+                  correct: 1,
+                  explanation: "Upper hemisphere dominance indicates someone focused on public life, career goals, and gaining recognition or achievement in the outer world."
+                },
+                {
+                  question: "Which hemisphere combination would suggest a highly introverted person?",
+                  options: [
+                    "Upper and Eastern",
+                    "Lower and Western",
+                    "Lower and Eastern", 
+                    "Upper and Western"
+                  ],
+                  correct: 2,
+                  explanation: "Lower (private, inner life) and Eastern (self-reliant, independent) hemisphere dominance suggests someone who is both introspective and self-contained."
+                },
+                {
+                  question: "What does Western hemisphere emphasis indicate?",
+                  options: [
+                    "Focus on career and public achievement",
+                    "Strong need for solitude and reflection",
+                    "Relational focus and responsiveness to others",
+                    "Intense specialization in one area"
+                  ],
+                  correct: 2,
+                  explanation: "Western hemisphere emphasis indicates someone who is relationship-oriented, responsive to others, and tends to define themselves through partnerships and interactions."
+                }
+              ]
+            }
+          ]
+        },
+        requiredLessons: ['patterns-1'],
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'patterns',
+        lessonNumber: 3,
+        title: 'Your Personal Chart Pattern Analysis',
+        description: 'Discover your unique birth chart pattern and what it reveals about your life approach.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Now that you understand the seven chart patterns and hemispheric emphasis, let\'s analyze your personal birth chart to discover your unique pattern and what it reveals about your approach to life.'
+            },
+            {
+              type: 'pattern-analysis',
+              content: 'Your birth chart pattern provides profound insights into how you naturally focus energy, pursue goals, and experience relationships. Combined with hemispheric emphasis, it offers a powerful framework for understanding your core life themes.'
+            },
+            {
+              type: 'personal-insight',
+              content: 'Understanding your chart pattern helps you work with your natural tendencies rather than against them, leading to greater fulfillment and authentic self-expression.'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "If you have a Bundle pattern, what is your likely approach to life?",
+                  options: [
+                    "Scattered interests across many areas",
+                    "Specialized focus with intense expertise in specific areas",
+                    "Balanced approach between opposing forces",
+                    "Driven by one singular mission or goal"
+                  ],
+                  correct: 1,
+                  explanation: "Bundle patterns indicate specialized, intense focus where all energy is concentrated in one area, leading to deep expertise and mastery in specific domains."
+                },
+                {
+                  question: "What memory hack helps remember the Locomotive pattern?",
+                  options: [
+                    "Bowl = Half-full life",
+                    "Train = Driven and momentum-focused",
+                    "Scale = Balancing act",
+                    "Spotlight = Stand-out talents"
+                  ],
+                  correct: 1,
+                  explanation: "Locomotive pattern is remembered as 'Train = Driven!' because like a locomotive train, these individuals have strong momentum and determination driving them forward."
+                },
+                {
+                  question: "How does understanding your chart pattern help with personal development?",
+                  options: [
+                    "It predicts your exact future",
+                    "It tells you which career to choose",
+                    "It helps you work with your natural tendencies for greater fulfillment",
+                    "It determines your personality completely"
+                  ],
+                  correct: 2,
+                  explanation: "Chart patterns provide insight into your natural energy flow and focus, helping you understand and work with your inherent tendencies rather than fighting against them for more authentic self-expression."
+                }
+              ]
+            }
+          ]
+        },
+        requiredLessons: ['patterns-2'],
+        xpReward: 15,
+        estimatedMinutes: 15
       }
     ];
 
@@ -1809,6 +2000,88 @@ The first four houses form your personal foundation - representing your inner ci
                 content: 'To see your personalized nodal insights, please ensure your birth information is complete in your profile.'
               }
             });
+          }
+          break;
+        case 'patterns':
+          // Handle chart patterns and shapes lessons
+          if (lesson.lessonNumber === 1) { // Chart Shapes: The Seven Jones Patterns
+            content.push({
+              type: 'text',
+              data: {
+                title: `Understanding Chart Patterns`,
+                content: 'Chart patterns reveal how you naturally focus and distribute your energy across life experiences. Each of the seven patterns creates a unique psychological framework for how you approach goals, relationships, and personal growth.'
+              }
+            });
+            content.push({
+              type: 'text', 
+              data: {
+                title: `The Seven Pattern Types`,
+                content: this.getChartPatternsOverview()
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'pattern-identifier',
+                element: 'pattern-exploration'
+              }
+            });
+          } else if (lesson.lessonNumber === 2) { // Hemispheric Emphasis
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your Chart's Hemispheric Focus`,
+                content: 'The distribution of planets across your chart\'s four hemispheres reveals whether you naturally focus on self vs. others, and private vs. public life. This creates a foundational framework for understanding your approach to the world.'
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `The Four Life Quadrants`,
+                content: this.getHemisphericOverview()
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'hemisphere-analyzer',
+                element: 'hemisphere-focus'
+              }
+            });
+          } else if (lesson.lessonNumber === 3) { // Personal Chart Pattern Analysis
+            // This lesson would analyze the user's actual chart pattern
+            if (chartData.detailedChart?.planets) {
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Your Personal Chart Pattern Analysis`,
+                  content: `Based on your birth chart, we can analyze the distribution of your planets to determine your unique chart pattern. This reveals fundamental insights about how you naturally focus energy and approach life experiences.`
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Chart Pattern Insights`,
+                  content: this.getPersonalPatternAnalysis(chartData)
+                }
+              });
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'personal-pattern-viewer',
+                  element: 'your-chart-pattern',
+                  chartData: chartData
+                }
+              });
+            } else {
+              content.push({
+                type: 'text',
+                data: {
+                  title: lesson.title,
+                  content: 'To see your personal chart pattern analysis, please complete your birth information in your profile. We need your exact birth time and location to accurately determine your chart\'s unique pattern.'
+                }
+              });
+            }
           }
           break;
         default:
