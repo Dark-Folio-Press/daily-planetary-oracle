@@ -1662,12 +1662,58 @@ The first four houses form your personal foundation - representing your inner ci
                   content: this.getNodalHousesInsights(northNode, southNode)
                 }
               });
+              content.push({
+                type: 'text',
+                data: {
+                  title: `North Node in ${northNode}: Growth Areas`,
+                  content: `Your North Node in ${northNode} shows where you're developing new skills and qualities in this lifetime. The house position reveals the specific life area where this growth unfolds.`
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: `South Node in ${southNode}: Natural Gifts`,
+                  content: `Your South Node in ${southNode} represents the talents and patterns you've already mastered. Understanding these gifts helps you use them as a foundation rather than a limitation.`
+                }
+              });
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'nodes-houses-explorer',
+                  northNode: northNode,
+                  southNode: southNode,
+                  element: 'nodal-houses'
+                }
+              });
             } else if (lesson.lessonNumber === 5) { // Nodal Aspects
               content.push({
                 type: 'text',
                 data: {
                   title: 'Planetary Support for Your Soul\'s Journey',
                   content: this.getNodalAspectsInsights(northNode, southNode)
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: `Understanding Nodal Aspects`,
+                  content: `Planets making aspects to your ${northNode} North Node and ${southNode} South Node provide additional tools, challenges, and support for your karmic evolution. These connections show how different parts of your chart work together to support your soul's growth.`
+                }
+              });
+              content.push({
+                type: 'text',
+                data: {
+                  title: 'Your Nodal Network',
+                  content: `The aspects to your nodes create a network of planetary energies that either support your North Node development or challenge you to move beyond South Node patterns. This cosmic support system guides your spiritual evolution.`
+                }
+              });
+              content.push({
+                type: 'interactive',
+                data: {
+                  type: 'nodal-aspects-explorer',
+                  northNode: northNode,
+                  southNode: southNode,
+                  element: 'nodal-aspects'
                 }
               });
             }
