@@ -1524,7 +1524,7 @@ export default function LessonPage() {
                   {/* Personal Chart Pattern Viewer */}
                   {interactiveContent?.element === 'your-chart-pattern' && (
                     <PatternIdentificationChallenge 
-                      chartData={lessonData?.userChartData}
+                      chartData={lessonData?.userChartData?.detailedChart}
                       birthData={lessonData?.userChartData?.birthData}
                     />
                   )}

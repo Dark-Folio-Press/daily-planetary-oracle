@@ -20,9 +20,12 @@ interface ChartData {
 }
 
 interface BirthData {
-  birthDate: string;
-  birthTime: string;
-  birthLocation: string;
+  birthDate?: string;
+  birthTime?: string;
+  birthLocation?: string;
+  date?: string;
+  time?: string;
+  location?: string;
 }
 
 interface PatternIdentificationChallengeProps {
@@ -77,7 +80,34 @@ export function PatternIdentificationChallenge({ chartData, birthData }: Pattern
   // Fetch detailed chart data
   useEffect(() => {
     const fetchChartData = async () => {
-      if (!birthData?.birthDate || !birthData?.birthTime || !birthData?.birthLocation) {
+      // Check if we already have chart data or need to fetch it
+      if (chartData?.planets && chartData.planets.length > 0) {
+        setDetailedChart(chartData);
+        const pattern = detectChartPattern(chartData.planets);
+        setDetectedPattern(pattern);
+        setLoading(false);
+        return;
+      }
+
+      // Try to extract birth data from various possible structures
+      let extractedBirthData = null;
+      
+      if (birthData?.birthDate && birthData?.birthTime && birthData?.birthLocation) {
+        extractedBirthData = {
+          birthDate: birthData.birthDate,
+          birthTime: birthData.birthTime,
+          birthLocation: birthData.birthLocation
+        };
+      } else if (birthData?.date && birthData?.time && birthData?.location) {
+        extractedBirthData = {
+          birthDate: birthData.date,
+          birthTime: birthData.time,
+          birthLocation: birthData.location
+        };
+      }
+
+      if (!extractedBirthData) {
+        console.log('No birth data available for pattern analysis');
         setLoading(false);
         return;
       }
@@ -87,9 +117,9 @@ export function PatternIdentificationChallenge({ chartData, birthData }: Pattern
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            birthDate: birthData.birthDate,
-            birthTime: birthData.birthTime,
-            birthLocation: birthData.birthLocation
+            birthDate: extractedBirthData.birthDate,
+            birthTime: extractedBirthData.birthTime,
+            birthLocation: extractedBirthData.birthLocation
           })
         });
 
@@ -109,7 +139,7 @@ export function PatternIdentificationChallenge({ chartData, birthData }: Pattern
     };
 
     fetchChartData();
-  }, [birthData]);
+  }, [chartData, birthData]);
 
   // Convert zodiac sign and degree to chart position
   const getChartPosition = (sign: string, degree: number) => {
