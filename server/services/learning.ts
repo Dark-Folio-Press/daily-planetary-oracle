@@ -763,7 +763,79 @@ class LearningService {
   async getPersonalizedLesson(lessonId: number, userId: string): Promise<PersonalizedLesson> {
     const [lesson] = await db.select().from(learningLessons).where(eq(learningLessons.id, lessonId));
     
+    // If lesson not found in learning_lessons, check if it's a completed lesson
     if (!lesson) {
+      const [progress] = await db.select()
+        .from(learningProgress)
+        .where(and(
+          eq(learningProgress.lessonId, lessonId),
+          eq(learningProgress.userId, userId),
+          sql`status IN ('completed', 'mastered')`
+        ));
+      
+      if (progress) {
+        // Create a proper lesson object for completed lessons using the same pattern as lesson 29
+        const lessonInfo = this.getLessonInfoById(lessonId);
+        const mockLesson = {
+          id: lessonId,
+          title: lessonInfo.title,
+          description: lessonInfo.description,
+          track: lessonInfo.track,
+          lessonNumber: lessonId,
+          xpReward: 50,
+          estimatedMinutes: 15,
+          prerequisites: null,
+          content: {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isActive: true,
+          requiredLessons: null
+        };
+
+        // Get user's birth data for personalization (same as working lesson 29)
+        const user = await db.select().from(users).where(eq(users.id, userId));
+        let userChartData = null;
+        
+        if (user[0]?.birthDate && user[0]?.birthTime && user[0]?.birthLocation) {
+          const sunSign = astrologyService.calculateSunSign(user[0].birthDate);
+          const moonSign = astrologyService.calculateMoonSign(user[0].birthDate, user[0].birthTime);
+          const risingSign = astrologyService.calculateRising(user[0].birthDate, user[0].birthTime, user[0].birthLocation);
+          
+          let detailedChart = null;
+          try {
+            detailedChart = await astrologyService.generateDetailedChartAccurate({
+              date: user[0].birthDate,
+              time: user[0].birthTime,
+              location: user[0].birthLocation
+            });
+          } catch (error) {
+            console.error('Failed to get detailed chart data:', error);
+          }
+          
+          userChartData = {
+            sunSign,
+            moonSign,
+            risingSign,
+            detailedChart,
+            birthData: {
+              date: user[0].birthDate,
+              time: user[0].birthTime,
+              location: user[0].birthLocation
+            }
+          };
+        }
+
+        // Generate personalized content using the same method as lesson 29
+        const personalizedContent = await this.personalizeContent(mockLesson, userChartData);
+
+        return {
+          lesson: mockLesson,
+          personalizedContent,
+          userChartData,
+          userProgress: progress
+        };
+      }
+      
       throw new Error('Lesson not found');
     }
     
@@ -900,7 +972,15 @@ class LearningService {
                 element: 'sun'
               }
             });
-          } else if (lesson.title.includes('Moon') && lesson.title.includes('Inner Emotional')) { // First Moon lesson (lesson 4)
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'sun-highlight',
+                sign: chartData.sunSign,
+                element: 'sun'
+              }
+            });
+          } else if (lesson.title.includes('Moon Sign') || lesson.title.includes('Emotional Nature')) { // Moon Sign lesson
             content.push({
               type: 'text',
               data: {
@@ -916,7 +996,15 @@ class LearningService {
                 element: 'moon'
               }
             });
-          } else if (lesson.title.includes('Rising')) { // Rising lesson (lesson 5)
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'moon-highlight',
+                sign: chartData.moonSign,
+                element: 'moon'
+              }
+            });
+          } else if (lesson.title.includes('Rising Sign') || lesson.title.includes('How You Appear')) { // Rising Sign lesson
             content.push({
               type: 'text',
               data: {
@@ -928,6 +1016,14 @@ class LearningService {
               type: 'interactive',
               data: {
                 type: 'rising-explorer',
+                sign: chartData.risingSign,
+                element: 'rising'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'rising-highlight',
                 sign: chartData.risingSign,
                 element: 'rising'
               }
@@ -993,6 +1089,14 @@ class LearningService {
                 type: 'communication-explorer',
                 sign: mercurySign,
                 element: 'mercury'
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'mercury-highlight',
+                sign: mercurySign,
+                planet: 'Mercury'
               }
             });
             content.push({
@@ -1201,7 +1305,45 @@ class LearningService {
           }
           break;
         case 'houses':
-          if (lesson.lessonNumber === 1) { // The 12 Houses: Life's Different Areas
+          // Handle individual house lessons (13-24)
+          const houseNumber = lesson.lessonNumber - 12; // Convert lesson number to house number
+          if (houseNumber >= 1 && houseNumber <= 12) {
+            const houseData = chartData.detailedChart?.houses?.find((h: any) => h.number === houseNumber);
+            const houseSign = houseData?.sign || 'Aries'; // Fallback
+            
+            content.push({
+              type: 'text',
+              data: {
+                title: `Your ${houseNumber}${this.getOrdinalSuffix(houseNumber)} House in ${houseSign}`,
+                content: this.getHousePersonalizedInsights(houseNumber, houseSign, chartData)
+              }
+            });
+            content.push({
+              type: 'text',
+              data: {
+                title: `Understanding the ${houseNumber}${this.getOrdinalSuffix(houseNumber)} House`,
+                content: this.getHouseGeneralInsights(houseNumber)
+              }
+            });
+            content.push({
+              type: 'interactive',
+              data: {
+                type: 'house-explorer',
+                houseNumber: houseNumber,
+                sign: houseSign,
+                element: `house-${houseNumber}`
+              }
+            });
+            content.push({
+              type: 'chart-highlight',
+              data: {
+                type: 'house-highlight',
+                houseNumber: houseNumber,
+                sign: houseSign,
+                description: `See where your ${houseNumber}${this.getOrdinalSuffix(houseNumber)} house sits in your birth chart and how ${houseSign} influences this life area`
+              }
+            });
+          } else if (lesson.lessonNumber === 1) { // The 12 Houses: Life's Different Areas
             content.push({
               type: 'text',
               data: {
@@ -1587,24 +1729,112 @@ The first four houses form your personal foundation - representing your inner ci
     }
     
     // Get the lesson details for completed lessons
-    const completedLessonIds = userProgress.map(p => parseInt(String(p.lessonId)));
+    const completedLessonIds = userProgress.map(p => p.lessonId);
     
     if (completedLessonIds.length === 0) {
       return [];
     }
     
-    const completedLessons = await db.select()
+    // Try to get lesson details from learning_lessons table
+    const actualLessons = await db.select()
       .from(learningLessons)
       .where(inArray(learningLessons.id, completedLessonIds))
       .orderBy(learningLessons.track, learningLessons.lessonNumber);
     
-    // Attach progress data to lessons
-    const progressMap = new Map(userProgress.map(p => [p.lessonId, p]));
+    // Create a map of actual lesson data
+    const lessonsMap = new Map(actualLessons.map(lesson => [lesson.id, lesson]));
     
-    return completedLessons.map(lesson => ({
-      ...lesson,
-      userProgress: progressMap.get(lesson.id) || null
-    }));
+    // Create lesson objects for all completed progress, using actual data when available
+    return userProgress.map(progress => {
+      const actualLesson = lessonsMap.get(progress.lessonId);
+      
+      if (actualLesson) {
+        // Use actual lesson data
+        return {
+          ...actualLesson,
+          userProgress: progress
+        };
+      } else {
+        // Create a lesson object using proper lesson info
+        const lessonInfo = this.getLessonInfoById(progress.lessonId);
+        return {
+          id: progress.lessonId,
+          title: lessonInfo.title,
+          description: lessonInfo.description,
+          track: lessonInfo.track,
+          lessonNumber: progress.lessonId,
+          xpReward: 50, // Default XP
+          estimatedMinutes: 15, // Default time
+          difficulty: "beginner" as const,
+          prerequisites: null,
+          content: {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isActive: true,
+          requiredLessons: null,
+          userProgress: progress
+        };
+      }
+    }).sort((a, b) => a.lessonNumber - b.lessonNumber);
+  }
+  
+  private getLessonTrackById(lessonId: number): string {
+    // Map lesson IDs to tracks based on typical curriculum structure
+    if (lessonId <= 3) return "basics";
+    if (lessonId <= 12) return "planets";
+    if (lessonId <= 24) return "houses";
+    return "advanced";
+  }
+
+  private getLessonInfoById(lessonId: number): { title: string; description: string; track: string } {
+    const track = this.getLessonTrackById(lessonId);
+    
+    // Comprehensive lesson catalog based on astrological curriculum
+    const lessonCatalog: Record<number, { title: string; description: string }> = {
+      // Basics Track (1-3)
+      1: { title: "Your Sun Sign: The Core of Who You Are", description: "Discover your fundamental personality traits and life purpose through your sun sign" },
+      2: { title: "Your Moon Sign: Your Emotional Nature", description: "Explore your inner world, emotions, and instinctive responses" },
+      3: { title: "Your Rising Sign: How You Appear to Others", description: "Learn about your outer personality and first impressions" },
+      
+      // Planets Track (4-12) 
+      4: { title: "Mercury: Your Communication Style", description: "Understanding how you think, learn, and communicate" },
+      5: { title: "Venus: Your Love Language", description: "Discover what you value in relationships and beauty" },
+      6: { title: "Mars: Your Drive and Ambition", description: "Explore your energy, passion, and how you take action" },
+      7: { title: "Jupiter: Your Growth and Expansion", description: "Learn about luck, opportunities, and personal growth" },
+      8: { title: "Saturn: Your Discipline and Structure", description: "Understanding life lessons, responsibility, and achievements" },
+      9: { title: "Uranus: Your Innovation and Freedom", description: "Discover your unique qualities and desire for independence" },
+      10: { title: "Neptune: Your Dreams and Intuition", description: "Explore spirituality, creativity, and psychic abilities" },
+      11: { title: "Pluto: Your Transformation Power", description: "Understanding deep change, regeneration, and personal power" },
+      12: { title: "Planetary Aspects: How Your Planets Interact", description: "Learn how planetary relationships create your unique personality blend" },
+      
+      // Houses Track (13-24)
+      13: { title: "1st House: Your Identity and Appearance", description: "The house of self, personality, and first impressions" },
+      14: { title: "2nd House: Your Values and Resources", description: "Understanding money, possessions, and self-worth" },
+      15: { title: "3rd House: Your Communication and Learning", description: "Siblings, short trips, and everyday interactions" },
+      16: { title: "4th House: Your Home and Family", description: "Roots, family dynamics, and emotional foundation" },
+      17: { title: "5th House: Your Creativity and Romance", description: "Self-expression, children, and recreational activities" },
+      18: { title: "6th House: Your Work and Health", description: "Daily routines, service to others, and physical wellness" },
+      19: { title: "7th House: Your Partnerships and Marriage", description: "One-on-one relationships and business partnerships" },
+      20: { title: "8th House: Your Transformation and Shared Resources", description: "Intimacy, shared finances, and life-changing experiences" },
+      21: { title: "9th House: Your Philosophy and Higher Learning", description: "Travel, education, religion, and personal beliefs" },
+      22: { title: "10th House: Your Career and Public Image", description: "Professional life, reputation, and life goals" },
+      23: { title: "11th House: Your Friendships and Hopes", description: "Social groups, wishes, and humanitarian causes" },
+      24: { title: "12th House: Your Spirituality and Subconscious", description: "Hidden aspects, karma, and spiritual development" },
+      
+      // Advanced Track (25-29)
+      25: { title: "Elements: Fire, Earth, Air, Water", description: "Understanding the four fundamental energies in astrology" },
+      26: { title: "Modalities: Cardinal, Fixed, Mutable", description: "How the three approaches to change shape your personality" },
+      27: { title: "Polarities: Understanding Opposite Signs", description: "Learning from the complementary nature of opposing energies" },
+      28: { title: "Birth Chart Integration: Your Complete Cosmic Picture", description: "Synthesizing all elements of your chart into a cohesive understanding" },
+      29: { title: "Advanced Sun Sign Mastery", description: "Master advanced concepts and nuances of your sun sign expression" }
+    };
+
+    const info = lessonCatalog[lessonId];
+    return {
+      title: info ? info.title : `Advanced Lesson ${lessonId}`,
+      description: info ? info.description : `Explore advanced astrological concepts and deepen your understanding`,
+      track
+    };
   }
 
   async getDashboardData(userId: string): Promise<any> {
@@ -1637,6 +1867,54 @@ The first four houses form your personal foundation - representing your inner ci
 
   private getElementsOverview(): string {
     return `The four elements form the foundation of astrology: Fire (passion), Earth (stability), Air (communication), Water (emotion).`;
+  }
+
+  private getOrdinalSuffix(num: number): string {
+    if (num % 100 >= 11 && num % 100 <= 13) return 'th';
+    switch (num % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
+
+  private getHousePersonalizedInsights(houseNumber: number, houseSign: string, chartData: any): string {
+    const houseThemes: Record<number, string> = {
+      1: `identity and first impressions`,
+      2: `values, money, and possessions`,
+      3: `communication and siblings`,
+      4: `home, family, and emotional foundation`,
+      5: `creativity, romance, and children`,
+      6: `work, health, and daily routines`,
+      7: `partnerships and marriage`,
+      8: `transformation and shared resources`,
+      9: `philosophy, travel, and higher learning`,
+      10: `career and public reputation`,
+      11: `friendships and future goals`,
+      12: `spirituality and hidden aspects`
+    };
+
+    return `Your ${houseNumber}${this.getOrdinalSuffix(houseNumber)} house is in ${houseSign}, which means your approach to ${houseThemes[houseNumber]} is influenced by ${houseSign}'s energy. This placement shows how you naturally express yourself in this life area and what experiences you're likely to encounter here.`;
+  }
+
+  private getHouseGeneralInsights(houseNumber: number): string {
+    const houseDescriptions: Record<number, string> = {
+      1: `The 1st house represents your identity, personality, and how you appear to others. It's ruled by your rising sign and shows your natural approach to life.`,
+      2: `The 2nd house governs your values, money, possessions, and self-worth. It reveals what you find valuable and how you handle material resources.`,
+      3: `The 3rd house rules communication, siblings, short trips, and learning. It shows how you process information and connect with your immediate environment.`,
+      4: `The 4th house represents home, family, roots, and your emotional foundation. It reveals your inner world and where you find security.`,
+      5: `The 5th house governs creativity, romance, children, and self-expression. It shows how you play, create, and express your unique personality.`,
+      6: `The 6th house rules work, health, daily routines, and service. It reveals how you approach responsibility and maintain your physical wellbeing.`,
+      7: `The 7th house represents partnerships, marriage, and one-on-one relationships. It shows what you seek in others and how you relate to people.`,
+      8: `The 8th house governs transformation, shared resources, intimacy, and the occult. It reveals your relationship with deep change and hidden matters.`,
+      9: `The 9th house rules philosophy, higher education, travel, and spiritual beliefs. It shows how you expand your understanding of the world.`,
+      10: `The 10th house represents career, reputation, and your public image. It reveals your life direction and how you want to be known in the world.`,
+      11: `The 11th house governs friendships, groups, hopes, and wishes. It shows your social connections and dreams for the future.`,
+      12: `The 12th house rules spirituality, the subconscious, karma, and hidden enemies. It reveals your connection to the divine and unconscious patterns.`
+    };
+
+    return houseDescriptions[houseNumber] || `The ${houseNumber}${this.getOrdinalSuffix(houseNumber)} house is an important area of life experience in astrology.`;
   }
 
   private getModalitiesOverview(): string {
