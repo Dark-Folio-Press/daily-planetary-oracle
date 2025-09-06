@@ -22,6 +22,7 @@ import { useState, useEffect } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import LessonQuiz from "@/components/lesson-quiz";
+import { PatternIdentificationChallenge } from "@/components/pattern-identification-challenge";
 
 interface LessonContent {
   type: 'text' | 'interactive' | 'chart-highlight' | 'quiz';
@@ -1522,75 +1523,10 @@ export default function LessonPage() {
 
                   {/* Personal Chart Pattern Viewer */}
                   {interactiveContent?.element === 'your-chart-pattern' && (
-                    <>
-                      <h4 className="font-semibold mb-3">Your Personal Chart Pattern Analysis</h4>
-                      <div className="space-y-4">
-                        <div className="relative w-80 h-80 mx-auto border-2 border-indigo-400 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
-                          {/* Chart wheel background */}
-                          <div className="absolute inset-4 border border-gray-300 rounded-full"></div>
-                          <div className="absolute inset-8 border border-gray-200 rounded-full"></div>
-                          
-                          {/* Hemisphere dividers */}
-                          <div className="absolute w-full h-0.5 bg-indigo-300 top-1/2 transform -translate-y-px"></div>
-                          <div className="absolute h-full w-0.5 bg-indigo-300 left-1/2 transform -translate-x-px"></div>
-                          
-                          {/* Sample planetary pattern - this would be dynamic based on user's chart */}
-                          <div className="absolute top-12 left-20 w-4 h-4 bg-yellow-500 rounded-full shadow-lg border-2 border-white" title="Sun">
-                            <div className="text-xs text-center mt-4 font-bold">☉</div>
-                          </div>
-                          <div className="absolute top-16 left-32 w-4 h-4 bg-gray-300 rounded-full shadow-lg border-2 border-white" title="Moon">
-                            <div className="text-xs text-center mt-4 font-bold">☽</div>
-                          </div>
-                          <div className="absolute top-24 left-24 w-4 h-4 bg-red-500 rounded-full shadow-lg border-2 border-white" title="Mars">
-                            <div className="text-xs text-center mt-4 font-bold">♂</div>
-                          </div>
-                          <div className="absolute top-20 right-28 w-4 h-4 bg-green-500 rounded-full shadow-lg border-2 border-white" title="Venus">
-                            <div className="text-xs text-center mt-4 font-bold">♀</div>
-                          </div>
-                          <div className="absolute top-28 left-36 w-4 h-4 bg-blue-500 rounded-full shadow-lg border-2 border-white" title="Mercury">
-                            <div className="text-xs text-center mt-4 font-bold">☿</div>
-                          </div>
-                          
-                          {/* Pattern overlay - example showing a partial bowl pattern */}
-                          <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                            <path d="M 80 80 A 80 80 0 0 1 240 120" stroke="#8b5cf6" strokeWidth="3" fill="none" strokeDasharray="4,4" opacity="0.7"/>
-                            <path d="M 240 120 A 80 80 0 0 1 200 240" stroke="#8b5cf6" strokeWidth="3" fill="none" strokeDasharray="4,4" opacity="0.7"/>
-                          </svg>
-                          
-                          {/* Center label */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center bg-white dark:bg-gray-800 px-3 py-1 rounded-full border shadow-sm">
-                              <div className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">Your Pattern</div>
-                              <div className="text-xs text-indigo-600 dark:text-indigo-400">Bowl Shape</div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
-                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Detected Pattern: Bowl Formation</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                              Your planets occupy approximately 180° of the chart, creating a Bowl pattern. This suggests you have a purposeful, 
-                              self-contained approach to life with a strong drive to "fill" what's missing in the empty hemisphere.
-                            </p>
-                          </div>
-                          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
-                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Hemispheric Emphasis</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                              Your chart shows emphasis in the {interactiveContent?.chartData ? 'Eastern and Upper' : 'Lower and Western'} hemispheres, 
-                              indicating a focus on {interactiveContent?.chartData ? 'independent achievement and public recognition' : 'relationships and private inner development'}.
-                            </p>
-                          </div>
-                          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                            <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Pattern Insights</p>
-                            <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                              This pattern suggests you approach life with focused intention, working to develop the qualities represented 
-                              by the empty portion of your chart through conscious effort and experience.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </>
+                    <PatternIdentificationChallenge 
+                      chartData={lessonData?.userChartData}
+                      birthData={lessonData?.userChartData?.birthData}
+                    />
                   )}
 
                   {interactiveContent?.type === 'chart-focus' ? (
