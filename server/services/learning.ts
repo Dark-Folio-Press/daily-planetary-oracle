@@ -1355,6 +1355,15 @@ class LearningService {
   private async personalizeContent(lesson: LearningLesson, chartData: any): Promise<LessonContent[]> {
     const content: LessonContent[] = [];
     
+    // First, check if lesson has stored content with quiz sections  
+    const lessonContent = lesson.content as any;
+    let hasQuizInDatabase = false;
+    
+    if (lessonContent?.sections) {
+      // Check if any section is a quiz
+      hasQuizInDatabase = lessonContent.sections.some((section: any) => section.type === 'quiz');
+    }
+    
     if (!chartData) {
       // Generic content for users without birth data
       content.push({
@@ -1363,6 +1372,17 @@ class LearningService {
           content: 'To get personalized insights, please complete your birth information in your profile.'
         }
       });
+      
+      // Still add quiz if present in database
+      if (hasQuizInDatabase) {
+        const quizSection = lessonContent.sections.find((section: any) => section.type === 'quiz');
+        if (quizSection) {
+          content.push({
+            type: 'quiz',
+            data: quizSection.data
+          });
+        }
+      }
     } else {
       // Personalized content based on chart data
       switch (lesson.track) {
@@ -2203,11 +2223,11 @@ The first four houses form your personal foundation - representing your inner ci
     // Process original lesson content sections (including quiz)
     if (lesson.content && (lesson.content as any).sections) {
       for (const section of (lesson.content as any).sections) {
-        if (section.type === 'quiz') {
+        if (section.type === 'quiz' && section.data && section.data.questions) {
           content.push({
             type: 'quiz',
             data: {
-              questions: section.questions
+              questions: section.data.questions
             }
           });
         }
