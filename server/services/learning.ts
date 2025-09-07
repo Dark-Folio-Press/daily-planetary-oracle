@@ -63,21 +63,147 @@ class LearningService {
 
   private async createDefaultLessons(): Promise<void> {
     const lessons = [
-      // BASICS TRACK
+      // BASICS TRACK - FOUNDATIONAL LESSONS
       {
         track: 'basics',
         lessonNumber: 1,
-        title: 'Your Sun Sign: The Core of Who You Are',
-        description: 'Discover what your sun sign reveals about your essential nature and identity.',
+        title: 'The Four Elements: Fire, Earth, Air & Water',
+        description: 'Learn the foundational building blocks of astrology - the four elements that shape all zodiac signs.',
         content: {
           sections: [
             {
               type: 'introduction',
-              content: 'Your sun sign represents your core identity, ego, and the essence of who you are becoming.'
+              content: 'The four elements (fire, earth, air, water) are the fundamental building blocks of astrology. Every zodiac sign expresses one of these elemental energies, which influences personality, behavior, and life approach.'
+            },
+            {
+              type: 'elemental-overview',
+              content: 'Fire signs are passionate and dynamic, Earth signs are practical and grounded, Air signs are intellectual and communicative, Water signs are emotional and intuitive.'
+            },
+            {
+              type: 'foundational-concept',
+              content: 'Understanding the elements is essential before exploring personal placements, as they provide the energetic foundation for interpreting any astrological placement.'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "Which element is associated with passion, energy, and initiative?",
+                  options: [
+                    "Earth",
+                    "Fire",
+                    "Air",
+                    "Water"
+                  ],
+                  correct: 1,
+                  explanation: "Fire signs (Aries, Leo, Sagittarius) are associated with passion, energy, enthusiasm, and taking initiative."
+                },
+                {
+                  question: "What makes the four elements foundational to astrology?",
+                  options: [
+                    "They determine your birth chart shape",
+                    "Every zodiac sign expresses one elemental energy", 
+                    "They control planetary movements",
+                    "They predict future events"
+                  ],
+                  correct: 1,
+                  explanation: "The four elements are foundational because every zodiac sign expresses one of these elemental energies, making them essential for understanding any astrological placement."
+                },
+                {
+                  question: "Which element is most associated with emotions and intuition?",
+                  options: [
+                    "Fire",
+                    "Earth", 
+                    "Air",
+                    "Water"
+                  ],
+                  correct: 3,
+                  explanation: "Water signs (Cancer, Scorpio, Pisces) are deeply connected to emotions, intuition, and the subconscious realm."
+                }
+              ]
+            }
+          ]
+        },
+        requiredLessons: null,
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'basics',
+        lessonNumber: 2,
+        title: 'The Three Modalities: Cardinal, Fixed & Mutable',
+        description: 'Explore the foundational approaches to action and change that define how each zodiac sign operates.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'The three modalities (cardinal, fixed, mutable) describe how zodiac signs approach action, goals, and change. They work with the elements to create the complete energetic signature of each sign.'
+            },
+            {
+              type: 'modality-overview',
+              content: 'Cardinal signs initiate and lead, Fixed signs sustain and stabilize, Mutable signs adapt and transform. Every sign combines one element with one modality.'
+            },
+            {
+              type: 'foundational-concept',
+              content: 'Understanding modalities is essential because they explain the \'how\' behind each sign\'s approach to life, while elements explain the \'what\' or core energy.'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "Which modality is associated with initiating new projects and leadership?",
+                  options: [
+                    "Fixed",
+                    "Cardinal",
+                    "Mutable",
+                    "None of the above"
+                  ],
+                  correct: 1,
+                  explanation: "Cardinal signs (Aries, Cancer, Libra, Capricorn) are the initiators and leaders of the zodiac, starting new cycles and projects."
+                },
+                {
+                  question: "How do modalities work with elements?",
+                  options: [
+                    "They replace the elements entirely",
+                    "Every sign combines one element with one modality", 
+                    "They only apply to certain zodiac signs",
+                    "They determine your birth time"
+                  ],
+                  correct: 1,
+                  explanation: "Every zodiac sign is defined by both an element (the core energy) and a modality (the approach to action), creating 12 unique combinations."
+                },
+                {
+                  question: "Which modality is most associated with flexibility and adaptation?",
+                  options: [
+                    "Cardinal",
+                    "Fixed", 
+                    "Mutable",
+                    "All modalities equally"
+                  ],
+                  correct: 2,
+                  explanation: "Mutable signs (Gemini, Virgo, Sagittarius, Pisces) are adaptable, flexible, and skilled at navigating change and transition."
+                }
+              ]
+            }
+          ]
+        },
+        requiredLessons: ['basics-1'],
+        xpReward: 15,
+        estimatedMinutes: 10
+      },
+      {
+        track: 'basics',
+        lessonNumber: 3,
+        title: 'Your Sun Sign: The Core of Who You Are',
+        description: 'Now that you understand elements and modalities, discover what your sun sign reveals about your essential nature.',
+        content: {
+          sections: [
+            {
+              type: 'introduction',
+              content: 'Your sun sign represents your core identity, ego, and life purpose. With your knowledge of elements and modalities, you can now understand the deeper layers of your sun sign\'s expression.'
             },
             {
               type: 'personal-insight',
-              content: 'Based on your birth chart, we\'ll explore your unique sun sign traits.'
+              content: 'Based on your birth chart and foundational knowledge, explore how your sun sign\'s element and modality create your unique identity.'
             },
             {
               type: 'interactive-element',
@@ -98,6 +224,17 @@ class LearningService {
                   explanation: "Your sun sign represents your core identity, ego, and the essence of who you are becoming."
                 },
                 {
+                  question: "How do elements and modalities enhance understanding of your sun sign?",
+                  options: [
+                    "They don't affect sun sign interpretation",
+                    "They provide deeper layers of meaning about how your core identity expresses itself",
+                    "They only matter for moon signs",
+                    "They determine your birth time"
+                  ],
+                  correct: 1,
+                  explanation: "Understanding your sun sign's element (core energy) and modality (approach to action) provides much deeper insight into how your identity expresses itself."
+                },
+                {
                   question: "When is your sun sign determined?",
                   options: [
                     "The time you were born",
@@ -107,40 +244,29 @@ class LearningService {
                   ],
                   correct: 2,
                   explanation: "Your sun sign is determined by the date you were born, as the sun moves through the zodiac signs throughout the year."
-                },
-                {
-                  question: "How many zodiac signs are there in total?",
-                  options: [
-                    "10",
-                    "11", 
-                    "12",
-                    "13"
-                  ],
-                  correct: 2,
-                  explanation: "There are 12 zodiac signs that the sun moves through during the year: Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, and Pisces."
                 }
               ]
             }
           ]
         },
-        requiredLessons: null,
+        requiredLessons: ['basics-1', 'basics-2'],
         xpReward: 15,
         estimatedMinutes: 10
       },
       {
         track: 'basics',
-        lessonNumber: 2, 
+        lessonNumber: 4,
         title: 'Your Moon Sign: Your Inner Emotional World',
-        description: 'Understand how your moon sign influences your emotions, instincts, and needs.',
+        description: 'Building on foundational knowledge, understand how your moon sign influences your emotions and instincts.',
         content: {
           sections: [
             {
               type: 'introduction',
-              content: 'Your moon sign governs your emotional responses, subconscious patterns, and inner needs.'
+              content: 'Your moon sign governs your emotional responses, subconscious patterns, and inner needs. Understanding its element and modality reveals how you process emotions.'
             },
             {
               type: 'personal-insight',
-              content: 'Explore how your moon sign shapes your emotional landscape.'
+              content: 'Explore how your moon sign\'s elemental and modal combination shapes your emotional landscape and what you need for security.'
             },
             {
               type: 'interactive-element',
@@ -161,6 +287,17 @@ class LearningService {
                   explanation: "Your moon sign governs your emotional responses, subconscious patterns, and inner emotional needs."
                 },
                 {
+                  question: "How do elements affect your moon sign expression?",
+                  options: [
+                    "They don\'t influence moon signs",
+                    "They determine how you process and express emotions",
+                    "They only affect sun signs",
+                    "They control your daily mood"
+                  ],
+                  correct: 1,
+                  explanation: "Your moon sign's element greatly influences how you process and express emotions - Fire moons are passionate, Earth moons seek security, Air moons intellectualize, Water moons feel deeply."
+                },
+                {
                   question: "How often does the moon change signs?",
                   options: [
                     "Every day",
@@ -170,123 +307,131 @@ class LearningService {
                   ],
                   correct: 1,
                   explanation: "The moon moves quickly through the zodiac, changing signs approximately every 2-3 days."
-                },
-                {
-                  question: "Why is your moon sign considered your 'inner world'?",
-                  options: [
-                    "Because it's hidden from others",
-                    "Because it influences your private emotional responses",
-                    "Because it affects your dreams and sleep",
-                    "Because it controls your subconscious mind"
-                  ],
-                  correct: 1,
-                  explanation: "Your moon sign represents your inner emotional world - how you process feelings privately and what you need for emotional security."
                 }
               ]
             }
           ]
         },
-        requiredLessons: null,
-        xpReward: 15,
-        estimatedMinutes: 10
-      },
-      {
-        track: 'basics',
-        lessonNumber: 3,
-        title: 'Your Rising Sign: Your Outer Expression',
-        description: 'Learn how your rising sign shapes first impressions and your approach to the world.',
-        content: {
-          sections: [
-            {
-              type: 'introduction',
-              content: 'Your rising sign is your social mask, affecting how others see you and how you navigate the world.'
-            },
-            {
-              type: 'personal-insight', 
-              content: 'Discover how your rising sign influences your personality and behavior.'
-            },
-            {
-              type: 'interactive-element',
-              element: 'rising-expression-explorer'
-            }
-          ]
-        },
         requiredLessons: ['basics-1', 'basics-2'],
-        xpReward: 15,
-        estimatedMinutes: 8
-      },
-      {
-        track: 'basics',
-        lessonNumber: 4,
-        title: 'The Four Elements: Fire, Earth, Air & Water',
-        description: 'Learn about the elemental foundation of astrology and how your sun sign expresses its element.',
-        content: {
-          sections: [
-            {
-              type: 'introduction',
-              content: 'The four elements (fire, earth, air, water) are the building blocks of astrology, each bringing distinct qualities and approaches to life.'
-            },
-            {
-              type: 'elemental-overview',
-              content: 'Understand how each element influences personality, behavior, and life approach.'
-            },
-            {
-              type: 'personal-insight',
-              content: 'Discover how your sun sign expresses its elemental nature and what this means for your personality.'
-            }
-          ]
-        },
-        requiredLessons: ['basics-3'],
         xpReward: 15,
         estimatedMinutes: 10
       },
       {
         track: 'basics',
         lessonNumber: 5,
-        title: 'The Three Modalities: Cardinal, Fixed & Mutable',
-        description: 'Explore how the three modalities describe different approaches to action and change.',
+        title: 'Your Rising Sign: Your Outer Expression',
+        description: 'Complete your Big Three understanding by learning how your rising sign shapes first impressions.',
         content: {
           sections: [
             {
               type: 'introduction',
-              content: 'The three modalities (cardinal, fixed, mutable) describe how signs initiate, sustain, and adapt to change.'
+              content: 'Your rising sign is your social mask and outer personality. With knowledge of sun and moon signs, you can now understand how all three work together to create your complete astrological identity.'
             },
             {
-              type: 'modality-overview',
-              content: 'Learn the unique characteristics and strengths of each modality.'
+              type: 'personal-insight', 
+              content: 'Discover how your rising sign\'s element and modality influence how others perceive you and how you approach new situations.'
             },
             {
-              type: 'personal-insight',
-              content: 'Understand how your sun sign\'s modality influences your approach to goals, challenges, and life changes.'
+              type: 'interactive-element',
+              element: 'rising-expression-explorer'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "What does your rising sign primarily influence?",
+                  options: [
+                    "Your deepest emotions and needs",
+                    "Your core identity and ego",
+                    "How others perceive you and your outer approach to life",
+                    "Your career and long-term goals"
+                  ],
+                  correct: 2,
+                  explanation: "Your rising sign influences your outer personality, first impressions, and how you instinctively approach new situations."
+                },
+                {
+                  question: "Why is understanding sun and moon signs helpful before learning about rising signs?",
+                  options: [
+                    "Rising signs don\'t matter without them",
+                    "They provide context for how your inner self (sun/moon) relates to your outer expression (rising)",
+                    "You need them to calculate rising sign",
+                    "They determine your rising sign"
+                  ],
+                  correct: 1,
+                  explanation: "Understanding your sun (core identity) and moon (emotional nature) first helps you see how your inner self relates to your rising sign\'s outer expression."
+                },
+                {
+                  question: "What information is needed to determine your rising sign?",
+                  options: [
+                    "Only your birth date",
+                    "Your birth date and location",
+                    "Your exact birth time, date, and location",
+                    "Just your sun and moon signs"
+                  ],
+                  correct: 2,
+                  explanation: "Rising signs change approximately every 2 hours, so you need your exact birth time, date, and location for accurate calculation."
+                }
+              ]
             }
           ]
         },
-        requiredLessons: ['basics-4'],
+        requiredLessons: ['basics-3', 'basics-4'],
         xpReward: 15,
-        estimatedMinutes: 10
+        estimatedMinutes: 8
       },
       {
         track: 'basics',
         lessonNumber: 6,
         title: 'The Big Three Integration',
-        description: 'See how your sun, moon, and rising signs work together to create your unique personality.',
+        description: 'Master how your sun, moon, and rising signs work together, using elemental and modal knowledge for deep understanding.',
         content: {
           sections: [
             {
               type: 'introduction',
-              content: 'Your Big Three create a complex interplay that forms your complete astrological identity.'
+              content: 'Your Big Three create a complex interplay that forms your complete astrological identity. With your foundation in elements and modalities, you can now understand the deeper dynamics at play.'
             },
             {
               type: 'synthesis',
-              content: 'Learn how your three core signs complement and sometimes conflict with each other.'
+              content: 'Learn how your three core signs\' elements and modalities complement and sometimes conflict with each other, creating your unique personality blend.'
+            },
+            {
+              type: 'foundational-integration',
+              content: 'This integration demonstrates how foundational astrological concepts (elements and modalities) work together in real chart interpretation.'
             },
             {
               type: 'interactive-element',
               element: 'big-three-integration'
+            },
+            {
+              type: 'quiz',
+              questions: [
+                {
+                  question: "How do elements and modalities enhance Big Three interpretation?",
+                  options: [
+                    "They don\'t affect the Big Three",
+                    "They provide deeper insight into how your three core signs interact and express themselves",
+                    "They only matter for advanced astrology",
+                    "They replace the need for sun, moon, and rising signs"
+                  ],
+                  correct: 1,
+                  explanation: "Understanding the elements and modalities of your sun, moon, and rising signs provides much deeper insight into how these three core parts of your personality interact and potentially conflict."
+                },
+                {
+                  question: "What creates the most harmony in a Big Three combination?",
+                  options: [
+                    "Having all three signs be exactly the same",
+                    "Having complementary elements and modalities that support each other",
+                    "Having all fire signs",
+                    "Having no patterns at all"
+                  ],
+                  correct: 1,
+                  explanation: "Harmony comes from complementary elements and modalities that support rather than conflict with each other, creating a balanced expression of personality."
+                }
+              ]
             }
           ]
         },
-        requiredLessons: ['basics-5'],
+        requiredLessons: ['basics-3', 'basics-4', 'basics-5'],
         xpReward: 20,
         estimatedMinutes: 10
       },
