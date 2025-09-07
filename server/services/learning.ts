@@ -1364,9 +1364,9 @@ class LearningService {
       hasQuizInDatabase = lessonContent.sections.some((section: any) => section.type === 'quiz');
     }
     
-    // For lessons with database content (including quizzes), use that content directly
-    if (lessonContent?.sections && lessonContent.sections.length > 0) {
-      // Process each section from the database
+    // For PLANETARY lessons with complete database content (including quizzes), use that content directly
+    if (lesson.track === 'planets' && lessonContent?.sections && hasQuizInDatabase) {
+      // Process each section from the database for planetary lessons
       lessonContent.sections.forEach((section: any) => {
         if (section.type === 'introduction' || section.type === 'personal-insight' || section.type === 'foundational-concept') {
           content.push({
@@ -1392,7 +1392,7 @@ class LearningService {
         }
       });
       
-      // Return early with database content - don't override with hardcoded logic
+      // Return early with database content for complete planetary lessons
       return content;
     }
     
