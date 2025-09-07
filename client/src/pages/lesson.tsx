@@ -604,6 +604,15 @@ export default function LessonPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 overflow-y-auto flex-1 pr-2">
+              {/* Debug logging */}
+              {process.env.NODE_ENV === 'development' && console.log('Venus debug:', {
+                interactiveContent: interactiveContent,
+                userChartData: lessonData?.userChartData,
+                detailedChart: lessonData?.userChartData?.detailedChart,
+                planets: lessonData?.userChartData?.detailedChart?.planets,
+                venusData: lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Venus')
+              })}
+              
               {/* Show chart-focus content */}
               {interactiveContent?.type === 'chart-focus' ? (
                 <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
