@@ -127,7 +127,7 @@ export default function LearningPage() {
             <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No {trackName} lessons yet</h3>
             <p className="text-gray-500">
-              {trackName} lessons will appear here as they become available.
+              Complete previous learning tracks to unlock all {trackName} lessons and continue your astrological journey.
             </p>
           </CardContent>
         </Card>
@@ -140,27 +140,36 @@ export default function LearningPage() {
           // Check if lesson is completed based on userProgress status
           const isCompleted = lesson.userProgress?.status === 'completed' || lesson.userProgress?.status === 'mastered';
           
+          const isMastered = lesson.userProgress?.status === 'mastered';
+          
           return (
             <Card 
               key={lesson.id} 
               className={`hover:shadow-lg transition-shadow cursor-pointer group ${
-                isCompleted 
+                isMastered 
+                  ? 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-300 dark:border-yellow-800' 
+                  : isCompleted 
                   ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
                   : ''
               }`}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
-                  <Badge 
-                    variant="secondary" 
-                    className={`mb-2 capitalize ${
-                      isCompleted 
-                        ? 'bg-green-100 text-green-700' 
-                        : ''
-                    }`}
-                  >
-                    {lesson.track}
-                  </Badge>
+                  <div className="flex gap-2 mb-2">
+                    <Badge variant="secondary" className="capitalize">
+                      {lesson.track}
+                    </Badge>
+                    {isMastered && (
+                      <Badge className="bg-yellow-500 text-yellow-900 hover:bg-yellow-600">
+                        ⭐ MASTERED
+                      </Badge>
+                    )}
+                    {isCompleted && !isMastered && (
+                      <Badge className="bg-green-500 text-green-900 hover:bg-green-600">
+                        ✓ COMPLETED
+                      </Badge>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1 text-sm text-gray-500">
                       <Clock className="w-3 h-3" />

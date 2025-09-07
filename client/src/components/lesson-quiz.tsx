@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Award, Trophy } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 interface QuizQuestion {
   question: string;
@@ -24,6 +25,31 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
   const [showExplanation, setShowExplanation] = useState(false);
   const [quizComplete, setQuizComplete] = useState(false);
   const [score, setScore] = useState(0);
+
+  // Confetti animation function for quiz success
+  const triggerConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    
+    // Additional burst after a short delay
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+    }, 200);
+  };
 
   const handleAnswerSelect = (optionIndex: number) => {
     if (showExplanation) return; // Prevent changing answer after showing explanation
@@ -58,6 +84,12 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
       ).length;
       const passed = finalScore >= Math.ceil(questions.length * 0.8); // 80% pass rate
       setQuizComplete(true);
+      
+      // Trigger confetti animation for successful quiz completion
+      if (passed) {
+        triggerConfetti();
+      }
+      
       onQuizComplete(finalScore, questions.length, passed);
     }
   };
@@ -85,7 +117,7 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             {passed ? (
-              <Trophy className="h-16 w-16 text-yellow-500" />
+              <Trophy className="h-16 w-16 text-yellow-500 animate-bounce" />
             ) : (
               <Award className="h-16 w-16 text-blue-500" />
             )}

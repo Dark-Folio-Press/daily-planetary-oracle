@@ -1151,26 +1151,38 @@ class LearningService {
       }
     });
     
+    // Define track progression order - when one track is completed, unlock ALL lessons in next track
+    const trackProgression = ['basics', 'planets', 'houses', 'nodes', 'patterns'];
+    const unlockedTracks = new Set<string>();
+    
+    // Always unlock basics track
+    unlockedTracks.add('basics');
+    
+    // Check which additional tracks should be unlocked based on completed tracks
+    for (let i = 0; i < trackProgression.length - 1; i++) {
+      const currentTrack = trackProgression[i];
+      const nextTrack = trackProgression[i + 1];
+      
+      if (completedTracks.has(currentTrack)) {
+        unlockedTracks.add(nextTrack);
+      } else {
+        break; // Stop at first incomplete track
+      }
+    }
+
     const availableLessons = allLessons.filter(lesson => {
       // If track is completed, all lessons in track are available for review
       if (completedTracks.has(lesson.track)) {
         return true;
       }
       
-      // If no prerequisites, it's available
-      if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
+      // If track is unlocked (entire track available), show all lessons in that track
+      if (unlockedTracks.has(lesson.track)) {
         return true;
       }
       
-      // Check if all prerequisites are completed
-      // Convert string prerequisites to numbers if needed
-      const prerequisitesMet = lesson.requiredLessons.every(req => {
-        const reqId = typeof req === 'string' ? parseInt(req) : req;
-        return completedLessonIds.includes(reqId);
-      });
-      
-      // Only available if prerequisites are met AND not already completed (unless track is complete)
-      return prerequisitesMet && !completedLessonIds.includes(lesson.id);
+      // For locked tracks, don't show any lessons
+      return false;
     });
     
     // Attach user progress to each lesson
