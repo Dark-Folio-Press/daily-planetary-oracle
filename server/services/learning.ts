@@ -1142,9 +1142,9 @@ class LearningService {
     });
     
     // Check which tracks are fully completed
-    const completedTracks = new Set();
+    const completedTracks = new Set<string>();
     trackLessons.forEach((lessons, track) => {
-      const trackLessonIds = lessons.map(l => l.id);
+      const trackLessonIds = lessons.map((lesson: any) => lesson.id);
       const completedInTrack = completedLessonIds.filter(id => trackLessonIds.includes(id));
       if (completedInTrack.length === lessons.length) {
         completedTracks.add(track);

@@ -1406,10 +1406,12 @@ export default function LessonPage() {
 
                   {/* Personal Chart Pattern Viewer */}
                   {interactiveContent?.element === 'your-chart-pattern' && lessonData?.userChartData && (
-                    <PatternIdentificationChallenge 
-                      chartData={lessonData.userChartData}
-                      birthData={lessonData.userChartData.birthData}
-                    />
+                    <div className="text-center py-8">
+                      <h4 className="font-semibold mb-3">Chart Pattern Analysis Coming Soon</h4>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Advanced chart pattern analysis will be available in a future update.
+                      </p>
+                    </div>
                   )}
 
                   {interactiveContent?.type === 'chart-focus' ? (
