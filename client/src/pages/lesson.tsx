@@ -459,16 +459,16 @@ export default function LessonPage() {
                   </Card>
                 )}
 
-                {content.type === 'interactive-element' && content.element === 'chart-focus' && (
+                {(content as any).type === 'interactive-element' && (content as any).element === 'chart-focus' && (
                   <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-800">
                     <CardContent className="p-6">
                       <div className="text-center">
                         <Target className="w-12 h-12 text-purple-600 mx-auto mb-4" />
                         <h4 className="text-lg font-semibold mb-2 text-purple-700 dark:text-purple-300">
-                          Planetary Chart Focus: {content.focusElement}
+                          Planetary Chart Focus: {(content as any).focusElement}
                         </h4>
                         <p className="text-purple-600 dark:text-purple-400 mb-4">
-                          Explore how {content.focusElement} appears in your personal birth chart and influences your life.
+                          Explore how {(content as any).focusElement} appears in your personal birth chart and influences your life.
                         </p>
                         <Button 
                           variant="outline" 
@@ -477,7 +477,7 @@ export default function LessonPage() {
                             setShowInteractiveModal(true);
                             setInteractiveContent({
                               type: 'chart-focus',
-                              element: content.focusElement
+                              element: (content as any).focusElement
                             });
                           }}
                         >
