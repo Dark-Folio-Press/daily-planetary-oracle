@@ -128,97 +128,88 @@ export default function LearningPage() {
     }
 
     return (
-      <div className="space-y-6">
-        {available.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {available.map((lesson) => (
-                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <Badge variant="secondary" className="mb-2 capitalize">
-                        {lesson.track}
-                      </Badge>
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        {lesson.estimatedMinutes}min
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg group-hover:text-purple-600 transition-colors">
-                      {lesson.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {lesson.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm font-medium text-purple-600">
-                        <Star className="w-4 h-4" />
-                        +{lesson.xpReward} XP
-                      </div>
-                      <Link href={`/learning/lesson/${lesson.id}`}>
-                        <Button size="sm" className="group-hover:bg-purple-600" data-testid={`button-start-lesson-${lesson.id}`}>
-                          Start
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {completed.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {completed.map((lesson) => (
-              <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
-                      {lesson.track}
-                    </Badge>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        {lesson.estimatedMinutes}min
-                      </div>
-                      <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {available.map((lesson) => (
+          <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <Badge variant="secondary" className="mb-2 capitalize">
+                  {lesson.track}
+                </Badge>
+                <div className="flex items-center gap-1 text-sm text-gray-500">
+                  <Clock className="w-3 h-3" />
+                  {lesson.estimatedMinutes}min
+                </div>
+              </div>
+              <CardTitle className="text-lg group-hover:text-purple-600 transition-colors">
+                {lesson.title}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {lesson.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                  <Star className="w-4 h-4" />
+                  +{lesson.xpReward} XP
+                </div>
+                <Link href={`/learning/lesson/${lesson.id}`}>
+                  <Button size="sm" className="group-hover:bg-purple-600" data-testid={`button-start-lesson-${lesson.id}`}>
+                    Start
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        
+        {completed.map((lesson) => (
+          <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
+                  {lesson.track}
+                </Badge>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <Clock className="w-3 h-3" />
+                    {lesson.estimatedMinutes}min
                   </div>
-                  <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
-                    {lesson.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    {lesson.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-sm font-medium text-green-600">
-                      <Star className="w-4 h-4" />
-                      +{lesson.xpReward} XP
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {lesson.userProgress?.completedAt && (
-                        <span className="text-xs text-gray-500">
-                          {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
-                        </span>
-                      )}
-                      <Link href={`/learning/lesson/${lesson.id}`}>
-                        <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
-                          <CheckCircle2 className="w-4 h-4 mr-1" />
-                          Review
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                </div>
+              </div>
+              <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
+                {lesson.title}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {lesson.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1 text-sm font-medium text-green-600">
+                  <Star className="w-4 h-4" />
+                  +{lesson.xpReward} XP
+                </div>
+                <div className="flex items-center gap-2">
+                  {lesson.userProgress?.completedAt && (
+                    <span className="text-xs text-gray-500">
+                      {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
+                    </span>
+                  )}
+                  <Link href={`/learning/lesson/${lesson.id}`}>
+                    <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                      <CheckCircle2 className="w-4 h-4 mr-1" />
+                      Review
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   };
