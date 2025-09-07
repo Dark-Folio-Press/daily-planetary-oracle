@@ -459,6 +459,35 @@ export default function LessonPage() {
                   </Card>
                 )}
 
+                {content.type === 'interactive-element' && content.element === 'chart-focus' && (
+                  <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200 dark:border-purple-800">
+                    <CardContent className="p-6">
+                      <div className="text-center">
+                        <Target className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                        <h4 className="text-lg font-semibold mb-2 text-purple-700 dark:text-purple-300">
+                          Planetary Chart Focus: {content.focusElement}
+                        </h4>
+                        <p className="text-purple-600 dark:text-purple-400 mb-4">
+                          Explore how {content.focusElement} appears in your personal birth chart and influences your life.
+                        </p>
+                        <Button 
+                          variant="outline" 
+                          className="border-purple-300 text-purple-700 hover:bg-purple-100 dark:border-purple-600 dark:text-purple-300"
+                          onClick={() => {
+                            setShowInteractiveModal(true);
+                            setInteractiveContent({
+                              type: 'chart-focus',
+                              element: content.focusElement
+                            });
+                          }}
+                        >
+                          View in Your Chart
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {index < (personalizedContent?.length || 0) - 1 && (
                   <Separator className="my-6" />
                 )}
@@ -606,6 +635,38 @@ export default function LessonPage() {
                                 <div className="text-2xl">↗</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
                                   {lessonData?.userChartData?.risingSign}
+                                </div>
+                              </div>
+                            )}
+                            {interactiveContent?.element?.toLowerCase() === 'mercury' && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">☿</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  Mercury in {(lessonData?.userChartData as any)?.mercurySign || 'Virgo'}
+                                </div>
+                              </div>
+                            )}
+                            {interactiveContent?.element?.toLowerCase() === 'venus' && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">♀</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  Venus in {(lessonData?.userChartData as any)?.venusSign || 'Libra'}
+                                </div>
+                              </div>
+                            )}
+                            {interactiveContent?.element?.toLowerCase() === 'mars' && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">♂</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  Mars in {(lessonData?.userChartData as any)?.marsSign || 'Scorpio'}
+                                </div>
+                              </div>
+                            )}
+                            {interactiveContent?.element?.toLowerCase() === 'jupiter' && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">♃</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  Jupiter in {(lessonData?.userChartData as any)?.jupiterSign || 'Sagittarius'}
                                 </div>
                               </div>
                             )}
