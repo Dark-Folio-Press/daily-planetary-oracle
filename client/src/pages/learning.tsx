@@ -18,7 +18,9 @@ import {
   CheckCircle2,
   Calendar,
   GitBranch,
-  Shapes
+  Shapes,
+  TrendingUp,
+  Home
 } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
@@ -128,12 +130,8 @@ export default function LearningPage() {
     return (
       <div className="space-y-6">
         {available.length > 0 && (
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-purple-700 dark:text-purple-300">
-              Available Lessons
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {available.map((lesson) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {available.map((lesson) => (
                 <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
@@ -173,57 +171,52 @@ export default function LearningPage() {
         )}
 
         {completed.length > 0 && (
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">
-              Completed Lessons
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {completed.map((lesson) => (
-                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
-                        {lesson.track}
-                      </Badge>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          {lesson.estimatedMinutes}min
-                        </div>
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {completed.map((lesson) => (
+              <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
+                      {lesson.track}
+                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Clock className="w-3 h-3" />
+                        {lesson.estimatedMinutes}min
                       </div>
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
                     </div>
-                    <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
-                      {lesson.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {lesson.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm font-medium text-green-600">
-                        <Star className="w-4 h-4" />
-                        +{lesson.xpReward} XP
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {lesson.userProgress?.completedAt && (
-                          <span className="text-xs text-gray-500">
-                            {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
-                          </span>
-                        )}
-                        <Link href={`/learning/lesson/${lesson.id}`}>
-                          <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
-                            <CheckCircle2 className="w-4 h-4 mr-1" />
-                            Review
-                          </Button>
-                        </Link>
-                      </div>
+                  </div>
+                  <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
+                    {lesson.title}
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    {lesson.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-sm font-medium text-green-600">
+                      <Star className="w-4 h-4" />
+                      +{lesson.xpReward} XP
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    <div className="flex items-center gap-2">
+                      {lesson.userProgress?.completedAt && (
+                        <span className="text-xs text-gray-500">
+                          {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
+                        </span>
+                      )}
+                      <Link href={`/learning/lesson/${lesson.id}`}>
+                        <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                          <CheckCircle2 className="w-4 h-4 mr-1" />
+                          Review
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
       </div>
@@ -295,14 +288,35 @@ export default function LearningPage() {
         </div>
 
         <Tabs defaultValue="progress" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 gap-1">
-            <TabsTrigger value="progress" className="text-xs lg:text-sm">Progress</TabsTrigger>
-            <TabsTrigger value="badges" className="text-xs lg:text-sm">Badges</TabsTrigger>
-            <TabsTrigger value="basics" className="text-xs lg:text-sm">Basics</TabsTrigger>
-            <TabsTrigger value="planets" className="text-xs lg:text-sm">Planets</TabsTrigger>
-            <TabsTrigger value="houses" className="text-xs lg:text-sm">Houses</TabsTrigger>
-            <TabsTrigger value="nodes" className="text-xs lg:text-sm">Nodes</TabsTrigger>
-            <TabsTrigger value="patterns" className="text-xs lg:text-sm">Patterns</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-7 gap-1 h-auto p-1">
+            <TabsTrigger value="progress" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <TrendingUp className="w-4 h-4" />
+              <span>Progress</span>
+            </TabsTrigger>
+            <TabsTrigger value="badges" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <Award className="w-4 h-4" />
+              <span>Badges</span>
+            </TabsTrigger>
+            <TabsTrigger value="basics" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <Star className="w-4 h-4" />
+              <span>Basics</span>
+            </TabsTrigger>
+            <TabsTrigger value="planets" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <Target className="w-4 h-4" />
+              <span>Planets</span>
+            </TabsTrigger>
+            <TabsTrigger value="houses" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <Home className="w-4 h-4" />
+              <span>Houses</span>
+            </TabsTrigger>
+            <TabsTrigger value="nodes" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <GitBranch className="w-4 h-4" />
+              <span>Nodes</span>
+            </TabsTrigger>
+            <TabsTrigger value="patterns" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <Shapes className="w-4 h-4" />
+              <span>Patterns</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Track-Specific Tabs */}
