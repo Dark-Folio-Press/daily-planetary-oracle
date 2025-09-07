@@ -642,7 +642,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">☿</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Mercury in {(lessonData?.userChartData as any)?.mercurySign || 'Virgo'}
+                                  Mercury in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury')?.sign || 'Virgo'}
                                 </div>
                               </div>
                             )}
@@ -650,7 +650,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♀</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Venus in {(lessonData?.userChartData as any)?.venusSign || 'Libra'}
+                                  Venus in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Venus')?.sign || 'Libra'}
                                 </div>
                               </div>
                             )}
@@ -658,7 +658,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♂</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Mars in {(lessonData?.userChartData as any)?.marsSign || 'Scorpio'}
+                                  Mars in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mars')?.sign || 'Scorpio'}
                                 </div>
                               </div>
                             )}
@@ -666,7 +666,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♃</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Jupiter in {(lessonData?.userChartData as any)?.jupiterSign || 'Sagittarius'}
+                                  Jupiter in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Jupiter')?.sign || 'Sagittarius'}
                                 </div>
                               </div>
                             )}
