@@ -65,8 +65,6 @@ interface DashboardData {
 }
 
 export default function LearningPage() {
-  const [selectedTrack, setSelectedTrack] = useState<string>("all");
-  
   const { data: dashboardData, isLoading } = useQuery<DashboardData>({
     queryKey: ["/api/learning/dashboard"]
   });
@@ -101,18 +99,136 @@ export default function LearningPage() {
   // Check if all lessons are completed (for congratulations message)
   const allLessonsCompleted = availableLessons.length === 0 && completedLessons.length > 0;
 
-  const trackOptions = [
-    { value: "all", label: "All Tracks", icon: BookOpen },
-    { value: "basics", label: "Basics", icon: Star },
-    { value: "planets", label: "Planets", icon: Target },
-    { value: "houses", label: "Houses", icon: Award },
-    { value: "nodes", label: "Nodes", icon: GitBranch },
-    { value: "patterns", label: "Patterns & Shapes", icon: Shapes },
-  ];
+  // Helper function to get lessons for a specific track
+  const getLessonsForTrack = (track: string) => {
+    const available = availableLessons.filter(lesson => lesson.track === track);
+    const completed = completedLessons.filter(lesson => lesson.track === track);
+    return { available, completed };
+  };
 
-  const filteredLessons = selectedTrack === "all" 
-    ? availableLessons 
-    : availableLessons.filter(lesson => lesson.track === selectedTrack);
+  // Helper component to render lessons for a track
+  const renderTrackLessons = (track: string, trackName: string) => {
+    const { available, completed } = getLessonsForTrack(track);
+    const allTrackLessons = [...available, ...completed];
+    
+    if (allTrackLessons.length === 0) {
+      return (
+        <Card className="text-center py-12">
+          <CardContent>
+            <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No {trackName} lessons yet</h3>
+            <p className="text-gray-500">
+              {trackName} lessons will appear here as they become available.
+            </p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {available.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-purple-700 dark:text-purple-300">
+              Available Lessons
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {available.map((lesson) => (
+                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <Badge variant="secondary" className="mb-2 capitalize">
+                        {lesson.track}
+                      </Badge>
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Clock className="w-3 h-3" />
+                        {lesson.estimatedMinutes}min
+                      </div>
+                    </div>
+                    <CardTitle className="text-lg group-hover:text-purple-600 transition-colors">
+                      {lesson.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      {lesson.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                        <Star className="w-4 h-4" />
+                        +{lesson.xpReward} XP
+                      </div>
+                      <Link href={`/learning/lesson/${lesson.id}`}>
+                        <Button size="sm" className="group-hover:bg-purple-600" data-testid={`button-start-lesson-${lesson.id}`}>
+                          Start
+                          <ChevronRight className="w-4 h-4 ml-1" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {completed.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">
+              Completed Lessons
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {completed.map((lesson) => (
+                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
+                        {lesson.track}
+                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          {lesson.estimatedMinutes}min
+                        </div>
+                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
+                      {lesson.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      {lesson.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm font-medium text-green-600">
+                        <Star className="w-4 h-4" />
+                        +{lesson.xpReward} XP
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {lesson.userProgress?.completedAt && (
+                          <span className="text-xs text-gray-500">
+                            {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                        <Link href={`/learning/lesson/${lesson.id}`}>
+                          <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                            <CheckCircle2 className="w-4 h-4 mr-1" />
+                            Review
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -178,203 +294,57 @@ export default function LearningPage() {
           </Card>
         </div>
 
-        <Tabs defaultValue="lessons" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="lessons">Available Lessons</TabsTrigger>
-            <TabsTrigger value="completed">Completed Lessons</TabsTrigger>
-            <TabsTrigger value="badges">Badges & Achievements</TabsTrigger>
-            <TabsTrigger value="progress">Progress Overview</TabsTrigger>
+        <Tabs defaultValue="progress" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 gap-1">
+            <TabsTrigger value="progress" className="text-xs lg:text-sm">Progress</TabsTrigger>
+            <TabsTrigger value="badges" className="text-xs lg:text-sm">Badges</TabsTrigger>
+            <TabsTrigger value="basics" className="text-xs lg:text-sm">Basics</TabsTrigger>
+            <TabsTrigger value="planets" className="text-xs lg:text-sm">Planets</TabsTrigger>
+            <TabsTrigger value="houses" className="text-xs lg:text-sm">Houses</TabsTrigger>
+            <TabsTrigger value="nodes" className="text-xs lg:text-sm">Nodes</TabsTrigger>
+            <TabsTrigger value="patterns" className="text-xs lg:text-sm">Patterns</TabsTrigger>
           </TabsList>
 
-          {/* Lessons Tab */}
-          <TabsContent value="lessons" className="space-y-6">
-            {allLessonsCompleted ? (
-              <Card className="text-center py-16 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-blue-900/20 border-2 border-dashed border-purple-200 dark:border-purple-800">
+          {/* Track-Specific Tabs */}
+          <TabsContent value="basics" className="space-y-6">
+            {renderTrackLessons("basics", "Basics")}
+            {canAccessSynastry && (
+              <Card className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border-pink-200 dark:border-pink-800">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-pink-700 dark:text-pink-300">
+                    <Trophy className="w-5 h-5" />
+                    🎉 Congratulations! Synastry Module Unlocked
+                  </CardTitle>
+                  <CardDescription>
+                    You've mastered the fundamentals! Now you can add a second birth chart to explore relationship compatibility.
+                  </CardDescription>
+                </CardHeader>
                 <CardContent>
-                  <div className="text-6xl mb-6">🎉</div>
-                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    Congratulations!
-                  </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-                    You've completed the Master Your Birth Chart Modules!
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">
-                    More cosmic learning adventures are coming soon.
-                  </p>
-                  <div className="flex items-center justify-center gap-2 text-sm text-purple-600 dark:text-purple-400">
-                    <Star className="w-4 h-4" />
-                    <span>{completedLessons.length} lessons mastered</span>
-                  </div>
+                  <Link href="/learning/synastry">
+                    <Button className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
+                      Explore Synastry
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
-            ) : (
-              <>
-                {/* Track Filter */}
-                <div className="flex flex-wrap gap-2">
-                  {trackOptions.map((track) => {
-                    const Icon = track.icon;
-                    return (
-                      <Button
-                        key={track.value}
-                        variant={selectedTrack === track.value ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedTrack(track.value)}
-                        className="flex items-center gap-2"
-                      >
-                        <Icon className="w-4 h-4" />
-                        {track.label}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                {/* Available Lessons */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredLessons.map((lesson) => (
-                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <Badge variant="secondary" className="mb-2 capitalize">
-                        {lesson.track}
-                      </Badge>
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        {lesson.estimatedMinutes}min
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg group-hover:text-purple-600 transition-colors">
-                      {lesson.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {lesson.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm font-medium text-purple-600">
-                        <Star className="w-4 h-4" />
-                        +{lesson.xpReward} XP
-                      </div>
-                      {lesson.userProgress?.status === 'completed' || lesson.userProgress?.status === 'mastered' ? (
-                        <Link href={`/learning/lesson/${lesson.id}`}>
-                          <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
-                            <CheckCircle2 className="w-4 h-4 mr-1" />
-                            Review
-                          </Button>
-                        </Link>
-                      ) : (
-                        <Link href={`/learning/lesson/${lesson.id}`}>
-                          <Button size="sm" className="group-hover:bg-purple-600" data-testid={`button-start-lesson-${lesson.id}`}>
-                            Start
-                            <ChevronRight className="w-4 h-4 ml-1" />
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-                </div>
-
-                {filteredLessons.length === 0 && (
-                  <Card className="text-center py-12">
-                    <CardContent>
-                      <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">No lessons available</h3>
-                      <p className="text-gray-500">
-                        Complete prerequisite lessons to unlock more content in this track.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Synastry Unlock Card */}
-                {canAccessSynastry && (
-                  <Card className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border-pink-200 dark:border-pink-800">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-pink-700 dark:text-pink-300">
-                        <Trophy className="w-5 h-5" />
-                        🎉 Congratulations! Synastry Module Unlocked
-                      </CardTitle>
-                      <CardDescription>
-                        You've mastered the fundamentals! Now you can add a second birth chart to explore relationship compatibility.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Link href="/learning/synastry">
-                        <Button className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
-                          Explore Synastry
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                )}
-              </>
             )}
           </TabsContent>
 
-          {/* Completed Lessons Tab */}
-          <TabsContent value="completed" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {completedLessons.map((lesson) => (
-                <Card key={lesson.id} className="hover:shadow-lg transition-shadow cursor-pointer group bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <Badge variant="secondary" className="mb-2 capitalize bg-green-100 text-green-700">
-                        {lesson.track}
-                      </Badge>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          {lesson.estimatedMinutes}min
-                        </div>
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg group-hover:text-green-600 transition-colors">
-                      {lesson.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {lesson.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm font-medium text-green-600">
-                        <Star className="w-4 h-4" />
-                        +{lesson.xpReward} XP
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {lesson.userProgress?.completedAt && (
-                          <span className="text-xs text-gray-500">
-                            {new Date(lesson.userProgress.completedAt).toLocaleDateString()}
-                          </span>
-                        )}
-                        <Link href={`/learning/lesson/${lesson.id}`}>
-                          <Button size="sm" variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
-                            <CheckCircle2 className="w-4 h-4 mr-1" />
-                            Review
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          <TabsContent value="planets" className="space-y-6">
+            {renderTrackLessons("planets", "Planets")}
+          </TabsContent>
 
-            {completedLessons.length === 0 && (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <CheckCircle2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No completed lessons yet</h3>
-                  <p className="text-gray-500">
-                    Complete your first lesson to see it here for easy review access.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+          <TabsContent value="houses" className="space-y-6">
+            {renderTrackLessons("houses", "Houses")}
+          </TabsContent>
+
+          <TabsContent value="nodes" className="space-y-6">
+            {renderTrackLessons("nodes", "Lunar Nodes")}
+          </TabsContent>
+
+          <TabsContent value="patterns" className="space-y-6">
+            {renderTrackLessons("patterns", "Patterns & Shapes")}
           </TabsContent>
 
           {/* Badges Tab */}
