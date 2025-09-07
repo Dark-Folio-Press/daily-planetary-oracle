@@ -1364,6 +1364,38 @@ class LearningService {
       hasQuizInDatabase = lessonContent.sections.some((section: any) => section.type === 'quiz');
     }
     
+    // For lessons with database content (including quizzes), use that content directly
+    if (lessonContent?.sections && lessonContent.sections.length > 0) {
+      // Process each section from the database
+      lessonContent.sections.forEach((section: any) => {
+        if (section.type === 'introduction' || section.type === 'personal-insight' || section.type === 'foundational-concept') {
+          content.push({
+            type: 'text',
+            data: {
+              title: section.type === 'introduction' ? lesson.title : 
+                    section.type === 'personal-insight' ? 'Personal Insights' :
+                    'Foundational Concepts',
+              content: section.content
+            }
+          });
+        } else if (section.type === 'interactive-element' && section.element === 'chart-focus') {
+          content.push({
+            type: 'interactive-element',
+            element: 'chart-focus',
+            focusElement: section.focusElement
+          } as any);
+        } else if (section.type === 'quiz') {
+          content.push({
+            type: 'quiz',
+            data: section.data
+          });
+        }
+      });
+      
+      // Return early with database content - don't override with hardcoded logic
+      return content;
+    }
+    
     if (!chartData) {
       // Generic content for users without birth data
       content.push({
