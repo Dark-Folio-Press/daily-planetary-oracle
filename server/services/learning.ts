@@ -1132,7 +1132,31 @@ class LearningService {
       .filter(p => p.status === 'completed' || p.status === 'mastered')
       .map(p => p.lessonId);
     
+    // Group lessons by track to check for track completion
+    const trackLessons = new Map();
+    allLessons.forEach(lesson => {
+      if (!trackLessons.has(lesson.track)) {
+        trackLessons.set(lesson.track, []);
+      }
+      trackLessons.get(lesson.track).push(lesson);
+    });
+    
+    // Check which tracks are fully completed
+    const completedTracks = new Set();
+    trackLessons.forEach((lessons, track) => {
+      const trackLessonIds = lessons.map(l => l.id);
+      const completedInTrack = completedLessonIds.filter(id => trackLessonIds.includes(id));
+      if (completedInTrack.length === lessons.length) {
+        completedTracks.add(track);
+      }
+    });
+    
     const availableLessons = allLessons.filter(lesson => {
+      // If track is completed, all lessons in track are available for review
+      if (completedTracks.has(lesson.track)) {
+        return true;
+      }
+      
       // If no prerequisites, it's available
       if (!lesson.requiredLessons || lesson.requiredLessons.length === 0) {
         return true;
@@ -1140,10 +1164,13 @@ class LearningService {
       
       // Check if all prerequisites are completed
       // Convert string prerequisites to numbers if needed
-      return lesson.requiredLessons.every(req => {
+      const prerequisitesMet = lesson.requiredLessons.every(req => {
         const reqId = typeof req === 'string' ? parseInt(req) : req;
         return completedLessonIds.includes(reqId);
       });
+      
+      // Only available if prerequisites are met AND not already completed (unless track is complete)
+      return prerequisitesMet && !completedLessonIds.includes(lesson.id);
     });
     
     // Attach user progress to each lesson
