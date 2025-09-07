@@ -1364,8 +1364,8 @@ class LearningService {
       hasQuizInDatabase = lessonContent.sections.some((section: any) => section.type === 'quiz');
     }
     
-    // For PLANETARY lessons with complete database content (including quizzes), use that content directly
-    if (lesson.track === 'planets' && lessonContent?.sections && hasQuizInDatabase) {
+    // For PLANETARY lessons with complete database content (including quizzes), use hybrid approach
+    if (lesson.track === 'planets' && lessonContent?.sections && hasQuizInDatabase && chartData) {
       // Process each section from the database for planetary lessons
       lessonContent.sections.forEach((section: any) => {
         if (section.type === 'introduction' || section.type === 'personal-insight' || section.type === 'foundational-concept') {
@@ -1392,7 +1392,98 @@ class LearningService {
         }
       });
       
-      // Return early with database content for complete planetary lessons
+      // Add interactive elements from hardcoded logic based on lesson title
+      if (lesson.title.includes('Mercury')) {
+        const mercuryData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury');
+        const mercurySign = mercuryData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'communication-explorer',
+            sign: mercurySign,
+            element: 'mercury'
+          }
+        });
+      } else if (lesson.title.includes('Venus')) {
+        const venusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Venus');
+        const venusSign = venusData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'relationship-explorer',
+            sign: venusSign,
+            element: 'venus'
+          }
+        });
+      } else if (lesson.title.includes('Mars')) {
+        const marsData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mars');
+        const marsSign = marsData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'motivation-explorer',
+            sign: marsSign,
+            element: 'mars'
+          }
+        });
+      } else if (lesson.title.includes('Jupiter')) {
+        const jupiterData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Jupiter');
+        const jupiterSign = jupiterData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'expansion-explorer',
+            sign: jupiterSign,
+            element: 'jupiter'
+          }
+        });
+      } else if (lesson.title.includes('Saturn')) {
+        const saturnData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Saturn');
+        const saturnSign = saturnData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'discipline-explorer',
+            sign: saturnSign,
+            element: 'saturn'
+          }
+        });
+      } else if (lesson.title.includes('Uranus')) {
+        const uranusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Uranus');
+        const uranusSign = uranusData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'innovation-explorer',
+            sign: uranusSign,
+            element: 'uranus'
+          }
+        });
+      } else if (lesson.title.includes('Neptune')) {
+        const neptuneData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Neptune');
+        const neptuneSign = neptuneData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'dreams-explorer',
+            sign: neptuneSign,
+            element: 'neptune'
+          }
+        });
+      } else if (lesson.title.includes('Pluto')) {
+        const plutoData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Pluto');
+        const plutoSign = plutoData?.sign || chartData.sunSign;
+        content.push({
+          type: 'interactive',
+          data: {
+            type: 'transformation-explorer',
+            sign: plutoSign,
+            element: 'pluto'
+          }
+        });
+      }
+      
+      // Return hybrid content for complete planetary lessons
       return content;
     }
     
