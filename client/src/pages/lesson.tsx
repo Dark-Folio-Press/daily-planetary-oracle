@@ -642,11 +642,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">☿</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  {/* Extract Mercury sign from interactiveContent element which contains "Mercury in [Sign]" */}
-                                  {interactiveContent?.element?.includes('Mercury in') ? 
-                                    interactiveContent.element : 
-                                    `Mercury in ${lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury')?.sign || 'Virgo'}`
-                                  }
+                                  {interactiveContent?.element || 'Mercury in Virgo'}
                                 </div>
                               </div>
                             )}
@@ -654,11 +650,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♀</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  {/* Extract Venus sign from interactiveContent element which contains "Venus in [Sign]" */}
-                                  {interactiveContent?.element?.includes('Venus in') ? 
-                                    interactiveContent.element : 
-                                    `Venus in ${lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Venus')?.sign || 'Libra'}`
-                                  }
+                                  {interactiveContent?.element || 'Venus in Libra'}
                                 </div>
                               </div>
                             )}
@@ -666,11 +658,7 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♂</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  {/* Extract Mars sign from interactiveContent element which contains "Mars in [Sign]" */}
-                                  {interactiveContent?.element?.includes('Mars in') ? 
-                                    interactiveContent.element : 
-                                    `Mars in ${lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mars')?.sign || 'Scorpio'}`
-                                  }
+                                  {interactiveContent?.element || 'Mars in Scorpio'}
                                 </div>
                               </div>
                             )}

@@ -559,15 +559,6 @@ export class AstrologyService {
       
       const chartData = JSON.parse(stdout);
       
-      console.log('Python chart data received:', {
-        hasError: !!chartData.error,
-        hasHouses: !!chartData.houses,
-        hasPlanets: !!chartData.planets,
-        planetsKeys: chartData.planets ? Object.keys(chartData.planets) : 'no planets'
-      });
-      
-      // Log what we're about to transform
-      console.log('About to transform planets:', chartData.planets ? 'EXISTS' : 'MISSING');
       
       if (chartData.error) {
         console.error('Python detailed chart error:', chartData.error);
