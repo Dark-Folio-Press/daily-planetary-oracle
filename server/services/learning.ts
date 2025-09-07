@@ -311,7 +311,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: null,
+        requiredLessons: ['basics-1', 'basics-2'],
         xpReward: 15,
         estimatedMinutes: 8
       },
@@ -430,7 +430,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['planets-1'],
+        requiredLessons: null,
         xpReward: 15,
         estimatedMinutes: 8
       },
@@ -451,7 +451,7 @@ class LearningService {
             }
           ]
         },
-        requiredLessons: ['planets-2'],
+        requiredLessons: ['planets-1', 'planets-2'],
         xpReward: 15,
         estimatedMinutes: 8
       },
