@@ -559,6 +559,13 @@ export class AstrologyService {
       
       const chartData = JSON.parse(stdout);
       
+      console.log('Python chart data received:', {
+        hasError: !!chartData.error,
+        hasHouses: !!chartData.houses,
+        hasPlanets: !!chartData.planets,
+        planetsKeys: chartData.planets ? Object.keys(chartData.planets) : 'no planets'
+      });
+      
       if (chartData.error) {
         console.error('Python detailed chart error:', chartData.error);
         // Fallback to JavaScript calculations

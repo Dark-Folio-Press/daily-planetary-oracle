@@ -1315,6 +1315,12 @@ class LearningService {
           time: user[0].birthTime,
           location: user[0].birthLocation
         });
+        console.log('DetailedChart result:', {
+          hasChart: !!detailedChart,
+          hasPlanets: !!detailedChart?.planets,
+          planetsLength: detailedChart?.planets?.length,
+          planetNames: detailedChart?.planets?.map((p: any) => p.planet)
+        });
       } catch (error) {
         console.error('Failed to get detailed chart data:', error);
       }
