@@ -575,9 +575,11 @@ export default function LessonPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 overflow-y-auto flex-1 pr-2">
-              <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
-                <CardContent className="p-6">
-                  {interactiveContent?.element === 'sun' && (
+              {/* Only show interactive content if NOT chart-focus */}
+              {interactiveContent?.type !== 'chart-focus' && (
+                <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                  <CardContent className="p-6">
+                    {interactiveContent?.element === 'sun' && (
                     <>
                       <h4 className="font-semibold mb-3">Your {interactiveContent?.sign} Sun in Action</h4>
                       <div className="space-y-3">
@@ -1464,6 +1466,7 @@ export default function LessonPage() {
                   )}
                 </CardContent>
               </Card>
+              )}
             </div>
           </DialogContent>
         </Dialog>
