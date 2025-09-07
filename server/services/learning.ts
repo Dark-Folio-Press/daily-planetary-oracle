@@ -1364,68 +1364,10 @@ class LearningService {
       hasQuizInDatabase = lessonContent.sections.some((section: any) => section.type === 'quiz');
     }
     
-    // For PLANETARY lessons with complete database content (including quizzes), use hybrid approach
-    if (lesson.track === 'planets' && lessonContent?.sections && hasQuizInDatabase && chartData) {
-      // Process each section from the database for planetary lessons
-      lessonContent.sections.forEach((section: any) => {
-        if (section.type === 'introduction' || section.type === 'personal-insight' || section.type === 'foundational-concept') {
-          content.push({
-            type: 'text',
-            data: {
-              title: section.type === 'introduction' ? lesson.title : 
-                    section.type === 'personal-insight' ? 'Personal Insights' :
-                    'Foundational Concepts',
-              content: section.content
-            }
-          });
-        } else if (section.type === 'interactive-element' && section.element === 'chart-focus') {
-          content.push({
-            type: 'interactive-element',
-            element: 'chart-focus',
-            focusElement: section.focusElement
-          } as any);
-        } else if (section.type === 'quiz') {
-          content.push({
-            type: 'quiz',
-            data: section.data
-          });
-        }
-      });
-      
-      // Add interactive elements using EXISTING supported types
-      if (lesson.title.includes('Mercury') || lesson.title.includes('Venus') || lesson.title.includes('Mars') || 
-          lesson.title.includes('Jupiter') || lesson.title.includes('Saturn') || lesson.title.includes('Uranus') || 
-          lesson.title.includes('Neptune') || lesson.title.includes('Pluto')) {
-        
-        // Get the planet's sign from chart data
-        let planetName = 'Sun'; // fallback
-        if (lesson.title.includes('Mercury')) planetName = 'Mercury';
-        else if (lesson.title.includes('Venus')) planetName = 'Venus';
-        else if (lesson.title.includes('Mars')) planetName = 'Mars';
-        else if (lesson.title.includes('Jupiter')) planetName = 'Jupiter';
-        else if (lesson.title.includes('Saturn')) planetName = 'Saturn';
-        else if (lesson.title.includes('Uranus')) planetName = 'Uranus';
-        else if (lesson.title.includes('Neptune')) planetName = 'Neptune';
-        else if (lesson.title.includes('Pluto')) planetName = 'Pluto';
-        
-        const planetData = chartData.detailedChart?.planets?.find((p: any) => p.planet === planetName);
-        const planetSign = planetData?.sign || chartData.sunSign;
-        const planetElement = this.getSignElement(planetSign);
-        
-        // Use existing element-explorer for all planetary lessons
-        content.push({
-          type: 'interactive',
-          data: {
-            type: 'element-explorer',
-            sign: planetSign,
-            element: planetElement,
-            planetContext: planetName // Add context for planetary focus
-          }
-        });
-      }
-      
-      // Return hybrid content for complete planetary lessons
-      return content;
+    // For PLANETARY lessons with quiz content, only add quiz from database to prevent mixing
+    let addQuizFromDatabase = false;
+    if (lesson.track === 'planets' && lessonContent?.sections && hasQuizInDatabase) {
+      addQuizFromDatabase = true;
     }
     
     if (!chartData) {
@@ -1608,7 +1550,7 @@ class LearningService {
           }
           break;
         case 'planets':
-          if (lesson.lessonNumber === 1) { // Mercury
+          if (lesson.lessonNumber === 2) { // Mercury
             const mercuryData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury');
             const mercurySign = mercuryData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1649,7 +1591,7 @@ class LearningService {
                 description: 'See where Mercury sits in your birth chart and which house governs your communication style'
               }
             });
-          } else if (lesson.lessonNumber === 2) { // Venus
+          } else if (lesson.lessonNumber === 3) { // Venus
             const venusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Venus');
             const venusSign = venusData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1682,7 +1624,7 @@ class LearningService {
                 description: 'Discover where Venus sits in your chart and which life area influences your relationships and values'
               }
             });
-          } else if (lesson.lessonNumber === 3) { // Mars
+          } else if (lesson.lessonNumber === 4) { // Mars
             const marsData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Mars');
             const marsSign = marsData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1715,7 +1657,7 @@ class LearningService {
                 description: 'See where Mars is positioned in your chart and which life area drives your ambition and energy'
               }
             });
-          } else if (lesson.lessonNumber === 4) { // Jupiter
+          } else if (lesson.lessonNumber === 5) { // Jupiter
             const jupiterData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Jupiter');
             const jupiterSign = jupiterData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1741,7 +1683,7 @@ class LearningService {
                 description: 'Discover where Jupiter brings luck and expansion to your life through its chart placement'
               }
             });
-          } else if (lesson.lessonNumber === 5) { // Saturn
+          } else if (lesson.lessonNumber === 6) { // Saturn
             const saturnData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Saturn');
             const saturnSign = saturnData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1767,7 +1709,7 @@ class LearningService {
                 description: 'See where Saturn teaches your most important life lessons through its chart position'
               }
             });
-          } else if (lesson.lessonNumber === 6) { // Uranus
+          } else if (lesson.lessonNumber === 7) { // Uranus
             const uranusData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Uranus');
             const uranusSign = uranusData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1793,7 +1735,7 @@ class LearningService {
                 description: 'Explore where Uranus brings sudden changes and innovation to your life path'
               }
             });
-          } else if (lesson.lessonNumber === 7) { // Neptune
+          } else if (lesson.lessonNumber === 8) { // Neptune
             const neptuneData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Neptune');
             const neptuneSign = neptuneData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1819,7 +1761,7 @@ class LearningService {
                 description: 'Discover where Neptune connects you to dreams and spirituality in your chart'
               }
             });
-          } else if (lesson.lessonNumber === 8) { // Pluto
+          } else if (lesson.lessonNumber === 9) { // Pluto
             const plutoData = chartData.detailedChart?.planets?.find((p: any) => p.planet === 'Pluto');
             const plutoSign = plutoData?.sign || chartData.sunSign; // Fallback to sun sign
             
@@ -1845,6 +1787,17 @@ class LearningService {
                 description: 'See where Pluto brings deep transformation and power to your life journey'
               }
             });
+          }
+          
+          // Add quiz from database to prevent content mixing for planetary lessons
+          if (addQuizFromDatabase) {
+            const quizSection = lessonContent.sections.find((section: any) => section.type === 'quiz');
+            if (quizSection) {
+              content.push({
+                type: 'quiz',
+                data: quizSection.data
+              });
+            }
           }
           break;
         case 'houses':
