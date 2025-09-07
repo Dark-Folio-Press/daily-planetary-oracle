@@ -566,6 +566,9 @@ export class AstrologyService {
         planetsKeys: chartData.planets ? Object.keys(chartData.planets) : 'no planets'
       });
       
+      // Log what we're about to transform
+      console.log('About to transform planets:', chartData.planets ? 'EXISTS' : 'MISSING');
+      
       if (chartData.error) {
         console.error('Python detailed chart error:', chartData.error);
         // Fallback to JavaScript calculations

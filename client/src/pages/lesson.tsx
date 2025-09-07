@@ -604,15 +604,6 @@ export default function LessonPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 overflow-y-auto flex-1 pr-2">
-              {/* Debug logging */}
-              {process.env.NODE_ENV === 'development' && console.log('Venus debug:', {
-                interactiveContent: interactiveContent,
-                userChartData: lessonData?.userChartData,
-                detailedChart: lessonData?.userChartData?.detailedChart,
-                planets: lessonData?.userChartData?.detailedChart?.planets,
-                venusData: lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Venus')
-              })}
-              
               {/* Show chart-focus content */}
               {interactiveContent?.type === 'chart-focus' ? (
                 <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
@@ -651,7 +642,11 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">☿</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Mercury in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury')?.sign || 'Virgo'}
+                                  {/* Extract Mercury sign from interactiveContent element which contains "Mercury in [Sign]" */}
+                                  {interactiveContent?.element?.includes('Mercury in') ? 
+                                    interactiveContent.element : 
+                                    `Mercury in ${lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mercury')?.sign || 'Virgo'}`
+                                  }
                                 </div>
                               </div>
                             )}
@@ -659,7 +654,11 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♀</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Venus in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Venus')?.sign || 'Libra'}
+                                  {/* Extract Venus sign from interactiveContent element which contains "Venus in [Sign]" */}
+                                  {interactiveContent?.element?.includes('Venus in') ? 
+                                    interactiveContent.element : 
+                                    `Venus in ${lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Venus')?.sign || 'Libra'}`
+                                  }
                                 </div>
                               </div>
                             )}
@@ -667,7 +666,11 @@ export default function LessonPage() {
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♂</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Mars in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mars')?.sign || 'Scorpio'}
+                                  {/* Extract Mars sign from interactiveContent element which contains "Mars in [Sign]" */}
+                                  {interactiveContent?.element?.includes('Mars in') ? 
+                                    interactiveContent.element : 
+                                    `Mars in ${lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Mars')?.sign || 'Scorpio'}`
+                                  }
                                 </div>
                               </div>
                             )}

@@ -1321,6 +1321,11 @@ class LearningService {
           planetsLength: detailedChart?.planets?.length,
           planetNames: detailedChart?.planets?.map((p: any) => p.planet)
         });
+        
+        // Ensure planets data is properly included in response
+        if (detailedChart && !detailedChart.planets) {
+          console.error('WARNING: detailedChart missing planets array!');
+        }
       } catch (error) {
         console.error('Failed to get detailed chart data:', error);
       }
