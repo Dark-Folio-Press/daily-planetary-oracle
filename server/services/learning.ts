@@ -2222,8 +2222,11 @@ The first four houses form your personal foundation - representing your inner ci
     
     // Process original lesson content sections (including quiz)
     if (lesson.content && (lesson.content as any).sections) {
+      console.log(`Processing lesson ${lesson.id} content sections:`, JSON.stringify((lesson.content as any).sections, null, 2));
       for (const section of (lesson.content as any).sections) {
+        console.log(`Processing section type: ${section.type}`, section);
         if (section.type === 'quiz' && section.data && section.data.questions) {
+          console.log('Adding quiz content to lesson');
           content.push({
             type: 'quiz',
             data: {
