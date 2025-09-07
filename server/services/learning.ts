@@ -49,8 +49,7 @@ class LearningService {
     // Check if content already exists
     const existingLessons = await db.select().from(learningLessons).limit(1);
     if (existingLessons.length > 0) {
-      console.log('Learning content already exists, checking for updates...');
-      await this.updateBasicsTrackStructure();
+      console.log('Learning content already exists, skipping creation...');
       return;
     }
 
@@ -61,105 +60,6 @@ class LearningService {
     console.log('Learning content initialized successfully');
   }
 
-  private async updateBasicsTrackStructure(): Promise<void> {
-    console.log('Updating basics track structure...');
-    
-    // Check if the structure needs updating by looking for the old duplicate lesson
-    const duplicateLesson = await db.select()
-      .from(learningLessons)
-      .where(and(
-        eq(learningLessons.track, 'basics'),
-        eq(learningLessons.lessonNumber, 5),
-        like(learningLessons.title, '%Moon Sign%')
-      ));
-    
-    if (duplicateLesson.length === 0) {
-      console.log('Basics track structure is already up to date');
-      return;
-    }
-    
-    // Update the structure: Remove duplicate moon lesson (lesson 5), 
-    // move rising from 6 to 3, elements from 3 to 4, modalities from 4 to 5, big three from 7 to 6
-    
-    // First, update lesson numbers and content for the reorganized lessons
-    await db.update(learningLessons)
-      .set({
-        lessonNumber: 3,
-        title: 'Your Rising Sign: Your Outer Expression',
-        description: 'Learn how your rising sign shapes first impressions and your approach to the world.',
-        content: {
-          sections: [
-            {
-              type: 'introduction',
-              content: 'Your rising sign is your social mask, affecting how others see you and how you navigate the world.'
-            },
-            {
-              type: 'personal-insight', 
-              content: 'Discover how your rising sign influences your personality and behavior.'
-            },
-            {
-              type: 'interactive-element',
-              element: 'rising-expression-explorer'
-            }
-          ]
-        },
-        requiredLessons: null
-      })
-      .where(and(
-        eq(learningLessons.track, 'basics'),
-        eq(learningLessons.lessonNumber, 6)
-      ));
-    
-    await db.update(learningLessons)
-      .set({
-        lessonNumber: 4,
-        requiredLessons: ['basics-3']
-      })
-      .where(and(
-        eq(learningLessons.track, 'basics'),
-        eq(learningLessons.lessonNumber, 3)
-      ));
-    
-    await db.update(learningLessons)
-      .set({
-        lessonNumber: 5,
-        requiredLessons: ['basics-4']
-      })
-      .where(and(
-        eq(learningLessons.track, 'basics'),
-        eq(learningLessons.lessonNumber, 4)
-      ));
-    
-    await db.update(learningLessons)
-      .set({
-        lessonNumber: 6,
-        requiredLessons: ['basics-5']
-      })
-      .where(and(
-        eq(learningLessons.track, 'basics'),
-        eq(learningLessons.lessonNumber, 7)
-      ));
-    
-    // Remove the duplicate moon lesson (lesson 5)
-    await db.delete(learningLessons)
-      .where(and(
-        eq(learningLessons.track, 'basics'),
-        eq(learningLessons.lessonNumber, 5),
-        like(learningLessons.title, '%Moon Sign%')
-      ));
-    
-    // Update planets track dependency
-    await db.update(learningLessons)
-      .set({
-        requiredLessons: ['basics-6']
-      })
-      .where(and(
-        eq(learningLessons.track, 'planets'),
-        eq(learningLessons.lessonNumber, 1)
-      ));
-    
-    console.log('Basics track structure updated successfully');
-  }
 
   private async createDefaultLessons(): Promise<void> {
     const lessons = [
