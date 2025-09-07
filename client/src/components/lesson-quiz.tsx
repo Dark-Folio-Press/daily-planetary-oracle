@@ -28,27 +28,33 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
 
   // Confetti animation function for quiz success
   const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    
-    // Additional burst after a short delay
-    setTimeout(() => {
+    console.log('🎊 Triggering confetti animation!');
+    try {
       confetti({
-        particleCount: 50,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 }
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
       });
-      confetti({
-        particleCount: 50,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 }
-      });
-    }, 200);
+      
+      // Additional burst after a short delay
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+      }, 200);
+      console.log('✅ Confetti animation triggered successfully');
+    } catch (error) {
+      console.error('❌ Error triggering confetti:', error);
+    }
   };
 
   const handleAnswerSelect = (optionIndex: number) => {
@@ -111,6 +117,16 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
     ).length;
     const percentage = getScorePercentage();
     const passed = isPassed();
+
+    // Trigger confetti when results screen renders (backup/fallback)
+    useEffect(() => {
+      if (passed) {
+        console.log('🎊 Quiz results screen rendered with passed=true, triggering confetti fallback');
+        setTimeout(() => {
+          triggerConfetti();
+        }, 500); // Small delay to ensure screen is ready
+      }
+    }, []);
 
     return (
       <Card className="w-full max-w-2xl mx-auto">
