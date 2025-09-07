@@ -575,8 +575,64 @@ export default function LessonPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 overflow-y-auto flex-1 pr-2">
-              {/* Only show interactive content if NOT chart-focus */}
-              {interactiveContent?.type !== 'chart-focus' && (
+              {/* Show chart-focus content */}
+              {interactiveContent?.type === 'chart-focus' ? (
+                <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
+                  <CardContent className="p-6">
+                    <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
+                    <div className="space-y-4">
+                      {/* Simplified Chart Focus - just the relevant element */}
+                      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                        <div className="text-center space-y-4">
+                          <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-indigo-300 dark:border-indigo-700 bg-white dark:bg-gray-900 flex items-center justify-center">
+                            {interactiveContent?.element?.toLowerCase().includes('sun') && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">☉</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  {lessonData?.userChartData?.sunSign}
+                                </div>
+                              </div>
+                            )}
+                            {interactiveContent?.element?.toLowerCase().includes('moon') && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">🌙</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  {lessonData?.userChartData?.moonSign}
+                                </div>
+                              </div>
+                            )}
+                            {interactiveContent?.element?.toLowerCase().includes('rising') && (
+                              <div className="flex flex-col items-center">
+                                <div className="text-2xl">↗</div>
+                                <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                  {lessonData?.userChartData?.risingSign}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            Focused view of your {interactiveContent?.element} placement
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 text-center">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {interactiveContent?.description || `See how your ${interactiveContent?.element} appears in your personal birth chart`}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                        <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Chart Insight</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          This placement shows how {interactiveContent?.element} influences your personality and life path. 
+                          The position relative to other elements creates your unique astrological blueprint.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
                 <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
                   <CardContent className="p-6">
                     {interactiveContent?.element === 'sun' && (
@@ -1201,61 +1257,6 @@ export default function LessonPage() {
                     </>
                   )}
 
-                  {interactiveContent?.type === 'chart-focus' && (
-                    <>
-                      <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
-                      <div className="space-y-4">
-                        {/* Simplified Chart Focus - just the relevant element */}
-                        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-indigo-200 dark:border-indigo-800">
-                          <div className="text-center space-y-4">
-                            <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-indigo-300 dark:border-indigo-700 bg-white dark:bg-gray-900 flex items-center justify-center">
-                              {interactiveContent?.element?.toLowerCase().includes('sun') && (
-                                <div className="flex flex-col items-center">
-                                  <div className="text-2xl">☉</div>
-                                  <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                    {lessonData?.userChartData?.sunSign}
-                                  </div>
-                                </div>
-                              )}
-                              {interactiveContent?.element?.toLowerCase().includes('moon') && (
-                                <div className="flex flex-col items-center">
-                                  <div className="text-2xl">🌙</div>
-                                  <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                    {lessonData?.userChartData?.moonSign}
-                                  </div>
-                                </div>
-                              )}
-                              {interactiveContent?.element?.toLowerCase().includes('rising') && (
-                                <div className="flex flex-col items-center">
-                                  <div className="text-2xl">↗</div>
-                                  <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                    {lessonData?.userChartData?.risingSign}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
-                              Focused view of your {interactiveContent?.element} placement
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 text-center">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {interactiveContent?.description || `See how your ${interactiveContent?.element} appears in your personal birth chart`}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Chart Insight</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            This placement shows how {interactiveContent?.element} influences your personality and life path. 
-                            The position relative to other elements creates your unique astrological blueprint.
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  )}
 
                   {/* Pattern Recognition Interactive */}
                   {interactiveContent?.element === 'pattern-exploration' && (
