@@ -28,7 +28,6 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
 
   // Confetti animation function for quiz success
   const triggerConfetti = () => {
-    console.log('🎊 Triggering confetti animation!');
     try {
       confetti({
         particleCount: 100,
@@ -51,9 +50,8 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
           origin: { x: 1 }
         });
       }, 200);
-      console.log('✅ Confetti animation triggered successfully');
     } catch (error) {
-      console.error('❌ Error triggering confetti:', error);
+      console.error('Error triggering confetti animation:', error);
     }
   };
 
@@ -121,7 +119,6 @@ export default function LessonQuiz({ questions, onQuizComplete, lessonTitle }: Q
     // Trigger confetti when results screen renders (backup/fallback)
     useEffect(() => {
       if (passed) {
-        console.log('🎊 Quiz results screen rendered with passed=true, triggering confetti fallback');
         setTimeout(() => {
           triggerConfetti();
         }, 500); // Small delay to ensure screen is ready
