@@ -1203,190 +1203,37 @@ export default function LessonPage() {
                     <>
                       <h4 className="font-semibold mb-3">Your Birth Chart Focus: {interactiveContent?.element}</h4>
                       <div className="space-y-4">
-                        {/* Simple Birth Chart Visualization */}
+                        {/* Simplified Chart Focus - just the relevant element */}
                         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-indigo-200 dark:border-indigo-800">
-                          <div className="flex items-center justify-center">
-                            <div className="relative w-48 h-48 rounded-full border-4 border-indigo-300 dark:border-indigo-700 bg-white dark:bg-gray-900">
-                              {/* Chart Circle with highlighted element */}
-                              <div className="absolute inset-0 rounded-full">
-                                {/* Highlighted element position based on type */}
-                                {interactiveContent?.element?.toLowerCase().includes('moon') && (
-                                  <div className="absolute top-2 right-8 w-4 h-4 bg-yellow-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      🌙 {lessonData?.userChartData?.moonSign}
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('sun') && (
-                                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ☉ {lessonData?.userChartData?.sunSign}
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('rising') && (
-                                  <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ↗ {lessonData?.userChartData?.risingSign}
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('mercury') && (
-                                  <div className="absolute bottom-8 left-8 w-4 h-4 bg-blue-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ☿ Mercury
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('venus') && (
-                                  <div className="absolute bottom-2 right-1/4 w-4 h-4 bg-pink-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♀ Venus
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('mars') && (
-                                  <div className="absolute top-16 right-16 w-4 h-4 bg-red-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♂ Mars
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('jupiter') && (
-                                  <div className="absolute bottom-16 left-16 w-4 h-4 bg-purple-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♃ Jupiter
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('saturn') && (
-                                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-amber-500 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♄ Saturn
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('uranus') && (
-                                  <div className="absolute top-4 left-4 w-4 h-4 bg-cyan-400 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♅ Uranus
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('neptune') && (
-                                  <div className="absolute bottom-4 right-4 w-4 h-4 bg-blue-500 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♆ Neptune
-                                    </div>
-                                  </div>
-                                )}
-                                {interactiveContent?.element?.toLowerCase().includes('pluto') && (
-                                  <div className="absolute bottom-8 right-8 w-4 h-4 bg-gray-600 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                      ♇ Pluto
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* Big Three combination view */}
-                                {interactiveContent?.element?.toLowerCase().includes('big-three') && (
-                                  <>
-                                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-400 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☉ {interactiveContent?.sun}
-                                      </div>
-                                    </div>
-                                    <div className="absolute top-2 right-8 w-4 h-4 bg-yellow-400 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        🌙 {interactiveContent?.moon}
-                                      </div>
-                                    </div>
-                                    <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ↗ {interactiveContent?.rising}
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
-                                
-                                {/* Lunar Nodes visualization */}
-                                {interactiveContent?.element?.toLowerCase().includes('lunar-nodes') && (
-                                  <>
-                                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-green-500 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☊ {interactiveContent?.northNode}
-                                      </div>
-                                    </div>
-                                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-orange-500 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☋ {interactiveContent?.southNode}
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
-                                
-                                {/* North Node focus */}
-                                {interactiveContent?.element?.toLowerCase().includes('north-node') && (
-                                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-green-500 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-6 font-semibold text-indigo-700">
-                                      ☊ {interactiveContent?.sign}
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* South Node focus */}
-                                {interactiveContent?.element?.toLowerCase().includes('south-node') && (
-                                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-orange-500 rounded-full shadow-lg animate-pulse">
-                                    <div className="text-xs text-center mt-6 font-semibold text-indigo-700">
-                                      ☋ {interactiveContent?.sign}
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* Nodal Houses visualization */}
-                                {interactiveContent?.element?.toLowerCase().includes('nodal-houses') && (
-                                  <>
-                                    <div className="absolute top-6 left-6 w-4 h-4 bg-green-500 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☊ {interactiveContent?.northNode}
-                                      </div>
-                                    </div>
-                                    <div className="absolute bottom-6 right-6 w-4 h-4 bg-orange-500 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☋ {interactiveContent?.southNode}
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
-                                
-                                {/* Nodal Aspects visualization */}
-                                {interactiveContent?.element?.toLowerCase().includes('nodal-aspects') && (
-                                  <>
-                                    <div className="absolute top-8 left-8 w-4 h-4 bg-green-500 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☊ {interactiveContent?.northNode}
-                                      </div>
-                                    </div>
-                                    <div className="absolute bottom-8 right-8 w-4 h-4 bg-orange-500 rounded-full shadow-lg animate-pulse">
-                                      <div className="text-xs text-center mt-5 font-semibold text-indigo-700">
-                                        ☋ {interactiveContent?.southNode}
-                                      </div>
-                                    </div>
-                                    {/* Add connecting lines for aspects */}
-                                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                                      <line x1="25%" y1="25%" x2="75%" y2="75%" stroke="#8b5cf6" strokeWidth="1" strokeDasharray="2,2" opacity="0.6"/>
-                                    </svg>
-                                  </>
-                                )}
-                                
-                                {/* Center label */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div className="text-center">
-                                    <div className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">Your Chart</div>
-                                    <div className="text-xs text-indigo-600 dark:text-indigo-400">{lessonData?.userChartData?.birthData?.location}</div>
+                          <div className="text-center space-y-4">
+                            <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-indigo-300 dark:border-indigo-700 bg-white dark:bg-gray-900 flex items-center justify-center">
+                              {interactiveContent?.element?.toLowerCase().includes('sun') && (
+                                <div className="flex flex-col items-center">
+                                  <div className="text-2xl">☉</div>
+                                  <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                    {lessonData?.userChartData?.sunSign}
                                   </div>
                                 </div>
-                              </div>
+                              )}
+                              {interactiveContent?.element?.toLowerCase().includes('moon') && (
+                                <div className="flex flex-col items-center">
+                                  <div className="text-2xl">🌙</div>
+                                  <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                    {lessonData?.userChartData?.moonSign}
+                                  </div>
+                                </div>
+                              )}
+                              {interactiveContent?.element?.toLowerCase().includes('rising') && (
+                                <div className="flex flex-col items-center">
+                                  <div className="text-2xl">↗</div>
+                                  <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                                    {lessonData?.userChartData?.risingSign}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              Focused view of your {interactiveContent?.element} placement
                             </div>
                           </div>
                           
@@ -1558,10 +1405,10 @@ export default function LessonPage() {
                   )}
 
                   {/* Personal Chart Pattern Viewer */}
-                  {interactiveContent?.element === 'your-chart-pattern' && (
+                  {interactiveContent?.element === 'your-chart-pattern' && lessonData?.userChartData && (
                     <PatternIdentificationChallenge 
-                      chartData={lessonData?.userChartData?.detailedChart}
-                      birthData={lessonData?.userChartData?.birthData}
+                      chartData={lessonData.userChartData}
+                      birthData={lessonData.userChartData.birthData}
                     />
                   )}
 
