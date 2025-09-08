@@ -2324,23 +2324,47 @@ The first four houses form your personal foundation - representing your inner ci
   }
 
 
-  private async updateUserStats(userId: string, status: string): Promise<void> {
+  private async updateUserStats(userId: string, status: string, timeSpent?: number): Promise<void> {
     const stats = await this.getUserStats(userId);
+    const today = new Date().toISOString().split('T')[0];
     
+    const updates: any = {
+      lastActivityDate: today
+    };
+
     if (status === 'completed' || status === 'mastered') {
-      const baseXP = 15;
-      const masteryBonus = status === 'mastered' ? 10 : 0;
-      const totalXP = baseXP + masteryBonus;
-      
-      await db.update(learningStats)
-        .set({
-          completedLessons: (stats.completedLessons || 0) + 1,
-          masteredLessons: status === 'mastered' ? (stats.masteredLessons || 0) + 1 : (stats.masteredLessons || 0),
-          totalXp: (stats.totalXp || 0) + totalXP,
-          lastActivityDate: new Date().toISOString()
-        })
-        .where(eq(learningStats.userId, userId));
+      updates.completedLessons = (stats.completedLessons || 0) + 1;
+      updates.totalXp = (stats.totalXp || 0) + 15; // Base XP for completion
     }
+
+    if (status === 'mastered') {
+      updates.masteredLessons = (stats.masteredLessons || 0) + 1;
+      updates.totalXp = (updates.totalXp || stats.totalXp || 0) + 10; // Bonus XP for mastery
+    }
+
+    if (timeSpent) {
+      updates.totalTimeSpent = (stats.totalTimeSpent || 0) + timeSpent;
+    }
+
+    // Update streak
+    if (stats.lastActivityDate !== today) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      
+      if (stats.lastActivityDate === yesterdayStr) {
+        // Continue streak
+        updates.currentStreak = (stats.currentStreak || 0) + 1;
+        updates.longestStreak = Math.max(updates.currentStreak, stats.longestStreak || 0);
+      } else {
+        // Start new streak
+        updates.currentStreak = 1;
+      }
+    }
+
+    await db.update(learningStats)
+      .set(updates)
+      .where(eq(learningStats.userId, userId));
   }
 
   async checkAndAwardBadges(userId: string): Promise<void> {
@@ -2462,7 +2486,7 @@ The first four houses form your personal foundation - representing your inner ci
     }
 
     // Update user stats
-    await this.updateUserStats(userId, status);
+    await this.updateUserStats(userId, status, timeSpent);
     
     // Check and award badges
     await this.checkAndAwardBadges(userId);

@@ -241,52 +241,52 @@ export default function LearningPage() {
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        {/* Stats Cards - Optimized for Mobile */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white border-0">
-            <CardContent className="p-6">
+            <CardContent className="p-3 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium">Total XP</p>
-                  <p className="text-2xl font-bold">{stats.totalXp.toLocaleString()}</p>
+                  <p className="text-purple-100 text-xs md:text-sm font-medium">Total XP</p>
+                  <p className="text-lg md:text-2xl font-bold">{stats.totalXp.toLocaleString()}</p>
                 </div>
-                <Star className="h-8 w-8 text-yellow-300" />
+                <Star className="h-5 w-5 md:h-8 md:w-8 text-yellow-300" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0">
-            <CardContent className="p-6">
+            <CardContent className="p-3 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-sm font-medium">Streak</p>
-                  <p className="text-2xl font-bold">{stats.currentStreak} days</p>
+                  <p className="text-orange-100 text-xs md:text-sm font-medium">Streak</p>
+                  <p className="text-lg md:text-2xl font-bold">{stats.currentStreak} days</p>
                 </div>
-                <Flame className="h-8 w-8 text-yellow-300" />
+                <Flame className="h-5 w-5 md:h-8 md:w-8 text-yellow-300" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0">
-            <CardContent className="p-6">
+            <CardContent className="p-3 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm font-medium">Completed</p>
-                  <p className="text-2xl font-bold">{stats.completedLessons}</p>
+                  <p className="text-green-100 text-xs md:text-sm font-medium">Completed</p>
+                  <p className="text-lg md:text-2xl font-bold">{stats.completedLessons}</p>
                 </div>
-                <CheckCircle2 className="h-8 w-8 text-green-200" />
+                <CheckCircle2 className="h-5 w-5 md:h-8 md:w-8 text-green-200" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0">
-            <CardContent className="p-6">
+            <CardContent className="p-3 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Study Time</p>
-                  <p className="text-2xl font-bold">{Math.floor(stats.totalTimeSpent / 60)}h</p>
+                  <p className="text-blue-100 text-xs md:text-sm font-medium">Study Time</p>
+                  <p className="text-lg md:text-2xl font-bold">{Math.floor(stats.totalTimeSpent / 60)}h</p>
                 </div>
-                <Clock className="h-8 w-8 text-blue-200" />
+                <Clock className="h-5 w-5 md:h-8 md:w-8 text-blue-200" />
               </div>
             </CardContent>
           </Card>
@@ -366,24 +366,26 @@ export default function LearningPage() {
             {renderTrackLessons("patterns", "Patterns & Shapes")}
           </TabsContent>
 
-          {/* Badges Tab */}
+          {/* Badges Tab - Optimized for Mobile */}
           <TabsContent value="badges" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {badges.map((badge) => (
                 <Card key={badge.id} className="bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-yellow-200 dark:border-yellow-800">
-                  <CardHeader className="text-center">
-                    <div className="text-4xl mb-2">{badge.icon}</div>
-                    <CardTitle className="text-lg text-yellow-700 dark:text-yellow-300">
-                      {badge.name}
-                    </CardTitle>
-                    <CardDescription className="text-yellow-600 dark:text-yellow-400">
-                      {badge.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <div className="flex items-center justify-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
-                      <Calendar className="w-4 h-4" />
-                      Earned {new Date(badge.earnedAt).toLocaleDateString()}
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl md:text-3xl">{badge.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm md:text-base text-yellow-700 dark:text-yellow-300 truncate">
+                          {badge.name}
+                        </h4>
+                        <p className="text-xs md:text-sm text-yellow-600 dark:text-yellow-400 line-clamp-2">
+                          {badge.description}
+                        </p>
+                        <div className="flex items-center gap-1 mt-1 text-xs text-yellow-600 dark:text-yellow-400">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(badge.earnedAt).toLocaleDateString()}
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
