@@ -638,7 +638,7 @@ export default function LessonPage() {
                                 </div>
                               </div>
                             )}
-                            {interactiveContent?.element?.toLowerCase() === 'mercury' && (
+                            {interactiveContent?.element?.toLowerCase().includes('mercury') && (
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">☿</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
@@ -646,7 +646,7 @@ export default function LessonPage() {
                                 </div>
                               </div>
                             )}
-                            {interactiveContent?.element?.toLowerCase() === 'venus' && (
+                            {interactiveContent?.element?.toLowerCase().includes('venus') && (
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♀</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
@@ -654,7 +654,7 @@ export default function LessonPage() {
                                 </div>
                               </div>
                             )}
-                            {interactiveContent?.element?.toLowerCase() === 'mars' && (
+                            {interactiveContent?.element?.toLowerCase().includes('mars') && (
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♂</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
@@ -662,11 +662,11 @@ export default function LessonPage() {
                                 </div>
                               </div>
                             )}
-                            {interactiveContent?.element?.toLowerCase() === 'jupiter' && (
+                            {interactiveContent?.element?.toLowerCase().includes('jupiter') && (
                               <div className="flex flex-col items-center">
                                 <div className="text-2xl">♃</div>
                                 <div className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                                  Jupiter in {lessonData?.userChartData?.detailedChart?.planets?.find((p: any) => p.planet === 'Jupiter')?.sign || 'Sagittarius'}
+                                  {interactiveContent?.element || 'Jupiter in Sagittarius'}
                                 </div>
                               </div>
                             )}
