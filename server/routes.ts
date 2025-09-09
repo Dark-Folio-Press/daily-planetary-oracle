@@ -1236,7 +1236,7 @@ ${daily.horoscope}
     console.log('Visual chart request received:', req.body);
     
     try {
-      const { birthDate, birthTime, birthLocation } = req.body;
+      const { birthDate, birthTime, birthLocation, theme = 'default' } = req.body;
       const user = (req.user as any);
       
       if (!birthDate || !birthTime || !birthLocation) {
@@ -1274,7 +1274,8 @@ ${daily.horoscope}
       const result = await astrologyService.generateBirthChartSVG({
         date: birthDate,
         time: birthTime,
-        location: birthLocation
+        location: birthLocation,
+        theme: theme
       }, user?.username || user?.firstName || 'Birth Chart');
 
       if (!result.success) {

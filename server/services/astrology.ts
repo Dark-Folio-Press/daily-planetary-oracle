@@ -635,7 +635,7 @@ export class AstrologyService {
   }
 
   // Generate visual birth chart SVG using Kerykeion
-  async generateBirthChartSVG(birthData: BirthData, userName?: string): Promise<{success: boolean, svgContent?: string, chartInfo?: any, error?: string}> {
+  async generateBirthChartSVG(birthData: BirthData & { theme?: string }, userName?: string): Promise<{success: boolean, svgContent?: string, chartInfo?: any, error?: string}> {
     try {
       // Parse location for coordinates
       const coordinates = this.parseLocation(birthData.location);
@@ -643,7 +643,8 @@ export class AstrologyService {
       // Call Python chart visualizer script
       const name = userName || "Birth Chart";
       const locationName = birthData.location;
-      const command = `python server/chart_visualizer.py "${birthData.date}" "${birthData.time}" "${coordinates.latitude}" "${coordinates.longitude}" "${name}" "${locationName}" 2>/dev/null`;
+      const theme = birthData.theme || "default";
+      const command = `python server/chart_visualizer.py "${birthData.date}" "${birthData.time}" "${coordinates.latitude}" "${coordinates.longitude}" "${name}" "${locationName}" "" "${theme}" 2>/dev/null`;
       const { stdout } = await execAsync(command);
       
       // Handle potentially large JSON output by parsing more carefully

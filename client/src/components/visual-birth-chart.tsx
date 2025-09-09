@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Download, Sparkles, Palette } from 'lucide-react';
+import { Loader2, Download, Sparkles, Palette, Settings } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CSSdoodleWrapper, { DoodlePatterns } from '@/components/css-doodle-wrapper';
+import { ChartThemeSelector } from '@/components/chart-theme-selector';
 
 interface VisualBirthChartProps {
   birthDate?: string;
@@ -11,6 +13,7 @@ interface VisualBirthChartProps {
   userName?: string;
   enableDoodleTheme?: boolean;
   userXP?: number;
+  onThemeChange?: (theme: string) => void;
 }
 
 interface ChartResponse {
@@ -27,14 +30,19 @@ export function VisualBirthChart({
   birthLocation, 
   userName,
   enableDoodleTheme = false,
-  userXP = 0
+  userXP = 0,
+  onThemeChange
 }: VisualBirthChartProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [chartData, setChartData] = useState<ChartResponse | null>(null);
-  const [doodleTheme, setDoodleTheme] = useState(enableDoodleTheme);
+  const [selectedTheme, setSelectedTheme] = useState<string>('kerykeion-default');
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
   const { toast } = useToast();
   
   const canUseDoodle = userXP >= 1000;
+  
+  // Legacy doodle theme support
+  const doodleTheme = selectedTheme === 'doodle';
 
   const generateChart = async () => {
     if (!birthDate || !birthTime || !birthLocation) {
@@ -58,6 +66,7 @@ export function VisualBirthChart({
           birthDate,
           birthTime,
           birthLocation,
+          theme: getKerykeionTheme(selectedTheme),
         }),
       });
 
@@ -84,6 +93,118 @@ export function VisualBirthChart({
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const getKerykeionTheme = (themeId: string): string => {
+    const themeMap: Record<string, string> = {
+      'kerykeion-default': 'default',
+      'kerykeion-dark': 'dark',
+      'kerykeion-dark-contrast': 'dark_high_contrast'
+    };
+    return themeMap[themeId] || 'default';
+  };
+
+  const handleThemeSelect = (themeId: string) => {
+    setSelectedTheme(themeId);
+    onThemeChange?.(themeId);
+    setShowThemeSelector(false);
+    // Clear existing chart to force regeneration with new theme
+    if (chartData && !themeId.startsWith('kerykeion-')) {
+      // For non-Kerykeion themes, keep existing chart but apply CSS
+    } else {
+      // For Kerykeion theme changes, clear chart to regenerate
+      setChartData(null);
+    }
+  };
+
+  const getChartDisplayClasses = (themeId: string): string => {
+    if (themeId === 'doodle') {
+      return 'chart-theme-doodle border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-orange-50/10';
+    }
+    if (themeId.startsWith('vintage-')) {
+      return 'border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-yellow-50/10';
+    }
+    if (themeId.startsWith('cosmic-')) {
+      return 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20';
+    }
+    return 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20';
+  };
+
+  const getVintageThemeClass = (themeId: string): string => {
+    const themeMap: Record<string, string> = {
+      'vintage-art-deco': 'theme-art-deco',
+      'vintage-victorian': 'theme-victorian',
+      'vintage-mid-century': 'theme-mid-century',
+      'vintage-classic': 'theme-classic-elegance'
+    };
+    return themeMap[themeId] || '';
+  };
+
+  const getCosmicThemeClass = (themeId: string): string => {
+    const themeMap: Record<string, string> = {
+      'cosmic-deep-space': 'theme-deep-space',
+      'cosmic-nebula': 'theme-nebula',
+      'cosmic-galaxy': 'theme-galaxy',
+      'cosmic-solar-system': 'theme-solar-system'
+    };
+    return themeMap[themeId] || '';
+  };
+
+  const getChartContentClasses = (themeId: string): string => {
+    if (themeId === 'doodle') return 'chart-content-doodle';
+    if (themeId.startsWith('vintage-')) return 'font-playfair';
+    if (themeId.startsWith('cosmic-')) return 'font-orbitron';
+    return '';
+  };
+
+  const getChartTextClasses = (themeId: string): string => {
+    if (themeId === 'doodle') return 'text-amber-700 dark:text-amber-300 font-patrick';
+    if (themeId.startsWith('vintage-')) return 'text-amber-700 dark:text-amber-300 font-playfair';
+    if (themeId.startsWith('cosmic-')) return 'text-purple-300 font-exo';
+    return 'text-purple-300';
+  };
+
+  const getThemeAccentClass = (themeId: string): string => {
+    if (themeId === 'doodle') return 'text-amber-600 dark:text-amber-400';
+    if (themeId.startsWith('vintage-')) return 'text-amber-600 dark:text-amber-400';
+    if (themeId.startsWith('cosmic-')) return 'text-purple-400 dark:text-purple-300';
+    return 'text-purple-400';
+  };
+
+  const getThemeName = (themeId: string): string => {
+    const themeNames: Record<string, string> = {
+      'kerykeion-default': 'Classic Professional',
+      'kerykeion-dark': 'Dark Professional',
+      'kerykeion-dark-contrast': 'High Contrast Dark',
+      'doodle': 'Handwritten Doodle',
+      'vintage-art-deco': 'Art Deco 1920s',
+      'vintage-victorian': 'Victorian Era',
+      'vintage-mid-century': 'Mid-Century Modern',
+      'vintage-classic': 'Classic Elegance',
+      'cosmic-deep-space': 'Deep Space',
+      'cosmic-nebula': 'Nebula',
+      'cosmic-galaxy': 'Galaxy',
+      'cosmic-solar-system': 'Solar System'
+    };
+    return themeNames[themeId] || 'Unknown Theme';
+  };
+
+  const getThemeXPRequirement = (themeId: string): string => {
+    const xpMap: Record<string, string> = {
+      'kerykeion-default': 'Free',
+      'kerykeion-dark': 'Free',
+      'kerykeion-dark-contrast': 'Free',
+      'doodle': '1000',
+      'vintage-art-deco': '2500',
+      'vintage-victorian': '5000',
+      'vintage-mid-century': '3500',
+      'vintage-classic': '7500',
+      'cosmic-deep-space': '5000',
+      'cosmic-nebula': '7500',
+      'cosmic-galaxy': '10000',
+      'cosmic-solar-system': '12500'
+    };
+    return xpMap[themeId] || 'Unknown';
   };
 
   const downloadChart = () => {
@@ -167,29 +288,29 @@ export function VisualBirthChart({
             </div>
             
             <div className="flex space-x-2">
-              {canUseDoodle && (
-                <Button
-                  onClick={() => {
-                    setDoodleTheme(!doodleTheme);
-                    toast({
-                      title: doodleTheme ? "Classic Theme Applied" : "Doodle Theme Applied",
-                      description: doodleTheme 
-                        ? "Your chart now shows in classic styling" 
-                        : "Your chart now features handwritten fonts and organic styling!",
-                    });
-                  }}
-                  variant={doodleTheme ? "default" : "outline"}
-                  size="sm"
-                  className={doodleTheme 
-                    ? "bg-amber-600 hover:bg-amber-700 text-white font-reenie" 
-                    : "border-purple-500 text-purple-300 hover:bg-purple-700"
-                  }
-                  data-testid="button-toggle-doodle-theme"
-                >
-                  <Palette className="w-4 h-4 mr-2" />
-                  {doodleTheme ? "Classic" : "Doodle"}
-                </Button>
-              )}
+              <Dialog open={showThemeSelector} onOpenChange={setShowThemeSelector}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-purple-500 text-purple-300 hover:bg-purple-700"
+                    data-testid="button-chart-theme-selector"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Chart Themes
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Chart Theme Selection</DialogTitle>
+                  </DialogHeader>
+                  <ChartThemeSelector 
+                    userXP={userXP}
+                    currentTheme={selectedTheme}
+                    onThemeSelect={handleThemeSelect}
+                  />
+                </DialogContent>
+              </Dialog>
               <Button
                 onClick={openChartInNewTab}
                 variant="outline"
@@ -227,11 +348,9 @@ export function VisualBirthChart({
 
           {/* Chart Display */}
           <div className={`relative border rounded-lg p-4 ${
-            doodleTheme 
-              ? 'chart-theme-doodle border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-orange-50/10' 
-              : 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20'
+            getChartDisplayClasses(selectedTheme)
           }`}>
-            {doodleTheme && canUseDoodle && (
+            {selectedTheme === 'doodle' && canUseDoodle && (
               <CSSdoodleWrapper
                 pattern={DoodlePatterns.paperTexture}
                 seed={42}
@@ -240,9 +359,18 @@ export function VisualBirthChart({
               />
             )}
             
+            {/* Additional theme overlays for vintage and cosmic themes */}
+            {selectedTheme.startsWith('vintage-') && (
+              <div className={`absolute inset-0 ${getVintageThemeClass(selectedTheme)} opacity-20 pointer-events-none`} />
+            )}
+            
+            {selectedTheme.startsWith('cosmic-') && (
+              <div className={`absolute inset-0 ${getCosmicThemeClass(selectedTheme)} pointer-events-none`} />
+            )}
+            
             <div
               className={`relative z-10 w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity ${
-                doodleTheme ? 'chart-content-doodle' : ''
+                getChartContentClasses(selectedTheme)
               }`}
               onClick={openChartInNewTab}
               dangerouslySetInnerHTML={{ __html: chartData.svgChart || '' }}
@@ -251,23 +379,25 @@ export function VisualBirthChart({
             />
             
             <p className={`text-xs text-center mt-2 opacity-70 relative z-10 ${
-              doodleTheme ? 'text-amber-700 dark:text-amber-300 font-patrick' : 'text-purple-300'
+              getChartTextClasses(selectedTheme)
             }`}>
               Click chart to view in full size
-              {doodleTheme && canUseDoodle && ' • Handwritten Doodle Theme Active'}
+              {selectedTheme !== 'kerykeion-default' && ` • ${getThemeName(selectedTheme)} Theme Active`}
             </p>
           </div>
 
           {/* Chart Info */}
           {chartData.chartInfo && (
             <div className={`text-xs space-y-1 ${
-              doodleTheme ? 'text-amber-700 dark:text-amber-300 font-patrick' : 'text-purple-300'
+              getChartTextClasses(selectedTheme)
             }`}>
               <p><strong>Chart Type:</strong> {chartData.chartInfo.chart_type}</p>
               <p><strong>Generated:</strong> {new Date(chartData.chartInfo.generated_at).toLocaleString()}</p>
               <p><strong>Calculation:</strong> Swiss Ephemeris professional accuracy</p>
-              {doodleTheme && canUseDoodle && (
-                <p className="text-amber-600 dark:text-amber-400"><strong>Theme:</strong> Handwritten Doodle Style • 1000 XP Unlocked</p>
+              {selectedTheme !== 'kerykeion-default' && (
+                <p className={getThemeAccentClass(selectedTheme)}>
+                  <strong>Theme:</strong> {getThemeName(selectedTheme)} • {getThemeXPRequirement(selectedTheme)} XP
+                </p>
               )}
             </div>
           )}

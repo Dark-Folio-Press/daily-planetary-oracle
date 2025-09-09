@@ -11,7 +11,7 @@ import tempfile
 from datetime import datetime
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
-def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birth Chart", location="", output_path=None):
+def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birth Chart", location="", output_path=None, theme="default"):
     """
     Generate a professional birth chart SVG using Kerykeion
     
@@ -22,6 +22,7 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
         longitude: Longitude as string or float
         name: Chart title/name
         output_path: Optional path to save SVG file
+        theme: Kerykeion theme ('default', 'dark', 'dark_high_contrast')
     
     Returns:
         Dict with SVG content and metadata
@@ -74,11 +75,18 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
         sys.stdout = StringIO()
         
         try:
-            chart = KerykeionChartSVG(
-                subject,
-                chart_type="Natal",
-                new_output_directory=temp_dir if not output_path else os.path.dirname(output_path)
-            )
+            # Handle Kerykeion theme parameter
+            chart_kwargs = {
+                "subject": subject,
+                "chart_type": "Natal",
+                "new_output_directory": temp_dir if not output_path else os.path.dirname(output_path)
+            }
+            
+            # Add theme parameter if not default
+            if theme and theme != "default":
+                chart_kwargs["theme"] = theme
+            
+            chart = KerykeionChartSVG(**chart_kwargs)
             
             # Generate the SVG
             chart.makeSVG()
@@ -142,6 +150,7 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
             "moon_sign": subject.moon["sign"],
             "rising_sign": subject.first_house["sign"],
             "chart_type": "Natal",
+            "kerykeion_theme": theme,
             "generated_at": datetime.now().isoformat()
         }
         
@@ -173,9 +182,10 @@ def main():
     name = sys.argv[5] if len(sys.argv) > 5 else "Birth Chart"
     location = sys.argv[6] if len(sys.argv) > 6 else ""
     output_path = sys.argv[7] if len(sys.argv) > 7 else None
+    theme = sys.argv[8] if len(sys.argv) > 8 else "default"
     
     try:
-        result = generate_birth_chart_svg(date_str, time_str, latitude, longitude, name, location, output_path)
+        result = generate_birth_chart_svg(date_str, time_str, latitude, longitude, name, location, output_path, theme)
         print(json.dumps(result, indent=2))
     except Exception as e:
         print(json.dumps({"error": f"Chart generation failed: {str(e)}"}), file=sys.stderr)
