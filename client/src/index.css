@@ -36,6 +36,32 @@
   --gradient-gold: linear-gradient(135deg, hsl(40, 25%, 75%), hsl(45, 60%, 85%), hsl(50, 70%, 65%));
   --gradient-silver: linear-gradient(135deg, hsl(200, 10%, 65%), hsl(200, 15%, 85%), hsl(210, 20%, 75%));
   --gradient-cosmic: linear-gradient(135deg, hsl(200, 10%, 65%), hsl(45, 60%, 85%), hsl(50, 70%, 65%));
+
+  /* Chart Theme Colors */
+  /* Vintage Theme */
+  --chart-vintage-bg: linear-gradient(45deg, hsl(40, 25%, 92%), hsl(35, 30%, 88%));
+  --chart-vintage-primary: hsl(25, 45%, 35%);
+  --chart-vintage-secondary: hsl(40, 35%, 55%);
+  --chart-vintage-accent: hsl(15, 55%, 45%);
+  --chart-vintage-text: hsl(25, 40%, 25%);
+  --chart-vintage-border: hsl(30, 25%, 70%);
+
+  /* Cosmic Theme */
+  --chart-cosmic-bg: radial-gradient(ellipse at center, hsl(240, 100%, 5%), hsl(260, 80%, 8%));
+  --chart-cosmic-primary: hsl(280, 100%, 70%);
+  --chart-cosmic-secondary: hsl(200, 100%, 60%);
+  --chart-cosmic-accent: hsl(60, 100%, 80%);
+  --chart-cosmic-text: hsl(280, 50%, 85%);
+  --chart-cosmic-border: hsl(280, 60%, 50%);
+  --chart-cosmic-glow: hsl(280, 100%, 70%);
+
+  /* Doodle Theme */
+  --chart-doodle-bg: hsl(45, 60%, 97%);
+  --chart-doodle-primary: hsl(220, 60%, 40%);
+  --chart-doodle-secondary: hsl(15, 70%, 50%);
+  --chart-doodle-accent: hsl(120, 50%, 40%);
+  --chart-doodle-text: hsl(220, 50%, 30%);
+  --chart-doodle-border: hsl(220, 40%, 60%);
 }
 
 .dark {
@@ -71,6 +97,32 @@
   --gradient-gold: linear-gradient(135deg, hsl(40, 60%, 40%), hsl(45, 70%, 50%), hsl(50, 80%, 35%));
   --gradient-silver: linear-gradient(135deg, hsl(200, 30%, 35%), hsl(200, 35%, 55%), hsl(210, 40%, 45%));
   --gradient-cosmic: linear-gradient(135deg, hsl(263, 70%, 50%), hsl(280, 60%, 45%), hsl(300, 70%, 40%));
+
+  /* Dark Mode Chart Theme Colors */
+  /* Vintage Theme - Dark */
+  --chart-vintage-bg: linear-gradient(45deg, hsl(40, 15%, 12%), hsl(35, 20%, 8%));
+  --chart-vintage-primary: hsl(25, 55%, 65%);
+  --chart-vintage-secondary: hsl(40, 45%, 75%);
+  --chart-vintage-accent: hsl(15, 65%, 65%);
+  --chart-vintage-text: hsl(25, 50%, 85%);
+  --chart-vintage-border: hsl(30, 35%, 45%);
+
+  /* Cosmic Theme - Dark (Enhanced) */
+  --chart-cosmic-bg: radial-gradient(ellipse at center, hsl(240, 100%, 3%), hsl(260, 90%, 5%));
+  --chart-cosmic-primary: hsl(280, 100%, 80%);
+  --chart-cosmic-secondary: hsl(200, 100%, 70%);
+  --chart-cosmic-accent: hsl(60, 100%, 85%);
+  --chart-cosmic-text: hsl(280, 60%, 90%);
+  --chart-cosmic-border: hsl(280, 80%, 60%);
+  --chart-cosmic-glow: hsl(280, 100%, 75%);
+
+  /* Doodle Theme - Dark */
+  --chart-doodle-bg: hsl(220, 15%, 8%);
+  --chart-doodle-primary: hsl(220, 70%, 70%);
+  --chart-doodle-secondary: hsl(15, 80%, 70%);
+  --chart-doodle-accent: hsl(120, 60%, 70%);
+  --chart-doodle-text: hsl(220, 60%, 85%);
+  --chart-doodle-border: hsl(220, 50%, 60%);
 }
 
 @layer base {
@@ -190,5 +242,205 @@
   
   .scrollbar-hide::-webkit-scrollbar {
     display: none;             /* Chrome, Safari, and Opera */
+  }
+
+  /* ===== CHART THEMES ===== */
+  
+  /* Vintage Theme */
+  .chart-theme-vintage {
+    background: var(--chart-vintage-bg);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid var(--chart-vintage-border);
+    box-shadow: 0 4px 20px rgba(139, 69, 19, 0.15);
+    position: relative;
+  }
+
+  .chart-theme-vintage::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(139, 69, 19, 0.03) 2px,
+        rgba(139, 69, 19, 0.03) 4px
+      );
+    pointer-events: none;
+    border-radius: 10px;
+  }
+
+  .chart-theme-vintage svg {
+    filter: sepia(0.3) contrast(1.1) brightness(0.95);
+    font-family: 'Georgia', 'Times New Roman', serif !important;
+  }
+
+  .chart-theme-vintage svg text {
+    fill: var(--chart-vintage-text) !important;
+    font-family: 'Georgia', 'Times New Roman', serif !important;
+    font-weight: 500 !important;
+  }
+
+  .chart-theme-vintage svg path,
+  .chart-theme-vintage svg line,
+  .chart-theme-vintage svg circle {
+    stroke: var(--chart-vintage-primary) !important;
+    stroke-width: 1.5px !important;
+  }
+
+  .chart-theme-vintage svg .planet,
+  .chart-theme-vintage svg .sign {
+    fill: var(--chart-vintage-accent) !important;
+  }
+
+  /* Cosmic Theme */
+  .chart-theme-cosmic {
+    background: var(--chart-cosmic-bg);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 2px solid var(--chart-cosmic-border);
+    box-shadow: 
+      0 0 30px rgba(147, 51, 234, 0.4),
+      inset 0 0 20px rgba(147, 51, 234, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-theme-cosmic::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+    animation: cosmic-shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .chart-theme-cosmic svg {
+    filter: brightness(1.2) contrast(1.1) saturate(1.3);
+  }
+
+  .chart-theme-cosmic svg text {
+    fill: var(--chart-cosmic-text) !important;
+    font-family: 'Arial', sans-serif !important;
+    text-shadow: 0 0 8px var(--chart-cosmic-glow) !important;
+  }
+
+  .chart-theme-cosmic svg path,
+  .chart-theme-cosmic svg line,
+  .chart-theme-cosmic svg circle {
+    stroke: var(--chart-cosmic-primary) !important;
+    stroke-width: 2px !important;
+    filter: drop-shadow(0 0 4px var(--chart-cosmic-glow));
+  }
+
+  .chart-theme-cosmic svg .planet,
+  .chart-theme-cosmic svg .sign {
+    fill: var(--chart-cosmic-accent) !important;
+    filter: drop-shadow(0 0 6px var(--chart-cosmic-glow));
+  }
+
+  /* Doodle/Hand-drawn Theme */
+  .chart-theme-doodle {
+    background: var(--chart-doodle-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 3px solid var(--chart-doodle-border);
+    border-style: dashed;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transform: rotate(-0.5deg);
+  }
+
+  .chart-theme-doodle::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 2px dotted var(--chart-doodle-accent);
+    border-radius: 4px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .chart-theme-doodle svg {
+    filter: contrast(1.1) brightness(0.95);
+    transform: rotate(0.3deg);
+  }
+
+  .chart-theme-doodle svg text {
+    fill: var(--chart-doodle-text) !important;
+    font-family: 'Comic Sans MS', cursive, sans-serif !important;
+    font-weight: bold !important;
+  }
+
+  .chart-theme-doodle svg path,
+  .chart-theme-doodle svg line {
+    stroke: var(--chart-doodle-primary) !important;
+    stroke-width: 2.5px !important;
+    stroke-dasharray: 3, 2 !important;
+    stroke-linecap: round !important;
+    filter: none !important;
+  }
+
+  .chart-theme-doodle svg circle {
+    stroke: var(--chart-doodle-secondary) !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: 4, 3 !important;
+    fill: none !important;
+  }
+
+  .chart-theme-doodle svg .planet,
+  .chart-theme-doodle svg .sign {
+    fill: var(--chart-doodle-accent) !important;
+  }
+
+  /* Animations */
+  @keyframes cosmic-shimmer {
+    0%, 100% {
+      opacity: 0.6;
+      transform: rotate(0deg) scale(1);
+    }
+    33% {
+      opacity: 0.8;
+      transform: rotate(1deg) scale(1.02);
+    }
+    66% {
+      opacity: 0.7;
+      transform: rotate(-1deg) scale(0.98);
+    }
+  }
+
+  /* Hover effects for theme containers */
+  .chart-theme-vintage:hover {
+    box-shadow: 0 8px 30px rgba(139, 69, 19, 0.25);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  .chart-theme-cosmic:hover {
+    box-shadow: 
+      0 0 40px rgba(147, 51, 234, 0.6),
+      inset 0 0 30px rgba(147, 51, 234, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  .chart-theme-doodle:hover {
+    transform: rotate(-0.5deg) translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
   }
 }
