@@ -27,6 +27,7 @@ import { Link } from "wouter";
 import { useState } from "react";
 import { DoodleThemeDemo } from "@/components/doodle-theme-demo";
 import { VintageThemeDemo } from "@/components/vintage-theme-demo";
+import { CosmicThemeDemo } from "@/components/cosmic-theme-demo";
 
 interface LearningStats {
   totalXp: number;
@@ -378,6 +379,9 @@ export default function LearningPage() {
               <DoodleThemeDemo userXP={stats.totalXp} />
               <div className="border-t pt-8">
                 <VintageThemeDemo />
+              </div>
+              <div className="border-t pt-8">
+                <CosmicThemeDemo />
               </div>
             </div>
           </TabsContent>

@@ -3,6 +3,9 @@
 /* Google Fonts for Vintage Themes */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap');
 
+/* Google Fonts for Cosmic Themes */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Exo:ital,wght@0,300;0,400;0,700;1,400&family=Rajdhani:wght@300;400;600;700&family=Audiowide&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -70,6 +73,16 @@
   --classic-amber: #d97706;
   --classic-brown: #7c2d12;
   --classic-white: #fefdf9;
+  
+  /* Cosmic Theme Colors */
+  --cosmic-deep-purple: #1a0b2e;
+  --cosmic-royal-purple: #16213e;
+  --cosmic-nebula-pink: #e056fd;
+  --cosmic-star-white: #ffffff;
+  --cosmic-galaxy-teal: #4ecdc4;
+  --cosmic-void-black: #0f0f23;
+  --cosmic-plasma-blue: #00d4ff;
+  --cosmic-stellar-gold: #ffb347;
   --chart-vintage-secondary: hsl(40, 35%, 55%);
   --chart-vintage-accent: hsl(15, 55%, 45%);
   --chart-vintage-text: hsl(25, 40%, 25%);
@@ -580,6 +593,144 @@
 .font-abril { font-family: 'Abril Fatface', cursive; }
 .font-cormorant { font-family: 'Cormorant Garamond', serif; }
 .font-crimson { font-family: 'Crimson Text', serif; }
+
+/* Cosmic Theme Classes */
+.theme-deep-space {
+  background: radial-gradient(ellipse at center, var(--cosmic-royal-purple) 0%, var(--cosmic-deep-purple) 50%, var(--cosmic-void-black) 100%);
+  border: 2px solid var(--cosmic-plasma-blue);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-deep-space::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, var(--cosmic-star-white), transparent),
+    radial-gradient(2px 2px at 40px 70px, var(--cosmic-galaxy-teal), transparent),
+    radial-gradient(1px 1px at 90px 40px, var(--cosmic-stellar-gold), transparent),
+    radial-gradient(1px 1px at 130px 80px, var(--cosmic-star-white), transparent),
+    radial-gradient(2px 2px at 160px 30px, var(--cosmic-nebula-pink), transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  opacity: 0.6;
+  animation: twinkle 4s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.theme-nebula {
+  background: linear-gradient(135deg, 
+    var(--cosmic-deep-purple) 0%, 
+    var(--cosmic-nebula-pink) 25%, 
+    var(--cosmic-plasma-blue) 50%, 
+    var(--cosmic-galaxy-teal) 75%, 
+    var(--cosmic-royal-purple) 100%
+  );
+  border: 2px solid var(--cosmic-stellar-gold);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-nebula::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 40%, rgba(224, 86, 253, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 40% 80%, rgba(78, 205, 196, 0.3) 0%, transparent 50%);
+  animation: nebula-swirl 8s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.theme-galaxy {
+  background: conic-gradient(from 0deg at 50% 50%, 
+    var(--cosmic-void-black) 0deg,
+    var(--cosmic-royal-purple) 60deg,
+    var(--cosmic-plasma-blue) 120deg,
+    var(--cosmic-galaxy-teal) 180deg,
+    var(--cosmic-nebula-pink) 240deg,
+    var(--cosmic-stellar-gold) 300deg,
+    var(--cosmic-void-black) 360deg
+  );
+  border: 3px solid var(--cosmic-star-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-galaxy::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(ellipse at center, transparent 30%, var(--cosmic-void-black) 70%);
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: galaxy-rotation 12s infinite linear;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.theme-solar-system {
+  background: radial-gradient(circle at center, var(--cosmic-stellar-gold) 0%, var(--cosmic-royal-purple) 40%, var(--cosmic-void-black) 100%);
+  border: 2px solid var(--cosmic-plasma-blue);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-solar-system::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, var(--cosmic-stellar-gold) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse-sun 3s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Cosmic font classes */
+.font-orbitron { font-family: 'Orbitron', monospace; }
+.font-space-mono { font-family: 'Space Mono', monospace; }
+.font-exo { font-family: 'Exo', sans-serif; }
+.font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+.font-audiowide { font-family: 'Audiowide', cursive; }
+
+/* Cosmic animations */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes nebula-swirl {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(0.9); }
+  75% { transform: rotate(270deg) scale(1.05); }
+}
+
+@keyframes galaxy-rotation {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulse-sun {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
 
   /* Animations */
   @keyframes cosmic-shimmer {
