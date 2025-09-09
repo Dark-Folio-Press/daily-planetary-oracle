@@ -164,10 +164,12 @@ export function DoodleThemeDemo({ userXP = 1200 }: DoodleThemeDemoProps) {
                     </div>
                     
                     <div className="md:col-span-2">
-                      <p className={`text-2xl text-purple-100 ${font.class} ${!isUnlocked ? 'blur-sm' : ''}`}>
+                      <p className={`text-3xl font-bold text-amber-800 dark:text-amber-200 ${font.class} ${!isUnlocked ? 'blur-sm' : ''}`} 
+                         style={{ textShadow: '2px 2px 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(139, 69, 19, 0.2)' }}>
                         {font.sample}
                       </p>
-                      <p className={`text-lg text-purple-200 mt-2 ${font.class} ${!isUnlocked ? 'blur-sm' : ''}`}>
+                      <p className={`text-xl text-amber-700 dark:text-amber-300 mt-2 ${font.class} ${!isUnlocked ? 'blur-sm' : ''}`}
+                         style={{ textShadow: '1px 1px 2px rgba(255, 255, 255, 0.7)' }}>
                         ABCDEFGHIJKLMnopqrstuvwxyz 123456789
                       </p>
                     </div>

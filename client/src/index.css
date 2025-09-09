@@ -417,12 +417,13 @@
     z-index: 3;
   }
 
-  /* Handwritten fonts for doodle theme */
+  /* Handwritten fonts for doodle theme with punched up colors */
   .chart-theme-doodle svg text {
-    fill: var(--chart-doodle-text) !important;
+    fill: #8B4513 !important;
     font-family: 'Reenie Beanie', 'Patrick Hand', 'Caveat', cursive !important;
     font-size: 1.2em !important;
     font-weight: 400 !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   }
 
   .chart-theme-doodle .chart-title {
@@ -430,17 +431,23 @@
     font-size: 2rem !important;
     font-weight: 400 !important;
     transform: rotate(-1deg);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    color: #654321 !important;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9), 
+                 0 0 8px rgba(139, 69, 19, 0.3);
   }
 
   .chart-theme-doodle .chart-labels {
     font-family: 'Patrick Hand', cursive !important;
     font-size: 1.1rem !important;
+    color: #8B4513 !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   }
 
   .chart-theme-doodle .chart-values {
     font-family: 'Caveat', cursive !important;
     font-weight: 500 !important;
+    color: #A0522D !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.9);
   }
 
   /* Sketchy lines and shapes */
