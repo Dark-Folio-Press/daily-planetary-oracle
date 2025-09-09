@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Download, Sparkles } from 'lucide-react';
+import { Loader2, Download, Sparkles, Palette } from 'lucide-react';
+import CSSdoodleWrapper, { DoodlePatterns } from '@/components/css-doodle-wrapper';
 
 interface VisualBirthChartProps {
   birthDate?: string;
   birthTime?: string;
   birthLocation?: string;
   userName?: string;
+  enableDoodleTheme?: boolean;
+  userXP?: number;
 }
 
 interface ChartResponse {
@@ -22,11 +25,16 @@ export function VisualBirthChart({
   birthDate, 
   birthTime, 
   birthLocation, 
-  userName 
+  userName,
+  enableDoodleTheme = false,
+  userXP = 0
 }: VisualBirthChartProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [chartData, setChartData] = useState<ChartResponse | null>(null);
+  const [doodleTheme, setDoodleTheme] = useState(enableDoodleTheme);
   const { toast } = useToast();
+  
+  const canUseDoodle = userXP >= 1000;
 
   const generateChart = async () => {
     if (!birthDate || !birthTime || !birthLocation) {
@@ -159,6 +167,29 @@ export function VisualBirthChart({
             </div>
             
             <div className="flex space-x-2">
+              {canUseDoodle && (
+                <Button
+                  onClick={() => {
+                    setDoodleTheme(!doodleTheme);
+                    toast({
+                      title: doodleTheme ? "Classic Theme Applied" : "Doodle Theme Applied",
+                      description: doodleTheme 
+                        ? "Your chart now shows in classic styling" 
+                        : "Your chart now features handwritten fonts and organic styling!",
+                    });
+                  }}
+                  variant={doodleTheme ? "default" : "outline"}
+                  size="sm"
+                  className={doodleTheme 
+                    ? "bg-amber-600 hover:bg-amber-700 text-white font-reenie" 
+                    : "border-purple-500 text-purple-300 hover:bg-purple-700"
+                  }
+                  data-testid="button-toggle-doodle-theme"
+                >
+                  <Palette className="w-4 h-4 mr-2" />
+                  {doodleTheme ? "Classic" : "Doodle"}
+                </Button>
+              )}
               <Button
                 onClick={openChartInNewTab}
                 variant="outline"
@@ -195,25 +226,58 @@ export function VisualBirthChart({
           </div>
 
           {/* Chart Display */}
-          <div className="border border-purple-500/30 rounded-lg p-4 bg-gradient-to-br from-purple-900/20 to-blue-900/20">
+          <div className={`relative border rounded-lg p-4 ${
+            doodleTheme 
+              ? 'chart-theme-doodle border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-orange-50/10' 
+              : 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20'
+          }`}>
+            {doodleTheme && canUseDoodle && (
+              <CSSdoodleWrapper
+                pattern={DoodlePatterns.paperTexture}
+                seed={42}
+                className="absolute inset-0"
+                style={{ width: '100%', height: '100%', borderRadius: '8px' }}
+              />
+            )}
+            
             <div
-              className="w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              className={`relative z-10 w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity ${
+                doodleTheme ? 'chart-content-doodle' : ''
+              }`}
               onClick={openChartInNewTab}
               dangerouslySetInnerHTML={{ __html: chartData.svgChart || '' }}
               data-testid="visual-birth-chart-display"
               title="Click to open in large view"
             />
-            <p className="text-xs text-purple-300 text-center mt-2 opacity-70">
+            
+            <p className={`text-xs text-center mt-2 opacity-70 relative z-10 ${
+              doodleTheme ? 'text-amber-700 dark:text-amber-300 font-patrick' : 'text-purple-300'
+            }`}>
               Click chart to view in full size
+              {doodleTheme && canUseDoodle && ' • Handwritten Doodle Theme Active'}
             </p>
           </div>
 
           {/* Chart Info */}
           {chartData.chartInfo && (
-            <div className="text-xs text-purple-300 space-y-1">
+            <div className={`text-xs space-y-1 ${
+              doodleTheme ? 'text-amber-700 dark:text-amber-300 font-patrick' : 'text-purple-300'
+            }`}>
               <p><strong>Chart Type:</strong> {chartData.chartInfo.chart_type}</p>
               <p><strong>Generated:</strong> {new Date(chartData.chartInfo.generated_at).toLocaleString()}</p>
               <p><strong>Calculation:</strong> Swiss Ephemeris professional accuracy</p>
+              {doodleTheme && canUseDoodle && (
+                <p className="text-amber-600 dark:text-amber-400"><strong>Theme:</strong> Handwritten Doodle Style • 1000 XP Unlocked</p>
+              )}
+            </div>
+          )}
+          
+          {/* XP Requirement Message */}
+          {!canUseDoodle && (
+            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+              <p className="text-amber-700 dark:text-amber-300 text-sm font-caveat">
+                🔒 Unlock the beautiful handwritten doodle theme for your birth charts at 1000 XP • Current XP: {userXP}
+              </p>
             </div>
           )}
         </div>

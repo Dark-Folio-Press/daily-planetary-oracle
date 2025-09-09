@@ -357,6 +357,8 @@ export function OptimizedChartSection({
                     birthTime={birthTime}
                     birthLocation={birthLocation}
                     userName={userName}
+                    enableDoodleTheme={true}
+                    userXP={1200}
                   />
                 </div>
               </div>
