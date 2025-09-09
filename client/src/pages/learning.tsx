@@ -26,6 +26,7 @@ import {
 import { Link } from "wouter";
 import { useState } from "react";
 import { DoodleThemeDemo } from "@/components/doodle-theme-demo";
+import { VintageThemeDemo } from "@/components/vintage-theme-demo";
 
 interface LearningStats {
   totalXp: number;
@@ -373,7 +374,12 @@ export default function LearningPage() {
           </TabsContent>
 
           <TabsContent value="themes" className="space-y-6">
-            <DoodleThemeDemo userXP={stats.totalXp} />
+            <div className="space-y-8">
+              <DoodleThemeDemo userXP={stats.totalXp} />
+              <div className="border-t pt-8">
+                <VintageThemeDemo />
+              </div>
+            </div>
           </TabsContent>
 
           {/* Badges Tab - Optimized for Mobile */}

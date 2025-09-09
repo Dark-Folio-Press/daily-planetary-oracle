@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Reenie+Beanie&family=Patrick+Hand&family=Kalam:wght@300;400;700&family=Caveat:wght@400;500;600;700&family=Indie+Flower&display=swap');
 
+/* Google Fonts for Vintage Themes */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,9 +43,33 @@
   --gradient-cosmic: linear-gradient(135deg, hsl(200, 10%, 65%), hsl(45, 60%, 85%), hsl(50, 70%, 65%));
 
   /* Chart Theme Colors */
-  /* Vintage Theme */
+  /* Vintage Themes */
   --chart-vintage-bg: linear-gradient(45deg, hsl(40, 25%, 92%), hsl(35, 30%, 88%));
   --chart-vintage-primary: hsl(25, 45%, 35%);
+  
+  /* Art Deco Colors */
+  --art-deco-gold: #C9A961;
+  --art-deco-charcoal: #2C2C2C;
+  --art-deco-bronze: #8B4513;
+  --art-deco-cream: #F5F5DC;
+  
+  /* Victorian Colors */
+  --victorian-burgundy: #722F37;
+  --victorian-gold: #D4AF37;
+  --victorian-brown: #8B4513;
+  --victorian-lace: #FDF5E6;
+  
+  /* Mid-Century Colors */
+  --midcentury-slate: #2F4F4F;
+  --midcentury-tomato: #FF6347;
+  --midcentury-teal: #20B2AA;
+  --midcentury-smoke: #F5F5F5;
+  
+  /* Classic Elegance Colors */
+  --classic-navy: #1e3a8a;
+  --classic-amber: #d97706;
+  --classic-brown: #7c2d12;
+  --classic-white: #fefdf9;
   --chart-vintage-secondary: hsl(40, 35%, 55%);
   --chart-vintage-accent: hsl(15, 55%, 45%);
   --chart-vintage-text: hsl(25, 40%, 25%);
@@ -480,6 +507,79 @@
   .font-caveat { font-family: 'Caveat', cursive; }
   .font-kalam { font-family: 'Kalam', cursive; }
   .font-indie { font-family: 'Indie Flower', cursive; }
+
+/* Vintage Theme Classes */
+.theme-art-deco {
+  background: linear-gradient(135deg, var(--art-deco-cream) 0%, #F0F0E6 100%);
+  border: 2px solid var(--art-deco-gold);
+  position: relative;
+}
+
+.theme-art-deco::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 1px solid var(--art-deco-bronze);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.theme-victorian {
+  background: linear-gradient(135deg, var(--victorian-lace) 0%, #F8F4E6 100%);
+  border: 3px double var(--victorian-burgundy);
+  position: relative;
+}
+
+.theme-victorian::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border: 1px solid var(--victorian-gold);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.theme-midcentury {
+  background: linear-gradient(135deg, var(--midcentury-smoke) 0%, #FAFAFA 100%);
+  border: 2px solid var(--midcentury-slate);
+  position: relative;
+}
+
+.theme-midcentury::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  background: linear-gradient(45deg, transparent 45%, var(--midcentury-teal) 49%, var(--midcentury-teal) 51%, transparent 55%);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.theme-classic {
+  background: linear-gradient(135deg, var(--classic-white) 0%, #FCFBF7 100%);
+  border: 2px solid var(--classic-navy);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+}
+
+/* Vintage font classes */
+.font-playfair { font-family: 'Playfair Display', serif; }
+.font-cinzel { font-family: 'Cinzel', serif; }
+.font-dancing { font-family: 'Dancing Script', cursive; }
+.font-great-vibes { font-family: 'Great Vibes', cursive; }
+.font-abril { font-family: 'Abril Fatface', cursive; }
+.font-cormorant { font-family: 'Cormorant Garamond', serif; }
+.font-crimson { font-family: 'Crimson Text', serif; }
 
   /* Animations */
   @keyframes cosmic-shimmer {
