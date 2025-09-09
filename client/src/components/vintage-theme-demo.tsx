@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Crown, Sparkles, Heart, Star, Diamond } from 'lucide-react';
+import { VintageChartPreview } from './enhanced-vintage-chart';
 
 interface VintageTheme {
   name: string;
@@ -153,76 +154,8 @@ export function VintageThemeDemo() {
             </p>
           </div>
 
-          {/* Mock Birth Chart Preview */}
-          <div 
-            className="border-2 rounded-lg p-4 mb-4"
-            style={{ 
-              borderColor: selectedTheme.colors.secondary,
-              backgroundColor: selectedTheme.colors.background 
-            }}
-          >
-            <div className="text-center mb-4">
-              <h4 
-                className="text-lg font-bold mb-1"
-                style={{ 
-                  fontFamily: selectedTheme.primaryFont,
-                  color: selectedTheme.colors.primary 
-                }}
-              >
-                Birth Chart Preview
-              </h4>
-              <p 
-                className="text-sm"
-                style={{ 
-                  fontFamily: selectedTheme.accentFont,
-                  color: selectedTheme.colors.text 
-                }}
-              >
-                Mary Shelley • August 30, 1797 • London, England
-              </p>
-            </div>
-
-            {/* Mock Planetary Placements */}
-            <div className="space-y-2">
-              {[
-                { planet: "☉ Sun", sign: "Virgo", degree: "6°42'" },
-                { planet: "☽ Moon", sign: "Pisces", degree: "23°17'" },
-                { planet: "↗ Rising", sign: "Pisces", degree: "24°44'" },
-                { planet: "☿ Mercury", sign: "Leo", degree: "28°31'" },
-                { planet: "♀ Venus", sign: "Libra", degree: "12°58'" },
-                { planet: "♂ Mars", sign: "Cancer", degree: "19°02'" }
-              ].map((placement, i) => (
-                <div key={i} className="flex justify-between items-center">
-                  <span 
-                    className="font-semibold"
-                    style={{ 
-                      fontFamily: selectedTheme.primaryFont,
-                      color: selectedTheme.colors.primary 
-                    }}
-                  >
-                    {placement.planet}
-                  </span>
-                  <span 
-                    className="flex-1 text-center"
-                    style={{ 
-                      fontFamily: selectedTheme.accentFont,
-                      color: selectedTheme.colors.text 
-                    }}
-                  >
-                    {placement.sign}
-                  </span>
-                  <span 
-                    className="font-mono text-sm"
-                    style={{ 
-                      color: selectedTheme.colors.secondary 
-                    }}
-                  >
-                    {placement.degree}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Enhanced Birth Chart Preview */}
+          <VintageChartPreview theme={selectedTheme} />
 
           {/* Font & Color Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
