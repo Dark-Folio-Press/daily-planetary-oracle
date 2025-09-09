@@ -31,25 +31,29 @@ export default function CSSdoodleWrapper({
 
   useEffect(() => {
     if (doodleRef.current) {
+      const doodleElement = doodleRef.current as any;
+      
       // Set the seed for reproducible patterns
       if (seed !== undefined) {
-        (doodleRef.current as any).seed = seed;
+        doodleElement.seed = seed;
       }
       
-      // Update the pattern
-      (doodleRef.current as any).update = () => {
-        if (doodleRef.current) {
-          (doodleRef.current as any).innerHTML = pattern;
-        }
-      };
+      // Set the pattern content
+      doodleElement.innerHTML = pattern;
       
-      // Trigger initial render
-      (doodleRef.current as any).innerHTML = pattern;
+      // Force update/re-render with new seed
+      if (doodleElement.update) {
+        doodleElement.update();
+      }
     }
   }, [pattern, seed]);
 
+  // Force key change to ensure re-render when seed changes
+  const key = `doodle-${seed || 0}`;
+
   return (
     <css-doodle 
+      key={key}
       ref={doodleRef as any}
       className={className}
       style={style}
