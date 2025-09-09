@@ -22,7 +22,7 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
         longitude: Longitude as string or float
         name: Chart title/name
         output_path: Optional path to save SVG file
-        theme: Kerykeion theme ('default', 'dark', 'dark_high_contrast')
+        theme: Kerykeion theme ('default', 'classic', 'light', 'dark', 'dark_high_contrast')
     
     Returns:
         Dict with SVG content and metadata
@@ -75,16 +75,21 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
         sys.stdout = StringIO()
         
         try:
-            # Handle Kerykeion theme parameter
-            chart_kwargs = {
-                "subject": subject,
-                "chart_type": "Natal",
-                "new_output_directory": temp_dir if not output_path else os.path.dirname(output_path)
+            # Handle Kerykeion theme parameter mapping
+            kerykeion_theme_map = {
+                "default": "classic",
+                "classic": "classic", 
+                "dark": "dark",
+                "dark_high_contrast": "dark-high-contrast",
+                "light": "light"
             }
             
-            # Add theme parameter if not default
-            if theme and theme != "default":
-                chart_kwargs["theme"] = theme
+            chart_kwargs = {
+                "first_obj": subject,
+                "chart_type": "Natal",
+                "new_output_directory": temp_dir if not output_path else os.path.dirname(output_path),
+                "theme": kerykeion_theme_map.get(theme, "classic")
+            }
             
             chart = KerykeionChartSVG(**chart_kwargs)
             
