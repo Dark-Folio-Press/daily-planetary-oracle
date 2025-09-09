@@ -20,10 +20,12 @@ import {
   GitBranch,
   Shapes,
   TrendingUp,
-  Home
+  Home,
+  Palette
 } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
+import { DoodleThemeDemo } from "@/components/doodle-theme-demo";
 
 interface LearningStats {
   totalXp: number;
@@ -293,7 +295,7 @@ export default function LearningPage() {
         </div>
 
         <Tabs defaultValue="progress" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 gap-1 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-8 gap-1 h-auto p-1">
             <TabsTrigger value="progress" className="flex flex-col items-center gap-1 p-2 text-xs">
               <TrendingUp className="w-4 h-4" />
               <span>Progress</span>
@@ -321,6 +323,10 @@ export default function LearningPage() {
             <TabsTrigger value="patterns" className="flex flex-col items-center gap-1 p-2 text-xs">
               <Shapes className="w-4 h-4" />
               <span>Patterns</span>
+            </TabsTrigger>
+            <TabsTrigger value="themes" className="flex flex-col items-center gap-1 p-2 text-xs">
+              <Palette className="w-4 h-4" />
+              <span>Themes</span>
             </TabsTrigger>
           </TabsList>
 
@@ -364,6 +370,10 @@ export default function LearningPage() {
 
           <TabsContent value="patterns" className="space-y-6">
             {renderTrackLessons("patterns", "Patterns & Shapes")}
+          </TabsContent>
+
+          <TabsContent value="themes" className="space-y-6">
+            <DoodleThemeDemo userXP={stats.totalXp} />
           </TabsContent>
 
           {/* Badges Tab - Optimized for Mobile */}
