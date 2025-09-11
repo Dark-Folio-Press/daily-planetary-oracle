@@ -409,11 +409,31 @@
     stroke: var(--chart-cosmic-text) !important;
   }
 
-  /* Remove white SVG backgrounds that hide cosmic themes */
+  /* Remove white and cream SVG backgrounds that hide cosmic themes */
   .chart-theme-cosmic svg rect[fill="white"],
   .chart-theme-cosmic svg rect[fill="#ffffff"],
-  .chart-theme-cosmic svg rect[fill="#FFFFFF"] {
+  .chart-theme-cosmic svg rect[fill="#FFFFFF"],
+  .chart-theme-cosmic svg rect[fill="#f5f5dc"],
+  .chart-theme-cosmic svg rect[fill="#F5F5DC"],
+  .chart-theme-cosmic svg rect[fill="#fdf5e6"],
+  .chart-theme-cosmic svg rect[fill="#FDF5E6"],
+  .chart-theme-cosmic svg rect[fill="beige"],
+  .chart-theme-cosmic svg rect[fill="cream"],
+  .chart-theme-cosmic svg rect[fill="#fffaf0"],
+  .chart-theme-cosmic svg rect[fill="#FFFAF0"] {
     fill: transparent !important;
+  }
+
+  /* Remove cream/beige colors from all chart elements */
+  .chart-theme-cosmic svg [fill="#f5f5dc"],
+  .chart-theme-cosmic svg [fill="#F5F5DC"],
+  .chart-theme-cosmic svg [fill="#fdf5e6"],
+  .chart-theme-cosmic svg [fill="#FDF5E6"],
+  .chart-theme-cosmic svg [fill="beige"],
+  .chart-theme-cosmic svg [fill="cream"],
+  .chart-theme-cosmic svg [fill="#fffaf0"],
+  .chart-theme-cosmic svg [fill="#FFFAF0"] {
+    fill: var(--chart-cosmic-text) !important;
   }
 
   .chart-theme-vintage svg {
@@ -427,6 +447,17 @@
 
   .chart-theme-vintage svg [stroke] {
     stroke: var(--chart-vintage-primary) !important;
+  }
+
+  /* Remove cream/beige backgrounds from vintage themes too */
+  .chart-theme-vintage svg rect[fill="#f5f5dc"],
+  .chart-theme-vintage svg rect[fill="#F5F5DC"],
+  .chart-theme-vintage svg rect[fill="#fdf5e6"],
+  .chart-theme-vintage svg rect[fill="#FDF5E6"],
+  .chart-theme-vintage svg rect[fill="beige"],
+  .chart-theme-vintage svg rect[fill="cream"] {
+    fill: var(--chart-vintage-bg) !important;
+    opacity: 0.1 !important;
   }
 
   /* Per-subtheme accents for dramatic differences */
