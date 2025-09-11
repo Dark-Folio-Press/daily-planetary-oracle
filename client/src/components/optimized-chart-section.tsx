@@ -25,6 +25,7 @@ interface OptimizedChartSectionProps {
   birthTime: string;
   birthLocation: string;
   userName?: string;
+  userXP?: number;
 }
 
 interface CachedChartData {
@@ -43,7 +44,8 @@ export function OptimizedChartSection({
   birthDate, 
   birthTime, 
   birthLocation, 
-  userName 
+  userName,
+  userXP = 0
 }: OptimizedChartSectionProps) {
   const [showCharts, setShowCharts] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -358,7 +360,7 @@ export function OptimizedChartSection({
                     birthLocation={birthLocation}
                     userName={userName}
                     enableDoodleTheme={true}
-                    userXP={1200}
+                    userXP={userXP}
                   />
                 </div>
               </div>

@@ -36,6 +36,12 @@ export function UserProfileCard() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
+  // Fetch user learning stats for XP data
+  const { data: userStats } = useQuery<{ totalXp: number }>({
+    queryKey: ['/api/learning/stats'],
+    enabled: !!user
+  });
+
   const queryClient = useQueryClient();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -536,6 +542,7 @@ export function UserProfileCard() {
           birthTime={user.birthTime}
           birthLocation={user.birthLocation}
           userName={user.username || user.firstName || undefined}
+          userXP={userStats?.totalXp || 0}
         />
       )}
 
