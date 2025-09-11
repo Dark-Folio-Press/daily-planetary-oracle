@@ -122,10 +122,10 @@ export function VisualBirthChart({
       return 'chart-theme-doodle border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-orange-50/10';
     }
     if (themeId.startsWith('vintage-')) {
-      return 'border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-yellow-50/10';
+      return 'chart-theme-vintage border-amber-600/30';
     }
     if (themeId.startsWith('cosmic-')) {
-      return 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20';
+      return 'chart-theme-cosmic border-purple-500/30';
     }
     return 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20';
   };
