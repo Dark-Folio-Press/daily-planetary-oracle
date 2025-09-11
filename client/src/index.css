@@ -393,8 +393,10 @@
   }
 
   /* High-specificity overrides to fix SVG styling */
+  /* Cosmic Academy-inspired SVG styling */
   .chart-theme-cosmic svg {
-    font-family: 'Orbitron', 'Exo', sans-serif !important;
+    font-family: 'Orbitron', 'Futura', 'Montserrat', sans-serif !important;
+    background: transparent !important;
   }
 
   .chart-theme-cosmic svg text {

@@ -8,8 +8,37 @@ import sys
 import json
 import os
 import tempfile
+import re
 from datetime import datetime
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
+
+def strip_kerykeion_css(svg_content):
+    """
+    Strip Kerykeion's inline CSS and styles to allow our external CSS to work properly.
+    Based on Cosmic Academy styling approach.
+    """
+    # Remove style tags completely
+    svg_content = re.sub(r'<style[^>]*>.*?</style>', '', svg_content, flags=re.DOTALL | re.IGNORECASE)
+    
+    # Remove inline style attributes from all elements
+    svg_content = re.sub(r'\s+style\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    
+    # Remove fill attributes that conflict with our themes (keep structure)
+    svg_content = re.sub(r'\s+fill\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    
+    # Remove stroke attributes to allow our CSS control
+    svg_content = re.sub(r'\s+stroke\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    
+    # Remove font-family attributes
+    svg_content = re.sub(r'\s+font-family\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    
+    # Remove font-size attributes to allow our CSS scaling
+    svg_content = re.sub(r'\s+font-size\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    
+    # Remove color-related attributes
+    svg_content = re.sub(r'\s+(color|opacity)\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    
+    return svg_content
 
 def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birth Chart", location="", output_path=None, theme="default"):
     """
@@ -118,6 +147,9 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
         if svg_path and os.path.exists(svg_path):
             with open(svg_path, 'r', encoding='utf-8') as f:
                 svg_content = f.read()
+            
+            # Strip Kerykeion's inline CSS to prevent override of our themes
+            svg_content = strip_kerykeion_css(svg_content)
             
             # Clean up temp file if not saving permanently
             if not output_path:
