@@ -392,6 +392,63 @@
     filter: drop-shadow(0 0 6px var(--chart-cosmic-glow));
   }
 
+  /* High-specificity overrides to fix SVG styling */
+  .chart-theme-cosmic svg {
+    font-family: 'Orbitron', 'Exo', sans-serif !important;
+  }
+
+  .chart-theme-cosmic svg text {
+    fill: var(--chart-cosmic-text) !important;
+    paint-order: stroke fill;
+    stroke: rgba(0, 0, 0, 0.7) !important;
+    stroke-width: 1px !important;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9) !important;
+  }
+
+  .chart-theme-cosmic svg [stroke] {
+    stroke: var(--chart-cosmic-text) !important;
+  }
+
+  /* Remove white SVG backgrounds that hide cosmic themes */
+  .chart-theme-cosmic svg rect[fill="white"],
+  .chart-theme-cosmic svg rect[fill="#ffffff"],
+  .chart-theme-cosmic svg rect[fill="#FFFFFF"] {
+    fill: transparent !important;
+  }
+
+  .chart-theme-vintage svg {
+    font-family: 'Playfair Display', 'Georgia', serif !important;
+  }
+
+  .chart-theme-vintage svg text {
+    fill: var(--chart-vintage-text) !important;
+    font-family: 'Playfair Display', 'Georgia', serif !important;
+  }
+
+  .chart-theme-vintage svg [stroke] {
+    stroke: var(--chart-vintage-primary) !important;
+  }
+
+  /* Per-subtheme accents for dramatic differences */
+  .theme-galaxy.chart-theme-cosmic svg text {
+    fill: var(--cosmic-galaxy-teal) !important;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9) !important;
+  }
+
+  .theme-nebula.chart-theme-cosmic svg [stroke] {
+    stroke: var(--cosmic-nebula-pink) !important;
+  }
+
+  .theme-deep-space.chart-theme-cosmic svg text {
+    fill: var(--cosmic-star-white) !important;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.9) !important;
+  }
+
+  .theme-solar-system.chart-theme-cosmic svg text {
+    fill: var(--cosmic-stellar-gold) !important;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9) !important;
+  }
+
   /* Enhanced Doodle/Hand-drawn Theme */
   .chart-theme-doodle {
     background: var(--chart-doodle-bg);

@@ -347,9 +347,9 @@ export function VisualBirthChart({
           </div>
 
           {/* Chart Display */}
-          <div className={`relative border rounded-lg p-4 ${
+          <div className={`relative border rounded-lg p-4 chart-container ${
             getChartDisplayClasses(selectedTheme)
-          }`}>
+          } ${getVintageThemeClass(selectedTheme)} ${getCosmicThemeClass(selectedTheme)}`}>
             {selectedTheme === 'doodle' && canUseDoodle && (
               <CSSdoodleWrapper
                 pattern={DoodlePatterns.paperTexture}
@@ -373,7 +373,9 @@ export function VisualBirthChart({
                 getChartContentClasses(selectedTheme)
               }`}
               onClick={openChartInNewTab}
-              dangerouslySetInnerHTML={{ __html: chartData.svgChart || '' }}
+              dangerouslySetInnerHTML={{ 
+                __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
+              }}
               data-testid="visual-birth-chart-display"
               title="Click to open in large view"
             />

@@ -1,0 +1,61 @@
+client:495 [vite] connecting...
+client:618 [vite] connected.
+hook.js:608 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. Error Component Stack
+    at DescriptionWarning (@radix-ui_react-dialog.js?v=69ce0b9b:1406:29)
+    at @radix-ui_react-dialog.js?v=69ce0b9b:1310:13
+    at @radix-ui_react-dialog.js?v=69ce0b9b:1233:58
+    at Presence (chunk-YN3QL25T.js?v=69ce0b9b:24:11)
+    at @radix-ui_react-dialog.js?v=69ce0b9b:1224:64
+    at chunk-EVLBUYTV.js?v=69ce0b9b:79:13
+    at chunk-EVLBUYTV.js?v=69ce0b9b:56:13
+    at chunk-BOL2CCOG.js?v=69ce0b9b:42:13
+    at chunk-UQHGR4RG.js?v=69ce0b9b:258:22
+    at Presence (chunk-YN3QL25T.js?v=69ce0b9b:24:11)
+    at Provider (chunk-OXZDJRWN.js?v=69ce0b9b:38:15)
+    at DialogPortal (@radix-ui_react-dialog.js?v=69ce0b9b:1186:11)
+    at _c3 (dialog.tsx:35:6)
+    at Provider (chunk-OXZDJRWN.js?v=69ce0b9b:38:15)
+    at Dialog (@radix-ui_react-dialog.js?v=69ce0b9b:1127:5)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at VisualBirthChart (visual-birth-chart.tsx:28:3)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at OptimizedChartSection (optimized-chart-section.tsx:44:3)
+    at div (<anonymous>)
+    at UserProfileCard (user-profile-card.tsx:35:20)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at header (<anonymous>)
+    at div (<anonymous>)
+    at ChatPage (chat.tsx:25:23)
+    at Route (wouter.js?v=69ce0b9b:323:16)
+    at Switch (wouter.js?v=69ce0b9b:379:17)
+    at Router (App.tsx:22:31)
+    at Provider (chunk-OXZDJRWN.js?v=69ce0b9b:38:15)
+    at TooltipProvider (@radix-ui_react-tooltip.js?v=69ce0b9b:2216:5)
+    at ThemeProvider (useTheme.tsx:13:33)
+    at QueryClientProvider (@tanstack_react-query.js?v=69ce0b9b:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+(anonymous) @ @radix-ui_react-dialog.js?v=69ce0b9b:1414
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=69ce0b9b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=69ce0b9b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=69ce0b9b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=69ce0b9b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=69ce0b9b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=69ce0b9b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=69ce0b9b:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=69ce0b9b:19416
+commitRoot @ chunk-RPCDYKBN.js?v=69ce0b9b:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=69ce0b9b:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=69ce0b9b:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=69ce0b9b:18627
