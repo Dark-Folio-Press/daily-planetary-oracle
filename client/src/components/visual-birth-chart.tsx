@@ -142,8 +142,8 @@ export function VisualBirthChart({
     const themeMap: Record<string, string> = {
       'vintage-art-deco': 'theme-art-deco',
       'vintage-victorian': 'theme-victorian',
-      'vintage-mid-century': 'theme-mid-century',
-      'vintage-classic': 'theme-classic-elegance'
+      'vintage-mid-century': 'theme-midcentury',
+      'vintage-classic': 'theme-classic'
     };
     return themeMap[themeId] || '';
   };
