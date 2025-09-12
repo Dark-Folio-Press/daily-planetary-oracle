@@ -17,10 +17,13 @@ def strip_kerykeion_css(svg_content):
     Minimal CSS stripping - only remove background fills that block cosmic themes.
     Preserve all Kerykeion styling needed for chart visibility.
     """
-    # Only neutralize problematic background fills that hide cosmic themes
-    # Target the main background rectangle (usually first large rect) but keep all other styling
-    svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
-    svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
+    # Neutralize ALL background fills that hide cosmic themes (white, cream, AND black)
+    # Target the main background rectangle but keep all other styling
+    svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0|000000|000)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
+    svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream|black)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
+    
+    # Also target common dark theme background colors that block cosmic themes
+    svg_content = re.sub(r'fill\s*=\s*["\']#?(1a1a1a|2d2d2d|333333|404040|222222)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
     
     # Optional: Remove only font-family attributes to allow CSS font control (keep all other attributes)
     svg_content = re.sub(r'\s+font-family\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
