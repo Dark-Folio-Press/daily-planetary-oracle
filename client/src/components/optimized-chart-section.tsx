@@ -26,6 +26,7 @@ interface OptimizedChartSectionProps {
   birthLocation: string;
   userName?: string;
   userXP?: number;
+  chartTheme?: string;
 }
 
 interface CachedChartData {
@@ -45,7 +46,8 @@ export function OptimizedChartSection({
   birthTime, 
   birthLocation, 
   userName,
-  userXP = 0
+  userXP = 0,
+  chartTheme = 'kerykeion-default'
 }: OptimizedChartSectionProps) {
   const [showCharts, setShowCharts] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -53,8 +55,8 @@ export function OptimizedChartSection({
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
 
-  // Cache key for this specific birth data
-  const cacheKey = `chart-data-${birthDate}-${birthTime}-${birthLocation}`;
+  // Cache key for this specific birth data AND theme to prevent cross-theme reuse
+  const cacheKey = `chart-data-${birthDate}-${birthTime}-${birthLocation}-${chartTheme}`;
 
   // Fetch cached chart data
   const { data: cachedChartData } = useQuery<CachedChartData>({
@@ -64,13 +66,18 @@ export function OptimizedChartSection({
     gcTime: 7 * 24 * 60 * 60 * 1000, // Keep for 7 days
   });
 
-  // Generate and cache visual chart
+  // Generate and cache visual chart with theme isolation
   const generateVisualChart = useMutation({
     mutationFn: async () => {
+      const baseKerykeionTheme = chartTheme?.startsWith('kerykeion-') 
+        ? chartTheme.replace('kerykeion-', '') 
+        : 'default';
+      
       const response = await apiRequest('POST', '/api/chart/visual', {
         birthDate,
         birthTime,
-        birthLocation
+        birthLocation,
+        theme: baseKerykeionTheme
       });
       return response.json();
     },

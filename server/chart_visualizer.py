@@ -17,20 +17,27 @@ def strip_kerykeion_css(svg_content):
     Minimal CSS stripping - only remove background fills that block cosmic themes.
     Preserve all Kerykeion styling needed for chart visibility.
     """
-    # Neutralize ALL background fills that hide cosmic themes (white, cream, AND black)
-    # Target the main background rectangle but keep all other styling
+    # Neutralize background fills in fill attributes that hide cosmic themes
     svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0|000000|000)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
     svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream|black)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
-    
-    # Also target common dark theme background colors that block cosmic themes
     svg_content = re.sub(r'fill\s*=\s*["\']#?(1a1a1a|2d2d2d|333333|404040|222222)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
     
-    # Optional: Remove only font-family attributes to allow CSS font control (keep all other attributes)
+    # ENHANCED: Also neutralize background fills in inline style attributes
+    # Handle style="fill:#000000" and similar patterns that block cosmic themes
+    def replace_inline_background_fills(match):
+        style_content = match.group(1)
+        # Replace problematic background fills within the style attribute
+        style_content = re.sub(r'fill\s*:\s*#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0|000000|000)\b', 'fill:none', style_content, flags=re.IGNORECASE)
+        style_content = re.sub(r'fill\s*:\s*(?:white|beige|cream|black)\b', 'fill:none', style_content, flags=re.IGNORECASE)
+        style_content = re.sub(r'fill\s*:\s*#?(1a1a1a|2d2d2d|333333|404040|222222)\b', 'fill:none', style_content, flags=re.IGNORECASE)
+        return f'style="{style_content}"'
+    
+    svg_content = re.sub(r'style\s*=\s*["\']([^"\']*)["\']', replace_inline_background_fills, svg_content, flags=re.IGNORECASE)
+    
+    # Remove only font-family attributes to allow CSS font control (keep all other attributes)
     svg_content = re.sub(r'\s+font-family\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
     
-    # Keep ALL inline styles, stroke, fill colors, and structural elements intact
-    # This preserves Kerykeion's essential styling while allowing themes to work
-    
+    # Keep ALL other styling intact for chart visibility
     return svg_content
 
 def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birth Chart", location="", output_path=None, theme="default"):
