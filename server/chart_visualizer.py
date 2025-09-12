@@ -14,24 +14,19 @@ from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 def strip_kerykeion_css(svg_content):
     """
-    Surgically remove only conflicting Kerykeion styles while preserving chart structure.
-    Keeps the chart visible while allowing our external CSS themes to work.
+    Minimal CSS stripping - only remove background fills that block cosmic themes.
+    Preserve all Kerykeion styling needed for chart visibility.
     """
-    # Remove style tags that contain theme CSS (but keep structural elements)
-    svg_content = re.sub(r'<style[^>]*>.*?</style>', '', svg_content, flags=re.DOTALL | re.IGNORECASE)
+    # Only neutralize problematic background fills that hide cosmic themes
+    # Target the main background rectangle (usually first large rect) but keep all other styling
+    svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
+    svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
     
-    # Only remove problematic background fills (white, cream, beige) that hide cosmic themes
-    svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0)["\']', 'fill="transparent"', svg_content, flags=re.IGNORECASE)
-    svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream)["\']', 'fill="transparent"', svg_content, flags=re.IGNORECASE)
-    
-    # Remove font-family attributes to allow our CSS theme fonts to take control
+    # Optional: Remove only font-family attributes to allow CSS font control (keep all other attributes)
     svg_content = re.sub(r'\s+font-family\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
     
-    # Remove font-size attributes only if they're inline styles (keep structural sizing)
-    svg_content = re.sub(r'\s+style\s*=\s*["\'][^"\']*font-size[^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
-    
-    # Keep all strokes and structural fills - only remove inline style attributes that override CSS
-    svg_content = re.sub(r'\s+style\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    # Keep ALL inline styles, stroke, fill colors, and structural elements intact
+    # This preserves Kerykeion's essential styling while allowing themes to work
     
     return svg_content
 
