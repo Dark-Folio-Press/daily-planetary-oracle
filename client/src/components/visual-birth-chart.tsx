@@ -66,7 +66,7 @@ export function VisualBirthChart({
           birthDate,
           birthTime,
           birthLocation,
-          theme: getKerykeionTheme(selectedTheme),
+          theme: getBaseKerykeionTheme(selectedTheme),
         }),
       });
 
@@ -104,17 +104,25 @@ export function VisualBirthChart({
     return themeMap[themeId] || 'default';
   };
 
+  const getBaseKerykeionTheme = (themeId: string): string => {
+    // For Kerykeion themes, use the actual theme
+    if (themeId.startsWith('kerykeion-')) {
+      return getKerykeionTheme(themeId);
+    }
+    
+    // For ALL custom themes (vintage, cosmic, doodle), use a neutral base
+    // This ensures each custom theme starts with a fresh, consistent SVG foundation
+    return 'default';
+  };
+
   const handleThemeSelect = (themeId: string) => {
     setSelectedTheme(themeId);
     onThemeChange?.(themeId);
     setShowThemeSelector(false);
-    // Clear existing chart to force regeneration with new theme
-    if (chartData && !themeId.startsWith('kerykeion-')) {
-      // For non-Kerykeion themes, keep existing chart but apply CSS
-    } else {
-      // For Kerykeion theme changes, clear chart to regenerate
-      setChartData(null);
-    }
+    
+    // ALWAYS clear existing chart data to force fresh regeneration for ANY theme change
+    // This prevents state bleeding between different themes
+    setChartData(null);
   };
 
   const getChartDisplayClasses = (themeId: string): string => {
