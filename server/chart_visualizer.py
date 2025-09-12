@@ -14,29 +14,24 @@ from kerykeion import AstrologicalSubject, KerykeionChartSVG
 
 def strip_kerykeion_css(svg_content):
     """
-    Strip Kerykeion's inline CSS and styles to allow our external CSS to work properly.
-    Based on Cosmic Academy styling approach.
+    Surgically remove only conflicting Kerykeion styles while preserving chart structure.
+    Keeps the chart visible while allowing our external CSS themes to work.
     """
-    # Remove style tags completely
+    # Remove style tags that contain theme CSS (but keep structural elements)
     svg_content = re.sub(r'<style[^>]*>.*?</style>', '', svg_content, flags=re.DOTALL | re.IGNORECASE)
     
-    # Remove inline style attributes from all elements
-    svg_content = re.sub(r'\s+style\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    # Only remove problematic background fills (white, cream, beige) that hide cosmic themes
+    svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0)["\']', 'fill="transparent"', svg_content, flags=re.IGNORECASE)
+    svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream)["\']', 'fill="transparent"', svg_content, flags=re.IGNORECASE)
     
-    # Remove fill attributes that conflict with our themes (keep structure)
-    svg_content = re.sub(r'\s+fill\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
-    
-    # Remove stroke attributes to allow our CSS control
-    svg_content = re.sub(r'\s+stroke\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
-    
-    # Remove font-family attributes
+    # Remove font-family attributes to allow our CSS theme fonts to take control
     svg_content = re.sub(r'\s+font-family\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
     
-    # Remove font-size attributes to allow our CSS scaling
-    svg_content = re.sub(r'\s+font-size\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    # Remove font-size attributes only if they're inline styles (keep structural sizing)
+    svg_content = re.sub(r'\s+style\s*=\s*["\'][^"\']*font-size[^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
     
-    # Remove color-related attributes
-    svg_content = re.sub(r'\s+(color|opacity)\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
+    # Keep all strokes and structural fills - only remove inline style attributes that override CSS
+    svg_content = re.sub(r'\s+style\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
     
     return svg_content
 
