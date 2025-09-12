@@ -126,6 +126,38 @@ const chartThemes: ChartTheme[] = [
       </div>
     )
   },
+  {
+    id: 'vintage-mid-century',
+    name: 'Mid-Century Modern',
+    category: 'vintage',
+    description: 'Clean mid-century design with atomic age aesthetics and modern typography',
+    xpRequired: 3500,
+    preview: (
+      <div className="w-full h-24 bg-gradient-to-br from-slate-100 to-blue-100 border-2 border-slate-500 rounded theme-midcentury relative">
+        <div className="flex items-center justify-center h-full">
+          <div className="w-16 h-16 rounded-full border-2 border-slate-700 flex items-center justify-center bg-slate-200">
+            <span className="text-slate-800 text-xs font-sans font-bold">1950</span>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'vintage-classic',
+    name: 'Classic Elegance',
+    category: 'vintage',
+    description: 'Timeless classic styling with refined typography and sophisticated color palette',
+    xpRequired: 7500,
+    preview: (
+      <div className="w-full h-24 bg-gradient-to-br from-blue-50 to-slate-100 border-2 border-blue-800 rounded theme-classic relative">
+        <div className="flex items-center justify-center h-full">
+          <div className="w-16 h-16 rounded-full border-2 border-blue-900 flex items-center justify-center bg-blue-100">
+            <span className="text-blue-900 text-xs font-serif font-semibold">CLASS</span>
+          </div>
+        </div>
+      </div>
+    )
+  },
   
   // Cosmic Themes (5000-12500 XP)
   {
