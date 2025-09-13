@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Edit, Trash2, Calendar, MapPin, Clock, User, Star, Share2, Activity, TrendingUp, Moon, ExternalLink } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -550,6 +550,9 @@ export function UserProfileCard() {
       {/* Avatar Selector Dialog */}
       <Dialog open={showAvatarSelector} onOpenChange={setShowAvatarSelector}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Choose Your Avatar</DialogTitle>
+          </DialogHeader>
           <AvatarSelector
             currentAvatarType={(user as any)?.avatarType}
             currentAvatarIcon={(user as any)?.avatarIcon}

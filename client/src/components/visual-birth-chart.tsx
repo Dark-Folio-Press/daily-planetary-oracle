@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Download, Sparkles } from 'lucide-react';
+import { Loader2, Download, Sparkles, Maximize2 } from 'lucide-react';
 
 interface VisualBirthChartProps {
   birthDate?: string;
@@ -26,6 +27,7 @@ export function VisualBirthChart({
 }: VisualBirthChartProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [chartData, setChartData] = useState<ChartResponse | null>(null);
+  const [showChartModal, setShowChartModal] = useState(false);
   const { toast } = useToast();
 
   const generateChart = async () => {
@@ -104,22 +106,13 @@ export function VisualBirthChart({
     });
   };
 
-  const openChartInNewTab = () => {
+  const openChartModal = () => {
     if (!chartData?.svgChart) return;
-
-    const blob = new Blob([chartData.svgChart], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const newWindow = window.open(url, '_blank');
+    setShowChartModal(true);
     
-    if (newWindow) {
-      newWindow.document.title = `Birth Chart - ${userName || 'Chart'}`;
-      // Clean up the URL after a delay to allow the new window to load
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
     toast({
       title: "Chart Opened",
-      description: "Your birth chart has been opened in a new tab for better viewing.",
+      description: "Your birth chart is now displayed in large view.",
     });
   };
 
@@ -167,16 +160,14 @@ export function VisualBirthChart({
             
             <div className="flex space-x-2">
               <Button
-                onClick={openChartInNewTab}
+                onClick={openChartModal}
                 variant="outline"
                 size="sm"
                 className="border-purple-500 text-purple-300 hover:bg-purple-700"
-                data-testid="button-open-chart-tab"
+                data-testid="button-open-chart-modal"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-                Open Large View
+                <Maximize2 className="w-4 h-4 mr-2" />
+                View Large Chart
               </Button>
               <Button
                 onClick={downloadChart}
@@ -205,15 +196,15 @@ export function VisualBirthChart({
           <div className="p-4 border border-purple-500/30 rounded-lg">
             <div
               className="w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={openChartInNewTab}
+              onClick={openChartModal}
               dangerouslySetInnerHTML={{ 
                 __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
               }}
               data-testid="visual-birth-chart-display"
-              title="Click to open in large view"
+              title="Click to view in large modal"
             />
             <p className="text-xs text-center mt-2 opacity-70 text-purple-300">
-              Click chart to view in full size
+              Click chart to view in large modal
             </p>
           </div>
 
@@ -236,6 +227,46 @@ export function VisualBirthChart({
           </p>
         </div>
       ) : null}
+
+      {/* Chart Modal */}
+      <Dialog open={showChartModal} onOpenChange={setShowChartModal}>
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto p-6">
+          <div className="space-y-4">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                {userName}'s Birth Chart
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Professional chart with Swiss Ephemeris calculations
+              </p>
+            </div>
+            
+            {chartData?.svgChart && (
+              <div className="flex justify-center">
+                <div
+                  className="max-w-full"
+                  dangerouslySetInnerHTML={{ 
+                    __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg w-full h-auto"') || '' 
+                  }}
+                  data-testid="modal-birth-chart-display"
+                />
+              </div>
+            )}
+            
+            <div className="flex justify-center space-x-3">
+              <Button
+                onClick={downloadChart}
+                variant="outline"
+                size="sm"
+                className="border-purple-500 text-purple-600 hover:bg-purple-50"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download SVG
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
