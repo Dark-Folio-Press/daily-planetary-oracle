@@ -841,6 +841,17 @@
   -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0 48%, white 50% 100%); 
 }
 
+/* Center scrim underlay - neutralizes background noise under chart */
+.theme-underlay-center-dark { 
+  pointer-events: none; 
+  background: radial-gradient(circle at 50% 50%, rgba(8,10,20,0.72) 0%, rgba(8,10,20,0.6) 40%, rgba(8,10,20,0.3) 48%, rgba(8,10,20,0) 58%); 
+}
+
+.theme-underlay-center-light { 
+  pointer-events: none; 
+  background: radial-gradient(circle at 50% 50%, rgba(250,252,255,0.85) 0%, rgba(250,252,255,0.7) 40%, rgba(250,252,255,0.4) 48%, rgba(250,252,255,0) 58%); 
+}
+
   /* Animations */
   @keyframes cosmic-shimmer {
     0%, 100% {

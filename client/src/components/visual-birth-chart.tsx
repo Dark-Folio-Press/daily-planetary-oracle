@@ -373,19 +373,19 @@ export function VisualBirthChart({
             {selectedTheme.startsWith('vintage-') && (
               <VintageThemeWrapper
                 theme={selectedTheme.replace('vintage-', '') as 'art-deco' | 'victorian' | 'mid-century' | 'classic'}
-                className="absolute inset-0 z-20"
+                className="absolute inset-0"
               />
             )}
             
             {selectedTheme.startsWith('cosmic-') && (
               <CosmicThemeWrapper
                 theme={selectedTheme.replace('cosmic-', '') as 'deep-space' | 'nebula' | 'galaxy' | 'solar-system'}
-                className="absolute inset-0 z-20"
+                className="absolute inset-0"
               />
             )}
             
             <div
-              className={`relative z-10 w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity ${
+              className={`relative z-30 isolate w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity ${
                 getChartContentClasses(selectedTheme)
               }`}
               onClick={openChartInNewTab}
