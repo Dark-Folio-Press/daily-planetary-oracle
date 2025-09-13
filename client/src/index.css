@@ -944,15 +944,8 @@
   border-radius: 8px;
 }
 
-.chart-skin svg rect {
-  fill: transparent !important;
-}
-
-/* Force all background shapes transparent */
-.chart-skin svg circle,
-.chart-skin svg path,
-.chart-skin svg polygon,
-.chart-skin svg ellipse {
+/* Only force confirmed background elements transparent */
+.chart-skin svg [data-role="background"] {
   fill: transparent !important;
 }
 

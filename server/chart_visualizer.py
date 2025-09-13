@@ -15,8 +15,8 @@ from bs4 import BeautifulSoup
 
 def clean_svg_response(svg_output: str) -> str:
     """
-    Selective SVG cleaning function that removes inline styles and background fills only,
-    while preserving content element colors for better theming control.
+    Selective SVG cleaning function that only neutralizes background elements
+    while preserving all content element colors and styles.
     """
     try:
         soup = BeautifulSoup(svg_output, 'xml')
@@ -30,70 +30,93 @@ def clean_svg_response(svg_output: str) -> str:
         svg_width = float(viewbox[2]) if len(viewbox) >= 3 else 820
         svg_height = float(viewbox[3]) if len(viewbox) >= 4 else 550
         
+        def parse_length(value, total_size):
+            """Parse length values including percentages and units"""
+            if not value:
+                return 0
+            value_str = str(value).strip()
+            
+            if value_str.endswith('%'):
+                return float(value_str[:-1]) / 100 * total_size
+            elif value_str.endswith('px'):
+                return float(value_str[:-2])
+            else:
+                try:
+                    return float(value_str)
+                except ValueError:
+                    return 0
+        
         def is_background_shape(tag, svg_width, svg_height):
             """Identify background shapes that should have transparent fills"""
             element_id = tag.get('id', '').lower()
             
-            # Check for background-related IDs
-            if any(bg_term in element_id for bg_term in ['background', 'bg', 'frame', 'border']):
+            # Only treat explicit background/bg IDs as backgrounds (removed frame/border)
+            if any(bg_term in element_id for bg_term in ['background', 'bg']):
                 return True
                 
-            # Check for large rects covering most of the SVG
+            # Check for large rects covering most of the SVG (with proper unit parsing)
             if tag.name == 'rect':
-                width = float(tag.get('width', 0))
-                height = float(tag.get('height', 0))
+                width = parse_length(tag.get('width', 0), svg_width)
+                height = parse_length(tag.get('height', 0), svg_height)
                 if width >= svg_width * 0.95 or height >= svg_height * 0.95:
                     return True
                     
-            # Check for large circles/ellipses near center
-            if tag.name in ['circle', 'ellipse']:
-                if tag.name == 'circle':
-                    radius = float(tag.get('r', 0))
-                    cx = float(tag.get('cx', svg_width/2))
-                    cy = float(tag.get('cy', svg_height/2))
-                    # Large circles near center are likely background
-                    if (radius >= min(svg_width, svg_height) * 0.45 and 
-                        abs(cx - svg_width/2) < svg_width * 0.1 and 
-                        abs(cy - svg_height/2) < svg_height * 0.1):
-                        return True
+            # Check for large circles/ellipses near center (with proper unit parsing)
+            if tag.name == 'circle':
+                radius = parse_length(tag.get('r', 0), min(svg_width, svg_height))
+                cx = parse_length(tag.get('cx', svg_width/2), svg_width)
+                cy = parse_length(tag.get('cy', svg_height/2), svg_height)
+                
+                # Large circles near center are likely background
+                if (radius >= min(svg_width, svg_height) * 0.45 and 
+                    abs(cx - svg_width/2) < svg_width * 0.1 and 
+                    abs(cy - svg_height/2) < svg_height * 0.1):
+                    return True
                         
             return False
 
-        # Remove inline styles from all elements
+        # Process elements - only modify confirmed backgrounds
         for tag in soup.find_all(True):
             if not hasattr(tag, 'has_attr'):
                 continue
-                
-            # Always remove inline styles
-            if tag.has_attr('style'):
-                del tag['style']
 
-            # Only remove fills from background shapes, preserve content colors
+            # Only neutralize background shapes, preserve all content
             if is_background_shape(tag, svg_width, svg_height):
-                if tag.has_attr('fill'):
-                    tag['fill'] = 'none'  # Make background transparent
+                # Remove or override background fills/styles
+                if tag.has_attr('style'):
+                    # Parse style and set fill to none while preserving other properties
+                    style = tag.get('style', '')
+                    # Simple approach: just set fill to none in style
+                    if 'fill:' in style:
+                        style = 'fill:none;' + ';'.join([prop for prop in style.split(';') if not prop.strip().startswith('fill')])
+                    else:
+                        style = 'fill:none;' + style
+                    tag['style'] = style
+                elif tag.has_attr('fill'):
+                    tag['fill'] = 'none'
+                    
                 # Mark as background for CSS targeting
                 tag['data-role'] = 'background'
 
-            # Add semantic CSS classes based on element characteristics
+            # Add semantic CSS classes for better theming (without removing existing styles)
             element_id = tag.get('id', '').lower()
             text_content = tag.text.strip().lower() if tag.text else ''
 
             # Add classes based on heuristics for better CSS targeting
+            existing_class = tag.get('class', '')
             if 'planet' in element_id or 'planet' in text_content:
-                tag['class'] = 'planet'
+                tag['class'] = f"{existing_class} planet".strip()
             elif 'sign' in element_id or 'sign' in text_content:
-                tag['class'] = 'sign'
+                tag['class'] = f"{existing_class} sign".strip()
             elif 'aspect' in element_id:
-                tag['class'] = 'aspect-line'
+                tag['class'] = f"{existing_class} aspect-line".strip()
             elif 'house' in element_id:
-                tag['class'] = 'house-line'
+                tag['class'] = f"{existing_class} house-line".strip()
             elif tag.name == 'text':
-                tag['class'] = 'chart-text'
+                tag['class'] = f"{existing_class} chart-text".strip()
 
-        # Remove any embedded <style> blocks that define fills/strokes
-        for style_tag in soup.find_all('style'):
-            style_tag.decompose()
+        # Keep embedded <style> blocks - they contain important color definitions
+        # Our CSS [data-role="background"] rules will override backgrounds selectively
 
         return str(soup)
     except Exception as e:
