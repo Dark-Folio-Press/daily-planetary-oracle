@@ -1,0 +1,103 @@
+🚫 Problem to Solve
+
+Kerykeion SVGs:
+
+Inject inline styles like style="fill:black" or hard-coded stroke="#000" on <text>, <path>, etc.
+
+These block your Tailwind/theme-based overrides even if !important is used in some cases.
+
+✅ SOLUTION PLAN
+1. 🔧 Strip Inline Styles in Python (as suggested earlier)
+
+In server/chart_visualizer.py:
+
+Add this post-processor to sanitize the Kerykeion output before it hits your React app:
+
+from bs4 import BeautifulSoup
+
+def strip_inline_styles(svg_output: str) -> str:
+    soup = BeautifulSoup(svg_output, 'xml')
+    for tag in soup.find_all(True):
+        if tag.has_attr('style'):
+            del tag['style']
+    return str(soup)
+
+
+Then after Kerykeion generates the SVG:
+
+svg = chart.get_svg()
+clean_svg = strip_inline_styles(svg)
+return clean_svg
+
+
+✅ This allows your external styles to apply without conflict.
+
+2. 🎯 Use CSS Classes in SVG (optional but powerful)
+
+If you're modifying or extending Kerykeion itself, tag elements with class names:
+
+Example:
+
+self.chart.add_text("Mars", x, y, class_name="planet")
+self.chart.add_circle(x, y, r, class_name="sign")
+
+
+This lets you target:
+
+svg .planet {
+  fill: var(--chart-accent) !important;
+}
+
+
+Even if you're not changing the Kerykeion internals, you can also post-process SVG in Python and add classes via BeautifulSoup.
+
+3. 🎨 Confirm Styling Application via React Components
+
+Make sure the rendered SVG is wrapped in a div with the correct theme class.
+
+In your React component:
+
+<div className={`chart-theme-cosmic chart-skin ${themeSkin}`}>
+  <div dangerouslySetInnerHTML={{ __html: svgContent }} />
+</div>
+
+
+Ensure svgContent is the cleaned SVG from your API.
+
+4. 🧾 Optional: Sanitize the Chart Server-Side (Advanced)
+
+You can enhance the Python post-processing even more:
+
+Add class="planet" or data-* attributes:
+if 'planet' in tag.get('id', '').lower():
+    tag['class'] = 'planet'
+
+
+This gives your CSS even more grip without modifying Kerykeion directly.
+
+5. 📄 PDF Export: Embed or Inline Your CSS
+
+Depending on your PDF generator:
+
+If using Puppeteer or playwright:
+
+Load a template page where the theme is applied via <div class="chart-theme-cosmic">
+
+Ensure <style> or link to CSS is present in the print context
+
+If using WeasyPrint:
+
+Ensure all styles are inlined or available via absolute file paths
+
+You can inject style tags manually into the SVG if needed using Python
+
+🔚 Final Recap
+✔️ What You've Achieved
+
+🌟 Full visual customization pipeline across multiple aesthetics (cosmic, vintage, doodle, etc.)
+
+🧠 Semantic and themeable CSS structure
+
+✨ SVG support for animations, typography, and fine-grained control
+
+🛠 Working architecture that separates concerns cleanly between backend chart logic and frontend rendering
