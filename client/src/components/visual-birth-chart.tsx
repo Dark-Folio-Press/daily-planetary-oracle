@@ -373,14 +373,14 @@ export function VisualBirthChart({
             {selectedTheme.startsWith('vintage-') && (
               <VintageThemeWrapper
                 theme={selectedTheme.replace('vintage-', '') as 'art-deco' | 'victorian' | 'mid-century' | 'classic'}
-                className="absolute inset-0"
+                className="absolute inset-0 z-20"
               />
             )}
             
             {selectedTheme.startsWith('cosmic-') && (
               <CosmicThemeWrapper
                 theme={selectedTheme.replace('cosmic-', '') as 'deep-space' | 'nebula' | 'galaxy' | 'solar-system'}
-                className="absolute inset-0"
+                className="absolute inset-0 z-20"
               />
             )}
             
