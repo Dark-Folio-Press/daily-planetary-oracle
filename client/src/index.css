@@ -834,6 +834,13 @@
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
+/* Theme mask utility - only shows decorations at edges, keeps chart center clear */
+.theme-overlay-edges { 
+  pointer-events: none; 
+  mask-image: radial-gradient(circle at 50% 50%, transparent 0 48%, white 50% 100%); 
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0 48%, white 50% 100%); 
+}
+
   /* Animations */
   @keyframes cosmic-shimmer {
     0%, 100% {

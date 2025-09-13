@@ -15,7 +15,47 @@ export default function VintageThemeWrapper({ theme, className = '', style = {} 
 
   if (!mounted) return null;
 
-  const getThemeElements = () => {
+  const getBackgroundElements = () => {
+    // Central decorative elements that should be behind the chart
+    switch (theme) {
+      case 'art-deco':
+        return (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Art Deco sunburst effect - central, should be behind chart */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 opacity-30">
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute top-1/2 left-1/2 w-16 h-px bg-yellow-600/20"
+                  style={{
+                    transform: `translate(-50%, -50%) rotate(${i * 30}deg)`,
+                    transformOrigin: 'center'
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        );
+        
+      case 'mid-century':
+        return (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Central atomic orbital rings */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 border border-teal-400/15 rounded-full">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 border border-slate-500/10 rounded-full">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-teal-500/20 rounded-full" />
+              </div>
+            </div>
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
+
+  const getEdgeElements = () => {
+    // Only edge/corner decorations that won't interfere with chart readability
     switch (theme) {
       case 'art-deco':
         return (
@@ -174,15 +214,22 @@ export default function VintageThemeWrapper({ theme, className = '', style = {} 
 
   return (
     <div className={`absolute inset-0 ${className}`} style={style}>
-      {/* Base theme background */}
-      <div className={`absolute inset-0 ${
-        theme === 'art-deco' ? 'bg-gradient-to-br from-yellow-50/80 to-amber-100/60' :
-        theme === 'victorian' ? 'bg-gradient-to-br from-purple-50/80 to-indigo-100/60' :
-        theme === 'mid-century' ? 'bg-gradient-to-br from-slate-100/80 to-blue-100/60' :
-        theme === 'classic' ? 'bg-gradient-to-br from-blue-50/80 to-slate-100/60' :
+      {/* Background layer - behind chart */}
+      <div className={`absolute inset-0 z-0 opacity-10 ${
+        theme === 'art-deco' ? 'bg-gradient-to-br from-yellow-50 to-amber-100' :
+        theme === 'victorian' ? 'bg-gradient-to-br from-purple-50 to-indigo-100' :
+        theme === 'mid-century' ? 'bg-gradient-to-br from-slate-100 to-blue-100' :
+        theme === 'classic' ? 'bg-gradient-to-br from-blue-50 to-slate-100' :
         ''
-      } rounded-lg`} />
-      {getThemeElements()}
+      } rounded-lg`}>
+        {/* Central decorative elements that should be in background */}
+        {getBackgroundElements()}
+      </div>
+      
+      {/* Foreground layer - edge-only accents */}
+      <div className="absolute inset-0 z-20 theme-overlay-edges">
+        {getEdgeElements()}
+      </div>
     </div>
   );
 }
