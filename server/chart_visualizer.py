@@ -37,7 +37,7 @@ def clean_svg_response(svg_output: str) -> str:
                 del tag['style']
                 removed_styles += 1
 
-            # CRITICAL: Remove hardcoded fill/stroke attributes that override CSS
+            # CRITICAL: Remove hardcoded fill/stroke attributes from ALL elements that override CSS
             if tag.has_attr('fill'):
                 del tag['fill']
                 removed_fills += 1
@@ -65,6 +65,10 @@ def clean_svg_response(svg_output: str) -> str:
             elif tag.name == 'text':
                 tag['class'] = 'chart-text'
                 added_classes += 1
+
+        # Also remove any embedded <style> blocks that define fills/strokes
+        for style_tag in soup.find_all('style'):
+            style_tag.decompose()
 
         # Debug info removed to avoid interfering with JSON response
         return str(soup)

@@ -948,6 +948,21 @@
   fill: transparent !important;
 }
 
+/* Force all background shapes transparent */
+.chart-skin svg circle,
+.chart-skin svg path,
+.chart-skin svg polygon,
+.chart-skin svg ellipse {
+  fill: transparent !important;
+}
+
+/* Neutralize explicit black fills that might persist */
+.chart-skin svg [fill="#000"],
+.chart-skin svg [fill="#000000"],
+.chart-skin svg [fill="black"] {
+  fill: transparent !important;
+}
+
 /* Theme-specific containers show gradients (not SVG backgrounds) */
 .chart-theme-cosmic {
   background: var(--chart-cosmic-bg);
