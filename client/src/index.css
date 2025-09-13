@@ -822,6 +822,18 @@
   50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(-2px) translateX(1px); }
+  50% { transform: translateY(0px) translateX(2px); }
+  75% { transform: translateY(2px) translateX(-1px); }
+}
+
+@keyframes orbit-planet {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
   /* Animations */
   @keyframes cosmic-shimmer {
     0%, 100% {

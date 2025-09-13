@@ -5,6 +5,8 @@ import { Loader2, Download, Sparkles, Palette, Settings } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CSSdoodleWrapper, { DoodlePatterns } from '@/components/css-doodle-wrapper';
 import { ChartThemeSelector } from '@/components/chart-theme-selector';
+import VintageThemeWrapper from '@/components/vintage-theme-wrapper';
+import CosmicThemeWrapper from '@/components/cosmic-theme-wrapper';
 
 interface VisualBirthChartProps {
   birthDate?: string;
@@ -367,13 +369,19 @@ export function VisualBirthChart({
               />
             )}
             
-            {/* Additional theme overlays for vintage and cosmic themes */}
+            {/* Active theme content generation */}
             {selectedTheme.startsWith('vintage-') && (
-              <div className={`absolute inset-0 ${getVintageThemeClass(selectedTheme)} opacity-20 pointer-events-none`} />
+              <VintageThemeWrapper
+                theme={selectedTheme.replace('vintage-', '') as 'art-deco' | 'victorian' | 'mid-century' | 'classic'}
+                className="absolute inset-0"
+              />
             )}
             
             {selectedTheme.startsWith('cosmic-') && (
-              <div className={`absolute inset-0 ${getCosmicThemeClass(selectedTheme)} pointer-events-none`} />
+              <CosmicThemeWrapper
+                theme={selectedTheme.replace('cosmic-', '') as 'deep-space' | 'nebula' | 'galaxy' | 'solar-system'}
+                className="absolute inset-0"
+              />
             )}
             
             <div

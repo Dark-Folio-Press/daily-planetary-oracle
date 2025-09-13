@@ -263,42 +263,6 @@ export default function CosmicThemeWrapper({ theme, className = '', style = {} }
       } rounded-lg`} />
       {getThemeElements()}
       
-      {/* Add required animations via style tag */}
-      <style jsx>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.2); }
-        }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          25% { transform: translateY(-2px) translateX(1px); }
-          50% { transform: translateY(0px) translateX(2px); }
-          75% { transform: translateY(2px) translateX(-1px); }
-        }
-        
-        @keyframes nebula-swirl {
-          0%, 100% { transform: rotate(0deg) scale(1); }
-          25% { transform: rotate(90deg) scale(1.1); }
-          50% { transform: rotate(180deg) scale(0.9); }
-          75% { transform: rotate(270deg) scale(1.05); }
-        }
-        
-        @keyframes galaxy-rotation {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        @keyframes pulse-sun {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-          50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
-        }
-        
-        @keyframes orbit-planet {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }
