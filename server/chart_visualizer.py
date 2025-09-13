@@ -11,34 +11,28 @@ import tempfile
 import re
 from datetime import datetime
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
+from bs4 import BeautifulSoup
 
-def strip_kerykeion_css(svg_content):
+def strip_inline_styles(svg_content):
     """
-    Minimal CSS stripping - only remove background fills that block cosmic themes.
-    Preserve all Kerykeion styling needed for chart visibility.
+    Remove ALL inline styles from SVG elements using BeautifulSoup.
+    This allows our CSS theming to take full control of the chart appearance.
     """
-    # Neutralize background fills in fill attributes that hide cosmic themes
-    svg_content = re.sub(r'fill\s*=\s*["\']#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0|000000|000)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
-    svg_content = re.sub(r'fill\s*=\s*["\'](?:white|beige|cream|black)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
-    svg_content = re.sub(r'fill\s*=\s*["\']#?(1a1a1a|2d2d2d|333333|404040|222222)["\']', 'fill="none"', svg_content, flags=re.IGNORECASE)
-    
-    # ENHANCED: Also neutralize background fills in inline style attributes
-    # Handle style="fill:#000000" and similar patterns that block cosmic themes
-    def replace_inline_background_fills(match):
-        style_content = match.group(1)
-        # Replace problematic background fills within the style attribute
-        style_content = re.sub(r'fill\s*:\s*#?(ffffff|FFFFFF|f5f5dc|F5F5DC|fdf5e6|FDF5E6|fffaf0|FFFAF0|000000|000)\b', 'fill:none', style_content, flags=re.IGNORECASE)
-        style_content = re.sub(r'fill\s*:\s*(?:white|beige|cream|black)\b', 'fill:none', style_content, flags=re.IGNORECASE)
-        style_content = re.sub(r'fill\s*:\s*#?(1a1a1a|2d2d2d|333333|404040|222222)\b', 'fill:none', style_content, flags=re.IGNORECASE)
-        return f'style="{style_content}"'
-    
-    svg_content = re.sub(r'style\s*=\s*["\']([^"\']*)["\']', replace_inline_background_fills, svg_content, flags=re.IGNORECASE)
-    
-    # Remove only font-family attributes to allow CSS font control (keep all other attributes)
-    svg_content = re.sub(r'\s+font-family\s*=\s*["\'][^"\']*["\']', '', svg_content, flags=re.IGNORECASE)
-    
-    # Keep ALL other styling intact for chart visibility
-    return svg_content
+    try:
+        # Parse SVG with BeautifulSoup
+        soup = BeautifulSoup(svg_content, 'xml')
+        
+        # Strip all inline style attributes from Tag elements only
+        for tag in soup.find_all(True):
+            # Only process Tag elements (not NavigableString or other types)
+            if hasattr(tag, 'has_attr') and tag.has_attr('style'):
+                del tag['style']
+        
+        return str(soup)
+    except Exception as e:
+        # Fallback to original content if parsing fails
+        print(f"Warning: Could not strip inline styles: {e}")
+        return svg_content
 
 def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birth Chart", location="", output_path=None, theme="default"):
     """
@@ -148,8 +142,8 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
             with open(svg_path, 'r', encoding='utf-8') as f:
                 svg_content = f.read()
             
-            # Strip Kerykeion's inline CSS to prevent override of our themes
-            svg_content = strip_kerykeion_css(svg_content)
+            # Strip ALL inline styles to allow CSS theming to work properly
+            svg_content = strip_inline_styles(svg_content)
             
             # Clean up temp file if not saving permanently
             if not output_path:

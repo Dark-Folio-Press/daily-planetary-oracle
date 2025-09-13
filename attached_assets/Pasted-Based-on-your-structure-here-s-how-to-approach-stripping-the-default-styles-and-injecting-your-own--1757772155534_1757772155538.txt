@@ -1,0 +1,134 @@
+Based on your structure, here's how to approach stripping the default styles and injecting your own — tailored to how your Kerykeion-based SVG is rendered and styled in your React frontend.
+
+🔧 Strategy Overview
+✅ What You Want:
+
+Remove default Kerykeion styling
+
+Apply your own themes (like Vintage, Cosmic, etc.)
+
+Ensure your custom CSS is used for both screen and PDF
+
+🧠 How Your System Works (Recap):
+
+Kerykeion generates SVG charts via chart_visualizer.py
+
+These charts are passed as raw SVG data back to the React frontend
+
+You apply themes via wrapper components (vintage-theme-wrapper.tsx, etc.)
+
+Global styling is controlled via index.css and maybe scoped modules
+
+🧼 Step 1: Strip Kerykeion’s Default SVG Styles
+🎯 Problem
+
+Kerykeion adds inline styles directly to SVG elements (e.g. <text style="fill:black; font-size:12px">), which override external CSS.
+
+🛠 Solution
+
+In chart_visualizer.py, modify the Kerykeion SVG output before sending it back to the frontend.
+
+✂️ Strip Inline Styles Example:
+
+In chart_visualizer.py, after SVG is generated:
+
+from bs4 import BeautifulSoup
+
+def strip_inline_styles(svg_output: str) -> str:
+    soup = BeautifulSoup(svg_output, 'xml')
+    for tag in soup.find_all(True):
+        if tag.has_attr('style'):
+            del tag['style']
+    return str(soup)
+
+
+Apply this after calling Kerykeion's chart render:
+
+chart = create_chart(...)
+svg = chart.get_svg()
+clean_svg = strip_inline_styles(svg)
+return clean_svg
+
+
+This removes inline styles so that your React-based themes can take over!
+
+🎨 Step 2: Apply Custom CSS Themes in React
+
+You’re already using wrapper components like:
+
+vintage-theme-wrapper.tsx
+
+cosmic-theme-wrapper.tsx
+
+These likely wrap the SVG chart with CSS classes or <div className="theme-wrapper vintage">, etc.
+
+Here’s how to make it work cleanly:
+
+🎯 Goal:
+
+Target the internal SVG elements using external CSS.
+
+✅ Example CSS (index.css or modular file):
+/* Base styling for all themes */
+.chart-wrapper svg {
+  width: 100%;
+  height: auto;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Style all <text> elements in chart */
+.chart-wrapper text {
+  fill: #222;
+  font-size: 14px;
+}
+
+/* Style planets specifically (if you tag them in Python with class="planet") */
+.chart-wrapper .planet {
+  fill: #0066cc;
+  font-weight: bold;
+}
+
+/* Vintage theme */
+.vintage .chart-wrapper text {
+  fill: #4b3621;
+  font-family: 'IM Fell English', serif;
+}
+
+/* Cosmic theme */
+.cosmic .chart-wrapper text {
+  fill: #d4f1f9;
+  font-family: 'Orbitron', sans-serif;
+}
+
+
+These styles will now apply because you stripped the inline styles!
+
+📄 Step 3: Make It PDF-Compatible
+
+If you're exporting to PDF via a headless browser (e.g. Puppeteer, Playwright), you must ensure:
+
+CSS is applied at print time.
+
+Fonts are embedded or loaded.
+
+No inline styles are blocking your overrides.
+
+✅ Example Print Styles:
+@media print {
+  .chart-wrapper svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+If using a tool like WeasyPrint, external styles are respected as long as paths are correct.
+
+📦 BONUS: Future-Proof with SVG Classes in Python
+
+In chart_visualizer.py, if you're generating SVG elements yourself, add class names to elements directly:
+
+self.chart.add_text("Mars", x, y, class_name="planet")
+
+
+Then you can easily target them in CSS.

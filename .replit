@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["chromium", "glib", "nss", "cairo", "pango", "atk", "cups", "zip"]
+packages = ["atk", "cairo", "chromium", "cups", "glib", "nss", "pango", "xcodebuild", "zip", "zlib"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -18,6 +18,10 @@ externalPort = 80
 [[ports]]
 localPort = 40381
 externalPort = 3000
+
+[[ports]]
+localPort = 41097
+externalPort = 3002
 
 [[ports]]
 localPort = 44067
