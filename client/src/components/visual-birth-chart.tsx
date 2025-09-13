@@ -5,8 +5,7 @@ import { Loader2, Download, Sparkles, Palette, Settings } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CSSdoodleWrapper, { DoodlePatterns } from '@/components/css-doodle-wrapper';
 import { ChartThemeSelector } from '@/components/chart-theme-selector';
-import VintageThemeWrapper from '@/components/vintage-theme-wrapper';
-import CosmicThemeWrapper from '@/components/cosmic-theme-wrapper';
+import ThemeSkin from '@/components/theme-skin';
 
 interface VisualBirthChartProps {
   birthDate?: string;
@@ -131,55 +130,12 @@ export function VisualBirthChart({
     if (themeId === 'doodle') {
       return 'chart-theme-doodle border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-orange-50/10';
     }
-    if (themeId.startsWith('vintage-')) {
-      return 'chart-theme-vintage border-amber-600/30';
-    }
-    if (themeId.startsWith('cosmic-')) {
-      return 'chart-theme-cosmic border-purple-500/30';
-    }
-    return 'border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-blue-900/20';
+    return 'border border-purple-500/30 rounded-lg';
   };
 
-  const getVintageThemeClass = (themeId: string): string => {
-    const themeMap: Record<string, string> = {
-      'vintage-art-deco': 'theme-art-deco',
-      'vintage-victorian': 'theme-victorian',
-      'vintage-mid-century': 'theme-midcentury',
-      'vintage-classic': 'theme-classic'
-    };
-    return themeMap[themeId] || '';
-  };
 
-  const getCosmicThemeClass = (themeId: string): string => {
-    const themeMap: Record<string, string> = {
-      'cosmic-deep-space': 'theme-deep-space',
-      'cosmic-nebula': 'theme-nebula',
-      'cosmic-galaxy': 'theme-galaxy',
-      'cosmic-solar-system': 'theme-solar-system'
-    };
-    return themeMap[themeId] || '';
-  };
 
-  const getChartContentClasses = (themeId: string): string => {
-    if (themeId === 'doodle') return 'chart-content-doodle';
-    if (themeId.startsWith('vintage-')) return 'font-playfair';
-    if (themeId.startsWith('cosmic-')) return 'font-orbitron';
-    return '';
-  };
 
-  const getChartTextClasses = (themeId: string): string => {
-    if (themeId === 'doodle') return 'text-amber-700 dark:text-amber-300 font-patrick';
-    if (themeId.startsWith('vintage-')) return 'text-amber-700 dark:text-amber-300 font-playfair';
-    if (themeId.startsWith('cosmic-')) return 'text-purple-300 font-exo';
-    return 'text-purple-300';
-  };
-
-  const getThemeAccentClass = (themeId: string): string => {
-    if (themeId === 'doodle') return 'text-amber-600 dark:text-amber-400';
-    if (themeId.startsWith('vintage-')) return 'text-amber-600 dark:text-amber-400';
-    if (themeId.startsWith('cosmic-')) return 'text-purple-400 dark:text-purple-300';
-    return 'text-purple-400';
-  };
 
   const getThemeName = (themeId: string): string => {
     const themeNames: Record<string, string> = {
@@ -356,64 +312,58 @@ export function VisualBirthChart({
             </div>
           </div>
 
-          {/* Chart Display */}
-          <div className={`relative border rounded-lg p-4 chart-container ${
-            getChartDisplayClasses(selectedTheme)
-          } ${getVintageThemeClass(selectedTheme)} ${getCosmicThemeClass(selectedTheme)}`}>
-            {selectedTheme === 'doodle' && canUseDoodle && (
-              <CSSdoodleWrapper
-                pattern={DoodlePatterns.paperTexture}
-                seed={42}
-                className="absolute inset-0"
-                style={{ width: '100%', height: '100%', borderRadius: '8px' }}
-              />
+          {/* Chart Display with ThemeSkin */}
+          <div className={`p-4 chart-container ${getChartDisplayClasses(selectedTheme)}`}>
+            {selectedTheme === 'doodle' && canUseDoodle ? (
+              // Special handling for doodle theme to maintain legacy support
+              <div className="relative">
+                <CSSdoodleWrapper
+                  pattern={DoodlePatterns.paperTexture}
+                  seed={42}
+                  className="absolute inset-0"
+                  style={{ width: '100%', height: '100%', borderRadius: '8px' }}
+                />
+                <div
+                  className="relative z-30 isolate w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity chart-content-doodle"
+                  onClick={openChartInNewTab}
+                  dangerouslySetInnerHTML={{ 
+                    __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
+                  }}
+                  data-testid="visual-birth-chart-display"
+                  title="Click to open in large view"
+                />
+                <p className="text-xs text-center mt-2 opacity-70 text-amber-700 dark:text-amber-300 font-patrick">
+                  Click chart to view in full size • {getThemeName(selectedTheme)} Theme Active
+                </p>
+              </div>
+            ) : (
+              // All other themes use ThemeSkin architecture  
+              <ThemeSkin theme={selectedTheme}>
+                <div
+                  className="w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={openChartInNewTab}
+                  dangerouslySetInnerHTML={{ 
+                    __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
+                  }}
+                  data-testid="visual-birth-chart-display"
+                  title="Click to open in large view"
+                />
+                <p className="text-xs text-center mt-2 opacity-70 text-purple-300">
+                  Click chart to view in full size
+                  {selectedTheme !== 'kerykeion-default' && ` • ${getThemeName(selectedTheme)} Theme Active`}
+                </p>
+              </ThemeSkin>
             )}
-            
-            {/* Active theme content generation */}
-            {selectedTheme.startsWith('vintage-') && (
-              <VintageThemeWrapper
-                theme={selectedTheme.replace('vintage-', '') as 'art-deco' | 'victorian' | 'mid-century' | 'classic'}
-                className="absolute inset-0"
-              />
-            )}
-            
-            {selectedTheme.startsWith('cosmic-') && (
-              <CosmicThemeWrapper
-                theme={selectedTheme.replace('cosmic-', '') as 'deep-space' | 'nebula' | 'galaxy' | 'solar-system'}
-                className="absolute inset-0"
-              />
-            )}
-            
-            <div
-              className={`relative z-30 isolate w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity ${
-                getChartContentClasses(selectedTheme)
-              }`}
-              onClick={openChartInNewTab}
-              dangerouslySetInnerHTML={{ 
-                __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
-              }}
-              data-testid="visual-birth-chart-display"
-              title="Click to open in large view"
-            />
-            
-            <p className={`text-xs text-center mt-2 opacity-70 relative z-10 ${
-              getChartTextClasses(selectedTheme)
-            }`}>
-              Click chart to view in full size
-              {selectedTheme !== 'kerykeion-default' && ` • ${getThemeName(selectedTheme)} Theme Active`}
-            </p>
           </div>
 
           {/* Chart Info */}
           {chartData.chartInfo && (
-            <div className={`text-xs space-y-1 ${
-              getChartTextClasses(selectedTheme)
-            }`}>
+            <div className="text-xs space-y-1 text-purple-300">
               <p><strong>Chart Type:</strong> {chartData.chartInfo.chart_type}</p>
               <p><strong>Generated:</strong> {new Date(chartData.chartInfo.generated_at).toLocaleString()}</p>
               <p><strong>Calculation:</strong> Swiss Ephemeris professional accuracy</p>
               {selectedTheme !== 'kerykeion-default' && (
-                <p className={getThemeAccentClass(selectedTheme)}>
+                <p className="text-purple-400">
                   <strong>Theme:</strong> {getThemeName(selectedTheme)} • {getThemeXPRequirement(selectedTheme)} XP
                 </p>
               )}
