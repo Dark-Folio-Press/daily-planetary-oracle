@@ -13,26 +13,49 @@ from datetime import datetime
 from kerykeion import AstrologicalSubject, KerykeionChartSVG
 from bs4 import BeautifulSoup
 
-def strip_inline_styles(svg_content):
+def clean_svg_response(svg_output: str) -> str:
     """
-    Remove ALL inline styles from SVG elements using BeautifulSoup.
-    This allows our CSS theming to take full control of the chart appearance.
+    Comprehensive SVG cleaning function that removes inline styles, hardcoded attributes,
+    and adds semantic CSS classes for better theming control.
     """
     try:
-        # Parse SVG with BeautifulSoup
-        soup = BeautifulSoup(svg_content, 'xml')
-        
-        # Strip all inline style attributes from Tag elements only
+        soup = BeautifulSoup(svg_output, 'xml')
+
         for tag in soup.find_all(True):
             # Only process Tag elements (not NavigableString or other types)
-            if hasattr(tag, 'has_attr') and tag.has_attr('style'):
+            if not hasattr(tag, 'has_attr'):
+                continue
+                
+            # Remove inline styles
+            if tag.has_attr('style'):
                 del tag['style']
-        
+
+            # CRITICAL: Remove hardcoded fill/stroke attributes that override CSS
+            for attr in ['fill', 'stroke']:
+                if tag.has_attr(attr):
+                    del tag[attr]
+
+            # Add semantic CSS classes based on element characteristics
+            element_id = tag.get('id', '').lower()
+            text_content = tag.text.strip().lower() if tag.text else ''
+
+            # Add classes based on heuristics for better CSS targeting
+            if 'planet' in element_id or 'planet' in text_content:
+                tag['class'] = 'planet'
+            elif 'sign' in element_id or 'sign' in text_content:
+                tag['class'] = 'sign'
+            elif 'aspect' in element_id:
+                tag['class'] = 'aspect-line'
+            elif 'house' in element_id:
+                tag['class'] = 'house-line'
+            elif tag.name == 'text':
+                tag['class'] = 'chart-text'
+
         return str(soup)
     except Exception as e:
         # Fallback to original content if parsing fails
-        print(f"Warning: Could not strip inline styles: {e}")
-        return svg_content
+        print(f"Warning: Could not clean SVG response: {e}")
+        return svg_output
 
 def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birth Chart", location="", output_path=None, theme="default"):
     """
@@ -142,8 +165,8 @@ def generate_birth_chart_svg(date_str, time_str, latitude, longitude, name="Birt
             with open(svg_path, 'r', encoding='utf-8') as f:
                 svg_content = f.read()
             
-            # Strip ALL inline styles to allow CSS theming to work properly
-            svg_content = strip_inline_styles(svg_content)
+            # Clean SVG by removing inline styles, hardcoded attributes, and adding semantic classes
+            svg_content = clean_svg_response(svg_content)
             
             # Clean up temp file if not saving permanently
             if not output_path:
