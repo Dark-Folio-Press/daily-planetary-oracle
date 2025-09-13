@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Edit, Trash2, Calendar, MapPin, Clock, User, Star, Share2, Activity, TrendingUp, Moon, ExternalLink } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -546,21 +547,17 @@ export function UserProfileCard() {
         />
       )}
 
-      {/* Avatar Selector Modal */}
-      {showAvatarSelector && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <AvatarSelector
-                currentAvatarType={(user as any)?.avatarType}
-                currentAvatarIcon={(user as any)?.avatarIcon}
-                currentProfileImageUrl={(user as any)?.profileImageUrl}
-                onClose={() => setShowAvatarSelector(false)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Avatar Selector Dialog */}
+      <Dialog open={showAvatarSelector} onOpenChange={setShowAvatarSelector}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <AvatarSelector
+            currentAvatarType={(user as any)?.avatarType}
+            currentAvatarIcon={(user as any)?.avatarIcon}
+            currentProfileImageUrl={(user as any)?.profileImageUrl}
+            onClose={() => setShowAvatarSelector(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
