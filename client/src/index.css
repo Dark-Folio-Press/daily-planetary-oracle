@@ -956,10 +956,7 @@
   fill: transparent !important;
 }
 
-/* Force background elements transparent (marked by our cleaning) */
-.chart-skin svg [data-role="background"] {
-  fill: transparent !important;
-}
+/* Duplicate rule removed - already defined above */
 
 /* Theme-specific containers show gradients (not SVG backgrounds) */
 .chart-theme-cosmic {
@@ -970,33 +967,43 @@
   background: var(--chart-vintage-bg);
 }
 
-.chart-skin svg path,
-.chart-skin svg line,
-.chart-skin svg polyline {
+/* Apply theming ONLY to cosmic and vintage themes, not kerykeion */
+.chart-theme-cosmic svg path,
+.chart-theme-cosmic svg line,
+.chart-theme-cosmic svg polyline,
+.chart-theme-vintage svg path,
+.chart-theme-vintage svg line,
+.chart-theme-vintage svg polyline {
   stroke: var(--chart-stroke-primary) !important;
   stroke-width: var(--chart-line-width) !important;
 }
 
-.chart-skin svg circle {
+.chart-theme-cosmic svg circle,
+.chart-theme-vintage svg circle {
   stroke: var(--chart-stroke-primary) !important;
   stroke-width: var(--chart-line-width) !important;
 }
 
-.chart-skin svg text {
+.chart-theme-cosmic svg text,
+.chart-theme-vintage svg text {
   fill: var(--chart-text) !important;
   font-family: var(--chart-font-family) !important;
   font-size: var(--symbol-size) !important;
 }
 
-.chart-skin svg text.accent,
-.chart-skin svg text[data-accent="true"] {
+.chart-theme-cosmic svg text.accent,
+.chart-theme-cosmic svg text[data-accent="true"],
+.chart-theme-vintage svg text.accent,
+.chart-theme-vintage svg text[data-accent="true"] {
   fill: var(--chart-accent) !important;
   font-weight: bold;
 }
 
-/* House cusps and aspects with secondary styling */
-.chart-skin svg .house-line,
-.chart-skin svg .aspect-line {
+/* House cusps and aspects with secondary styling - only for themed charts */
+.chart-theme-cosmic svg .house-line,
+.chart-theme-cosmic svg .aspect-line,
+.chart-theme-vintage svg .house-line,
+.chart-theme-vintage svg .aspect-line {
   stroke: var(--chart-stroke-secondary) !important;
   stroke-width: calc(var(--chart-line-width) * 0.8) !important;
   opacity: 0.7;
