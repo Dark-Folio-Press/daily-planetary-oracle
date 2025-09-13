@@ -943,6 +943,16 @@
   border-radius: 8px;
 }
 
+/* Defensive fallback to prevent black backgrounds when styles are stripped */
+.chart-skin svg {
+  background: transparent !important;
+}
+
+.chart-theme-cosmic svg,
+.chart-theme-vintage svg {
+  background: var(--chart-bg) !important;
+}
+
 .chart-skin svg path,
 .chart-skin svg line,
 .chart-skin svg polyline {

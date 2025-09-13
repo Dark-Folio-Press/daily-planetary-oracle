@@ -27,6 +27,13 @@ export default function ThemeSkin({ theme, children, className = '' }: ThemeSkin
     return skinMap[themeId] || 'chart-skin';
   };
 
+  const getCategoryClass = (themeId: string): string => {
+    // Add the category class that CSS selectors expect
+    if (themeId.startsWith('cosmic-')) return 'chart-theme-cosmic';
+    if (themeId.startsWith('vintage-')) return 'chart-theme-vintage';
+    return ''; // No category class for kerykeion/doodle themes
+  };
+
   const getBackgroundAtmosphere = (themeId: string): ReactNode => {
     // Simple background atmosphere only - no decorative elements
     if (themeId.startsWith('cosmic-')) {
@@ -62,7 +69,7 @@ export default function ThemeSkin({ theme, children, className = '' }: ThemeSkin
   };
 
   return (
-    <div className={`chart-skin ${getSkinClass(theme)} relative ${className}`}>
+    <div className={`chart-skin ${getCategoryClass(theme)} ${getSkinClass(theme)} relative ${className}`}>
       {/* Layer 1: Background atmosphere - subtle and behind everything */}
       {getBackgroundAtmosphere(theme)}
       
