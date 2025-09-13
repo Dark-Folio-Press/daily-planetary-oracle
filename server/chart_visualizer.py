@@ -20,6 +20,12 @@ def clean_svg_response(svg_output: str) -> str:
     """
     try:
         soup = BeautifulSoup(svg_output, 'xml')
+        
+        # Debug counters
+        removed_styles = 0
+        removed_fills = 0 
+        removed_strokes = 0
+        added_classes = 0
 
         for tag in soup.find_all(True):
             # Only process Tag elements (not NavigableString or other types)
@@ -29,11 +35,15 @@ def clean_svg_response(svg_output: str) -> str:
             # Remove inline styles
             if tag.has_attr('style'):
                 del tag['style']
+                removed_styles += 1
 
             # CRITICAL: Remove hardcoded fill/stroke attributes that override CSS
-            for attr in ['fill', 'stroke']:
-                if tag.has_attr(attr):
-                    del tag[attr]
+            if tag.has_attr('fill'):
+                del tag['fill']
+                removed_fills += 1
+            if tag.has_attr('stroke'):
+                del tag['stroke']
+                removed_strokes += 1
 
             # Add semantic CSS classes based on element characteristics
             element_id = tag.get('id', '').lower()
@@ -42,15 +52,21 @@ def clean_svg_response(svg_output: str) -> str:
             # Add classes based on heuristics for better CSS targeting
             if 'planet' in element_id or 'planet' in text_content:
                 tag['class'] = 'planet'
+                added_classes += 1
             elif 'sign' in element_id or 'sign' in text_content:
                 tag['class'] = 'sign'
+                added_classes += 1
             elif 'aspect' in element_id:
                 tag['class'] = 'aspect-line'
+                added_classes += 1
             elif 'house' in element_id:
                 tag['class'] = 'house-line'
+                added_classes += 1
             elif tag.name == 'text':
                 tag['class'] = 'chart-text'
+                added_classes += 1
 
+        print(f"SVG cleaning results: removed {removed_styles} styles, {removed_fills} fills, {removed_strokes} strokes, added {added_classes} classes")
         return str(soup)
     except Exception as e:
         # Fallback to original content if parsing fails

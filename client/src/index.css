@@ -938,16 +938,13 @@
 }
 
 /* === SVG THEMING RULES === */
+/* Default base skin with fallback background */
 .chart-skin svg {
-  background: var(--chart-bg);
+  background: #f8f9fa;
   border-radius: 8px;
 }
 
-/* Defensive fallback to prevent black backgrounds when styles are stripped */
-.chart-skin svg {
-  background: transparent !important;
-}
-
+/* Theme-specific backgrounds override the default */
 .chart-theme-cosmic svg,
 .chart-theme-vintage svg {
   background: var(--chart-bg) !important;
