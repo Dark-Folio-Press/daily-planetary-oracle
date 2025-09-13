@@ -25,9 +25,10 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
-import { DoodleThemeDemo } from "@/components/doodle-theme-demo";
-import { VintageThemeDemo } from "@/components/vintage-theme-demo";
-import { CosmicThemeDemo } from "@/components/cosmic-theme-demo";
+// Theme demo imports temporarily removed until chart rendering is fixed
+// import { DoodleThemeDemo } from "@/components/doodle-theme-demo";
+// import { VintageThemeDemo } from "@/components/vintage-theme-demo";
+// import { CosmicThemeDemo } from "@/components/cosmic-theme-demo";
 
 interface LearningStats {
   totalXp: number;
@@ -326,10 +327,11 @@ export default function LearningPage() {
               <Shapes className="w-4 h-4" />
               <span>Patterns</span>
             </TabsTrigger>
-            <TabsTrigger value="themes" className="flex flex-col items-center gap-1 p-2 text-xs">
+            {/* Temporarily hidden until chart rendering is fixed */}
+            {/* <TabsTrigger value="themes" className="flex flex-col items-center gap-1 p-2 text-xs">
               <Palette className="w-4 h-4" />
               <span>Themes</span>
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           {/* Track-Specific Tabs */}
@@ -374,7 +376,8 @@ export default function LearningPage() {
             {renderTrackLessons("patterns", "Patterns & Shapes")}
           </TabsContent>
 
-          <TabsContent value="themes" className="space-y-6">
+          {/* Themes tab temporarily hidden until chart rendering is fixed */}
+          {/* <TabsContent value="themes" className="space-y-6">
             <div className="space-y-8">
               <DoodleThemeDemo userXP={stats.totalXp} />
               <div className="border-t pt-8">
@@ -384,7 +387,7 @@ export default function LearningPage() {
                 <CosmicThemeDemo />
               </div>
             </div>
-          </TabsContent>
+          </TabsContent> */}
 
           {/* Badges Tab - Optimized for Mobile */}
           <TabsContent value="badges" className="space-y-6">
