@@ -15,35 +15,65 @@ from bs4 import BeautifulSoup
 
 def clean_svg_response(svg_output: str) -> str:
     """
-    Comprehensive SVG cleaning function that removes inline styles, hardcoded attributes,
-    and adds semantic CSS classes for better theming control.
+    Selective SVG cleaning function that removes inline styles and background fills only,
+    while preserving content element colors for better theming control.
     """
     try:
         soup = BeautifulSoup(svg_output, 'xml')
         
-        # Debug counters
-        removed_styles = 0
-        removed_fills = 0 
-        removed_strokes = 0
-        added_classes = 0
+        # Get SVG dimensions for background detection
+        svg_root = soup.find('svg')
+        if not svg_root:
+            return svg_output
+            
+        viewbox = svg_root.get('viewBox', '0 0 820 550').split()
+        svg_width = float(viewbox[2]) if len(viewbox) >= 3 else 820
+        svg_height = float(viewbox[3]) if len(viewbox) >= 4 else 550
+        
+        def is_background_shape(tag, svg_width, svg_height):
+            """Identify background shapes that should have transparent fills"""
+            element_id = tag.get('id', '').lower()
+            
+            # Check for background-related IDs
+            if any(bg_term in element_id for bg_term in ['background', 'bg', 'frame', 'border']):
+                return True
+                
+            # Check for large rects covering most of the SVG
+            if tag.name == 'rect':
+                width = float(tag.get('width', 0))
+                height = float(tag.get('height', 0))
+                if width >= svg_width * 0.95 or height >= svg_height * 0.95:
+                    return True
+                    
+            # Check for large circles/ellipses near center
+            if tag.name in ['circle', 'ellipse']:
+                if tag.name == 'circle':
+                    radius = float(tag.get('r', 0))
+                    cx = float(tag.get('cx', svg_width/2))
+                    cy = float(tag.get('cy', svg_height/2))
+                    # Large circles near center are likely background
+                    if (radius >= min(svg_width, svg_height) * 0.45 and 
+                        abs(cx - svg_width/2) < svg_width * 0.1 and 
+                        abs(cy - svg_height/2) < svg_height * 0.1):
+                        return True
+                        
+            return False
 
+        # Remove inline styles from all elements
         for tag in soup.find_all(True):
-            # Only process Tag elements (not NavigableString or other types)
             if not hasattr(tag, 'has_attr'):
                 continue
                 
-            # Remove inline styles
+            # Always remove inline styles
             if tag.has_attr('style'):
                 del tag['style']
-                removed_styles += 1
 
-            # CRITICAL: Remove hardcoded fill/stroke attributes from ALL elements that override CSS
-            if tag.has_attr('fill'):
-                del tag['fill']
-                removed_fills += 1
-            if tag.has_attr('stroke'):
-                del tag['stroke']
-                removed_strokes += 1
+            # Only remove fills from background shapes, preserve content colors
+            if is_background_shape(tag, svg_width, svg_height):
+                if tag.has_attr('fill'):
+                    tag['fill'] = 'none'  # Make background transparent
+                # Mark as background for CSS targeting
+                tag['data-role'] = 'background'
 
             # Add semantic CSS classes based on element characteristics
             element_id = tag.get('id', '').lower()
@@ -52,25 +82,19 @@ def clean_svg_response(svg_output: str) -> str:
             # Add classes based on heuristics for better CSS targeting
             if 'planet' in element_id or 'planet' in text_content:
                 tag['class'] = 'planet'
-                added_classes += 1
             elif 'sign' in element_id or 'sign' in text_content:
                 tag['class'] = 'sign'
-                added_classes += 1
             elif 'aspect' in element_id:
                 tag['class'] = 'aspect-line'
-                added_classes += 1
             elif 'house' in element_id:
                 tag['class'] = 'house-line'
-                added_classes += 1
             elif tag.name == 'text':
                 tag['class'] = 'chart-text'
-                added_classes += 1
 
-        # Also remove any embedded <style> blocks that define fills/strokes
+        # Remove any embedded <style> blocks that define fills/strokes
         for style_tag in soup.find_all('style'):
             style_tag.decompose()
 
-        # Debug info removed to avoid interfering with JSON response
         return str(soup)
     except Exception as e:
         # Fallback to original content if parsing fails

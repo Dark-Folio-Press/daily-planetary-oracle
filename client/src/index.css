@@ -963,6 +963,11 @@
   fill: transparent !important;
 }
 
+/* Force background elements transparent (marked by our cleaning) */
+.chart-skin svg [data-role="background"] {
+  fill: transparent !important;
+}
+
 /* Theme-specific containers show gradients (not SVG backgrounds) */
 .chart-theme-cosmic {
   background: var(--chart-cosmic-bg);
