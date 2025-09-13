@@ -1,20 +1,13 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Download, Sparkles, Palette, Settings } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import CSSdoodleWrapper, { DoodlePatterns } from '@/components/css-doodle-wrapper';
-import { ChartThemeSelector } from '@/components/chart-theme-selector';
-import ThemeSkin from '@/components/theme-skin';
+import { Loader2, Download, Sparkles } from 'lucide-react';
 
 interface VisualBirthChartProps {
   birthDate?: string;
   birthTime?: string;
   birthLocation?: string;
   userName?: string;
-  enableDoodleTheme?: boolean;
-  userXP?: number;
-  onThemeChange?: (theme: string) => void;
 }
 
 interface ChartResponse {
@@ -29,21 +22,11 @@ export function VisualBirthChart({
   birthDate, 
   birthTime, 
   birthLocation, 
-  userName,
-  enableDoodleTheme = false,
-  userXP = 0,
-  onThemeChange
+  userName
 }: VisualBirthChartProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [chartData, setChartData] = useState<ChartResponse | null>(null);
-  const [selectedTheme, setSelectedTheme] = useState<string>('kerykeion-default');
-  const [showThemeSelector, setShowThemeSelector] = useState(false);
   const { toast } = useToast();
-  
-  const canUseDoodle = userXP >= 1000;
-  
-  // Legacy doodle theme support
-  const doodleTheme = selectedTheme === 'doodle';
 
   const generateChart = async () => {
     if (!birthDate || !birthTime || !birthLocation) {
@@ -67,7 +50,7 @@ export function VisualBirthChart({
           birthDate,
           birthTime,
           birthLocation,
-          theme: getBaseKerykeionTheme(selectedTheme),
+          theme: 'default',
         }),
       });
 
@@ -96,82 +79,11 @@ export function VisualBirthChart({
     }
   };
 
-  const getKerykeionTheme = (themeId: string): string => {
-    const themeMap: Record<string, string> = {
-      'kerykeion-default': 'default',
-      'kerykeion-dark': 'dark',
-      'kerykeion-dark-contrast': 'dark_high_contrast'
-    };
-    return themeMap[themeId] || 'default';
-  };
-
-  const getBaseKerykeionTheme = (themeId: string): string => {
-    // For Kerykeion themes, use the actual theme
-    if (themeId.startsWith('kerykeion-')) {
-      return getKerykeionTheme(themeId);
-    }
-    
-    // For ALL custom themes (vintage, cosmic, doodle), use a neutral base
-    // This ensures each custom theme starts with a fresh, consistent SVG foundation
-    return 'default';
-  };
-
-  const handleThemeSelect = (themeId: string) => {
-    setSelectedTheme(themeId);
-    onThemeChange?.(themeId);
-    setShowThemeSelector(false);
-    
-    // ALWAYS clear existing chart data to force fresh regeneration for ANY theme change
-    // This prevents state bleeding between different themes
-    setChartData(null);
-  };
-
-  const getChartDisplayClasses = (themeId: string): string => {
-    if (themeId === 'doodle') {
-      return 'chart-theme-doodle border-amber-600/30 bg-gradient-to-br from-amber-50/10 to-orange-50/10';
-    }
-    return 'border border-purple-500/30 rounded-lg';
-  };
 
 
 
 
 
-  const getThemeName = (themeId: string): string => {
-    const themeNames: Record<string, string> = {
-      'kerykeion-default': 'Classic Professional',
-      'kerykeion-dark': 'Dark Professional',
-      'kerykeion-dark-contrast': 'High Contrast Dark',
-      'doodle': 'Handwritten Doodle',
-      'vintage-art-deco': 'Art Deco 1920s',
-      'vintage-victorian': 'Victorian Era',
-      'vintage-mid-century': 'Mid-Century Modern',
-      'vintage-classic': 'Classic Elegance',
-      'cosmic-deep-space': 'Deep Space',
-      'cosmic-nebula': 'Nebula',
-      'cosmic-galaxy': 'Galaxy',
-      'cosmic-solar-system': 'Solar System'
-    };
-    return themeNames[themeId] || 'Unknown Theme';
-  };
-
-  const getThemeXPRequirement = (themeId: string): string => {
-    const xpMap: Record<string, string> = {
-      'kerykeion-default': 'Free',
-      'kerykeion-dark': 'Free',
-      'kerykeion-dark-contrast': 'Free',
-      'doodle': '1000',
-      'vintage-art-deco': '2500',
-      'vintage-victorian': '5000',
-      'vintage-mid-century': '3500',
-      'vintage-classic': '7500',
-      'cosmic-deep-space': '5000',
-      'cosmic-nebula': '7500',
-      'cosmic-galaxy': '10000',
-      'cosmic-solar-system': '12500'
-    };
-    return xpMap[themeId] || 'Unknown';
-  };
 
   const downloadChart = () => {
     if (!chartData?.svgChart) return;
@@ -254,29 +166,6 @@ export function VisualBirthChart({
             </div>
             
             <div className="flex space-x-2">
-              <Dialog open={showThemeSelector} onOpenChange={setShowThemeSelector}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-purple-500 text-purple-300 hover:bg-purple-700"
-                    data-testid="button-chart-theme-selector"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Chart Themes
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Chart Theme Selection</DialogTitle>
-                  </DialogHeader>
-                  <ChartThemeSelector 
-                    userXP={userXP}
-                    currentTheme={selectedTheme}
-                    onThemeSelect={handleThemeSelect}
-                  />
-                </DialogContent>
-              </Dialog>
               <Button
                 onClick={openChartInNewTab}
                 variant="outline"
@@ -312,48 +201,20 @@ export function VisualBirthChart({
             </div>
           </div>
 
-          {/* Chart Display with ThemeSkin */}
-          <div className={`p-4 chart-container ${getChartDisplayClasses(selectedTheme)}`}>
-            {selectedTheme === 'doodle' && canUseDoodle ? (
-              // Special handling for doodle theme to maintain legacy support
-              <div className="relative">
-                <CSSdoodleWrapper
-                  pattern={DoodlePatterns.paperTexture}
-                  seed={42}
-                  className="absolute inset-0"
-                  style={{ width: '100%', height: '100%', borderRadius: '8px' }}
-                />
-                <div
-                  className="relative z-30 isolate w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity chart-content-doodle"
-                  onClick={openChartInNewTab}
-                  dangerouslySetInnerHTML={{ 
-                    __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
-                  }}
-                  data-testid="visual-birth-chart-display"
-                  title="Click to open in large view"
-                />
-                <p className="text-xs text-center mt-2 opacity-70 text-amber-700 dark:text-amber-300 font-patrick">
-                  Click chart to view in full size • {getThemeName(selectedTheme)} Theme Active
-                </p>
-              </div>
-            ) : (
-              // All other themes use ThemeSkin architecture  
-              <ThemeSkin theme={selectedTheme}>
-                <div
-                  className="w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={openChartInNewTab}
-                  dangerouslySetInnerHTML={{ 
-                    __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
-                  }}
-                  data-testid="visual-birth-chart-display"
-                  title="Click to open in large view"
-                />
-                <p className="text-xs text-center mt-2 opacity-70 text-purple-300">
-                  Click chart to view in full size
-                  {selectedTheme !== 'kerykeion-default' && ` • ${getThemeName(selectedTheme)} Theme Active`}
-                </p>
-              </ThemeSkin>
-            )}
+          {/* Simplified Chart Display */}
+          <div className="p-4 border border-purple-500/30 rounded-lg">
+            <div
+              className="w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={openChartInNewTab}
+              dangerouslySetInnerHTML={{ 
+                __html: chartData.svgChart?.replace('<svg', '<svg class="chart-svg"') || '' 
+              }}
+              data-testid="visual-birth-chart-display"
+              title="Click to open in large view"
+            />
+            <p className="text-xs text-center mt-2 opacity-70 text-purple-300">
+              Click chart to view in full size
+            </p>
           </div>
 
           {/* Chart Info */}
@@ -362,20 +223,6 @@ export function VisualBirthChart({
               <p><strong>Chart Type:</strong> {chartData.chartInfo.chart_type}</p>
               <p><strong>Generated:</strong> {new Date(chartData.chartInfo.generated_at).toLocaleString()}</p>
               <p><strong>Calculation:</strong> Swiss Ephemeris professional accuracy</p>
-              {selectedTheme !== 'kerykeion-default' && (
-                <p className="text-purple-400">
-                  <strong>Theme:</strong> {getThemeName(selectedTheme)} • {getThemeXPRequirement(selectedTheme)} XP
-                </p>
-              )}
-            </div>
-          )}
-          
-          {/* XP Requirement Message */}
-          {!canUseDoodle && (
-            <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-              <p className="text-amber-700 dark:text-amber-300 text-sm font-caveat">
-                🔒 Unlock the beautiful handwritten doodle theme for your birth charts at 1000 XP • Current XP: {userXP}
-              </p>
             </div>
           )}
         </div>
