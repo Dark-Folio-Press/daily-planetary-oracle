@@ -938,16 +938,23 @@
 }
 
 /* === SVG THEMING RULES === */
-/* Default base skin with fallback background */
+/* Force SVG backgrounds and rects transparent to show container theme gradients */
 .chart-skin svg {
-  background: #f8f9fa;
+  background: transparent !important;
   border-radius: 8px;
 }
 
-/* Theme-specific backgrounds override the default */
-.chart-theme-cosmic svg,
-.chart-theme-vintage svg {
-  background: var(--chart-bg) !important;
+.chart-skin svg rect {
+  fill: transparent !important;
+}
+
+/* Theme-specific containers show gradients (not SVG backgrounds) */
+.chart-theme-cosmic {
+  background: var(--chart-cosmic-bg);
+}
+
+.chart-theme-vintage {
+  background: var(--chart-vintage-bg);
 }
 
 .chart-skin svg path,
