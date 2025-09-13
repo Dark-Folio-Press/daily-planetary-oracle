@@ -66,7 +66,7 @@ def clean_svg_response(svg_output: str) -> str:
                 tag['class'] = 'chart-text'
                 added_classes += 1
 
-        print(f"SVG cleaning results: removed {removed_styles} styles, {removed_fills} fills, {removed_strokes} strokes, added {added_classes} classes")
+        # Debug info removed to avoid interfering with JSON response
         return str(soup)
     except Exception as e:
         # Fallback to original content if parsing fails
