@@ -149,10 +149,10 @@ export function MoodTransitDashboard() {
   };
 
   const { data: correlationData, isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/analysis/mood-transit-correlation', dateRange],
+    queryKey: ['/api/analysis/mood-transit-correlation'],
     queryFn: async () => {
-      const { startDate, endDate } = getDateRange();
-      const response = await fetch(`/api/analysis/mood-transit-correlation?startDate=${startDate}&endDate=${endDate}`);
+      // Remove date filtering to show all data
+      const response = await fetch(`/api/analysis/mood-transit-correlation`);
       if (!response.ok) {
         throw new Error('Failed to fetch correlation analysis');
       }
