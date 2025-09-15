@@ -2838,15 +2838,24 @@ ${daily.horoscope}
       // Execute backfill operations
       if (backfillPromises.length > 0) {
         console.log(`Backfilling ${backfillPromises.length} missing transit entries for user ${userId}`);
-        await Promise.allSettled(backfillPromises);
-        
-        // Refetch transit data after backfill
-        const updatedTransits = await storage.getUserDailyTransits(userId, startDate, endDate);
-        
-        // Import and use correlation service
-        const { correlationService } = await import('./services/correlation');
-        const analysis = await correlationService.analyzeMoodTransitCorrelations(moods, updatedTransits);
-        res.json(analysis);
+        try {
+          await Promise.all(backfillPromises);
+          console.log(`Successfully backfilled ${backfillPromises.length} transit entries for user ${userId}`);
+          
+          // Refetch transit data after successful backfill
+          const updatedTransits = await storage.getUserDailyTransits(userId, startDate, endDate);
+          
+          // Import and use correlation service
+          const { correlationService } = await import('./services/correlation');
+          const analysis = await correlationService.analyzeMoodTransitCorrelations(moods, updatedTransits);
+          res.json(analysis);
+        } catch (error) {
+          console.error(`Error during backfill for user ${userId}:`, error);
+          // Fallback to existing data if backfill fails
+          const { correlationService } = await import('./services/correlation');
+          const analysis = await correlationService.analyzeMoodTransitCorrelations(moods, transits);
+          res.json(analysis);
+        }
       } else {
         // No backfill needed, proceed with existing data
         const { correlationService } = await import('./services/correlation');
