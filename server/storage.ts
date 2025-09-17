@@ -845,6 +845,25 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getNotificationEligibleUsers(): Promise<User[]> {
+    try {
+      const result = await db
+        .select()
+        .from(users)
+        .where(
+          and(
+            inArray(users.subscriptionTier, ['stardust', 'cosmic']),
+            eq(users.pushNotificationsEnabled, true),
+            sql`${users.oneSignalPlayerId} IS NOT NULL`
+          )
+        );
+      return result;
+    } catch (error) {
+      console.error('Error getting notification eligible users:', error);
+      return [];
+    }
+  }
+
   async updateUserNotificationSettings(
     userId: string, 
     settings: {
@@ -1225,6 +1244,7 @@ export class MemStorage implements IStorage {
   
   // Subscription and notification methods (MemStorage stubs - guests don't persist subscription data)
   async getUsersBySubscriptionTiers(tiers: string[]): Promise<User[]> { return []; }
+  async getNotificationEligibleUsers(): Promise<User[]> { return []; }
   async updateUserNotificationSettings(userId: string, settings: any): Promise<void> {}
 }
 

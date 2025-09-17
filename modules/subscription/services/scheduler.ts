@@ -37,9 +37,15 @@ export class NotificationCron {
    */
   private async processDailyNotifications(): Promise<void> {
     try {
-      const users = await this.getSubscriptionUsers(['stardust', 'cosmic']);
+      // Get only users who are eligible for notifications (paid tier + opted in + have player ID)
+      const users = await this.getEligibleUsers();
       
       for (const user of users) {
+        // Defensive guards - ensure user is still eligible
+        if (!(user as any).pushNotificationsEnabled || !(user as any).oneSignalPlayerId) {
+          continue;
+        }
+        
         const userTime = this.getUserLocalTime(user);
         
         // Send at 8 AM user's time
@@ -57,9 +63,15 @@ export class NotificationCron {
    */
   private async processWeeklyNotifications(): Promise<void> {
     try {
-      const users = await this.getSubscriptionUsers(['stardust', 'cosmic']);
+      // Get only users who are eligible for notifications (paid tier + opted in + have player ID)
+      const users = await this.getEligibleUsers();
       
       for (const user of users) {
+        // Defensive guards - ensure user is still eligible
+        if (!(user as any).pushNotificationsEnabled || !(user as any).oneSignalPlayerId) {
+          continue;
+        }
+        
         const userTime = this.getUserLocalTime(user);
         
         // Send on Monday at 7 AM user's time
@@ -162,10 +174,10 @@ export class NotificationCron {
   }
 
   /**
-   * Get users by subscription tiers
+   * Get users who are eligible for notifications (paid tier + opted in + have player ID)
    */
-  private async getSubscriptionUsers(tiers: string[]): Promise<User[]> {
-    return await storage.getUsersBySubscriptionTiers(tiers);
+  private async getEligibleUsers(): Promise<User[]> {
+    return await storage.getNotificationEligibleUsers();
   }
 }
 
