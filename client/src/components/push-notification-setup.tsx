@@ -86,7 +86,38 @@ export default function PushNotificationSetup({ userTier, userId }: PushNotifica
       // Enable subscription
       await window.OneSignal.setSubscription(true);
 
-      // Notify backend about subscription
+      // Get OneSignal player ID and user timezone - with fallback for SDK compatibility
+      let playerId: string | null = null;
+      try {
+        // Try modern method first
+        playerId = await window.OneSignal.getUserId();
+        // Fallback to legacy method if available
+        if (!playerId && window.OneSignal.getPlayerId) {
+          playerId = await window.OneSignal.getPlayerId();
+        }
+      } catch (error) {
+        console.warn('Could not get OneSignal player ID:', error);
+      }
+
+      if (!playerId) {
+        throw new Error('Unable to get OneSignal player ID');
+      }
+
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      // Register OneSignal player ID and timezone with backend
+      await apiRequest('/api/notifications/onesignal/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          oneSignalPlayerId: playerId,
+          timezone: timezone
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      // Also call original subscribe endpoint for backward compatibility
       await apiRequest('/api/notifications/subscribe', {
         method: 'POST',
       });
