@@ -16,6 +16,7 @@ import FeedbackAnalytics from "@/pages/feedback-analytics";
 import { MoodAnalysisPage } from "@/pages/mood-analysis";
 import LearningPage from "@/pages/learning";
 import LessonPage from "@/pages/lesson";
+import WaitlistPage from "@/pages/WaitlistPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/forgot-password"><ForgotPasswordPage /></Route>
       <Route path="/reset-password"><ResetPasswordPage /></Route>
       <Route path="/profile-setup"><ProfileSetupPage /></Route>
+      <Route path="/waitlist"><WaitlistPage /></Route>
       
       {/* Learning route - accessible to authenticated users */}
       <Route path="/learning">

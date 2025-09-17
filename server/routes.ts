@@ -2928,6 +2928,10 @@ ${daily.horoscope}
   // ====================== NOTIFICATION ROUTES ======================
   app.use('/api/notifications', notificationRoutes);
 
+  // ====================== WAITLIST ROUTES ======================
+  const { default: waitlistRoutes } = await import('./routes/waitlist.js');
+  app.use('/api/waitlist', waitlistRoutes);
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -12,6 +12,7 @@ import {
   dailyTransits,
   contentFeedback,
   weeklyReflections,
+  waitlist,
   type ChatSession, 
   type ChatMessage, 
   type Playlist, 
@@ -23,6 +24,7 @@ import {
   type DailyTransit,
   type ContentFeedback,
   type WeeklyReflection,
+  type Waitlist,
   type InsertSongUsage,
   type InsertChatSession, 
   type InsertChatMessage, 
@@ -33,6 +35,7 @@ import {
   type InsertDailyTransit,
   type InsertContentFeedback,
   type InsertWeeklyReflection,
+  type InsertWaitlist,
   type UpsertUser,
   type InsertUser
 } from "@shared/schema";
@@ -146,6 +149,16 @@ export interface IStorage {
   getUserDailyTransits(userId: string, startDate?: string, endDate?: string): Promise<DailyTransit[]>;
   updateDailyTransit(id: number, updates: Partial<InsertDailyTransit>): Promise<DailyTransit | undefined>;
   deleteDailyTransit(id: number): Promise<boolean>;
+
+  // Waitlist methods
+  addToWaitlist(email: string, ipAddress?: string, userAgent?: string): Promise<{ position: number; referralCode: string }>;
+  getWaitlistPosition(email: string): Promise<number | null>;
+  getWaitlistStats(): Promise<{ totalSignups: number; totalInvited: number; totalAccepted: number }>;
+  processReferral(referralCode: string, newEmail: string): Promise<boolean>;
+  updateSocialShares(email: string): Promise<void>;
+  getWaitlistByEmail(email: string): Promise<any>;
+  sendInvitation(email: string): Promise<{ inviteToken: string } | null>;
+  acceptInvitation(inviteToken: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -915,6 +928,165 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // Waitlist methods
+  async addToWaitlist(email: string, ipAddress?: string, userAgent?: string): Promise<{ position: number; referralCode: string }> {
+    try {
+      // Check if email already exists
+      const existing = await db.select().from(waitlist).where(eq(waitlist.email, email)).limit(1);
+      if (existing.length > 0) {
+        return { 
+          position: existing[0].position, 
+          referralCode: existing[0].referralCode || '' 
+        };
+      }
+
+      // Generate referral code
+      const referralCode = `${Date.now().toString(36)}${Math.random().toString(36).substr(2, 5)}`.toUpperCase();
+      
+      // Get current position (total count + 1)
+      const countResult = await db.select({ count: sql<number>`count(*)` }).from(waitlist);
+      const position = (countResult[0]?.count || 0) + 1;
+
+      // Insert new waitlist entry
+      const [newEntry] = await db.insert(waitlist).values({
+        email,
+        position,
+        referralCode,
+        ipAddress,
+        userAgent,
+      }).returning();
+
+      return { position, referralCode };
+    } catch (error) {
+      console.error('Error adding to waitlist:', error);
+      throw new Error('Failed to join waitlist');
+    }
+  }
+
+  async getWaitlistPosition(email: string): Promise<number | null> {
+    try {
+      const [entry] = await db.select({ position: waitlist.position })
+        .from(waitlist)
+        .where(eq(waitlist.email, email))
+        .limit(1);
+      return entry?.position || null;
+    } catch (error) {
+      console.error('Error getting waitlist position:', error);
+      return null;
+    }
+  }
+
+  async getWaitlistStats(): Promise<{ totalSignups: number; totalInvited: number; totalAccepted: number }> {
+    try {
+      const [stats] = await db.select({
+        totalSignups: sql<number>`count(*)`,
+        totalInvited: sql<number>`count(*) filter (where invite_status = 'invited')`,
+        totalAccepted: sql<number>`count(*) filter (where invite_status = 'accepted')`
+      }).from(waitlist);
+
+      return {
+        totalSignups: stats?.totalSignups || 0,
+        totalInvited: stats?.totalInvited || 0,
+        totalAccepted: stats?.totalAccepted || 0
+      };
+    } catch (error) {
+      console.error('Error getting waitlist stats:', error);
+      return { totalSignups: 0, totalInvited: 0, totalAccepted: 0 };
+    }
+  }
+
+  async processReferral(referralCode: string, newEmail: string): Promise<boolean> {
+    try {
+      // Find the referrer
+      const [referrer] = await db.select()
+        .from(waitlist)
+        .where(eq(waitlist.referralCode, referralCode))
+        .limit(1);
+
+      if (!referrer) return false;
+
+      // Update referrer's count and boost position
+      await db.update(waitlist)
+        .set({
+          referralCount: (referrer.referralCount || 0) + 1,
+          positionBoost: (referrer.positionBoost || 0) + 10, // 10 position boost per referral
+          updatedAt: new Date()
+        })
+        .where(eq(waitlist.referralCode, referralCode));
+
+      return true;
+    } catch (error) {
+      console.error('Error processing referral:', error);
+      return false;
+    }
+  }
+
+  async updateSocialShares(email: string): Promise<void> {
+    try {
+      const [entry] = await db.select().from(waitlist).where(eq(waitlist.email, email)).limit(1);
+      if (!entry) return;
+
+      await db.update(waitlist)
+        .set({
+          socialShares: (entry.socialShares || 0) + 1,
+          positionBoost: (entry.positionBoost || 0) + 5, // 5 position boost per share
+          updatedAt: new Date()
+        })
+        .where(eq(waitlist.email, email));
+    } catch (error) {
+      console.error('Error updating social shares:', error);
+    }
+  }
+
+  async getWaitlistByEmail(email: string): Promise<Waitlist | null> {
+    try {
+      const [entry] = await db.select().from(waitlist).where(eq(waitlist.email, email)).limit(1);
+      return entry || null;
+    } catch (error) {
+      console.error('Error getting waitlist entry:', error);
+      return null;
+    }
+  }
+
+  async sendInvitation(email: string): Promise<{ inviteToken: string } | null> {
+    try {
+      const inviteToken = `invite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const [updated] = await db.update(waitlist)
+        .set({
+          inviteStatus: 'invited',
+          inviteToken,
+          invitedAt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(waitlist.email, email))
+        .returning();
+
+      return updated ? { inviteToken } : null;
+    } catch (error) {
+      console.error('Error sending invitation:', error);
+      return null;
+    }
+  }
+
+  async acceptInvitation(inviteToken: string): Promise<boolean> {
+    try {
+      const [updated] = await db.update(waitlist)
+        .set({
+          inviteStatus: 'accepted',
+          acceptedAt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(waitlist.inviteToken, inviteToken))
+        .returning();
+
+      return !!updated;
+    } catch (error) {
+      console.error('Error accepting invitation:', error);
+      return false;
+    }
+  }
+
 }
 
 export class MemStorage implements IStorage {
@@ -1257,6 +1429,20 @@ export class MemStorage implements IStorage {
   async getUsersBySubscriptionTiers(tiers: string[]): Promise<User[]> { return []; }
   async getNotificationEligibleUsers(): Promise<User[]> { return []; }
   async updateUserNotificationSettings(userId: string, settings: any): Promise<void> {}
+
+  // Waitlist methods (MemStorage stubs - waitlist always uses database)
+  async addToWaitlist(email: string, ipAddress?: string, userAgent?: string): Promise<{ position: number; referralCode: string }> {
+    throw new Error('Waitlist functionality requires database storage');
+  }
+  async getWaitlistPosition(email: string): Promise<number | null> { return null; }
+  async getWaitlistStats(): Promise<{ totalSignups: number; totalInvited: number; totalAccepted: number }> {
+    return { totalSignups: 0, totalInvited: 0, totalAccepted: 0 };
+  }
+  async processReferral(referralCode: string, newEmail: string): Promise<boolean> { return false; }
+  async updateSocialShares(email: string): Promise<void> {}
+  async getWaitlistByEmail(email: string): Promise<any> { return null; }
+  async sendInvitation(email: string): Promise<{ inviteToken: string } | null> { return null; }
+  async acceptInvitation(inviteToken: string): Promise<boolean> { return false; }
 }
 
 export const storage = new DatabaseStorage();

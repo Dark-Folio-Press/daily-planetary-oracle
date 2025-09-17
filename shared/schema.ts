@@ -579,6 +579,38 @@ export type InsertLearningStats = z.infer<typeof insertLearningStatsSchema>;
 export type LearningQuizResult = typeof learningQuizResults.$inferSelect;
 export type InsertLearningQuizResult = z.infer<typeof insertLearningQuizResultSchema>;
 
+// Waitlist table for controlled beta access
+export const waitlist = pgTable("waitlist", {
+  id: serial("id").primaryKey(),
+  email: varchar("email").notNull().unique(),
+  position: integer("position").notNull(),
+  inviteStatus: varchar("invite_status").default("pending"), // 'pending', 'invited', 'accepted'
+  inviteToken: varchar("invite_token").unique(),
+  invitedAt: timestamp("invited_at"),
+  acceptedAt: timestamp("accepted_at"),
+  referralCode: varchar("referral_code").unique(),
+  referredBy: varchar("referred_by"), // Email of referrer
+  referralCount: integer("referral_count").default(0),
+  socialShares: integer("social_shares").default(0),
+  positionBoost: integer("position_boost").default(0), // Boost from referrals/shares
+  ipAddress: varchar("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Waitlist schemas
+export const insertWaitlistSchema = createInsertSchema(waitlist).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true,
+  position: true,
+  referralCode: true,
+  inviteToken: true,
+});
+export type InsertWaitlist = z.infer<typeof insertWaitlistSchema>;
+export type Waitlist = typeof waitlist.$inferSelect;
+
 // Additional types for the application
 export interface Song {
   title: string;
