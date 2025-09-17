@@ -945,7 +945,7 @@ export class DatabaseStorage implements IStorage {
       
       // Get current position (total count + 1)
       const countResult = await db.select({ count: sql<number>`count(*)` }).from(waitlist);
-      const position = (countResult[0]?.count || 0) + 1;
+      const position = Number(countResult[0]?.count || 0) + 1;
 
       // Insert new waitlist entry
       const [newEntry] = await db.insert(waitlist).values({
@@ -985,9 +985,9 @@ export class DatabaseStorage implements IStorage {
       }).from(waitlist);
 
       return {
-        totalSignups: stats?.totalSignups || 0,
-        totalInvited: stats?.totalInvited || 0,
-        totalAccepted: stats?.totalAccepted || 0
+        totalSignups: Number(stats?.totalSignups) || 0,
+        totalInvited: Number(stats?.totalInvited) || 0,
+        totalAccepted: Number(stats?.totalAccepted) || 0
       };
     } catch (error) {
       console.error('Error getting waitlist stats:', error);

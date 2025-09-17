@@ -32,6 +32,11 @@ const shareUpdateSchema = z.object({
   email: z.string().email('Invalid email format'),
 });
 
+// In-memory store for rate limiting (in production, use Redis or similar)
+const shareRateLimit = new Map();
+const SHARE_LIMIT_PER_EMAIL = 5; // Maximum 5 shares per email per day
+const SHARE_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 /**
  * Join the waitlist
  */
@@ -51,7 +56,7 @@ router.post('/signup', async (req, res) => {
 
     res.json({
       success: true,
-      position: result.position,
+      position: Number(result.position), // Ensure it's a number
       referralCode: result.referralCode,
       message: `You're #${result.position} on the waitlist!`
     });
@@ -111,6 +116,29 @@ router.post('/share', async (req, res) => {
   try {
     const { email } = shareUpdateSchema.parse(req.body);
     
+    // Check rate limiting
+    const now = Date.now();
+    const userShares = shareRateLimit.get(email);
+    
+    if (userShares) {
+      // Clean up old entries (older than 24 hours)
+      userShares.timestamps = userShares.timestamps.filter(
+        (timestamp: number) => now - timestamp < SHARE_COOLDOWN
+      );
+      
+      // Check if user has exceeded daily limit
+      if (userShares.timestamps.length >= SHARE_LIMIT_PER_EMAIL) {
+        return res.status(429).json({ 
+          error: 'Share limit exceeded',
+          message: 'You can only share 5 times per day. Please wait before sharing again.'
+        });
+      }
+      
+      userShares.timestamps.push(now);
+    } else {
+      shareRateLimit.set(email, { timestamps: [now] });
+    }
+    
     await storage.updateSocialShares(email);
     
     const updatedEntry = await storage.getWaitlistByEmail(email);
@@ -119,7 +147,8 @@ router.post('/share', async (req, res) => {
       success: true,
       socialShares: updatedEntry?.socialShares || 0,
       positionBoost: updatedEntry?.positionBoost || 0,
-      message: 'Social share recorded! Your position has been boosted.'
+      message: 'Social share recorded! Your position has been boosted.',
+      sharesRemaining: Math.max(0, SHARE_LIMIT_PER_EMAIL - (userShares?.timestamps.length || 1))
     });
 
   } catch (error) {
