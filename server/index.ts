@@ -90,7 +90,16 @@ app.all("/auth/*", (req, res) => {
     port,
     host: "0.0.0.0",
     reusePort: true,
-  }, () => {
+  }, async () => {
     log(`serving on port ${port}`);
+    
+    // Start notification scheduling system
+    try {
+      const schedulerModule = await import('../modules/subscription/services/scheduler.js');
+      schedulerModule.notificationCron.start();
+      log('🔔 Notification scheduling system started');
+    } catch (error) {
+      console.error('Failed to start notification scheduler:', error);
+    }
   });
 })();

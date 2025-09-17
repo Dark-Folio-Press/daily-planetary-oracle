@@ -24,10 +24,10 @@ export class NotificationCron {
    * Runs every Monday at 7 AM user's local time
    */
   startWeeklyNotifications(): void {
-    // Run daily and check if it's Monday 7 AM for any users
+    // Run hourly and check if it's Monday 7 AM for any users (proper timezone handling)
     const interval = setInterval(async () => {
       await this.processWeeklyNotifications();
-    }, 24 * 60 * 60 * 1000); // Every day
+    }, 60 * 60 * 1000); // Every hour
 
     this.intervals.set('weekly', interval);
   }
