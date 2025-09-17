@@ -47,13 +47,14 @@ export default function WaitlistPage() {
     },
     onSuccess: (data: any) => {
       setUserEmail(email); // Store user's email for sharing
+      const position = Number(data.position) || 1; // Ensure it's a number
       setJoinedWaitlist({
-        position: data.position,
+        position: position,
         referralCode: data.referralCode,
         referralCount: 0,
         socialShares: 0,
         positionBoost: 0,
-        effectivePosition: data.position,
+        effectivePosition: position,
       });
       toast({
         title: 'Welcome to the Cosmic Journey!',
