@@ -53,6 +53,13 @@ export const users = pgTable("users", {
   spotifyPlaylistId: varchar("spotify_playlist_id"), // Store the current week's playlist ID
   // Music mode preference for premium users
   musicMode: varchar("music_mode").default("personal"), // 'personal' or 'discovery'
+  // Subscription and notification settings
+  subscriptionTier: varchar("subscription_tier").default("vibes"), // 'vibes', 'stardust', 'cosmic'
+  pushNotificationsEnabled: boolean("push_notifications_enabled").default(false),
+  oneSignalPlayerId: varchar("onesignal_player_id"), // OneSignal player ID for targeting
+  notificationSubscribedAt: timestamp("notification_subscribed_at"),
+  notificationUnsubscribedAt: timestamp("notification_unsubscribed_at"),
+  timezone: varchar("timezone"), // User's timezone for notification scheduling
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

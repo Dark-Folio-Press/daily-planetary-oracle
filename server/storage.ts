@@ -37,7 +37,7 @@ import {
   type InsertUser
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, sql, and } from "drizzle-orm";
+import { eq, sql, and, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User operations 
@@ -66,6 +66,15 @@ export interface IStorage {
   updateUserLastExported(userId: string): Promise<void>;
   canUserGenerate(userId: string, feature: 'playlist' | 'horoscope' | 'chart' | 'transit'): Promise<boolean>;
   canUserExport(userId: string): Promise<boolean>;
+  // Subscription and notification methods
+  getUsersBySubscriptionTiers(tiers: string[]): Promise<User[]>;
+  updateUserNotificationSettings(userId: string, settings: {
+    pushNotificationsEnabled?: boolean;
+    oneSignalPlayerId?: string;
+    subscribedAt?: Date;
+    unsubscribedAt?: Date;
+    timezone?: string;
+  }): Promise<void>;
   // Weekly content persistence
   storeWeeklyHoroscope(userId: string, horoscope: any): Promise<void>;
   storeChartReading(userId: string, chartReading: any): Promise<void>;
@@ -822,6 +831,60 @@ export class DatabaseStorage implements IStorage {
     return reflection;
   }
 
+  // Subscription and notification methods
+  async getUsersBySubscriptionTiers(tiers: string[]): Promise<User[]> {
+    try {
+      const result = await db
+        .select()
+        .from(users)
+        .where(inArray(users.subscriptionTier, tiers));
+      return result;
+    } catch (error) {
+      console.error('Error getting users by subscription tiers:', error);
+      return [];
+    }
+  }
+
+  async updateUserNotificationSettings(
+    userId: string, 
+    settings: {
+      pushNotificationsEnabled?: boolean;
+      oneSignalPlayerId?: string;
+      subscribedAt?: Date;
+      unsubscribedAt?: Date;
+      timezone?: string;
+    }
+  ): Promise<void> {
+    try {
+      const updateData: any = {};
+      
+      if (settings.pushNotificationsEnabled !== undefined) {
+        updateData.pushNotificationsEnabled = settings.pushNotificationsEnabled;
+      }
+      if (settings.oneSignalPlayerId !== undefined) {
+        updateData.oneSignalPlayerId = settings.oneSignalPlayerId;
+      }
+      if (settings.subscribedAt !== undefined) {
+        updateData.notificationSubscribedAt = settings.subscribedAt;
+      }
+      if (settings.unsubscribedAt !== undefined) {
+        updateData.notificationUnsubscribedAt = settings.unsubscribedAt;
+      }
+      if (settings.timezone !== undefined) {
+        updateData.timezone = settings.timezone;
+      }
+
+      await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, userId));
+        
+    } catch (error) {
+      console.error('Error updating user notification settings:', error);
+      throw error;
+    }
+  }
+
 }
 
 export class MemStorage implements IStorage {
@@ -1159,6 +1222,10 @@ export class MemStorage implements IStorage {
   async getUserDailyTransits(userId: string, startDate?: string, endDate?: string): Promise<DailyTransit[]> { return []; }
   async updateDailyTransit(id: number, updates: Partial<InsertDailyTransit>): Promise<DailyTransit | undefined> { return undefined; }
   async deleteDailyTransit(id: number): Promise<boolean> { return false; }
+  
+  // Subscription and notification methods (MemStorage stubs - guests don't persist subscription data)
+  async getUsersBySubscriptionTiers(tiers: string[]): Promise<User[]> { return []; }
+  async updateUserNotificationSettings(userId: string, settings: any): Promise<void> {}
 }
 
 export const storage = new DatabaseStorage();

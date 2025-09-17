@@ -165,9 +165,7 @@ export class NotificationCron {
    * Get users by subscription tiers
    */
   private async getSubscriptionUsers(tiers: string[]): Promise<User[]> {
-    // This would need to be implemented in the actual storage layer
-    // For now, return empty array as placeholder
-    return [];
+    return await storage.getUsersBySubscriptionTiers(tiers);
   }
 }
 

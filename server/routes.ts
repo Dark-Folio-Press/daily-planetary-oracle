@@ -24,6 +24,7 @@ import { setupAuth, requireAuth, requireCompleteProfile } from "./auth";
 import { socialService } from "./services/social";
 import { pdfService } from "./services/pdf";
 import { z } from "zod";
+import notificationRoutes from "./routes/notifications";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from client/public for social sharing assets
@@ -2923,6 +2924,9 @@ ${daily.horoscope}
       res.status(500).json({ error: 'Failed to backfill transit data' });
     }
   });
+
+  // ====================== NOTIFICATION ROUTES ======================
+  app.use('/api/notifications', notificationRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
