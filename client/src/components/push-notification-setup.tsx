@@ -15,6 +15,8 @@ declare global {
       isPushNotificationsEnabled: () => Promise<boolean>;
       showSlidedownPrompt: () => Promise<void>;
       setSubscription: (subscribe: boolean) => Promise<void>;
+      getUserId: () => Promise<string | null>;
+      getPlayerId?: () => Promise<string | null>;
       on: (event: string, callback: (data: any) => void) => void;
     };
   }
