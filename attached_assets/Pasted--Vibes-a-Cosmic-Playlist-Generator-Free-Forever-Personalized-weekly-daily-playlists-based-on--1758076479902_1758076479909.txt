@@ -1,0 +1,68 @@
+ Vibes, a Cosmic Playlist Generator (Free Forever) 
+- Personalized weekly/daily playlists based on astrological data 
+- Basic astrological insight for each day of the week
+- Spotify integration (1 export, 3 generations) 
+- No history/saving 
+
+
+⭐ Monthly Subscriptions
+
+Stardust ($9.99/month)
+All of Vibes PLUS
+Daily personal transit push notifications
+Weekly personal horoscope push notifications
+Weekly playlist notification 
+Unlimited birth chart readings
+
+
+Cosmic ($14.99/month)
+All of Stardust PLUS
+-90 min AI chat per month
+Daily Astro Weather and Lunar Phases
+Mood tracking, journal, analytics dashboard, 
+monthly cosmic report centred on your astrological data
+- Upgrade path to unlimited chat at $9.99/month 
+
+ Add-Ons: 
+- CosmicChat: +$9.99/mo for unlimited AI chat 
+- CosmicAcademy: +$9.99/mo Learn at your own pace, cancel anytime.
+	Master Your Chart - Learn Astrology by Mastering Your Chart
+	Charting For Two - Synastry Charts for Relationships
+	Predictive Astrology - Techniques, Forming a question, Choosing a technique, Recording observations, repeatable observations
+	
+FUTURE BUILD	
+Mystic ($39.99/month)
+Everything in Cosmic
+Enhanced Journaling Features
+Lunar Rituals
+Personal grimoire AI assistant
+Custom astrological reports
+Future tarot readings
+Runes divination
+Priority support
+
+For now i want to focus on shaping the vibes, stardust and cosmic tiers
+To implement it the way I envision it I'll need the following:
+
+Implement Stripe billing integration
+Add OneSignal for push notifications
+Set up basic analytics tracking
+
+Create subscription tiers
+Implement token system
+Add payment flows
+Launch with early adopter pricing
+
+Start Simple: Launch with just Vibes (FREE) and a waitlist sign up and notification strategy - early adopters will sign up to receive  free week once we go live.  Goal is by end of October so three to four weeks after launch (beginning of October) SIgn up to unlock a 7 day trial of Stardust ($9.99) or Cosmic ($19.99) when we launch
+
+
+I'll need an ai, automated solution o help me capture waitlist data, end warm emails, updates and launch notices.
+I WONT need their payment info until they choose to go ahead with a free trial. on the eighth day, we charge.
+All of the users milestones will be tied to their sign up date. Their monthly reports their playlist start days (they sign up on a wednesday, their playlit goes from that Wednesday to the next wednesday) 
+
+Use Stripe Billing: Handles subscription complexity automatically
+OneSignal Setup: 30-minute integration for push notifications
+Analytics First: Track user behavior to optimize pricing
+Referral Program: Give free tokens for successful referrals
+
+Where should we start?
