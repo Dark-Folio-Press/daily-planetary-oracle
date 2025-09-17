@@ -171,3 +171,10 @@ export class NotificationCron {
 
 // Export singleton
 export const notificationCron = new NotificationCron();
+
+// Export startup function for server boot
+export function startNotifications(): void {
+  notificationCron.startDailyNotifications();
+  notificationCron.startWeeklyNotifications();
+  console.log('✨ OneSignal notification scheduling started - daily and weekly notifications active');
+}

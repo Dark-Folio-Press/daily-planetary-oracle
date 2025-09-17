@@ -95,8 +95,8 @@ app.all("/auth/*", (req, res) => {
     
     // Start notification scheduling system
     try {
-      const schedulerModule = await import('../modules/subscription/services/scheduler.js');
-      schedulerModule.notificationCron.start();
+      const { startNotifications } = await import('../modules/subscription/services/scheduler');
+      startNotifications();
       log('🔔 Notification scheduling system started');
     } catch (error) {
       console.error('Failed to start notification scheduler:', error);
