@@ -31,6 +31,7 @@ export default function WaitlistPage() {
   const [referralCode, setReferralCode] = useState('');
   const [joinedWaitlist, setJoinedWaitlist] = useState<WaitlistEntry | null>(null);
   const [showReferralInput, setShowReferralInput] = useState(false);
+  const [userEmail, setUserEmail] = useState(''); // Store user's email for sharing
   const { toast } = useToast();
 
   // Get waitlist stats
@@ -45,6 +46,7 @@ export default function WaitlistPage() {
       return apiRequest('POST', '/api/waitlist/signup', { email, referralCode });
     },
     onSuccess: (data: any) => {
+      setUserEmail(email); // Store user's email for sharing
       setJoinedWaitlist({
         position: data.position,
         referralCode: data.referralCode,
@@ -69,13 +71,29 @@ export default function WaitlistPage() {
 
   // Social share mutation
   const shareMutation = useMutation({
-    mutationFn: async (email: string) => {
-      return apiRequest('POST', '/api/waitlist/share', { email });
+    mutationFn: async (userEmail: string) => {
+      return apiRequest('POST', '/api/waitlist/share', { email: userEmail });
     },
     onSuccess: () => {
       toast({
         title: 'Share Recorded!',
         description: 'Your position has been boosted. Keep sharing to move up faster!',
+      });
+      // Update the joinedWaitlist state with new position
+      if (joinedWaitlist) {
+        setJoinedWaitlist({
+          ...joinedWaitlist,
+          socialShares: joinedWaitlist.socialShares + 1,
+          positionBoost: joinedWaitlist.positionBoost + 5,
+          effectivePosition: Math.max(1, joinedWaitlist.position - (joinedWaitlist.positionBoost + 5))
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Share Failed',
+        description: error.message || 'Failed to record your share. Please try again.',
+        variant: 'destructive',
       });
     },
   });
@@ -110,7 +128,7 @@ export default function WaitlistPage() {
     }
 
     window.open(shareUrl, '_blank');
-    shareMutation.mutate(joinedWaitlist.referralCode);
+    shareMutation.mutate(userEmail);
   };
 
   // Check for referral code in URL
