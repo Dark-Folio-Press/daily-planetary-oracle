@@ -74,7 +74,10 @@ export interface IStorage {
     subscribedAt?: Date;
     unsubscribedAt?: Date;
     timezone?: string;
+    lastDailySentAt?: Date;
+    lastWeeklySentAt?: Date;
   }): Promise<void>;
+  getNotificationEligibleUsers(): Promise<User[]>;
   // Weekly content persistence
   storeWeeklyHoroscope(userId: string, horoscope: any): Promise<void>;
   storeChartReading(userId: string, chartReading: any): Promise<void>;
@@ -872,6 +875,8 @@ export class DatabaseStorage implements IStorage {
       subscribedAt?: Date;
       unsubscribedAt?: Date;
       timezone?: string;
+      lastDailySentAt?: Date;
+      lastWeeklySentAt?: Date;
     }
   ): Promise<void> {
     try {
@@ -891,6 +896,12 @@ export class DatabaseStorage implements IStorage {
       }
       if (settings.timezone !== undefined) {
         updateData.timezone = settings.timezone;
+      }
+      if (settings.lastDailySentAt !== undefined) {
+        updateData.lastDailySentAt = settings.lastDailySentAt;
+      }
+      if (settings.lastWeeklySentAt !== undefined) {
+        updateData.lastWeeklySentAt = settings.lastWeeklySentAt;
       }
 
       await db

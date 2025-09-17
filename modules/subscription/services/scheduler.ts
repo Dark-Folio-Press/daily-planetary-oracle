@@ -35,23 +35,39 @@ export class NotificationCron {
   /**
    * Process daily transit notifications
    */
-  private async processDailyNotifications(): Promise<void> {
+  async processDailyNotifications(): Promise<void> {
     try {
       // Get only users who are eligible for notifications (paid tier + opted in + have player ID)
       const users = await this.getEligibleUsers();
+      console.log(`📊 Daily notifications check: ${users.length} eligible users found`);
       
+      let sentCount = 0;
       for (const user of users) {
         // Defensive guards - ensure user is still eligible
         if (!(user as any).pushNotificationsEnabled || !(user as any).oneSignalPlayerId) {
           continue;
         }
         
-        const userTime = this.getUserLocalTime(user);
+        const userTz = (user as any).timezone || 'UTC';
+        const now = Date.now();
+        const parts = this.localParts(now, userTz);
         
         // Send at 8 AM user's time
-        if (userTime.getHours() === 8 && userTime.getMinutes() < 60) {
-          await this.sendDailyTransit(user);
+        if (parts.hour === 8 && parts.minute < 60) {
+          // Check idempotency - don't send if already sent today (using timezone-safe comparison)
+          const todayKey = this.localDateKey(now, userTz);
+          const lastSent = (user as any).lastDailySentAt;
+          const lastSentKey = lastSent ? this.localDateKey(lastSent.getTime(), userTz) : null;
+          
+          if (lastSentKey !== todayKey) {
+            await this.sendDailyTransit(user);
+            sentCount++;
+          }
         }
+      }
+      
+      if (sentCount > 0) {
+        console.log(`🌟 Daily notifications sent to ${sentCount} users`);
       }
     } catch (error) {
       console.error('Daily notification processing failed:', error);
@@ -61,24 +77,46 @@ export class NotificationCron {
   /**
    * Process weekly horoscope notifications
    */
-  private async processWeeklyNotifications(): Promise<void> {
+  async processWeeklyNotifications(): Promise<void> {
     try {
       // Get only users who are eligible for notifications (paid tier + opted in + have player ID)
       const users = await this.getEligibleUsers();
+      console.log(`📊 Weekly notifications check: ${users.length} eligible users found`);
       
+      let sentCount = 0;
       for (const user of users) {
         // Defensive guards - ensure user is still eligible
         if (!(user as any).pushNotificationsEnabled || !(user as any).oneSignalPlayerId) {
           continue;
         }
         
-        const userTime = this.getUserLocalTime(user);
+        const userTz = (user as any).timezone || 'UTC';
+        const now = Date.now();
+        const parts = this.localParts(now, userTz);
         
         // Send on Monday at 7 AM user's time
-        if (userTime.getDay() === 1 && userTime.getHours() === 7 && userTime.getMinutes() < 60) {
-          await this.sendWeeklyHoroscope(user);
-          await this.sendPlaylistNotification(user);
+        if (parts.weekday === 1 && parts.hour === 7 && parts.minute < 60) {
+          // Check idempotency - don't send if already sent this week (using timezone-safe comparison)
+          const currentWeekMonday = this.mondayKey(now, userTz);
+          
+          const lastSent = (user as any).lastWeeklySentAt;
+          const lastSentWeekMonday = lastSent ? this.mondayKey(lastSent.getTime(), userTz) : null;
+          
+          if (lastSentWeekMonday !== currentWeekMonday) {
+            await this.sendWeeklyHoroscope(user);
+            await this.sendPlaylistNotification(user);
+            
+            // Update last sent timestamp for idempotency
+            await storage.updateUserNotificationSettings(user.id, {
+              lastWeeklySentAt: new Date()
+            });
+            sentCount++;
+          }
         }
+      }
+      
+      if (sentCount > 0) {
+        console.log(`🌟 Weekly notifications sent to ${sentCount} users`);
       }
     } catch (error) {
       console.error('Weekly notification processing failed:', error);
@@ -93,6 +131,11 @@ export class NotificationCron {
       // Get user's daily transit data (this would use your astrology service)
       const transitData = await this.generateDailyTransit(user);
       await notificationScheduler.scheduleDailyTransit(user, transitData);
+      
+      // Update last sent timestamp for idempotency
+      await storage.updateUserNotificationSettings(user.id, {
+        lastDailySentAt: new Date()
+      });
     } catch (error) {
       console.error(`Failed to send daily transit for user ${user.id}:`, error);
     }
@@ -128,14 +171,6 @@ export class NotificationCron {
     }
   }
 
-  /**
-   * Get user's local time based on their timezone
-   */
-  private getUserLocalTime(user: User): Date {
-    // Use user's timezone from birth data if available
-    const timezone = user.timezone || 'UTC';
-    return new Date(new Date().toLocaleString('en-US', { timeZone: timezone }));
-  }
 
   /**
    * Generate daily transit data for user
@@ -167,10 +202,88 @@ export class NotificationCron {
    * Stop all notification intervals
    */
   stopAll(): void {
-    for (const [name, interval] of this.intervals.entries()) {
+    this.intervals.forEach((interval, name) => {
       clearInterval(interval);
-    }
+      console.log(`🛑 Stopped ${name} notifications`);
+    });
     this.intervals.clear();
+  }
+
+  /**
+   * Get timezone-safe local date parts without Date constructor bugs
+   */
+  private localParts(epochMs: number, timezone: string): { year: number; month: number; day: number; weekday: number; hour: number; minute: number } {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    const parts = formatter.formatToParts(new Date(epochMs));
+    const weekdayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    
+    return {
+      year: parseInt(parts.find(p => p.type === 'year')?.value || '0'),
+      month: parseInt(parts.find(p => p.type === 'month')?.value || '0'),
+      day: parseInt(parts.find(p => p.type === 'day')?.value || '0'),
+      weekday: weekdayMap[parts.find(p => p.type === 'weekday')?.value || 'Sun'] || 0,
+      hour: parseInt(parts.find(p => p.type === 'hour')?.value || '0'),
+      minute: parseInt(parts.find(p => p.type === 'minute')?.value || '0')
+    };
+  }
+
+  /**
+   * Get user-local YYYY-MM-DD string for date comparison
+   */
+  private localDateKey(epochMs: number, timezone: string): string {
+    const parts = this.localParts(epochMs, timezone);
+    return `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
+  }
+
+  /**
+   * Get Monday of week in user timezone using pure arithmetic (no Date constructor)
+   */
+  private mondayKey(epochMs: number, timezone: string): string {
+    const parts = this.localParts(epochMs, timezone);
+    const daysToMonday = parts.weekday === 0 ? 6 : parts.weekday - 1; // Sun=6 days back, Mon=0 days back
+    
+    // Calculate Monday using pure arithmetic to avoid timezone bugs
+    let mondayYear = parts.year;
+    let mondayMonth = parts.month;
+    let mondayDay = parts.day - daysToMonday;
+    
+    // Handle month rollover
+    while (mondayDay <= 0) {
+      mondayMonth--;
+      if (mondayMonth <= 0) {
+        mondayMonth = 12;
+        mondayYear--;
+      }
+      mondayDay += this.getDaysInMonth(mondayYear, mondayMonth);
+    }
+    
+    return `${mondayYear}-${String(mondayMonth).padStart(2, '0')}-${String(mondayDay).padStart(2, '0')}`;
+  }
+
+  /**
+   * Get days in month with leap year handling
+   */
+  private getDaysInMonth(year: number, month: number): number {
+    const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (month === 2 && this.isLeapYear(year)) return 29;
+    return monthDays[month - 1] || 31;
+  }
+
+  /**
+   * Check if year is leap year
+   */
+  private isLeapYear(year: number): boolean {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   }
 
   /**

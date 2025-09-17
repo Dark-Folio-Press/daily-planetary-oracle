@@ -132,6 +132,62 @@ router.post('/onesignal/register', requireAuth, async (req, res) => {
 });
 
 /**
+ * Manual notification trigger for testing (admin/development use only)
+ */
+router.post('/test', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session?.passport?.user;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    // Check for admin access (for production safety)
+    const isDevMode = process.env.NODE_ENV === 'development';
+    
+    // Skip admin check entirely in dev mode, otherwise safely parse admin list
+    if (!isDevMode) {
+      const adminUserIds = (process.env.ADMIN_USER_IDS || '').split(',');
+      const isAdminUser = adminUserIds.includes(String(userId));
+      
+      if (!isAdminUser) {
+        return res.status(403).json({ error: 'Admin access required for manual notifications' });
+      }
+    }
+
+    const { type = 'daily' } = req.body; // 'daily' or 'weekly'
+    
+    // Import scheduler with proper TypeScript module resolution
+    const { notificationCron } = await import('../../modules/subscription/services/scheduler');
+    
+    let result: { type: string; message: string; eligibleUsersCount?: number; timestamp?: string };
+    if (type === 'weekly') {
+      await notificationCron.processWeeklyNotifications();
+      result = { type: 'weekly', message: 'Weekly notifications processed (horoscope + playlist)' };
+    } else {
+      await notificationCron.processDailyNotifications();
+      result = { type: 'daily', message: 'Daily transit notifications processed' };
+    }
+
+    // Get eligible users count for logging
+    const eligibleUsers = await storage.getNotificationEligibleUsers();
+    result.eligibleUsersCount = eligibleUsers.length;
+    result.timestamp = new Date().toISOString();
+
+    console.log(`🧪 Manual notification test triggered:`, result);
+
+    res.json({ 
+      success: true, 
+      ...result
+    });
+
+  } catch (error) {
+    console.error('Manual notification test error:', error);
+    res.status(500).json({ error: 'Failed to trigger test notification' });
+  }
+});
+
+/**
  * Get user notification settings
  */
 router.get('/settings', requireAuth, async (req, res) => {

@@ -60,6 +60,8 @@ export const users = pgTable("users", {
   notificationSubscribedAt: timestamp("notification_subscribed_at"),
   notificationUnsubscribedAt: timestamp("notification_unsubscribed_at"),
   timezone: varchar("timezone"), // User's timezone for notification scheduling
+  lastDailySentAt: timestamp("last_daily_sent_at"), // Idempotency tracking for daily notifications
+  lastWeeklySentAt: timestamp("last_weekly_sent_at"), // Idempotency tracking for weekly notifications
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
