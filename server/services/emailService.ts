@@ -1,24 +1,23 @@
-const twilio = require('twilio');
+import sgMail from '@sendgrid/mail';
 
 export interface EmailService {
   sendInviteEmail(to: string, inviteToken: string): Promise<boolean>;
   sendBulkInviteEmails(invitations: { email: string; inviteToken: string }[]): Promise<{ sent: number; failed: number }>;
 }
 
-export class TwilioEmailService implements EmailService {
-  private client: any;
+export class SendGridEmailService implements EmailService {
   private fromEmail: string;
 
   constructor() {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    this.fromEmail = process.env.TWILIO_FROM_EMAIL || 'beta@example.com';
+    const apiKey = process.env.SENDGRID_API_KEY;
+    this.fromEmail = process.env.SENDGRID_FROM_EMAIL || 'beta@example.com';
 
-    if (!accountSid || !authToken) {
-      throw new Error('TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN must be provided');
+    if (!apiKey) {
+      throw new Error('SENDGRID_API_KEY must be provided');
     }
 
-    this.client = twilio(accountSid, authToken);
+    sgMail.setApiKey(apiKey);
+    console.log(`SendGrid email service initialized with from address: ${this.fromEmail}`);
   }
 
   async sendInviteEmail(to: string, inviteToken: string): Promise<boolean> {
@@ -87,14 +86,15 @@ This invitation expires in 7 days. Questions? Reply to this email.
 Welcome to the stars!
       `;
 
-      await this.client.messages.create({
-        from: this.fromEmail,
+      const msg = {
         to: to,
+        from: this.fromEmail,
         subject: '🌟 Your Cosmic Music Curator Beta Invitation',
         html: htmlContent,
         text: textContent,
-      });
+      };
 
+      await sgMail.send(msg);
       console.log(`Beta invitation sent to ${to}`);
       return true;
     } catch (error) {
@@ -123,4 +123,4 @@ Welcome to the stars!
   }
 }
 
-export const emailService = new TwilioEmailService();
+export const emailService = new SendGridEmailService();
