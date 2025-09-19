@@ -17,6 +17,7 @@ import { MoodAnalysisPage } from "@/pages/mood-analysis";
 import LearningPage from "@/pages/learning";
 import LessonPage from "@/pages/lesson";
 import WaitlistPage from "@/pages/WaitlistPage";
+import HarmonicAnalysisPage from "@/pages/harmonic-analysis";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -62,6 +63,9 @@ function Router() {
       </Route>
       <Route path="/mood-analysis">
         {user && hasCompleteProfile ? <MoodAnalysisPage /> : <LoginPage />}
+      </Route>
+      <Route path="/harmonic-analysis">
+        {user && hasCompleteProfile ? <HarmonicAnalysisPage /> : <LoginPage />}
       </Route>
       <Route path="/chat">
         {user ? <LoginPage /> : <LoginPage />}

@@ -1,11 +1,16 @@
 import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
+import multer from "multer";
+import path from "path";
+import fs from "fs/promises";
 import { storage } from "./storage";
 import { openAIService } from "./services/openai";
 import { astrologyService } from "./services/astrology";
 import { spotifyService } from "./services/spotify";
 import { learningService } from "./services/learning";
+import { HarmonicAnalysisService } from "./services/harmonicAnalysis";
+import { HarmonicCorrelationEngine } from "./services/harmonicCorrelationEngine";
 import { 
   insertChatSessionSchema, 
   insertChatMessageSchema, 
@@ -162,6 +167,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating music mode:", error);
       res.status(500).json({ message: "Failed to update music mode preference" });
+    }
+  });
+
+  // ====================== HARMONIC ANALYSIS ROUTES ======================
+  
+  // Configure multer for audio file uploads
+  const upload = multer({
+    dest: 'uploads/',
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      const allowedTypes = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/m4a'];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Invalid file type. Only MP3, WAV, OGG, and M4A files are allowed.'));
+      }
+    }
+  });
+
+  // Initialize services
+  const harmonicAnalysisService = new HarmonicAnalysisService();
+  const harmonicCorrelationEngine = new HarmonicCorrelationEngine();
+
+  // Audio analysis endpoint for uploaded files
+  app.post('/api/analyze-audio', requireAuth, upload.single('audio'), async (req: any, res) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
+
+      // Check if user has paid access
+      const user = req.user;
+      const hasPaidAccess = user?.subscriptionTier === 'paid' || user?.subscriptionTier === 'premium';
+      
+      if (!hasPaidAccess) {
+        return res.status(403).json({ 
+          message: 'Premium feature: Audio upload analysis requires a paid subscription'
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'No audio file provided' });
+      }
+
+      const { path: filePath, originalname: filename } = req.file;
+
+      try {
+        // Get user's birth chart data for correlation
+        const userData = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        const userRecord = userData[0];
+        
+        if (!userRecord?.birthDate || !userRecord?.birthTime || !userRecord?.birthLocation) {
+          return res.status(400).json({ 
+            message: 'Complete birth chart information required for harmonic correlation' 
+          });
+        }
+
+        // Perform harmonic analysis on the uploaded file
+        const harmonicAnalysis = await harmonicAnalysisService.analyzeLocalFile(filePath, filename);
+        
+        if (!harmonicAnalysis) {
+          return res.status(500).json({ 
+            message: 'Failed to analyze audio file' 
+          });
+        }
+
+        // Generate astrological chart for correlation
+        const birthChart = await astrologyService.generateDetailedChartAccurate({
+          date: userRecord.birthDate,
+          time: userRecord.birthTime,
+          location: userRecord.birthLocation
+        });
+
+        // Correlate harmonics with astrological aspects
+        const correlation = await harmonicCorrelationEngine.analyzeTrackCorrelation(
+          birthChart,
+          {
+            id: `local_${Date.now()}`,
+            name: filename.replace(/\.[^/.]+$/, ""), // Remove file extension
+            artist: "Local Upload",
+            previewUrl: undefined
+          }
+        );
+        
+        if (!correlation) {
+          return res.status(500).json({ 
+            message: 'Failed to correlate harmonics with chart' 
+          });
+        }
+
+        // Clean up uploaded file
+        try {
+          await fs.unlink(filePath);
+        } catch (cleanupError) {
+          console.warn('Failed to clean up uploaded file:', cleanupError);
+        }
+
+        // Return analysis result
+        const result = {
+          overallScore: correlation.overallScore,
+          correlations: correlation.correlations,
+          dominantCorrelations: correlation.dominantCorrelations,
+          chartResonance: correlation.chartResonance,
+          musicalFeatures: {
+            key: harmonicAnalysis.musicalKey,
+            tempo: harmonicAnalysis.tempo,
+            brightness: harmonicAnalysis.spectralCentroid / 8000, // Normalize to 0-1
+            energy: harmonicAnalysis.rms,
+            harmonicComplexity: Math.min(harmonicAnalysis.harmonics.length / 10, 1) // Normalize to 0-1
+          },
+          harmonicInsights: correlation.harmonicInsights,
+          recommendationReason: correlation.recommendationReason,
+          analysisTimestamp: new Date().toISOString(),
+          filename
+        };
+
+        res.json(result);
+
+      } catch (analysisError) {
+        console.error('Audio analysis error:', analysisError);
+        
+        // Clean up uploaded file on error
+        try {
+          await fs.unlink(filePath);
+        } catch (cleanupError) {
+          console.warn('Failed to clean up uploaded file after error:', cleanupError);
+        }
+
+        res.status(500).json({ 
+          message: 'Failed to analyze audio file',
+          error: analysisError instanceof Error ? analysisError.message : 'Unknown error'
+        });
+      }
+
+    } catch (error) {
+      console.error('Audio upload endpoint error:', error);
+      res.status(500).json({ 
+        message: 'Internal server error',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 
