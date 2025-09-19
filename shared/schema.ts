@@ -574,6 +574,66 @@ export type LearningBadge = typeof learningBadges.$inferSelect;
 export type InsertLearningBadge = z.infer<typeof insertLearningBadgeSchema>;
 export type LearningUserBadge = typeof learningUserBadges.$inferSelect;
 export type InsertLearningUserBadge = z.infer<typeof insertLearningUserBadgeSchema>;
+
+// Harmonic Correlation Types for Enhanced Song Data
+export interface HarmonicCorrelationData {
+  overallScore: number;           // 0-1, overall harmonic alignment with user's chart
+  correlations: Array<{
+    aspect: string;               // e.g., "trine", "square", "opposition"
+    musicalInterval: string;      // e.g., "Perfect Fifth", "Perfect Fourth"
+    harmonicRatio: number;        // e.g., 1.5 (3:2), 1.333 (4:3)
+    ratioString: string;          // e.g., "3:2", "4:3"
+    matchStrength: number;        // 0-1, strength of this specific correlation
+    resonanceType: string;        // "exact", "overtone", "undertone", "composite"
+    explanation: string;          // Human-readable explanation
+  }>;
+  dominantCorrelations: Array<{   // Top 3 strongest correlations
+    aspect: string;
+    musicalInterval: string;
+    matchStrength: number;
+    explanation: string;
+  }>;
+  chartResonance: {
+    elementalAlignment: number;   // How well it matches chart's elemental balance
+    aspectAlignment: number;      // How well harmonics match aspects
+    energyAlignment: number;      // Flowing vs dynamic energy match
+  };
+  musicalFeatures: {
+    key?: string;
+    tempo?: number;
+    brightness: number;           // Spectral centroid normalized
+    energy: number;               // RMS energy normalized
+    harmonicComplexity: number;   // Number of significant harmonics
+  };
+  harmonicInsights: string[];     // Human-readable explanations
+  recommendationReason: string;   // Why this track resonates with their chart
+  analysisTimestamp?: string;     // When the harmonic analysis was performed
+  previewUrl?: string;           // Spotify preview URL used for analysis
+}
+
+// Enhanced Song Type with Harmonic Data
+export interface EnhancedSongData {
+  // Standard Spotify data
+  id: string;
+  name: string;
+  artist: string;
+  album?: string;
+  duration_ms?: number;
+  preview_url?: string;
+  external_urls?: {
+    spotify: string;
+  };
+  
+  // Harmonic correlation data (optional - only present when analysis is performed)
+  harmonicCorrelation?: HarmonicCorrelationData;
+  
+  // Original astrological relevance (if any)
+  astrologicalContext?: string;
+  
+  // Metadata
+  addedAt?: string;
+  source?: string; // "spotify_recommendation", "astrological_match", "harmonic_correlation"
+}
 export type LearningStats = typeof learningStats.$inferSelect;
 export type InsertLearningStats = z.infer<typeof insertLearningStatsSchema>;
 export type LearningQuizResult = typeof learningQuizResults.$inferSelect;
