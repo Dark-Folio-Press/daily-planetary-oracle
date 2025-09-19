@@ -159,6 +159,8 @@ export interface IStorage {
   getWaitlistByEmail(email: string): Promise<any>;
   sendInvitation(email: string): Promise<{ inviteToken: string } | null>;
   acceptInvitation(inviteToken: string): Promise<boolean>;
+  sendWaitlistInvitation(position: number): Promise<boolean>;
+  getWaitlistEntries(page: number, limit: number): Promise<{ entries: any[]; total: number; hasNext: boolean }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1087,6 +1089,71 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async sendWaitlistInvitation(position: number): Promise<boolean> {
+    const { emailService } = await import('./services/emailService.js');
+    
+    try {
+      // Find the user at the given position (considering position boosts)
+      const [entry] = await db.select()
+        .from(waitlist)
+        .where(eq(waitlist.inviteStatus, 'pending'))
+        .orderBy(sql`(${waitlist.position} - ${waitlist.positionBoost})`)
+        .limit(1)
+        .offset(position - 1);
+
+      if (!entry) {
+        return false;
+      }
+
+      // Generate invitation token and update status
+      const result = await this.sendInvitation(entry.email);
+      if (!result) {
+        return false;
+      }
+
+      // Send the actual email
+      const emailSent = await emailService.sendInviteEmail(entry.email, result.inviteToken);
+      if (!emailSent) {
+        console.error(`Failed to send email invitation to ${entry.email}`);
+        return false;
+      }
+
+      console.log(`Successfully sent invitation to ${entry.email} at position ${position}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending waitlist invitation:', error);
+      return false;
+    }
+  }
+
+  async getWaitlistEntries(page: number, limit: number): Promise<{ entries: any[]; total: number; hasNext: boolean }> {
+    try {
+      const offset = (page - 1) * limit;
+      
+      // Get total count
+      const [countResult] = await db.select({ count: sql<number>`count(*)` }).from(waitlist);
+      const total = Number(countResult?.count) || 0;
+      
+      // Get paginated entries
+      const entries = await db.select()
+        .from(waitlist)
+        .orderBy(sql`(${waitlist.position} - ${waitlist.positionBoost})`)
+        .limit(limit)
+        .offset(offset);
+
+      const hasNext = offset + limit < total;
+
+      return {
+        entries,
+        total,
+        hasNext
+      };
+    } catch (error) {
+      console.error('Error getting waitlist entries:', error);
+      return { entries: [], total: 0, hasNext: false };
+    }
+  }
+
 }
 
 export class MemStorage implements IStorage {
@@ -1156,6 +1223,15 @@ export class MemStorage implements IStorage {
       currentTransitDetails: userData.currentTransitDetails || null,
       spotifyPlaylistId: userData.spotifyPlaylistId || null,
       musicMode: userData.musicMode || "personal",
+      // Subscription and notification fields
+      subscriptionTier: userData.subscriptionTier || "vibes",
+      pushNotificationsEnabled: userData.pushNotificationsEnabled || false,
+      oneSignalPlayerId: userData.oneSignalPlayerId || null,
+      notificationSubscribedAt: userData.notificationSubscribedAt || null,
+      notificationUnsubscribedAt: userData.notificationUnsubscribedAt || null,
+      timezone: userData.timezone || null,
+      lastDailySentAt: userData.lastDailySentAt || null,
+      lastWeeklySentAt: userData.lastWeeklySentAt || null,
       createdAt: userData.createdAt || new Date(),
       updatedAt: userData.updatedAt || new Date(),
     };
@@ -1210,6 +1286,15 @@ export class MemStorage implements IStorage {
       currentTransitDetails: userData.currentTransitDetails || null,
       spotifyPlaylistId: userData.spotifyPlaylistId || null,
       musicMode: userData.musicMode || "personal",
+      // Subscription and notification fields
+      subscriptionTier: userData.subscriptionTier || "vibes",
+      pushNotificationsEnabled: userData.pushNotificationsEnabled || false,
+      oneSignalPlayerId: userData.oneSignalPlayerId || null,
+      notificationSubscribedAt: userData.notificationSubscribedAt || null,
+      notificationUnsubscribedAt: userData.notificationUnsubscribedAt || null,
+      timezone: userData.timezone || null,
+      lastDailySentAt: userData.lastDailySentAt || null,
+      lastWeeklySentAt: userData.lastWeeklySentAt || null,
       createdAt: userData.createdAt || new Date(),
       updatedAt: userData.updatedAt || new Date(),
     };
@@ -1443,6 +1528,10 @@ export class MemStorage implements IStorage {
   async getWaitlistByEmail(email: string): Promise<any> { return null; }
   async sendInvitation(email: string): Promise<{ inviteToken: string } | null> { return null; }
   async acceptInvitation(inviteToken: string): Promise<boolean> { return false; }
+  async sendWaitlistInvitation(position: number): Promise<boolean> { return false; }
+  async getWaitlistEntries(page: number, limit: number): Promise<{ entries: any[]; total: number; hasNext: boolean }> {
+    return { entries: [], total: 0, hasNext: false };
+  }
 }
 
 export const storage = new DatabaseStorage();
