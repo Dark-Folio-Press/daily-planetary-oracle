@@ -4,7 +4,7 @@
  */
 
 // @ts-ignore - Meyda doesn't have perfect TypeScript definitions
-const Meyda = require('meyda');
+import Meyda from 'meyda';
 
 export interface AudioHarmonic {
   harmonic: number;      // 1st, 2nd, 3rd harmonic, etc.
