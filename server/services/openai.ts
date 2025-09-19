@@ -1,8 +1,10 @@
 import OpenAI from "openai";
-import type { BirthInfo, PlaylistData } from "@shared/schema";
+import type { BirthInfo, PlaylistData, EnhancedSongData, HarmonicCorrelationData } from "@shared/schema";
 import { AstrologyService } from "./astrology";
 import { spotifyService, type SpotifyTrack } from "./spotify";
 import { storage } from "../storage";
+import { harmonicCorrelationEngine } from "./harmonicCorrelationEngine";
+import { astrologicalHarmonicsService } from "./astrologicalHarmonics";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
@@ -360,6 +362,130 @@ IMPORTANT: Only select songs from the above Spotify recommendations list. These 
       }
     }
     
+    // *** NEW: Harmonic Analysis Integration ***
+    // Analyze harmonic correlations between user's chart and playlist songs
+    if (playlistData.songs && Array.isArray(playlistData.songs)) {
+      try {
+        console.log('Starting harmonic correlation analysis for playlist...');
+        
+        // Get user's astrological chart data for harmonic correlation
+        let chartData = null;
+        try {
+          chartData = await this.astrologyService.calculateBigThreeAccurate(birthInfo);
+          console.log('Retrieved user chart data for harmonic analysis');
+        } catch (error) {
+          console.error('Error getting chart data for harmonic analysis:', error);
+          // Continue without harmonic analysis if chart data fails
+        }
+        
+        if (chartData) {
+          // Convert chart to harmonic profile
+          const chartHarmonics = astrologicalHarmonicsService.convertChartToHarmonics(chartData);
+          console.log(`Chart contains ${chartHarmonics.aspectHarmonics.length} astrological aspects for correlation`);
+          
+          // Analyze each song that has a preview URL
+          const songsWithPreviews = playlistData.songs.filter((song: any) => song.previewUrl);
+          console.log(`Analyzing harmonic correlations for ${songsWithPreviews.length}/${playlistData.songs.length} songs with preview URLs`);
+          
+          if (songsWithPreviews.length > 0) {
+            // Analyze songs in parallel for efficiency (batch of 3)
+            const BATCH_SIZE = 3;
+            for (let i = 0; i < songsWithPreviews.length; i += BATCH_SIZE) {
+              const batch = songsWithPreviews.slice(i, i + BATCH_SIZE);
+              
+              const batchPromises = batch.map(async (song: any) => {
+                try {
+                  const trackCorrelation = await harmonicCorrelationEngine.analyzeTrackCorrelation(
+                    chartData,
+                    {
+                      id: song.spotifyId || song.title,
+                      name: song.title,
+                      artist: song.artist,
+                      previewUrl: song.previewUrl
+                    }
+                  );
+                  
+                  if (trackCorrelation) {
+                    // Add harmonic correlation data to the song
+                    const harmonicData: HarmonicCorrelationData = {
+                      overallScore: trackCorrelation.overallScore,
+                      correlations: trackCorrelation.correlations.map(corr => ({
+                        aspect: corr.aspectMatch.aspect,
+                        musicalInterval: corr.aspectMatch.musicalInterval,
+                        harmonicRatio: corr.aspectMatch.harmonicRatio,
+                        ratioString: corr.aspectMatch.ratioString,
+                        matchStrength: corr.matchStrength,
+                        resonanceType: corr.resonanceType,
+                        explanation: corr.explanation
+                      })),
+                      dominantCorrelations: trackCorrelation.dominantCorrelations.map(corr => ({
+                        aspect: corr.aspectMatch.aspect,
+                        musicalInterval: corr.aspectMatch.musicalInterval,
+                        matchStrength: corr.matchStrength,
+                        explanation: corr.explanation
+                      })),
+                      chartResonance: trackCorrelation.chartResonance,
+                      musicalFeatures: trackCorrelation.musicalFeatures,
+                      harmonicInsights: trackCorrelation.harmonicInsights,
+                      recommendationReason: trackCorrelation.recommendationReason,
+                      analysisTimestamp: new Date().toISOString(),
+                      previewUrl: song.previewUrl
+                    };
+                    
+                    // Enhance the song with harmonic correlation data
+                    song.harmonicCorrelation = harmonicData;
+                    song.source = 'harmonic_correlation';
+                    
+                    console.log(`✨ ${song.title}: Harmonic score ${(trackCorrelation.overallScore * 100).toFixed(1)}% - ${trackCorrelation.recommendationReason}`);
+                  }
+                } catch (error) {
+                  console.error(`Error analyzing harmonic correlation for ${song.title}:`, error);
+                  // Continue with other songs if one fails
+                }
+              });
+              
+              await Promise.all(batchPromises);
+              
+              // Small delay between batches to avoid overwhelming the system
+              if (i + BATCH_SIZE < songsWithPreviews.length) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+              }
+            }
+            
+            // Calculate overall playlist harmonic score
+            const songsWithHarmonics = playlistData.songs.filter((song: any) => song.harmonicCorrelation);
+            if (songsWithHarmonics.length > 0) {
+              const averageScore = songsWithHarmonics.reduce((sum: number, song: any) => 
+                sum + song.harmonicCorrelation.overallScore, 0
+              ) / songsWithHarmonics.length;
+              
+              playlistData.overallHarmonicScore = averageScore;
+              playlistData.harmonicsAnalyzed = songsWithHarmonics.length;
+              playlistData.harmonicInsights = this.generatePlaylistHarmonicInsights(songsWithHarmonics, chartHarmonics);
+              
+              console.log(`🎵 Playlist harmonic analysis complete: ${(averageScore * 100).toFixed(1)}% average correlation across ${songsWithHarmonics.length} songs`);
+            }
+          } else {
+            console.log('No preview URLs available for harmonic analysis');
+            playlistData.harmonicInsights = [
+              'Harmonic analysis unavailable - no audio previews found for this playlist\'s songs'
+            ];
+          }
+        } else {
+          console.log('Skipping harmonic analysis - chart data unavailable');
+          playlistData.harmonicInsights = [
+            'Harmonic analysis unavailable - unable to process astrological chart data'
+          ];
+        }
+      } catch (error) {
+        console.error('Error during harmonic correlation analysis:', error);
+        playlistData.harmonicInsights = [
+          'Harmonic analysis temporarily unavailable'
+        ];
+        // Continue with playlist generation even if harmonic analysis fails
+      }
+    }
+    
     // Record song usage for authenticated users
     if (userId && playlistData.songs && Array.isArray(playlistData.songs)) {
       try {
@@ -390,6 +516,71 @@ IMPORTANT: Only select songs from the above Spotify recommendations list. These 
     }
 
     return playlistData;
+  }
+
+  /**
+   * Generate harmonic insights for the overall playlist
+   */
+  private generatePlaylistHarmonicInsights(songsWithHarmonics: any[], chartHarmonics: any): string[] {
+    const insights: string[] = [];
+    
+    if (songsWithHarmonics.length === 0) {
+      return ['No harmonic correlations found for this playlist'];
+    }
+    
+    // Calculate average harmonic score
+    const averageScore = songsWithHarmonics.reduce((sum, song) => 
+      sum + song.harmonicCorrelation.overallScore, 0
+    ) / songsWithHarmonics.length;
+    
+    if (averageScore > 0.7) {
+      insights.push(`🎵 This playlist shows strong harmonic resonance with your astrological chart (${(averageScore * 100).toFixed(1)}% alignment)`);
+    } else if (averageScore > 0.5) {
+      insights.push(`🎶 This playlist offers moderate harmonic alignment with your cosmic patterns (${(averageScore * 100).toFixed(1)}% alignment)`);
+    } else {
+      insights.push(`🎵 This playlist provides diverse harmonic experiences that complement your chart (${(averageScore * 100).toFixed(1)}% alignment)`);
+    }
+    
+    // Find most common harmonic correlations
+    const aspectCounts: Record<string, number> = {};
+    const intervalCounts: Record<string, number> = {};
+    
+    for (const song of songsWithHarmonics) {
+      for (const correlation of song.harmonicCorrelation.correlations) {
+        aspectCounts[correlation.aspect] = (aspectCounts[correlation.aspect] || 0) + 1;
+        intervalCounts[correlation.musicalInterval] = (intervalCounts[correlation.musicalInterval] || 0) + 1;
+      }
+    }
+    
+    // Find dominant aspects and intervals
+    const dominantAspects = Object.entries(aspectCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 2)
+      .map(([aspect]) => aspect);
+      
+    const dominantIntervals = Object.entries(intervalCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 2)
+      .map(([interval]) => interval);
+    
+    if (dominantAspects.length > 0) {
+      insights.push(`Most resonant astrological patterns: ${dominantAspects.join(' and ')} aspects`);
+    }
+    
+    if (dominantIntervals.length > 0) {
+      insights.push(`Dominant musical intervals: ${dominantIntervals.join(' and ')}`);
+    }
+    
+    // Find song with highest correlation
+    const bestSong = songsWithHarmonics.reduce((best, song) => 
+      song.harmonicCorrelation.overallScore > best.harmonicCorrelation.overallScore ? song : best
+    );
+    
+    if (bestSong.harmonicCorrelation.overallScore > 0.7) {
+      insights.push(`✨ "${bestSong.title}" shows the strongest cosmic alignment: ${bestSong.harmonicCorrelation.recommendationReason}`);
+    }
+    
+    return insights;
   }
 
   /**
