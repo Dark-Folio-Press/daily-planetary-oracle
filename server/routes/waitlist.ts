@@ -2,6 +2,9 @@ import { Router } from 'express';
 import { storage } from '../storage';
 import { z } from 'zod';
 import { requireAuth } from '../auth';
+import { db } from '../db';
+import { waitlist } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 const router = Router();
 
@@ -186,7 +189,94 @@ router.get('/stats', async (req, res) => {
 });
 
 /**
- * Accept invitation (when user gets beta access)
+ * Preview invitation and show confirmation page (when user clicks email link)
+ */
+router.get('/accept/:inviteToken', async (req, res) => {
+  try {
+    const { inviteToken } = req.params;
+    
+    if (!inviteToken) {
+      return res.status(400).send('<h1>Invalid invitation link</h1><p>The invitation token is missing.</p>');
+    }
+
+    // Just validate token without accepting it
+    const [invitation] = await db.select()
+      .from(waitlist)
+      .where(eq(waitlist.inviteToken, inviteToken))
+      .limit(1);
+
+    if (!invitation || invitation.inviteStatus !== 'invited' || invitation.acceptedAt) {
+      return res.status(404).send(`
+        <html>
+          <head><title>Invitation Invalid</title></head>
+          <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h1>🔒 Invitation Invalid</h1>
+            <p>This invitation link has expired, already been used, or is invalid.</p>
+            <p>Please contact support if you believe this is an error.</p>
+          </body>
+        </html>
+      `);
+    }
+
+    // Check if invitation has expired (7 days from invite date)
+    if (invitation.invitedAt) {
+      const inviteDate = new Date(invitation.invitedAt);
+      const expiryDate = new Date(inviteDate.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days
+      if (new Date() > expiryDate) {
+        return res.status(410).send(`
+          <html>
+            <head><title>Invitation Expired</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+              <h1>⏰ Invitation Expired</h1>
+              <p>This invitation link has expired.</p>
+              <p>Please contact support for a new invitation.</p>
+            </body>
+          </html>
+        `);
+      }
+    }
+
+    // Show confirmation page instead of auto-accepting
+    const baseUrl = process.env.REPLIT_DOMAIN 
+      ? `https://${process.env.REPLIT_DOMAIN}` 
+      : 'http://localhost:5000';
+    
+    res.send(`
+      <html>
+        <head><title>Confirm Beta Invitation</title></head>
+        <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh;">
+          <h1>🌟 Welcome to Cosmic Music Curator Beta!</h1>
+          <p style="font-size: 18px; margin: 20px 0;">You've been invited to join our exclusive beta program.</p>
+          <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; margin: 30px auto; max-width: 500px;">
+            <h2>What You'll Get:</h2>
+            <ul style="text-align: left; display: inline-block;">
+              <li>AI-powered weekly playlists based on astrological transits</li>
+              <li>Personalized daily horoscopes with music recommendations</li>
+              <li>Birth chart analysis with cosmic soundtracks</li>
+              <li>Push notifications for planetary movements</li>
+            </ul>
+          </div>
+          <form method="POST" action="/api/waitlist/accept/${inviteToken}" style="margin-top: 30px;">
+            <button type="submit" 
+                    style="display: inline-block; background: white; color: #6366f1; padding: 15px 30px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">
+              Accept Beta Invitation
+            </button>
+          </form>
+          <p style="font-size: 14px; margin-top: 20px; opacity: 0.8;">
+            By clicking "Accept Beta Invitation", you confirm you want to join our beta program.
+          </p>
+        </body>
+      </html>
+    `);
+
+  } catch (error) {
+    console.error('Preview invitation error:', error);
+    res.status(500).send('<h1>Error</h1><p>An error occurred while processing your invitation. Please try again later.</p>');
+  }
+});
+
+/**
+ * Accept invitation via POST API (for programmatic access)
  */
 router.post('/accept/:inviteToken', async (req, res) => {
   try {
@@ -202,11 +292,28 @@ router.post('/accept/:inviteToken', async (req, res) => {
       return res.status(404).json({ error: 'Invalid or expired invite token' });
     }
 
-    res.json({
-      success: true,
-      message: 'Invitation accepted! Welcome to the beta.',
-      redirectUrl: '/onboarding'
-    });
+    // For POST API, redirect to success page
+    const baseUrl = process.env.REPLIT_DOMAIN 
+      ? `https://${process.env.REPLIT_DOMAIN}` 
+      : 'http://localhost:5000';
+    
+    res.send(`
+      <html>
+        <head><title>Beta Access Granted</title></head>
+        <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh;">
+          <h1>🌟 Welcome to Cosmic Music Curator Beta!</h1>
+          <p style="font-size: 18px; margin: 20px 0;">Your invitation has been accepted successfully!</p>
+          <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; margin: 30px auto; max-width: 500px;">
+            <h2>🚀 You're In!</h2>
+            <p>You now have full access to all beta features. Start exploring your personalized cosmic music journey.</p>
+          </div>
+          <a href="${baseUrl}" 
+             style="display: inline-block; background: white; color: #6366f1; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 20px;">
+            Enter Cosmic Music Curator
+          </a>
+        </body>
+      </html>
+    `);
 
   } catch (error) {
     console.error('Accept invitation error:', error);

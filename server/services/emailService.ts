@@ -7,26 +7,45 @@ export interface EmailService {
 
 export class SendGridEmailService implements EmailService {
   private fromEmail: string;
+  private baseUrl: string;
+  private initialized: boolean = false;
 
   constructor() {
-    const apiKey = process.env.SENDGRID_API_KEY;
     this.fromEmail = process.env.SENDGRID_FROM_EMAIL || 'beta@example.com';
+    
+    // Set base URL for invitation links
+    const appBaseUrl = process.env.APP_BASE_URL;
+    const replitDomain = process.env.REPLIT_DOMAIN;
+    
+    if (appBaseUrl) {
+      this.baseUrl = appBaseUrl;
+    } else if (replitDomain) {
+      this.baseUrl = `https://${replitDomain}`;
+    } else {
+      this.baseUrl = 'http://localhost:5000';
+      console.warn('No APP_BASE_URL or REPLIT_DOMAIN set, using localhost for email links');
+    }
+    
+    console.log(`Email service configured with base URL: ${this.baseUrl}`);
+  }
 
+  private initializeSendGrid() {
+    if (this.initialized) return;
+    
+    const apiKey = process.env.SENDGRID_API_KEY;
     if (!apiKey) {
-      throw new Error('SENDGRID_API_KEY must be provided');
+      throw new Error('SENDGRID_API_KEY must be provided to send emails');
     }
 
     sgMail.setApiKey(apiKey);
-    console.log(`SendGrid email service initialized with from address: ${this.fromEmail}`);
+    this.initialized = true;
+    console.log(`SendGrid API initialized with from address: ${this.fromEmail}`);
   }
 
   async sendInviteEmail(to: string, inviteToken: string): Promise<boolean> {
     try {
-      const baseUrl = process.env.REPLIT_DOMAIN 
-        ? `https://${process.env.REPLIT_DOMAIN}` 
-        : 'https://your-app-domain.replit.app';
-
-      const acceptUrl = `${baseUrl}/waitlist/accept/${inviteToken}`;
+      this.initializeSendGrid();
+      const acceptUrl = `${this.baseUrl}/api/waitlist/accept/${inviteToken}`;
 
       const htmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

@@ -41,6 +41,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, sql, and, inArray } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 export interface IStorage {
   // User operations 
@@ -1052,8 +1053,38 @@ export class DatabaseStorage implements IStorage {
 
   async sendInvitation(email: string): Promise<{ inviteToken: string } | null> {
     try {
-      const inviteToken = `invite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // Check if user already has a pending invitation
+      const [existing] = await db.select()
+        .from(waitlist)
+        .where(eq(waitlist.email, email))
+        .limit(1);
+
+      if (!existing) {
+        console.log(`No waitlist entry found for email: ${email}`);
+        return null;
+      }
+
+      if (existing.inviteStatus === 'accepted') {
+        console.log(`User already accepted beta invitation: ${email}`);
+        return null;
+      }
+
+      if (existing.inviteStatus === 'invited' && existing.inviteToken) {
+        // Check if existing invitation is still valid (not expired)
+        if (existing.invitedAt) {
+          const inviteDate = new Date(existing.invitedAt);
+          const expiryDate = new Date(inviteDate.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days
+          if (new Date() < expiryDate) {
+            console.log(`User already has a valid pending invitation: ${email}`);
+            return { inviteToken: existing.inviteToken };
+          }
+        }
+      }
+
+      // Generate cryptographically secure invitation token
+      const inviteToken = `inv_${randomUUID()}`;
       
+      // Update invitation status - allow re-inviting expired invitations  
       const [updated] = await db.update(waitlist)
         .set({
           inviteStatus: 'invited',
@@ -1061,10 +1092,20 @@ export class DatabaseStorage implements IStorage {
           invitedAt: new Date(),
           updatedAt: new Date()
         })
-        .where(eq(waitlist.email, email))
+        .where(and(
+          eq(waitlist.email, email),
+          // Allow inviting pending users OR users with expired invitations
+          sql`(invite_status = 'pending' OR (invite_status = 'invited' AND invited_at < NOW() - INTERVAL '7 days'))`
+        ))
         .returning();
 
-      return updated ? { inviteToken } : null;
+      if (updated) {
+        console.log(`New invitation created for: ${email}`);
+        return { inviteToken };
+      } else {
+        console.log(`Failed to update invitation status for: ${email}`);
+        return null;
+      }
     } catch (error) {
       console.error('Error sending invitation:', error);
       return null;
@@ -1073,16 +1114,57 @@ export class DatabaseStorage implements IStorage {
 
   async acceptInvitation(inviteToken: string): Promise<boolean> {
     try {
+      // First, find the invitation to validate it
+      const [invitation] = await db.select()
+        .from(waitlist)
+        .where(eq(waitlist.inviteToken, inviteToken))
+        .limit(1);
+
+      if (!invitation) {
+        console.log('Invalid token: not found');
+        return false;
+      }
+
+      if (invitation.inviteStatus !== 'invited') {
+        console.log(`Invalid token: status is ${invitation.inviteStatus}, not 'invited'`);
+        return false;
+      }
+
+      if (invitation.acceptedAt) {
+        console.log('Invalid token: already accepted');
+        return false;
+      }
+
+      // Check if invitation has expired (7 days from invite date)
+      if (invitation.invitedAt) {
+        const inviteDate = new Date(invitation.invitedAt);
+        const expiryDate = new Date(inviteDate.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days
+        if (new Date() > expiryDate) {
+          console.log('Invalid token: expired');
+          return false;
+        }
+      }
+
+      // Accept the invitation (one-time use)
       const [updated] = await db.update(waitlist)
         .set({
           inviteStatus: 'accepted',
           acceptedAt: new Date(),
           updatedAt: new Date()
         })
-        .where(eq(waitlist.inviteToken, inviteToken))
+        .where(and(
+          eq(waitlist.inviteToken, inviteToken),
+          eq(waitlist.inviteStatus, 'invited') // Double-check status hasn't changed
+        ))
         .returning();
 
-      return !!updated;
+      if (updated) {
+        console.log(`Invitation accepted for email: ${updated.email}`);
+        return true;
+      } else {
+        console.log('Failed to update invitation status');
+        return false;
+      }
     } catch (error) {
       console.error('Error accepting invitation:', error);
       return false;
