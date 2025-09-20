@@ -44,6 +44,8 @@ interface HarmonicCorrelationData {
   recommendationReason: string;
   analysisTimestamp?: string;
   previewUrl?: string;
+  analysisType?: 'full_audio' | 'audio_features' | 'simulated';
+  confidence?: number;
 }
 
 interface Song {
@@ -70,6 +72,8 @@ interface PlaylistCardProps {
     overallHarmonicScore?: number;
     harmonicsAnalyzed?: number;
     harmonicInsights?: string[];
+    analysisType?: 'full_audio' | 'audio_features' | 'simulated';
+    confidence?: number;
   };
   sessionId?: string;
 }
@@ -82,6 +86,43 @@ const dayColors = {
   'FRI': 'bg-indigo-100 text-indigo-600',
   'SAT': 'bg-purple-100 text-purple-600',
   'SUN': 'bg-yellow-100 text-yellow-600',
+};
+
+// Cosmic messaging functions
+const getAnalysisTypeMessage = (analysisType?: string): string => {
+  switch (analysisType) {
+    case 'full_audio':
+      return "Direct sonic divination reveals cosmic alignments";
+    case 'audio_features':
+      return "Sonic essence channeled through celestial frequency mapping";
+    case 'simulated':
+      return "Harmonic patterns divined through astrological resonance";
+    default:
+      return "Cosmic harmonies have been decoded";
+  }
+};
+
+const getConfidenceMessage = (confidence?: number): string => {
+  if (!confidence) return "The cosmic frequencies whisper softly";
+  
+  if (confidence >= 0.8) return "High cosmic resonance detected";
+  if (confidence >= 0.6) return "Strong celestial alignment confirmed";
+  if (confidence >= 0.4) return "Moderate harmonic confluence observed";
+  if (confidence >= 0.2) return "Subtle cosmic patterns emerge";
+  return "Faint stellar echoes perceived";
+};
+
+const getAnalysisIcon = (analysisType?: string): string => {
+  switch (analysisType) {
+    case 'full_audio':
+      return "🎵";
+    case 'audio_features':
+      return "✨";
+    case 'simulated':
+      return "🔮";
+    default:
+      return "🌌";
+  }
 };
 
 export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps) {
@@ -209,40 +250,87 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                 </TooltipProvider>
               </div>
             )}
+            
+            {/* Analysis Type and Confidence Display */}
+            <div className="mt-2 flex items-center space-x-2">
+              <div className="flex items-center space-x-1 bg-white/10 rounded-full px-2 py-1">
+                <span className="text-xs">{getAnalysisIcon(playlist.analysisType)}</span>
+                <span className="text-xs font-medium text-purple-100">
+                  {getAnalysisTypeMessage(playlist.analysisType)}
+                </span>
+              </div>
+              {playlist.confidence !== undefined && (
+                <div className="flex items-center space-x-1 bg-white/10 rounded-full px-2 py-1">
+                  <span className="text-xs font-medium text-purple-100">
+                    {getConfidenceMessage(playlist.confidence)}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center space-x-2">
-            {/* Harmonic Insights Button */}
-            {playlist.harmonicInsights && playlist.harmonicInsights.length > 0 && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="bg-white/10 hover:bg-white/20 text-white border-white/20"
-                    data-testid="button-harmonic-insights"
-                  >
-                    <TrendingUp className="w-4 h-4 mr-1" />
-                    Insights
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center space-x-2">
-                      <Waves className="w-5 h-5 text-purple-600" />
-                      <span>Harmonic Correlations</span>
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    {playlist.harmonicInsights.map((insight, index) => (
+            {/* Harmonic Insights Button - Always Available */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="bg-white/10 hover:bg-white/20 text-white border-white/20"
+                  data-testid="button-harmonic-insights"
+                >
+                  <TrendingUp className="w-4 h-4 mr-1" />
+                  Cosmic Insights
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center space-x-2">
+                    <Waves className="w-5 h-5 text-purple-600" />
+                    <span>Harmonic Correlations</span>
+                    <span className="text-sm font-normal text-gray-600">
+                      {getAnalysisIcon(playlist.analysisType)} {getAnalysisTypeMessage(playlist.analysisType)}
+                    </span>
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {/* Analysis Source and Confidence */}
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">Analysis Source</h4>
+                      {playlist.confidence !== undefined && (
+                        <span className="text-sm text-purple-600 font-medium">
+                          {(playlist.confidence * 100).toFixed(0)}% confidence
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-700 mb-2">
+                      {getAnalysisTypeMessage(playlist.analysisType)}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {getConfidenceMessage(playlist.confidence)}
+                    </p>
+                  </div>
+                  
+                  {/* Harmonic Insights */}
+                  {playlist.harmonicInsights && playlist.harmonicInsights.length > 0 ? (
+                    playlist.harmonicInsights.map((insight, index) => (
                       <div key={index} className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
                         <Info className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-gray-700">{insight}</p>
                       </div>
-                    ))}
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
+                    ))
+                  ) : (
+                    <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+                      <Info className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">
+                        The cosmic forces have aligned to create this harmonious collection. 
+                        Each track resonates with your astrological essence through {playlist.analysisType === 'full_audio' ? 'direct sonic analysis' : playlist.analysisType === 'audio_features' ? 'celestial frequency mapping' : 'astrological divination'}.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
             <div className="w-12 h-12 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative">
               <Music2 className="w-6 h-6 text-white" />
               <div className="absolute inset-0 bg-white/20 rounded-lg opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300"></div>
@@ -271,15 +359,29 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="flex items-center space-x-1">
+                              <span className="text-xs">{getAnalysisIcon(song.harmonicCorrelation.analysisType)}</span>
                               <Waves className="w-3 h-3 text-purple-500" />
                               <span className="text-xs font-medium text-purple-600">
                                 {(song.harmonicCorrelation.overallScore * 100).toFixed(0)}% alignment
                               </span>
+                              {song.harmonicCorrelation.confidence !== undefined && (
+                                <span className="text-xs text-purple-500">
+                                  ({(song.harmonicCorrelation.confidence * 100).toFixed(0)}% confidence)
+                                </span>
+                              )}
                             </div>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="max-w-sm">
                             <div className="space-y-1">
                               <p className="text-sm font-medium">{song.harmonicCorrelation.recommendationReason}</p>
+                              <p className="text-xs text-gray-600">
+                                {getAnalysisTypeMessage(song.harmonicCorrelation.analysisType)}
+                              </p>
+                              {song.harmonicCorrelation.confidence !== undefined && (
+                                <p className="text-xs text-purple-600">
+                                  {getConfidenceMessage(song.harmonicCorrelation.confidence)}
+                                </p>
+                              )}
                               {song.harmonicCorrelation.dominantCorrelations.length > 0 && (
                                 <p className="text-xs text-gray-600">
                                   Top correlation: {song.harmonicCorrelation.dominantCorrelations[0].aspect} → {song.harmonicCorrelation.dominantCorrelations[0].musicalInterval}
@@ -320,20 +422,36 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                         <DialogContent className="max-w-3xl">
                           <DialogHeader>
                             <DialogTitle className="flex items-center space-x-2">
+                              <span className="text-lg">{getAnalysisIcon(song.harmonicCorrelation.analysisType)}</span>
                               <Waves className="w-5 h-5 text-purple-600" />
                               <span>"{song.title}" - Harmonic Analysis</span>
                             </DialogTitle>
                           </DialogHeader>
                           <div className="space-y-6">
-                            {/* Overall Score */}
+                            {/* Analysis Source and Overall Score */}
                             <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
                               <div className="flex items-center justify-between mb-2">
                                 <h4 className="font-medium text-gray-900">Cosmic Alignment Score</h4>
-                                <span className="text-2xl font-bold text-purple-600">
-                                  {(song.harmonicCorrelation.overallScore * 100).toFixed(0)}%
-                                </span>
+                                <div className="text-right">
+                                  <span className="text-2xl font-bold text-purple-600">
+                                    {(song.harmonicCorrelation.overallScore * 100).toFixed(0)}%
+                                  </span>
+                                  {song.harmonicCorrelation.confidence !== undefined && (
+                                    <p className="text-xs text-purple-600">
+                                      {(song.harmonicCorrelation.confidence * 100).toFixed(0)}% confidence
+                                    </p>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-sm text-gray-700">{song.harmonicCorrelation.recommendationReason}</p>
+                              <p className="text-sm text-gray-700 mb-2">{song.harmonicCorrelation.recommendationReason}</p>
+                              <div className="bg-white/50 rounded p-2 mt-2">
+                                <p className="text-xs text-gray-600 mb-1">
+                                  <strong>Analysis Method:</strong> {getAnalysisTypeMessage(song.harmonicCorrelation.analysisType)}
+                                </p>
+                                <p className="text-xs text-purple-600">
+                                  {getConfidenceMessage(song.harmonicCorrelation.confidence)}
+                                </p>
+                              </div>
                             </div>
                             
                             {/* Chart Resonance */}
@@ -404,6 +522,17 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                                 </div>
                                 <div>
                                   <span className="text-gray-600">Energy:</span> {(song.harmonicCorrelation.musicalFeatures.energy * 100).toFixed(0)}%
+                                </div>
+                                <div>
+                                  <span className="text-gray-600">Harmonic Complexity:</span> {song.harmonicCorrelation.musicalFeatures.harmonicComplexity}
+                                </div>
+                                <div>
+                                  <span className="text-gray-600">Analysis Source:</span> 
+                                  <span className="text-purple-600 font-medium">
+                                    {song.harmonicCorrelation.analysisType === 'full_audio' ? 'Direct Audio' : 
+                                     song.harmonicCorrelation.analysisType === 'audio_features' ? 'Audio Features' : 
+                                     'Astrological Synthesis'}
+                                  </span>
                                 </div>
                               </div>
                             </div>
