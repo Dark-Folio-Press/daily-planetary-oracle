@@ -433,6 +433,134 @@ export class SpotifyService {
     }
   }
 
+  /**
+   * Get audio features for a single track or multiple tracks
+   */
+  async getAudioFeatures(accessToken: string, trackIds: string | string[]): Promise<any> {
+    const ids = Array.isArray(trackIds) ? trackIds.join(',') : trackIds;
+    
+    try {
+      const response = await this.getSpotifyApi(accessToken, `/audio-features?ids=${ids}`);
+      
+      if (Array.isArray(trackIds)) {
+        return response?.audio_features || [];
+      } else {
+        // Single track - return the first (and only) audio features object
+        return response?.audio_features?.[0] || null;
+      }
+    } catch (error) {
+      console.error('Error fetching audio features:', error);
+      return Array.isArray(trackIds) ? [] : null;
+    }
+  }
+
+  // Session-based cache for audio features
+  private static audioFeaturesCache = new Map<string, any>();
+
+  /**
+   * Get audio features for a track with enhanced error handling and fallback estimates
+   */
+  async getTrackAudioFeatures(accessToken: string, trackId: string, trackInfo?: {
+    name: string;
+    artist: string;
+    genres?: string[];
+  }): Promise<any> {
+    try {
+      // Check cache first
+      if (SpotifyService.audioFeaturesCache.has(trackId)) {
+        const cached = SpotifyService.audioFeaturesCache.get(trackId);
+        console.log(`Audio features retrieved from cache for ${trackInfo?.name || trackId}`);
+        return cached;
+      }
+
+      const audioFeatures = await this.getAudioFeatures(accessToken, trackId);
+      
+      if (audioFeatures) {
+        // Set source for real Spotify data
+        audioFeatures._source = 'spotify_api';
+        
+        // Cache the result
+        SpotifyService.audioFeaturesCache.set(trackId, audioFeatures);
+        
+        console.log(`Audio features retrieved for ${trackInfo?.name || trackId}:`, {
+          energy: audioFeatures.energy,
+          valence: audioFeatures.valence,
+          danceability: audioFeatures.danceability,
+          acousticness: audioFeatures.acousticness,
+          tempo: audioFeatures.tempo,
+          key: audioFeatures.key,
+          mode: audioFeatures.mode,
+          _source: audioFeatures._source
+        });
+        return audioFeatures;
+      }
+
+      // Fallback to genre-based estimates if available
+      if (trackInfo?.genres && trackInfo.genres.length > 0) {
+        console.log(`Audio features unavailable for ${trackInfo.name}, using genre estimates`);
+        const estimates = this.getGenreBasedEstimates(trackInfo.genres);
+        
+        const genreEstimate = {
+          danceability: estimates.energy * 0.8 + 0.1, // Convert energy to danceability approximation
+          energy: estimates.energy,
+          key: Math.floor(Math.random() * 12), // Random key 0-11
+          loudness: -8 - (Math.random() * 12), // Typical range -20 to -8 dB
+          mode: Math.random() > 0.6 ? 1 : 0, // Major (1) or minor (0)
+          speechiness: 0.05 + Math.random() * 0.1, // Low speechiness for most music
+          acousticness: estimates.energy < 0.4 ? 0.7 : 0.2, // High for low energy
+          instrumentalness: Math.random() * 0.3, // Variable
+          liveness: 0.1 + Math.random() * 0.2, // Low to moderate
+          valence: estimates.valence,
+          tempo: estimates.tempo,
+          type: 'audio_features',
+          id: trackId,
+          uri: `spotify:track:${trackId}`,
+          track_href: `https://api.spotify.com/v1/tracks/${trackId}`,
+          analysis_url: `https://api.spotify.com/v1/audio-analysis/${trackId}`,
+          duration_ms: 200000, // Default ~3.5 minutes
+          time_signature: 4,
+          _source: 'genre_estimate' // Mark as estimated
+        };
+        
+        // Cache the genre estimate
+        SpotifyService.audioFeaturesCache.set(trackId, genreEstimate);
+        return genreEstimate;
+      }
+
+      // Final fallback - generic estimates
+      console.log(`No genre info available for ${trackInfo?.name || trackId}, using generic estimates`);
+      const defaultEstimate = {
+        danceability: 0.5,
+        energy: 0.5,
+        key: Math.floor(Math.random() * 12),
+        loudness: -10,
+        mode: 1,
+        speechiness: 0.05,
+        acousticness: 0.4,
+        instrumentalness: 0.1,
+        liveness: 0.15,
+        valence: 0.5,
+        tempo: 120,
+        type: 'audio_features',
+        id: trackId,
+        uri: `spotify:track:${trackId}`,
+        track_href: `https://api.spotify.com/v1/tracks/${trackId}`,
+        analysis_url: `https://api.spotify.com/v1/audio-analysis/${trackId}`,
+        duration_ms: 200000,
+        time_signature: 4,
+        _source: 'default_estimate'
+      };
+      
+      // Cache the default estimate
+      SpotifyService.audioFeaturesCache.set(trackId, defaultEstimate);
+      return defaultEstimate;
+
+    } catch (error) {
+      console.error(`Error getting audio features for track ${trackId}:`, error);
+      return null;
+    }
+  }
+
   async createPlaylist(accessToken: string, userId: string, name: string, description: string, songs: any[]): Promise<{
     id: string;
     external_urls: { spotify: string };

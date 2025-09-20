@@ -77,25 +77,28 @@ export class HarmonicCorrelationEngine {
       name: string;
       artist: string;
       previewUrl?: string;
+    },
+    options?: {
+      spotifyService?: any;
+      accessToken?: string;
     }
   ): Promise<TrackCorrelation | null> {
     try {
       // Get chart harmonics from astrological data
       const chartHarmonics = astrologicalHarmonicsService.convertChartToHarmonics(chartData);
 
-      if (!track.previewUrl) {
-        // Return chart-based analysis without audio
-        return this.createChartOnlyCorrelation(track, chartHarmonics);
-      }
-
-      // Analyze audio harmonics
+      // Try full harmonic analysis with fallback system
       const audioAnalysis = await harmonicAnalysisService.analyzeSpotifyPreview(
-        track.previewUrl,
-        { id: track.id, name: track.name, artist: track.artist }
+        track.previewUrl || '',
+        { id: track.id, name: track.name, artist: track.artist },
+        {
+          spotifyService: options?.spotifyService,
+          accessToken: options?.accessToken
+        }
       );
 
       if (!audioAnalysis) {
-        // Fallback to chart-only analysis
+        // Final fallback to chart-only analysis
         return this.createChartOnlyCorrelation(track, chartHarmonics);
       }
 
@@ -110,8 +113,12 @@ export class HarmonicCorrelationEngine {
         .slice(0, 3)
         .filter(c => c.matchStrength >= this.config.minCorrelationStrength);
 
-      // Generate insights
-      const harmonicInsights = this.generateTrackInsights(correlations, chartHarmonics, audioAnalysis.harmonicAnalysis);
+      // Generate insights based on analysis type
+      const harmonicInsights = this.generateTrackInsights(
+        correlations, 
+        chartHarmonics, 
+        audioAnalysis.harmonicAnalysis
+      );
 
       // Calculate chart resonance factors
       const chartResonance = this.calculateChartResonance(chartHarmonics, audioAnalysis.harmonicAnalysis, correlations);
@@ -124,7 +131,8 @@ export class HarmonicCorrelationEngine {
         dominantCorrelations,
         chartResonance,
         musicalFeatures,
-        chartHarmonics
+        chartHarmonics,
+        audioAnalysis.harmonicAnalysis.analysisType
       );
 
       return {
@@ -158,7 +166,11 @@ export class HarmonicCorrelationEngine {
       name: string;
       artist: string;
       previewUrl?: string;
-    }>
+    }>,
+    options?: {
+      spotifyService?: any;
+      accessToken?: string;
+    }
   ): Promise<PlaylistCorrelation> {
     const chartHarmonics = astrologicalHarmonicsService.convertChartToHarmonics(chartData);
     const trackCorrelations: TrackCorrelation[] = [];
@@ -169,7 +181,7 @@ export class HarmonicCorrelationEngine {
       const batch = tracks.slice(i, i + BATCH_SIZE);
       
       const batchPromises = batch.map(track => 
-        this.analyzeTrackCorrelation(chartData, track)
+        this.analyzeTrackCorrelation(chartData, track, options)
       );
       
       const batchResults = await Promise.all(batchPromises);
@@ -286,7 +298,7 @@ export class HarmonicCorrelationEngine {
   }
 
   /**
-   * Create correlation when only chart data is available (no audio preview)
+   * Create correlation when only chart data is available (no audio preview or features)
    */
   private createChartOnlyCorrelation(track: any, chartHarmonics: ChartHarmonic): TrackCorrelation {
     return {
@@ -294,11 +306,12 @@ export class HarmonicCorrelationEngine {
       trackName: track.name,
       artist: track.artist,
       previewUrl: track.previewUrl,
-      overallScore: 0.5, // Neutral score without audio analysis
+      overallScore: 0.4, // Lower score without audio analysis
       correlations: [],
       dominantCorrelations: [],
       harmonicInsights: [
-        "Audio preview not available - correlation based on astrological patterns only",
+        "The cosmic veil conceals this track's sonic essence - resonance divined through pure astrological wisdom",
+        "Audio frequencies remain in the ethereal realm, but your chart's patterns guide the cosmic selection",
         ...this.generateChartOnlyInsights(chartHarmonics)
       ],
       chartResonance: {
@@ -311,7 +324,7 @@ export class HarmonicCorrelationEngine {
         energy: 0.5,
         harmonicComplexity: 0
       },
-      recommendationReason: "Selected based on astrological compatibility patterns"
+      recommendationReason: "Chosen through celestial intuition and astrological compatibility patterns when sonic data transcends the physical realm"
     };
   }
 
@@ -322,13 +335,17 @@ export class HarmonicCorrelationEngine {
     const insights: string[] = [];
 
     if (chartHarmonics.harmoniousAspects.length > chartHarmonics.tensionAspects.length) {
-      insights.push("Your chart favors flowing, harmonious energy - seek consonant musical intervals");
+      insights.push("The stars whisper of your affinity for flowing, harmonious energies - let consonant musical intervals carry your spirit");
     } else {
-      insights.push("Your chart has dynamic tension - complex rhythms and dissonance may resonate");
+      insights.push("Your celestial blueprint pulses with dynamic tension - complex rhythms and bold dissonance shall awaken your cosmic nature");
     }
 
     if (chartHarmonics.dominantHarmonics.includes(3)) {
-      insights.push("Perfect fifths (3:2 ratio) align with your trine aspects");
+      insights.push("The sacred ratio of perfect fifths (3:2) dances in harmony with your trine aspects, creating bridges between worlds");
+    }
+
+    if (chartHarmonics.dominantHarmonics.length > 5) {
+      insights.push("Your chart reveals complex harmonic structures - seek music that layers multiple frequencies like your multifaceted cosmic signature");
     }
 
     return insights;
@@ -395,32 +412,67 @@ export class HarmonicCorrelationEngine {
     dominantCorrelations: HarmonicCorrelation[],
     chartResonance: any,
     musicalFeatures: any,
-    chartHarmonics: ChartHarmonic
+    chartHarmonics: ChartHarmonic,
+    analysisType?: string
   ): string {
+    // Add analysis type context to mystical language
+    let analysisPrefix = '';
+    if (analysisType === 'audio_features') {
+      analysisPrefix = 'Through cosmic vibration patterns, ';
+    } else if (analysisType === 'simulated') {
+      analysisPrefix = 'By channeling universal harmonies, ';
+    } else if (analysisType === 'full_audio') {
+      analysisPrefix = 'Through direct sonic divination, ';
+    }
+
     if (dominantCorrelations.length > 0) {
       const topCorrelation = dominantCorrelations[0];
-      return `This track's ${topCorrelation.aspectMatch.musicalInterval} intervals echo your ${topCorrelation.aspectMatch.aspect} aspects, creating harmonic resonance with your astrological pattern.`;
+      return `${analysisPrefix}this track's ${topCorrelation.aspectMatch.musicalInterval} intervals echo your ${topCorrelation.aspectMatch.aspect} aspects, creating harmonic resonance with your astrological pattern.`;
     }
 
     if (chartResonance.energyAlignment > 0.7) {
-      return "The energy signature of this music aligns well with your chart's elemental balance.";
+      return `${analysisPrefix}the energy signature of this music aligns well with your chart's elemental balance.`;
     }
 
-    return "Selected for its complementary harmonic qualities that balance your astrological influences.";
+    return `${analysisPrefix}this track is selected for its complementary harmonic qualities that balance your astrological influences.`;
   }
 
   private generateTrackInsights(correlations: HarmonicCorrelation[], chartHarmonics: ChartHarmonic, musicHarmonics: HarmonicAnalysisResult): string[] {
     const insights: string[] = [];
+    const analysisType = musicHarmonics.analysisType;
+    const confidence = musicHarmonics.confidence;
+
+    // Add analysis type context
+    if (analysisType === 'audio_features') {
+      insights.push(`Sonic essence channeled through celestial frequency mapping (confidence: ${Math.round(confidence * 100)}%)`);
+    } else if (analysisType === 'simulated') {
+      insights.push(`Harmonic patterns divined through astrological resonance (confidence: ${Math.round(confidence * 100)}%)`);
+    } else if (analysisType === 'full_audio') {
+      insights.push(`Direct audio harmonic analysis reveals cosmic alignments (confidence: ${Math.round(confidence * 100)}%)`);
+    }
 
     if (correlations.length === 0) {
-      insights.push("This track offers contrasting energy patterns - it may introduce new harmonic perspectives to your cosmic blueprint.");
+      if (analysisType === 'audio_features') {
+        insights.push("The vibrational essence of this track dances in contrast to your chart's natural harmonies, offering cosmic expansion through musical diversity.");
+      } else {
+        insights.push("This track offers contrasting energy patterns - it may introduce new harmonic perspectives to your cosmic blueprint.");
+      }
     } else {
       const strongest = correlations[0];
       insights.push(strongest.explanation);
       
       if (correlations.length > 2) {
-        insights.push(`Found ${correlations.length} harmonic correlations with your chart.`);
+        if (analysisType === 'audio_features') {
+          insights.push(`The universe reveals ${correlations.length} vibrational resonances between this track's energetic signature and your celestial patterns.`);
+        } else {
+          insights.push(`Found ${correlations.length} harmonic correlations with your chart.`);
+        }
       }
+    }
+
+    // Add musical feature insights for audio features analysis
+    if (analysisType === 'audio_features' && musicHarmonics.musicalKey && musicHarmonics.tempo) {
+      insights.push(`The cosmic key of ${musicHarmonics.musicalKey} at ${Math.round(musicHarmonics.tempo)} BPM creates a rhythmic foundation that mirrors the pulse of your planetary influences.`);
     }
 
     return insights;

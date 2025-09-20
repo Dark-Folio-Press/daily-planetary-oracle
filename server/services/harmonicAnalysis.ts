@@ -26,6 +26,8 @@ export interface HarmonicAnalysisResult {
   zcr: number;                 // Zero crossing rate
   musicalKey?: string;
   tempo?: number;
+  analysisType: 'full_audio' | 'audio_features' | 'simulated'; // Analysis source
+  confidence: number;          // 0-1, confidence in the analysis
 }
 
 export interface SpotifyTrackAnalysis {
@@ -76,7 +78,9 @@ export class HarmonicAnalysisService {
         rms: Math.random() * 0.5 + 0.1, // Energy level
         zcr: Math.random() * 0.1 + 0.05, // Zero crossing rate
         musicalKey: this.estimateMusicalKey(),
-        tempo: Math.floor(Math.random() * 60) + 80 // 80-140 BPM
+        tempo: Math.floor(Math.random() * 60) + 80, // 80-140 BPM
+        analysisType: 'simulated',
+        confidence: 0.3
       };
 
       return simulatedAnalysis;
@@ -121,9 +125,9 @@ export class HarmonicAnalysisService {
   }
 
   /**
-   * Analyze harmonic content from a Spotify preview URL
+   * Create synthetic harmonic analysis from Spotify audio features
    */
-  async analyzeSpotifyPreview(previewUrl: string, trackData: {
+  async analyzeFromAudioFeatures(audioFeatures: any, trackData: {
     id: string;
     name: string;
     artist: string;
@@ -131,18 +135,12 @@ export class HarmonicAnalysisService {
     const startTime = Date.now();
 
     try {
-      // Fetch audio data from Spotify preview URL
-      const audioBuffer = await this.fetchAudioBuffer(previewUrl);
-      if (!audioBuffer) {
-        console.warn(`Could not fetch audio for track: ${trackData.name}`);
-        return null;
-      }
-
-      // Perform harmonic analysis
-      const harmonicAnalysis = await this.extractHarmonics(audioBuffer);
-
+      console.log(`Creating synthetic harmonic analysis for ${trackData.name} from audio features`);
+      
+      const harmonicAnalysis = this.createSyntheticHarmonics(audioFeatures);
+      
       return {
-        previewUrl,
+        previewUrl: '', // No preview URL for audio features analysis
         trackId: trackData.id,
         name: trackData.name,
         artist: trackData.artist,
@@ -151,9 +149,295 @@ export class HarmonicAnalysisService {
       };
 
     } catch (error) {
+      console.error(`Error creating synthetic analysis for ${trackData.name}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Generate synthetic harmonics from Spotify audio features
+   */
+  private createSyntheticHarmonics(audioFeatures: any): HarmonicAnalysisResult {
+    // Map audio features to harmonic characteristics
+    const energy = audioFeatures.energy || 0.5;
+    const valence = audioFeatures.valence || 0.5;
+    const danceability = audioFeatures.danceability || 0.5;
+    const acousticness = audioFeatures.acousticness || 0.5;
+    const instrumentalness = audioFeatures.instrumentalness || 0.1;
+    const tempo = audioFeatures.tempo || 120;
+    const key = audioFeatures.key || 0; // 0-11 Spotify key notation
+    const mode = audioFeatures.mode || 1; // 0=minor, 1=major
+    const loudness = audioFeatures.loudness || -10; // dB
+
+    // Generate fundamental frequency from key and energy
+    const keyFrequencies = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88]; // C4 to B4
+    const fundamentalHz = keyFrequencies[key] * (0.8 + energy * 0.4); // Vary with energy
+
+    // Create harmonics based on audio features
+    const harmonics: AudioHarmonic[] = [];
+    
+    // Fundamental (always present)
+    harmonics.push({
+      harmonic: 1,
+      frequency: fundamentalHz,
+      amplitude: 1.0,
+      ratio: 1.0,
+      ratioString: '1:1'
+    });
+
+    // 2nd harmonic (octave) - stronger in energetic tracks
+    const secondAmplitude = 0.3 + energy * 0.4;
+    harmonics.push({
+      harmonic: 2,
+      frequency: fundamentalHz * 2,
+      amplitude: secondAmplitude,
+      ratio: 2.0,
+      ratioString: '2:1'
+    });
+
+    // 3rd harmonic (perfect fifth) - stronger in major keys and high valence
+    const thirdAmplitude = 0.2 + (mode * 0.2) + (valence * 0.3);
+    harmonics.push({
+      harmonic: 3,
+      frequency: fundamentalHz * 3,
+      amplitude: thirdAmplitude,
+      ratio: 3.0,
+      ratioString: '3:1'
+    });
+
+    // 4th harmonic (two octaves) - varies with danceability
+    const fourthAmplitude = 0.15 + danceability * 0.25;
+    harmonics.push({
+      harmonic: 4,
+      frequency: fundamentalHz * 4,
+      amplitude: fourthAmplitude,
+      ratio: 4.0,
+      ratioString: '4:1'
+    });
+
+    // 5th harmonic (major third above second octave) - relates to valence
+    const fifthAmplitude = 0.1 + valence * 0.2;
+    harmonics.push({
+      harmonic: 5,
+      frequency: fundamentalHz * 5,
+      amplitude: fifthAmplitude,
+      ratio: 5.0,
+      ratioString: '5:1'
+    });
+
+    // Higher harmonics for non-acoustic tracks
+    if (acousticness < 0.6) {
+      for (let i = 6; i <= 8; i++) {
+        const amplitude = Math.max(0.05, (1 - acousticness) * 0.15 * (1 / i));
+        harmonics.push({
+          harmonic: i,
+          frequency: fundamentalHz * i,
+          amplitude,
+          ratio: i,
+          ratioString: `${i}:1`
+        });
+      }
+    }
+
+    // Calculate synthetic spectral features
+    const spectralCentroid = fundamentalHz * (1 + energy * 2 + (1 - acousticness)); // Brightness estimate
+    const spectralRolloff = spectralCentroid * (1.5 + energy); // Energy distribution estimate
+    const rms = Math.sqrt(energy) * (0.1 + Math.pow(10, loudness / 20)); // Energy estimate from loudness
+    const zcr = (1 - acousticness) * 0.1; // Zero crossing estimate
+
+    // Create synthetic MFCC and chroma
+    const mfcc = this.generateSyntheticMFCC(energy, acousticness, valence);
+    const chroma = this.generateSyntheticChroma(key, mode, valence);
+
+    // Determine dominant harmonics based on audio features
+    const dominantHarmonics: number[] = [1]; // Fundamental always dominant
+    
+    if (energy > 0.6) dominantHarmonics.push(2); // Strong energy = strong octave
+    if (valence > 0.6 && mode === 1) dominantHarmonics.push(3); // Happy major = strong fifth
+    if (danceability > 0.7) dominantHarmonics.push(4); // Danceable = strong rhythmic harmonics
+    if (energy > 0.8 && acousticness < 0.3) dominantHarmonics.push(5); // Electric energy
+
+    // Estimate musical key
+    const keyNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const musicalKey = `${keyNames[key]} ${mode === 1 ? 'major' : 'minor'}`;
+
+    // Calculate confidence based on feature completeness and source
+    let confidence = 0.7; // Base confidence for real Spotify audio features
+    if (audioFeatures._source === 'genre_estimate') confidence = 0.4;
+    if (audioFeatures._source === 'default_estimate') confidence = 0.3;
+    if (audioFeatures._source === 'spotify_api') confidence = 0.7;
+
+    return {
+      fundamentalHz,
+      harmonics,
+      dominantHarmonics,
+      spectralCentroid,
+      spectralRolloff,
+      mfcc,
+      chroma,
+      rms,
+      zcr,
+      musicalKey,
+      tempo,
+      analysisType: 'audio_features',
+      confidence
+    };
+  }
+
+  /**
+   * Generate synthetic MFCC coefficients from audio features
+   */
+  private generateSyntheticMFCC(energy: number, acousticness: number, valence: number): number[] {
+    const mfcc: number[] = [];
+    
+    // MFCC 0 (energy-related)
+    mfcc.push((energy - 0.5) * 2);
+    
+    // MFCC 1-3 (spectral shape, related to acousticness)
+    for (let i = 1; i <= 3; i++) {
+      mfcc.push((acousticness - 0.5) * (2 / i) + (Math.random() - 0.5) * 0.3);
+    }
+    
+    // MFCC 4-6 (mid-range spectral features, related to valence)
+    for (let i = 4; i <= 6; i++) {
+      mfcc.push((valence - 0.5) * (1.5 / i) + (Math.random() - 0.5) * 0.4);
+    }
+    
+    // MFCC 7-12 (higher order features, more random but constrained)
+    for (let i = 7; i <= 12; i++) {
+      mfcc.push((Math.random() - 0.5) * (1 / i));
+    }
+    
+    return mfcc;
+  }
+
+  /**
+   * Generate synthetic chroma vector from key and mode
+   */
+  private generateSyntheticChroma(key: number, mode: number, valence: number): number[] {
+    const chroma = new Array(12).fill(0);
+    
+    // Major and minor key profiles
+    const majorProfile = [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1];
+    const minorProfile = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0];
+    
+    const profile = mode === 1 ? majorProfile : minorProfile;
+    
+    // Apply profile starting from the key
+    for (let i = 0; i < 12; i++) {
+      const chromaIndex = (i + key) % 12;
+      chroma[chromaIndex] = profile[i] * (0.5 + valence * 0.5) + (Math.random() * 0.2);
+    }
+    
+    return chroma;
+  }
+
+  /**
+   * Analyze harmonic content from a Spotify preview URL with audio features fallback
+   */
+  async analyzeSpotifyPreview(previewUrl: string, trackData: {
+    id: string;
+    name: string;
+    artist: string;
+  }, options?: {
+    spotifyService?: any;
+    accessToken?: string;
+  }): Promise<SpotifyTrackAnalysis | null> {
+    const startTime = Date.now();
+
+    try {
+      // Try audio preview first if available
+      if (previewUrl) {
+        try {
+          const audioBuffer = await this.fetchAudioBuffer(previewUrl);
+          if (audioBuffer) {
+            console.log(`Analyzing audio preview for: ${trackData.name}`);
+            const harmonicAnalysis = await this.extractHarmonics(audioBuffer);
+            harmonicAnalysis.analysisType = 'full_audio';
+            harmonicAnalysis.confidence = 0.9;
+
+            return {
+              previewUrl,
+              trackId: trackData.id,
+              name: trackData.name,
+              artist: trackData.artist,
+              harmonicAnalysis,
+              processingTime: Date.now() - startTime
+            };
+          }
+        } catch (error) {
+          console.warn(`Preview URL analysis failed for ${trackData.name}:`, error);
+        }
+      }
+
+      // Fallback to audio features if preview fails or unavailable
+      if (options?.spotifyService && options?.accessToken) {
+        console.log(`Preview unavailable for ${trackData.name}, trying audio features fallback`);
+        
+        try {
+          const audioFeatures = await options.spotifyService.getTrackAudioFeatures(
+            options.accessToken,
+            trackData.id,
+            { 
+              name: trackData.name, 
+              artist: trackData.artist,
+              genres: [] // Could be enhanced to pass genre info if available
+            }
+          );
+
+          // Handle null response (403 or other API errors)
+          if (audioFeatures) {
+            console.log(`Audio features retrieved for ${trackData.name}, source: ${audioFeatures._source}`);
+            return await this.analyzeFromAudioFeatures(audioFeatures, trackData);
+          } else {
+            console.warn(`Audio features returned null for ${trackData.name} - likely API restriction`);
+          }
+        } catch (error) {
+          console.warn(`Audio features analysis failed for ${trackData.name}:`, error);
+        }
+      }
+
+      // Final fallback - simulated analysis
+      console.log(`No audio data available for ${trackData.name}, using simulated analysis`);
+      const simulatedAnalysis = this.createSimulatedAnalysis(trackData);
+      
+      return {
+        previewUrl: '',
+        trackId: trackData.id,
+        name: trackData.name,
+        artist: trackData.artist,
+        harmonicAnalysis: simulatedAnalysis,
+        processingTime: Date.now() - startTime
+      };
+
+    } catch (error) {
       console.error(`Error analyzing track ${trackData.name}:`, error);
       return null;
     }
+  }
+
+  /**
+   * Create simulated analysis when no audio data is available
+   */
+  private createSimulatedAnalysis(trackData: { name: string; artist: string }): HarmonicAnalysisResult {
+    const simulatedAnalysis = {
+      fundamentalHz: 220 + Math.random() * 880,
+      harmonics: this.generateSimulatedHarmonics(),
+      dominantHarmonics: [1, 2, 3, 5],
+      spectralCentroid: Math.random() * 4000 + 1000,
+      spectralRolloff: Math.random() * 8000 + 2000,
+      mfcc: Array.from({length: 13}, () => Math.random() * 2 - 1),
+      chroma: Array.from({length: 12}, () => Math.random()),
+      rms: Math.random() * 0.5 + 0.1,
+      zcr: Math.random() * 0.1 + 0.05,
+      musicalKey: this.estimateMusicalKey(),
+      tempo: Math.floor(Math.random() * 60) + 80,
+      analysisType: 'simulated' as const,
+      confidence: 0.2,
+      _source: 'simulation' // Mark as pure simulation
+    };
+
+    return simulatedAnalysis;
   }
 
   /**
@@ -248,7 +532,9 @@ export class HarmonicAnalysisService {
               rms: avgFeatures.rms || 0,
               zcr: avgFeatures.zcr || 0,
               musicalKey: this.estimateKey(avgFeatures.chroma || []),
-              tempo: this.estimateTempo(audioData, decodedAudio.sampleRate)
+              tempo: this.estimateTempo(audioData, decodedAudio.sampleRate),
+              analysisType: 'full_audio',
+              confidence: 0.9
             };
 
             resolve(result);
