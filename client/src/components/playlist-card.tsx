@@ -392,6 +392,18 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                         </Tooltip>
                       </TooltipProvider>
                       
+                      {/* Planetary Resonance */}
+                      {song.harmonicCorrelation.planetaryResonance?.dominantPlanet && (
+                        <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                          🪐 {song.harmonicCorrelation.planetaryResonance.dominantPlanet}
+                        </span>
+                      )}
+                      {song.harmonicCorrelation.planetaryResonance?.cosmicAlignment && (
+                        <span className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">
+                          ✨ {(song.harmonicCorrelation.planetaryResonance.cosmicAlignment * 100).toFixed(0)}% cosmic
+                        </span>
+                      )}
+                      
                       {/* Musical Features */}
                       {song.harmonicCorrelation.musicalFeatures.key && (
                         <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
@@ -503,6 +515,42 @@ export default function PlaylistCard({ playlist, sessionId }: PlaylistCardProps)
                               </div>
                             )}
                             
+                            {/* Planetary Resonance */}
+                            {song.harmonicCorrelation.planetaryResonance && (
+                              <div className="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg">
+                                <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                                  <span className="mr-2">🪐</span>
+                                  Planetary Frequency Resonance
+                                </h4>
+                                
+                                {song.harmonicCorrelation.planetaryResonance.dominantPlanet && (
+                                  <div className="mb-3">
+                                    <div className="text-sm font-medium text-purple-800">
+                                      Dominant Planet: {song.harmonicCorrelation.planetaryResonance.dominantPlanet}
+                                    </div>
+                                    <div className="text-sm text-purple-600">
+                                      Cosmic Alignment: {(song.harmonicCorrelation.planetaryResonance.cosmicAlignment * 100).toFixed(0)}%
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {song.harmonicCorrelation.planetaryResonance.planetaryResonances.length > 0 && (
+                                  <div className="space-y-2">
+                                    {song.harmonicCorrelation.planetaryResonance.planetaryResonances.slice(0, 3).map((resonance, idx) => (
+                                      <div key={idx} className="text-xs bg-white bg-opacity-60 p-2 rounded">
+                                        <span className="font-medium">{resonance.planet}:</span> {(resonance.resonanceStrength * 100).toFixed(0)}% resonance
+                                        {resonance.detectedFrequencies.length > 0 && (
+                                          <span className="text-purple-600 ml-1">
+                                            ({resonance.detectedFrequencies[0].toFixed(1)} Hz)
+                                          </span>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
                             {/* Musical Features */}
                             <div className="p-4 bg-gray-50 rounded-lg">
                               <h4 className="font-medium text-gray-900 mb-2">Musical Analysis</h4>

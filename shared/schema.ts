@@ -605,6 +605,28 @@ export interface HarmonicCorrelationData {
     energy: number;               // RMS energy normalized
     harmonicComplexity: number;   // Number of significant harmonics
   };
+  // NEW: Planetary frequency resonance data
+  planetaryResonance?: {
+    planetaryResonances: Array<{
+      planet: string;
+      resonanceStrength: number;
+      detectedFrequencies: number[];
+      harmonic: number;
+      explanation: string;
+    }>;
+    dominantPlanet: string | null;
+    cosmicAlignment: number;
+    frequencySpectrum: {
+      planetaryFrequencies: number[];
+      cosmicRatios: Array<{
+        ratio: number;
+        planets: string[];
+        significance: string;
+      }>;
+    };
+    insights: string[];
+    confidenceLevel: number;
+  };
   harmonicInsights: string[];     // Human-readable explanations
   recommendationReason: string;   // Why this track resonates with their chart
   analysisTimestamp?: string;     // When the harmonic analysis was performed

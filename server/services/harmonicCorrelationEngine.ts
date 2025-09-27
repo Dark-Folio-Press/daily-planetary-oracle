@@ -6,6 +6,7 @@
 
 import { astrologicalHarmonicsService, ChartHarmonic, HarmonicCorrelation } from './astrologicalHarmonics';
 import { harmonicAnalysisService, HarmonicAnalysisResult, SpotifyTrackAnalysis } from './harmonicAnalysis';
+import { planetaryFrequencyEngine, PlanetaryHarmonicAnalysis } from './planetaryFrequencyEngine';
 
 export interface TrackCorrelation {
   trackId: string;
@@ -28,6 +29,7 @@ export interface TrackCorrelation {
     energy: number;              // RMS energy normalized
     harmonicComplexity: number;  // Number of significant harmonics
   };
+  planetaryResonance?: PlanetaryHarmonicAnalysis; // NEW: Planetary frequency analysis
   recommendationReason: string;  // Why this track resonates with their chart
 }
 
@@ -126,13 +128,24 @@ export class HarmonicCorrelationEngine {
       // Extract musical features
       const musicalFeatures = this.extractMusicalFeatures(audioAnalysis.harmonicAnalysis);
 
-      // Generate recommendation reason
+      // Perform planetary frequency analysis
+      const planetaryResonance = await planetaryFrequencyEngine.analyzePlanetaryResonance(
+        track,
+        audioAnalysis.harmonicAnalysis,
+        chartData
+      );
+
+      // Enhance overall score with planetary alignment
+      const enhancedScore = this.enhanceScoreWithPlanetaryResonance(overallScore, planetaryResonance);
+
+      // Generate recommendation reason including planetary insights
       const recommendationReason = this.generateRecommendationReason(
         dominantCorrelations,
         chartResonance,
         musicalFeatures,
         chartHarmonics,
-        audioAnalysis.harmonicAnalysis.analysisType
+        audioAnalysis.harmonicAnalysis.analysisType,
+        planetaryResonance
       );
 
       return {
@@ -140,12 +153,13 @@ export class HarmonicCorrelationEngine {
         trackName: track.name,
         artist: track.artist,
         previewUrl: track.previewUrl,
-        overallScore,
+        overallScore: enhancedScore,
         correlations: correlations.slice(0, this.config.maxCorrelationsPerTrack),
         dominantCorrelations,
         harmonicInsights,
         chartResonance,
         musicalFeatures,
+        planetaryResonance,
         recommendationReason
       };
 
@@ -408,12 +422,35 @@ export class HarmonicCorrelationEngine {
     };
   }
 
+  /**
+   * Enhance overall score using planetary resonance data
+   */
+  private enhanceScoreWithPlanetaryResonance(
+    baseScore: number,
+    planetaryResonance: PlanetaryHarmonicAnalysis
+  ): number {
+    // Add planetary alignment bonus (up to 20% improvement)
+    const planetaryBonus = planetaryResonance.cosmicAlignment * 0.2;
+    
+    // Bonus for strong individual planetary resonances
+    const strongPlanetaryResonances = planetaryResonance.planetaryResonances.filter(r => r.resonanceStrength > 0.6).length;
+    const strengthBonus = Math.min(strongPlanetaryResonances * 0.05, 0.15);
+    
+    // Factor in confidence level
+    const confidenceFactor = planetaryResonance.confidenceLevel;
+    
+    const enhancedScore = baseScore + (planetaryBonus + strengthBonus) * confidenceFactor;
+    
+    return Math.min(enhancedScore, 1.0);
+  }
+
   private generateRecommendationReason(
     dominantCorrelations: HarmonicCorrelation[],
     chartResonance: any,
     musicalFeatures: any,
     chartHarmonics: ChartHarmonic,
-    analysisType?: string
+    analysisType?: string,
+    planetaryResonance?: PlanetaryHarmonicAnalysis
   ): string {
     // Add analysis type context to mystical language
     let analysisPrefix = '';
@@ -425,11 +462,20 @@ export class HarmonicCorrelationEngine {
       analysisPrefix = 'Through direct sonic divination, ';
     }
 
+    // Priority 1: Planetary resonance insights
+    if (planetaryResonance && planetaryResonance.dominantPlanet && planetaryResonance.cosmicAlignment > 0.5) {
+      const planet = planetaryResonance.dominantPlanet;
+      const alignment = (planetaryResonance.cosmicAlignment * 100).toFixed(0);
+      return `${analysisPrefix}this track resonates with ${planet}'s orbital frequency (${alignment}% cosmic alignment), amplifying ${planet.toLowerCase()} energy through literal planetary harmonics in the music.`;
+    }
+
+    // Priority 2: Astrological harmonic correlations
     if (dominantCorrelations.length > 0) {
       const topCorrelation = dominantCorrelations[0];
       return `${analysisPrefix}this track's ${topCorrelation.aspectMatch.musicalInterval} intervals echo your ${topCorrelation.aspectMatch.aspect} aspects, creating harmonic resonance with your astrological pattern.`;
     }
 
+    // Priority 3: General energy alignment
     if (chartResonance.energyAlignment > 0.7) {
       return `${analysisPrefix}the energy signature of this music aligns well with your chart's elemental balance.`;
     }
