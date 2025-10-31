@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/hooks/useTheme";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { getChatSessionId } from "@/lib/guestSession";
 import ChatMessage from "@/components/chat-message";
 import ChatInput from "@/components/chat-input";
 import QuickActions from "@/components/quick-actions";
@@ -22,7 +23,8 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function ChatPage() {
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random()}`);
+  // Use stable sessionId from sessionStorage to prevent infinite loops on component remounts
+  const [sessionId] = useState(() => getChatSessionId());
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [showSpotifyCard, setShowSpotifyCard] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
