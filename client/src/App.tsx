@@ -57,6 +57,11 @@ function Router() {
         {!user ? <Landing /> : (!hasCompleteProfile ? <ProfileSetupPage /> : <ChatPage />)}
       </Route>
       
+      {/* Chat route - accessible to guests and authenticated users */}
+      <Route path="/chat">
+        {!user ? <ChatPage /> : (!hasCompleteProfile ? <ProfileSetupPage /> : <ChatPage />)}
+      </Route>
+      
       {/* Other authenticated routes */}
       <Route path="/feedback-analytics">
         {user && hasCompleteProfile ? <FeedbackAnalytics /> : <LoginPage />}
@@ -66,9 +71,6 @@ function Router() {
       </Route>
       <Route path="/harmonic-analysis">
         {user && hasCompleteProfile ? <HarmonicAnalysisPage /> : <LoginPage />}
-      </Route>
-      <Route path="/chat">
-        {user ? <LoginPage /> : <LoginPage />}
       </Route>
       
       {/* Catch all */}

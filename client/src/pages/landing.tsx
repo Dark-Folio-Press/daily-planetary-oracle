@@ -127,13 +127,37 @@ export default function Landing() {
               Master your birth chart, understand planetary influences, and unlock the wisdom of your cosmic blueprint.
             </p>
             <div className="space-y-4">
+              <Link href="/chat">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 w-full"
+                  data-testid="button-try-free"
+                >
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Try Free as Guest
+                </Button>
+              </Link>
+              <p className="text-sm text-gray-500 text-center">
+                No login required • 3 cosmic playlists per week • Free Spotify export
+              </p>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">or</span>
+                </div>
+              </div>
+              
               <Link href="/login">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 w-full"
+                  variant="outline"
+                  className="w-full border-2"
+                  data-testid="button-sign-in"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Sign In to Get Started
+                  Sign In for Full Access
                 </Button>
               </Link>
               <p className="text-sm text-gray-500">
