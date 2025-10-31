@@ -88,33 +88,39 @@ export default function Landing() {
 
           {/* Features */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="p-6 bg-white rounded-lg shadow-sm transition-all duration-1000 ease-in-out">
-              <Sparkles className="h-8 w-8 text-blue-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                <strong>{currentFeatures[0].title}</strong>
-              </h3>
-              <p className="text-gray-600">
-                {currentFeatures[0].content}
-              </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-sm transition-all duration-1000 ease-in-out">
-              <Star className="h-8 w-8 text-purple-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                <strong>{currentFeatures[1].title}</strong>
-              </h3>
-              <p className="text-gray-600">
-                {currentFeatures[1].content}
-              </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-sm transition-all duration-1000 ease-in-out">
-              <Music className="h-8 w-8 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                <strong>{currentFeatures[2].title}</strong>
-              </h3>
-              <p className="text-gray-600">
-                {currentFeatures[2].content}
-              </p>
-            </div>
+            <Link href="/chat">
+              <div className="p-6 bg-white rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105 cursor-pointer" data-testid="card-feature-1">
+                <Sparkles className="h-8 w-8 text-blue-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  <strong>{currentFeatures[0].title}</strong>
+                </h3>
+                <p className="text-gray-600">
+                  {currentFeatures[0].content}
+                </p>
+              </div>
+            </Link>
+            <Link href="/chat">
+              <div className="p-6 bg-white rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105 cursor-pointer" data-testid="card-feature-2">
+                <Star className="h-8 w-8 text-purple-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  <strong>{currentFeatures[1].title}</strong>
+                </h3>
+                <p className="text-gray-600">
+                  {currentFeatures[1].content}
+                </p>
+              </div>
+            </Link>
+            <Link href="/chat">
+              <div className="p-6 bg-white rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105 cursor-pointer" data-testid="card-feature-3">
+                <Music className="h-8 w-8 text-green-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  <strong>{currentFeatures[2].title}</strong>
+                </h3>
+                <p className="text-gray-600">
+                  {currentFeatures[2].content}
+                </p>
+              </div>
+            </Link>
           </div>
 
           {/* CTA */}
