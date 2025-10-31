@@ -47,35 +47,18 @@ export default function ChatPage() {
     enabled: !!user,
   });
 
-  // Initialize session once on mount
-  const [sessionInitialized, setSessionInitialized] = useState(false);
-  const sessionInitRef = useRef(false);
-  
-  useEffect(() => {
-    // Prevent double initialization (React StrictMode or re-mounts)
-    if (sessionInitRef.current) return;
-    sessionInitRef.current = true;
-    
-    const initSession = async () => {
-      try {
-        await apiRequest('POST', '/api/chat/session', { sessionId });
-        setSessionInitialized(true);
-      } catch (error) {
-        console.error('Failed to initialize session:', error);
-        sessionInitRef.current = false; // Allow retry on error
-      }
-    };
-    
-    initSession();
-  }, [sessionId]);
-
+  // Fetch messages (session is created server-side if it doesn't exist)
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ['/api/chat', sessionId, 'messages'],
     queryFn: async () => {
+      //  Initialize session and fetch messages in one request
+      await apiRequest('POST', '/api/chat/session', { sessionId });
       const response = await apiRequest('GET', `/api/chat/${sessionId}/messages`);
       return response.json();
     },
-    enabled: sessionInitialized
+    staleTime: Infinity, // Don't refetch automatically
+    refetchOnMount: false, // Don't refetch on remount
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
 
   const sendMessageMutation = useMutation({
