@@ -92,6 +92,37 @@ export default function ChatPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/chat', sessionId, 'messages'] });
+    },
+    onError: (error: any) => {
+      // Check for rate limit error
+      if (error.status === 429) {
+        const errorData = error.body || {};
+        const resetIn = errorData.resetIn || 60;
+        toast({
+          title: "🌟 Guest Limit Reached - Try 3 for Free!",
+          description: `You've used all 3 free guest playlists. Try again in ${resetIn} minutes, or sign up now for unlimited cosmic playlists!`,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to generate playlists.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1000);
+        return;
+      }
+      
+      toast({
+        title: "Error",
+        description: "Failed to generate playlist. Please try again.",
+        variant: "destructive",
+      });
     }
   });
 

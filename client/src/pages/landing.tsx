@@ -138,7 +138,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <p className="text-sm text-gray-500 text-center">
-                No login required • 3 cosmic playlists per week • Free Spotify export
+                No login required • Try 3 for free! • Free Spotify export
               </p>
               
               <div className="relative">

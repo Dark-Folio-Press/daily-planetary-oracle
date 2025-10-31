@@ -28,6 +28,7 @@ import { eq, and } from "drizzle-orm";
 import { setupAuth, requireAuth, requireCompleteProfile } from "./auth";
 import { socialService } from "./services/social";
 import { pdfService } from "./services/pdf";
+import { guestPlaylistRateLimit } from "./middleware/rateLimit";
 import { z } from "zod";
 import notificationRoutes from "./routes/notifications";
 
@@ -786,7 +787,7 @@ Would you like me to explain the astrological reasoning behind any specific song
   });
 
   // Generate new playlist (or show existing weekly playlist)
-  app.post("/api/chat/:sessionId/generate-playlist", async (req, res) => {
+  app.post("/api/chat/:sessionId/generate-playlist", guestPlaylistRateLimit, async (req, res) => {
     try {
       const { sessionId } = req.params;
       const userId = (req.user as any)?.id || 'guest';
