@@ -157,3 +157,32 @@ export function prepareGuestDataForMigration(): {
     guestId: session.id
   };
 }
+
+/**
+ * Get or create a stable chat session ID
+ * Uses sessionStorage so it persists across component remounts but clears on browser tab close
+ * This prevents infinite loops from creating new sessions on every render
+ */
+const CHAT_SESSION_KEY = 'cosmic_chat_session_id';
+
+export function getChatSessionId(): string {
+  // Try to get existing session ID from sessionStorage (persists across remounts)
+  const existingSessionId = sessionStorage.getItem(CHAT_SESSION_KEY);
+  
+  if (existingSessionId) {
+    return existingSessionId;
+  }
+  
+  // Create new chat session ID
+  const newSessionId = `session_${Date.now()}_${Math.random()}`;
+  sessionStorage.setItem(CHAT_SESSION_KEY, newSessionId);
+  
+  return newSessionId;
+}
+
+/**
+ * Clear chat session (forces new session on next page load)
+ */
+export function clearChatSession(): void {
+  sessionStorage.removeItem(CHAT_SESSION_KEY);
+}
