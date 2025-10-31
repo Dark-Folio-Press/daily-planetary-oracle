@@ -47,14 +47,29 @@ export default function ChatPage() {
     enabled: !!user,
   });
 
+  // Initialize session once on mount
+  const [sessionInitialized, setSessionInitialized] = useState(false);
+  
+  useEffect(() => {
+    const initSession = async () => {
+      try {
+        await apiRequest('POST', '/api/chat/session', { sessionId });
+        setSessionInitialized(true);
+      } catch (error) {
+        console.error('Failed to initialize session:', error);
+      }
+    };
+    
+    initSession();
+  }, [sessionId]);
+
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ['/api/chat', sessionId, 'messages'],
     queryFn: async () => {
-      // Initialize session first
-      await apiRequest('POST', '/api/chat/session', { sessionId });
       const response = await apiRequest('GET', `/api/chat/${sessionId}/messages`);
       return response.json();
-    }
+    },
+    enabled: sessionInitialized
   });
 
   const sendMessageMutation = useMutation({
