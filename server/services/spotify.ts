@@ -62,15 +62,32 @@ export class SpotifyService {
     console.log("Spotify Service initialized with redirect URI:", this.redirectUri);
   }
 
-  getAuthUrl(state: string): string {
+  /**
+   * SPOTIFY COMPLIANCE: Separate auth flows for personalization vs export
+   * 
+   * PERSONALIZATION (PAID FEATURE - Stardust/Cosmic tiers):
+   * - Read user's music taste to improve recommendations
+   * - Requires: user-read-private, user-read-email, user-top-read, user-library-read
+   * - This is what we CHARGE for (better AI recommendations)
+   * 
+   * EXPORT (FREE FOR ALL USERS):
+   * - Create playlists in user's Spotify account
+   * - Requires: playlist-modify-public, playlist-modify-private
+   * - This is FREE - we do NOT charge for Spotify features
+   */
+
+  /**
+   * Get authorization URL for Spotify PERSONALIZATION (paid feature)
+   * Used by Stardust/Cosmic users to connect their Spotify for better recommendations
+   */
+  getPersonalizationAuthUrl(state: string): string {
     const scopes = [
       'user-read-private',
       'user-read-email',
       'user-read-recently-played',
       'user-top-read',
-      'user-library-read',
-      'playlist-modify-public',
-      'playlist-modify-private'
+      'user-library-read'
+      // NO playlist-modify scopes - this is just for reading their taste
     ];
 
     const params = new URLSearchParams({
@@ -79,11 +96,43 @@ export class SpotifyService {
       scope: scopes.join(' '),
       redirect_uri: this.redirectUri,
       state: state,
-      // Force Spotify to show login screen instead of auto-login
       show_dialog: 'true'
     });
 
     return `https://accounts.spotify.com/authorize?${params.toString()}`;
+  }
+
+  /**
+   * Get authorization URL for Spotify EXPORT (free for all users)
+   * Used by ANY user (guest, free, paid) to create playlists in their Spotify account
+   */
+  getExportAuthUrl(state: string): string {
+    const scopes = [
+      'playlist-modify-public',
+      'playlist-modify-private'
+      // NO read scopes - this is just for creating playlists
+      // We don't need email/profile for export-only users
+    ];
+
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: this.clientId,
+      scope: scopes.join(' '),
+      redirect_uri: this.redirectUri,
+      state: state,
+      show_dialog: 'true'
+    });
+
+    return `https://accounts.spotify.com/authorize?${params.toString()}`;
+  }
+
+  /**
+   * Legacy method - kept for backward compatibility
+   * Use getPersonalizationAuthUrl() or getExportAuthUrl() instead
+   */
+  getAuthUrl(state: string): string {
+    // Default to export auth (free for all)
+    return this.getExportAuthUrl(state);
   }
 
   async exchangeCodeForToken(code: string): Promise<{

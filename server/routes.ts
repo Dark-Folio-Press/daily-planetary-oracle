@@ -1747,12 +1747,69 @@ ${daily.horoscope}
 
   // Spotify Integration Routes
   
-  // Start Spotify authentication
+  /**
+   * SPOTIFY PERSONALIZATION AUTH (PAID FEATURE)
+   * For Stardust/Cosmic users to connect Spotify and read their music taste
+   * This improves AI recommendations - what we CHARGE for
+   */
+  app.get('/api/spotify/auth-personalization', requireAuth, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      // Check if user has paid tier (Stardust or Cosmic)
+      const tier = user?.subscriptionTier || 'vibes';
+      if (tier === 'vibes') {
+        return res.status(403).json({ 
+          error: "Spotify personalization requires Stardust or Cosmic subscription",
+          upgradeRequired: true,
+          feature: 'spotifyPersonalization'
+        });
+      }
+      
+      const authUrl = spotifyService.getPersonalizationAuthUrl(`${userId}:personalization`);
+      console.log("\n=== SPOTIFY PERSONALIZATION AUTH ===");
+      console.log("User ID:", userId);
+      console.log("Tier:", tier);
+      console.log("Type: PERSONALIZATION (read music taste)");
+      console.log("====================================");
+      res.json({ authUrl });
+    } catch (error) {
+      console.error("Error getting Spotify personalization auth URL:", error);
+      res.status(500).json({ error: "Failed to get Spotify auth URL" });
+    }
+  });
+
+  /**
+   * SPOTIFY EXPORT AUTH (FREE FOR ALL)
+   * For ANY user (guest, free, paid) to create playlists in their Spotify account
+   * This is FREE - we do NOT charge for Spotify features
+   */
+  app.get('/api/spotify/auth-export', async (req: any, res) => {
+    try {
+      // Get user ID - could be authenticated user or guest
+      const userId = req.user?.id || req.query.guestId || 'guest';
+      
+      const authUrl = spotifyService.getExportAuthUrl(`${userId}:export`);
+      console.log("\n=== SPOTIFY EXPORT AUTH (FREE) ===");
+      console.log("User ID:", userId);
+      console.log("Type: EXPORT (create playlists)");
+      console.log("Free for: ALL users (guest, free, paid)");
+      console.log("===================================");
+      res.json({ authUrl });
+    } catch (error) {
+      console.error("Error getting Spotify export auth URL:", error);
+      res.status(500).json({ error: "Failed to get Spotify auth URL" });
+    }
+  });
+  
+  // Legacy endpoint - kept for backward compatibility
+  // Defaults to export auth (free for all)
   app.get('/api/spotify/auth', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
       const authUrl = spotifyService.getAuthUrl(userId);
-      console.log("\n=== SPOTIFY AUTH REQUEST ===");
+      console.log("\n=== SPOTIFY AUTH REQUEST (LEGACY) ===");
       console.log("User ID:", userId);
       console.log("Full auth URL:", authUrl);
       console.log("Redirect URI that MUST be in your Spotify app settings:");
@@ -1768,45 +1825,102 @@ ${daily.horoscope}
   // Spotify OAuth callback
   app.get('/api/spotify/callback', async (req, res) => {
     try {
-      const { code, state: userId, error } = req.query;
-      
-      console.log("\n=== SPOTIFY CALLBACK RECEIVED ===");
-      console.log("Code received:", !!code);
-      console.log("User ID:", userId);
-      console.log("Error:", error || "none");
-      console.log("=================================");
+      const { code, state, error } = req.query;
       
       if (error) {
         console.error("Spotify OAuth error:", error);
         return res.redirect('/?spotify=error&reason=' + encodeURIComponent(error as string));
       }
       
-      if (!code || !userId) {
-        console.error("Missing parameters in Spotify callback:", { code: !!code, userId });
+      if (!code || !state) {
+        console.error("Missing parameters in Spotify callback:", { code: !!code, state: !!state });
         return res.status(400).json({ error: "Missing code or state parameter" });
       }
+
+      // Parse state parameter: format is "userId:authType" (e.g., "user123:personalization" or "guest_abc:export")
+      const stateStr = state as string;
+      const [userId, authType = 'legacy'] = stateStr.includes(':') ? stateStr.split(':') : [stateStr, 'legacy'];
+      
+      console.log("\n=== SPOTIFY CALLBACK RECEIVED ===");
+      console.log("Code received:", !!code);
+      console.log("User ID:", userId);
+      console.log("Auth Type:", authType);
+      console.log("=================================");
 
       // Exchange code for tokens
       const tokens = await spotifyService.exchangeCodeForToken(code as string);
       
-      // Get user's Spotify profile
-      const spotifyUser = await spotifyService.getUserProfile(tokens.access_token);
-      
-      // Get comprehensive music profile
-      const musicProfile = await spotifyService.getUserMusicProfile(tokens.access_token);
-      
-      // Save Spotify data to user
-      await storage.updateUserSpotify(userId as string, {
-        spotifyId: spotifyUser.id,
-        spotifyAccessToken: tokens.access_token,
-        spotifyRefreshToken: tokens.refresh_token,
-        spotifyTokenExpires: new Date(Date.now() + tokens.expires_in * 1000),
-        musicProfile: musicProfile,
-      });
-
-      // Redirect back to the app with success
-      const redirectUrl = req.get('referer') || '/';
-      res.redirect(`${redirectUrl}?spotify=connected`);
+      // Handle different auth types
+      if (authType === 'personalization') {
+        // PERSONALIZATION flow: Save tokens + read music profile (paid feature)
+        
+        // Verify user has paid tier (only if not guest)
+        if (!userId.startsWith('guest')) {
+          const user = await storage.getUser(userId);
+          const tier = user?.subscriptionTier || 'vibes';
+          
+          if (tier === 'vibes') {
+            console.error("User attempted personalization without paid tier:", userId);
+            return res.redirect('/?spotify=error&reason=upgrade_required');
+          }
+        }
+        
+        // Get user's Spotify profile
+        const spotifyUser = await spotifyService.getUserProfile(tokens.access_token);
+        
+        // Get comprehensive music profile (this is the paid feature)
+        const musicProfile = await spotifyService.getUserMusicProfile(tokens.access_token);
+        
+        // Save personalization data (for authenticated users only)
+        if (!userId.startsWith('guest')) {
+          await storage.updateUserSpotify(userId, {
+            spotifyId: spotifyUser.id,
+            spotifyAccessToken: tokens.access_token,
+            spotifyRefreshToken: tokens.refresh_token,
+            spotifyTokenExpires: new Date(Date.now() + tokens.expires_in * 1000),
+            musicProfile: musicProfile,
+          });
+        }
+        
+        const redirectUrl = req.get('referer') || '/';
+        res.redirect(`${redirectUrl}?spotify=personalized`);
+        
+      } else if (authType === 'export') {
+        // EXPORT flow: Save minimal tokens for playlist creation (FREE for all)
+        // Store tokens in session or temp storage for guest users, database for authenticated users
+        
+        if (!userId.startsWith('guest')) {
+          // Authenticated user: save export tokens
+          await storage.updateUserSpotify(userId, {
+            spotifyAccessToken: tokens.access_token,
+            spotifyRefreshToken: tokens.refresh_token,
+            spotifyTokenExpires: new Date(Date.now() + tokens.expires_in * 1000),
+          });
+        } else {
+          // Guest user: store in session temporarily
+          // TODO: Implement session storage for guest export tokens
+          console.log("Guest export tokens received - session storage needed");
+        }
+        
+        const redirectUrl = req.get('referer') || '/';
+        res.redirect(`${redirectUrl}?spotify=export_ready`);
+        
+      } else {
+        // LEGACY flow: Default behavior (backward compatibility)
+        const spotifyUser = await spotifyService.getUserProfile(tokens.access_token);
+        const musicProfile = await spotifyService.getUserMusicProfile(tokens.access_token);
+        
+        await storage.updateUserSpotify(userId, {
+          spotifyId: spotifyUser.id,
+          spotifyAccessToken: tokens.access_token,
+          spotifyRefreshToken: tokens.refresh_token,
+          spotifyTokenExpires: new Date(Date.now() + tokens.expires_in * 1000),
+          musicProfile: musicProfile,
+        });
+        
+        const redirectUrl = req.get('referer') || '/';
+        res.redirect(`${redirectUrl}?spotify=connected`);
+      }
     } catch (error) {
       console.error("Error in Spotify callback:", error);
       res.redirect('/?spotify=error');

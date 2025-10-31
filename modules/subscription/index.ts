@@ -1,5 +1,9 @@
 // Subscription Module - Exports for tiered pricing, billing, and premium features
-// Note: This module will be implemented for the public launch with tiered subscriptions
+// SPOTIFY COMPLIANCE NOTE: 
+// - Spotify export is FREE for ALL users (guest, free, paid) - we do NOT charge for this
+// - We charge for: AI curation, astrology analysis, personalization, and premium features
+// - Spotify personalization (reading user's music taste) is a paid feature for better recommendations
+// - This keeps us compliant with Spotify Developer Policy for Extended Quota Mode (25+ users)
 
 export interface SubscriptionTier {
   id: string;
@@ -8,7 +12,6 @@ export interface SubscriptionTier {
   features: string[];
   limits: {
     playlists: number | 'unlimited';
-    spotifyExports?: number | 'unlimited';
     horoscopes: number | 'unlimited';
     birthCharts?: number | 'unlimited';
     chatMessages: number | 'unlimited';
@@ -19,6 +22,8 @@ export interface SubscriptionTier {
     monthlyReports?: boolean;
     historyAccess?: boolean;
     musicMode: 'personal' | 'both';
+    spotifyPersonalization?: boolean; // Paid feature: Read user's Spotify data for better recommendations
+    requiresLogin?: boolean; // Whether this tier requires account creation
   };
 }
 
@@ -28,18 +33,20 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     name: 'Vibes',
     price: 0,
     features: [
-      'Personalized weekly/daily playlists based on astrological data',
-      'Basic astrological insight for each day of the week',
-      'Spotify integration (1 export, 3 generations)',
-      'No history/saving'
+      'Guest mode - no login required',
+      '3 AI-generated cosmic playlists per week',
+      'Basic astrological insights',
+      'Free Spotify export for all playlists',
+      'No history/saving (browser-only sessions)'
     ],
     limits: {
-      playlists: 3, // 3 generations
-      spotifyExports: 1,
+      playlists: 3, // 3 AI generations per week
       horoscopes: 7, // Daily insights for week
       chatMessages: 0,
       historyAccess: false,
-      musicMode: 'personal'
+      musicMode: 'personal',
+      spotifyPersonalization: false, // Cannot read Spotify data
+      requiresLogin: false // Guest mode enabled
     }
   },
   {
@@ -48,20 +55,25 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     price: 9.99,
     features: [
       'All of Vibes PLUS',
+      'Unlimited AI-generated playlists',
+      'Spotify personalization (connect your account for better recommendations)',
+      'Unlimited birth chart readings',
       'Daily personal transit push notifications',
       'Weekly personal horoscope push notifications', 
       'Weekly playlist notification',
-      'Unlimited birth chart readings'
+      'Save and access playlist history',
+      'Free Spotify export (same as free tier)'
     ],
     limits: {
       playlists: 'unlimited',
-      spotifyExports: 'unlimited',
       horoscopes: 'unlimited',
       birthCharts: 'unlimited',
       pushNotifications: true,
       chatMessages: 0,
       historyAccess: true,
-      musicMode: 'personal'
+      musicMode: 'personal',
+      spotifyPersonalization: true, // Can connect Spotify to read music taste
+      requiresLogin: true // Requires account
     }
   },
   {
@@ -71,14 +83,16 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     features: [
       'All of Stardust PLUS',
       '90 min AI chat per month',
+      'Spotify personalization with Discovery Mode (explore new music)',
       'Daily Astro Weather and Lunar Phases',
       'Mood tracking, journal, analytics dashboard',
       'Monthly cosmic report centered on your astrological data',
+      'Planetary frequency resonance analysis',
+      'Free Spotify export (same as free tier)',
       'Upgrade path to unlimited chat at $9.99/month'
     ],
     limits: {
       playlists: 'unlimited',
-      spotifyExports: 'unlimited', 
       horoscopes: 'unlimited',
       birthCharts: 'unlimited',
       pushNotifications: true,
@@ -88,7 +102,9 @@ export const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
       lunarPhases: true,
       monthlyReports: true,
       historyAccess: true,
-      musicMode: 'both'
+      musicMode: 'both', // Personal + Discovery
+      spotifyPersonalization: true, // Can connect Spotify to read music taste
+      requiresLogin: true // Requires account
     }
   }
 ];
