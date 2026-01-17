@@ -18,6 +18,7 @@ import LearningPage from "@/pages/learning";
 import LessonPage from "@/pages/lesson";
 import WaitlistPage from "@/pages/WaitlistPage";
 import HarmonicAnalysisPage from "@/pages/harmonic-analysis";
+import WixTestPage from "@/pages/wix-test";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -72,6 +73,9 @@ function Router() {
       <Route path="/harmonic-analysis">
         {user && hasCompleteProfile ? <HarmonicAnalysisPage /> : <LoginPage />}
       </Route>
+      
+      {/* Wix Horoscope API Test Page - publicly accessible */}
+      <Route path="/wix-test"><WixTestPage /></Route>
       
       {/* Catch all */}
       <Route><NotFound /></Route>

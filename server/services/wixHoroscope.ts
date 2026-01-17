@@ -15,7 +15,8 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY
 });
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 
 const ZODIAC_SIGNS = [
   'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo',
@@ -402,6 +403,10 @@ Respond in JSON format:
     successUrl: string,
     cancelUrl: string
   ): Promise<string> {
+    if (!stripe) {
+      throw new Error("Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.");
+    }
+    
     let customer;
     
     const existingSub = await db.select()
@@ -447,6 +452,10 @@ Respond in JSON format:
   }
 
   async handleStripeWebhook(event: Stripe.Event): Promise<void> {
+    if (!stripe) {
+      throw new Error("Stripe is not configured");
+    }
+    
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;

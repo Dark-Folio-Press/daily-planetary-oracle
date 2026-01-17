@@ -5,7 +5,8 @@ import Stripe from "stripe";
 
 const router = Router();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 
 const corsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -246,9 +247,9 @@ router.post("/stripe/webhook", async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
-  if (!webhookSecret) {
-    console.error("Stripe webhook secret not configured");
-    return res.status(500).json({ error: "Webhook not configured" });
+  if (!stripe || !webhookSecret) {
+    console.error("Stripe not configured");
+    return res.status(500).json({ error: "Stripe not configured" });
   }
   
   try {
