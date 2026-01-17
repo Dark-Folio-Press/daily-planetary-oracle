@@ -31,6 +31,7 @@ import { pdfService } from "./services/pdf";
 import { guestPlaylistRateLimit } from "./middleware/rateLimit";
 import { z } from "zod";
 import notificationRoutes from "./routes/notifications";
+import wixHoroscopeRoutes from "./routes/wixHoroscope";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from client/public for social sharing assets
@@ -3268,6 +3269,9 @@ ${daily.horoscope}
 
   // ====================== NOTIFICATION ROUTES ======================
   app.use('/api/notifications', notificationRoutes);
+  
+  // Wix Horoscope API Routes (CORS-enabled for external Wix site integration)
+  app.use('/api/wix/horoscope', wixHoroscopeRoutes);
 
   // ====================== WAITLIST ROUTES ======================
   const { default: waitlistRoutes } = await import('./routes/waitlist.js');

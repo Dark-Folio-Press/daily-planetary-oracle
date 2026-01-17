@@ -419,6 +419,98 @@ export const insertSongUsageSchema = createInsertSchema(songUsage).omit({
 export type SongUsage = typeof songUsage.$inferSelect;
 export type InsertSongUsage = z.infer<typeof insertSongUsageSchema>;
 
+// ====================== WIX HOROSCOPE INTEGRATION ======================
+
+// Daily General Horoscopes (12 zodiac signs)
+export const dailyHoroscopes = pgTable("daily_horoscopes", {
+  id: serial("id").primaryKey(),
+  date: text("date").notNull(), // YYYY-MM-DD
+  zodiacSign: varchar("zodiac_sign").notNull(), // 'aries', 'taurus', etc.
+  horoscope: text("horoscope").notNull(), // The dark, sardonic horoscope text
+  luckyNumber: integer("lucky_number"),
+  luckyColor: varchar("lucky_color"),
+  moodSummary: varchar("mood_summary"), // Brief mood summary
+  compatibility: varchar("compatibility"), // Most compatible sign for the day
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => [
+  index("idx_daily_horoscopes_date_sign").on(table.date, table.zodiacSign),
+]);
+
+// Push Notification Subscriptions for Web Push
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(), // Public key
+  auth: text("auth").notNull(), // Auth secret
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastNotificationSent: timestamp("last_notification_sent"),
+}, (table) => [
+  index("idx_push_subscriptions_user").on(table.userId),
+]);
+
+// Stripe Subscription Tracking for $2/month plan
+export const stripeSubscriptions = pgTable("stripe_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().unique(),
+  stripeCustomerId: varchar("stripe_customer_id").notNull(),
+  stripeSubscriptionId: varchar("stripe_subscription_id").notNull(),
+  status: varchar("status").notNull(), // 'active', 'canceled', 'past_due', etc.
+  currentPeriodStart: timestamp("current_period_start"),
+  currentPeriodEnd: timestamp("current_period_end"),
+  cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Wix API Keys for authentication
+export const wixApiKeys = pgTable("wix_api_keys", {
+  id: serial("id").primaryKey(),
+  apiKey: varchar("api_key").notNull().unique(),
+  siteName: varchar("site_name"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastUsed: timestamp("last_used"),
+});
+
+// Daily Horoscope Types
+export const insertDailyHoroscopeSchema = createInsertSchema(dailyHoroscopes).omit({
+  id: true,
+  createdAt: true,
+});
+export type DailyHoroscope = typeof dailyHoroscopes.$inferSelect;
+export type InsertDailyHoroscope = z.infer<typeof insertDailyHoroscopeSchema>;
+
+// Push Subscription Types
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions).omit({
+  id: true,
+  createdAt: true,
+  lastNotificationSent: true,
+});
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = z.infer<typeof insertPushSubscriptionSchema>;
+
+// Stripe Subscription Types
+export const insertStripeSubscriptionSchema = createInsertSchema(stripeSubscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type StripeSubscription = typeof stripeSubscriptions.$inferSelect;
+export type InsertStripeSubscription = z.infer<typeof insertStripeSubscriptionSchema>;
+
+// Wix API Key Types
+export const insertWixApiKeySchema = createInsertSchema(wixApiKeys).omit({
+  id: true,
+  createdAt: true,
+  lastUsed: true,
+});
+export type WixApiKey = typeof wixApiKeys.$inferSelect;
+export type InsertWixApiKey = z.infer<typeof insertWixApiKeySchema>;
+
+// ====================== END WIX HOROSCOPE INTEGRATION ======================
+
 // Learning System Tables
 export const learningLessons = pgTable("learning_lessons", {
   id: serial("id").primaryKey(),
