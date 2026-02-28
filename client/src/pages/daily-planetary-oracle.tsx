@@ -176,6 +176,13 @@ export default function DailyPlanetaryOracle() {
   const [activeElement, setActiveElement] = useState<Element>('Water');
   const [focusedPlanet, setFocusedPlanet] = useState<Planet | null>(null);
   const [showMinorCards, setShowMinorCards] = useState(false);
+  const [introVisible, setIntroVisible] = useState(() => localStorage.getItem('oracle-intro-seen') !== 'true');
+  const [introExpanded, setIntroExpanded] = useState(false);
+
+  const dismissIntro = () => {
+    localStorage.setItem('oracle-intro-seen', 'true');
+    setIntroVisible(false);
+  };
 
   const { data, isLoading } = useQuery<PlanetsResponse>({
     queryKey: ["/api/wix/horoscope/planets/sounds"],
@@ -516,6 +523,42 @@ export default function DailyPlanetaryOracle() {
           Hear the planets — powered by live astronomical transit data
           {data && <span className="ml-2 text-purple-500">· {data.date}</span>}
         </p>
+
+        {introVisible && (
+          <div className="mb-6 rounded-xl border border-purple-900/50 bg-gray-950/80 p-5">
+            <p className="text-xs uppercase tracking-widest text-purple-500 mb-2">How to consult this oracle</p>
+
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Click any planet card to hear its orbital frequency and open its full symbolic correspondence — a reading drawn from today's actual sky positions. Each planet generates its own layer.
+            </p>
+
+            <button
+              onClick={() => setIntroExpanded(v => !v)}
+              className="mt-2 text-xs text-purple-500 hover:text-purple-300 transition-colors flex items-center gap-1"
+            >
+              {introExpanded ? '▾ Read less' : '▸ Read more — what each layer contains'}
+            </button>
+
+            {introExpanded && (
+              <div className="mt-4 space-y-2 text-xs text-gray-400 border-t border-gray-800/60 pt-4">
+                <div><span className="text-gray-200 font-semibold">Colour Correspondences —</span> Three swatches: the planet's spectral colour derived from its Kepler frequency transposed into visible light; the traditional tarot colour; and the astrological planetary colour. Plus a gradient showing all three in sequence.</div>
+                <div><span className="text-gray-200 font-semibold">Gemstone —</span> The stone associated with this planet in western occult tradition.</div>
+                <div><span className="text-gray-200 font-semibold">Elder Futhark Rune —</span> The runic symbol assigned to this planet and its core meaning.</div>
+                <div><span className="text-gray-200 font-semibold">Hebrew Letter —</span> The Kabbalistic letter correspondence and its translation.</div>
+                <div><span className="text-gray-200 font-semibold">Keywords —</span> The planet's operating principles in plain language.</div>
+                <div><span className="text-gray-200 font-semibold">Mythical / Spiritual —</span> The god, archetype, or myth that defines this planet's character.</div>
+                <div><span className="text-gray-200 font-semibold">Minor Arcana Spread —</span> The tarot cards that resonate with this planet's energy — a celestial spread drawn from today's active planetary positions. Expand it below the main card.</div>
+              </div>
+            )}
+
+            <button
+              onClick={dismissIntro}
+              className="mt-4 px-4 py-2 text-xs rounded-lg border border-purple-700 text-purple-400 hover:text-white hover:border-purple-400 transition-colors"
+            >
+              Got it — open the oracle
+            </button>
+          </div>
+        )}
 
         <canvas ref={orreryRef} width={900} height={320}
           className="w-full rounded-xl border border-purple-900/40 mb-6"
