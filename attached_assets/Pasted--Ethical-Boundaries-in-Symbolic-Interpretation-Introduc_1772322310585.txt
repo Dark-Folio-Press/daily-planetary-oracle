@@ -1,0 +1,162 @@
+# Ethical Boundaries in Symbolic Interpretation
+
+## Introduction
+
+The Symbolic-Interpretative-Engine is designed with ethical considerations at its core. While symbolic interpretation can offer profound insights, it must be practiced with care, restraint, and respect for human agency.
+
+## Core Ethical Principles
+
+### 1. **Empowerment Over Determinism**
+
+**Principle:** Interpretations should empower individuals to make their own choices, not lock them into predetermined outcomes.
+
+**In Practice:**
+- ✅ "This transit suggests a time when leadership opportunities may emerge..."
+- ❌ "You will become a CEO in three years."
+
+**Rationale:** Astrology and symbolic systems describe potentials and archetypal energies, not fixed destinies. Deterministic statements remove agency and can become self-fulfilling prophecies.
+
+### 2. **Insight Not Instruction**
+
+**Principle:** Provide symbolic understanding and perspectives, but don't prescribe specific actions, especially in critical life domains.
+
+**In Practice:**
+- ✅ "This configuration might illuminate themes around career direction..."
+- ❌ "You must quit your job immediately."
+
+**Rationale:** The interpreter's role is to illuminate, not to direct. Individuals must make their own decisions based on their full life context.
+
+### 3. **Respect for Professional Boundaries**
+
+**Principle:** Symbolic interpretation is not a substitute for professional medical, legal, financial, or psychological services.
+
+**Critical Boundaries:**
+- **Medical:** Never diagnose, treat, or advise on health conditions
+- **Legal:** Never provide legal advice or predict legal outcomes
+- **Financial:** Never make specific investment recommendations
+- **Mental Health:** Never diagnose mental illness or substitute for therapy
+
+**In Practice:**
+- ✅ "This placement might relate to how you process emotions; consider discussing with a therapist..."
+- ❌ "This aspect means you have depression; stop taking your medication."
+
+### 4. **Vulnerable Populations**
+
+**Principle:** Exercise extra care when working with vulnerable individuals.
+
+**Considerations:**
+- People in crisis or distress
+- Those facing major life decisions
+- Individuals with mental health challenges
+- Minors
+- Those in dependent relationships
+
+**Safeguards:**
+- Encourage professional support
+- Avoid definitive statements
+- Emphasize multiple possibilities
+- Refer to appropriate resources
+
+### 5. **Consent and Privacy**
+
+**Principle:** Interpret charts only with appropriate consent and maintain confidentiality.
+
+**In Practice:**
+- Keep interpretations confidential
+- Respect the private nature of symbolic work
+- Don't use interpretations to manipulate or control
+
+### 6. **Cultural Sensitivity**
+
+**Principle:** Recognize that symbolic systems carry cultural contexts and may not apply universally.
+
+**Considerations:**
+- Western astrology is one system among many
+- Symbols carry different meanings in different cultures
+- Not everyone resonates with astrological frameworks
+- Respect diverse spiritual and philosophical perspectives
+
+### 7. **Avoiding Harm**
+
+**Principle:** Do no harm through interpretation.
+
+**Red Flags to Avoid:**
+- Frightening predictions (death, disaster, doom)
+- Statements that could induce anxiety or despair
+- Interpretations that stigmatize or label
+- Readings that exploit fear or vulnerability
+
+**Positive Framing:**
+Even challenging patterns can be framed constructively:
+- ✅ "This difficult aspect suggests a period of growth through challenge..."
+- ❌ "This aspect will bring terrible suffering and loss."
+
+## Implementation in Prompts
+
+When designing prompts for the Symbolic-Interpretative-Engine, build in ethical guardrails:
+
+### Template Structure
+```
+[Context about the chart or question]
+[Request for interpretation]
+[Ethical boundaries reminder]
+
+Please provide an interpretation that:
+- Emphasizes potential and possibility rather than fate
+- Respects the individual's agency and free will
+- Avoids medical, legal, or financial advice
+- Maintains a constructive, empowering tone
+- Honors the complexity and mystery of symbolic systems
+```
+
+### Example Ethical Prompt
+
+```
+Given a natal chart with Saturn in the 10th house:
+
+Provide a symbolic interpretation of this placement that:
+1. Explores the archetypal themes of structure, mastery, and authority
+2. Discusses potential manifestations in career and public life
+3. Avoids deterministic statements about specific outcomes
+4. Empowers the individual to work consciously with this energy
+5. Maintains a balanced perspective on challenges and gifts
+```
+
+## Self-Check Questions
+
+Before finalizing any interpretation or prompt, ask:
+
+1. **Does this empower or limit?** Does it open possibilities or close them?
+2. **Is this insight or instruction?** Am I illuminating or directing?
+3. **Could this cause harm?** Might this frighten, stigmatize, or disempower?
+4. **Am I respecting boundaries?** Am I staying in my lane?
+5. **Is this balanced?** Am I showing both light and shadow?
+6. **Would I want to receive this interpretation?** Is it something I'd find helpful?
+
+## When in Doubt
+
+If you're unsure whether an interpretation crosses ethical boundaries:
+
+1. **Add qualifiers:** "might," "could," "suggests," "may indicate"
+2. **Offer multiple perspectives:** Show various possibilities
+3. **Emphasize agency:** Remind that the individual chooses their response
+4. **Suggest support:** Encourage appropriate professional resources
+5. **Be gentle:** Choose the kinder interpretation when multiple exist
+
+## Accountability
+
+The development team and contributors to this project are responsible for:
+- Testing prompts for ethical compliance
+- Updating safeguards as needed
+- Listening to feedback from users and practitioners
+- Prioritizing ethical considerations over technical capabilities
+
+## Guidance
+
+- ISAR Ethics Statement (International Society for Astrological Research)
+- NCGR Code of Ethics (National Council for Geocosmic Research)
+- AFAN Professional Ethics Statement (Association for Astrological Networking)
+
+---
+
+*Ethics is not a constraint on this project, it is the foundation. These boundaries don't limit the Astro-Interpretative-Engine; they make it trustworthy.*
