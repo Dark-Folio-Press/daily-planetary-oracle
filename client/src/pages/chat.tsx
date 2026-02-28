@@ -18,7 +18,7 @@ import { StarryNightToggle } from "@/components/starry-night-toggle";
 import { AvatarDisplay } from "@/components/avatar-display";
 import { GuestExitModal, useGuestExitModal } from "@/components/guest-exit-modal";
 
-import { Music, Sparkles, MoreHorizontal, LogOut, X, BarChart3, MessageSquare, TrendingUp, BookOpen, Gauge, GraduationCap } from "lucide-react";
+import { Music, Sparkles, MoreHorizontal, LogOut, X, BarChart3, MessageSquare, TrendingUp, BookOpen, Gauge, GraduationCap, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -485,6 +485,25 @@ export default function ChatPage() {
                   </Tooltip>
                 </TooltipProvider>
               )}
+
+              {/* Planetary Sound Generator Button */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => window.location.href = '/sound-generator'}
+                      className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors flex-shrink-0"
+                    >
+                      <Radio className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
+                    🪐 Planetary Sound Oracle
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               {/* Learning System Button - After Cosmic Mood Analysis */}
               {user && (

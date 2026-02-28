@@ -19,6 +19,7 @@ import LessonPage from "@/pages/lesson";
 import WaitlistPage from "@/pages/WaitlistPage";
 import HarmonicAnalysisPage from "@/pages/harmonic-analysis";
 import WixTestPage from "@/pages/wix-test";
+import SoundGeneratorPage from "@/pages/sound-generator";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -76,6 +77,9 @@ function Router() {
       
       {/* Wix Horoscope API Test Page - publicly accessible */}
       <Route path="/wix-test"><WixTestPage /></Route>
+
+      {/* Planetary Sound Generator - publicly accessible */}
+      <Route path="/sound-generator"><SoundGeneratorPage /></Route>
       
       {/* Catch all */}
       <Route><NotFound /></Route>

@@ -2,6 +2,10 @@ import { Router, Request, Response, NextFunction } from "express";
 import { wixHoroscopeService } from "../services/wixHoroscope";
 import { z } from "zod";
 import Stripe from "stripe";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 const router = Router();
 
@@ -302,6 +306,127 @@ router.post("/admin/send-daily-notifications", async (req: Request, res: Respons
   } catch (error) {
     console.error("Error sending daily notifications:", error);
     res.status(500).json({ success: false, error: "Failed to send notifications" });
+  }
+});
+
+router.get("/planets/sounds", async (req: Request, res: Response) => {
+  try {
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+
+    const KEPLER_FREQUENCIES: Record<string, number> = {
+      Sun: 126.22, Moon: 210.42, Mercury: 141.27,
+      Venus: 221.23, Mars: 144.72, Jupiter: 183.58, Saturn: 147.85
+    };
+
+    const MODULATION_RATES: Record<string, number> = {
+      Moon: 10, Mercury: 5, Venus: 3.5, Sun: 2,
+      Mars: 1.5, Jupiter: 0.8, Saturn: 0.3
+    };
+
+    const ORBIT_RADII: Record<string, number> = {
+      Sun: 0, Mercury: 70, Venus: 100, Moon: 125,
+      Mars: 155, Jupiter: 193, Saturn: 232
+    };
+
+    const ORBIT_SPEEDS: Record<string, number> = {
+      Moon: 13.0, Mercury: 4.1, Venus: 1.6, Sun: 1.0,
+      Mars: 0.53, Jupiter: 0.084, Saturn: 0.034
+    };
+
+    const ELEMENT_MAP: Record<string, string> = {
+      Aries: 'fire', Leo: 'fire', Sagittarius: 'fire',
+      Taurus: 'earth', Virgo: 'earth', Capricorn: 'earth',
+      Gemini: 'air', Libra: 'air', Aquarius: 'air',
+      Cancer: 'water', Scorpio: 'water', Pisces: 'water'
+    };
+
+    const WAVEFORM_MAP: Record<string, string> = {
+      fire: 'sawtooth', earth: 'square', air: 'triangle', water: 'sine'
+    };
+
+    const PLANET_COLORS: Record<string, string> = {
+      Sun: '#FFD700', Moon: '#C0C0C0', Mercury: '#B5B5B5',
+      Venus: '#FFA07A', Mars: '#FF4500', Jupiter: '#DEB887', Saturn: '#DAA520'
+    };
+
+    const PLANET_SYMBOLS: Record<string, string> = {
+      Sun: '☀️', Moon: '🌙', Mercury: '☿', Venus: '♀',
+      Mars: '♂', Jupiter: '♃', Saturn: '♄'
+    };
+
+    let planetsRaw: Record<string, any> = {};
+    let pythonSucceeded = false;
+
+    try {
+      const command = `python server/astrology_engine.py "${dateStr}" "12:00" "51.5074" "-0.1278"`;
+      const { stdout } = await execAsync(command, { timeout: 15000 });
+      const chartData = JSON.parse(stdout);
+      if (chartData.planets && !chartData.error) {
+        planetsRaw = chartData.planets;
+        pythonSucceeded = true;
+      }
+    } catch (pyError) {
+      console.error('Python engine error, using fallback:', pyError);
+    }
+
+    if (!pythonSucceeded) {
+      const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+      const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+      const mkPlanet = (offset: number, speed: number) => ({
+        sign: signs[Math.floor(((dayOfYear * speed) + offset) / 30) % 12],
+        degree: Math.floor(((dayOfYear * speed) + offset) % 30),
+        retrograde: false
+      });
+      planetsRaw = {
+        Sun: mkPlanet(0, 1), Moon: mkPlanet(0, 13.2),
+        Mercury: mkPlanet(20, 1.2), Venus: mkPlanet(45, 0.9),
+        Mars: mkPlanet(80, 0.5), Jupiter: mkPlanet(120, 0.08),
+        Saturn: mkPlanet(200, 0.03)
+      };
+    }
+
+    const TARGET_PLANETS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
+    const planets = TARGET_PLANETS.map(name => {
+      const raw = planetsRaw[name] || { sign: 'Aries', degree: 0, retrograde: false };
+      const sign = raw.sign || 'Aries';
+      const degree = raw.degree || 0;
+      const retrograde = raw.retrograde || false;
+      const element = ELEMENT_MAP[sign] || 'fire';
+      const baseFreq = KEPLER_FREQUENCIES[name];
+      const freqOffset = ((degree / 30) - 0.5) * 40;
+      const modulationDepth = retrograde ? 85 : 40;
+
+      return {
+        name,
+        symbol: PLANET_SYMBOLS[name],
+        sign,
+        degree,
+        retrograde,
+        element,
+        color: PLANET_COLORS[name],
+        orbitRadius: ORBIT_RADII[name],
+        orbitSpeed: ORBIT_SPEEDS[name],
+        audio: {
+          baseFrequency: baseFreq,
+          frequency: Math.max(40, baseFreq + freqOffset),
+          modulationRate: MODULATION_RATES[name],
+          modulationDepth,
+          waveform: WAVEFORM_MAP[element] || 'sine',
+          volume: 0.4
+        }
+      };
+    });
+
+    res.json({
+      success: true,
+      date: dateStr,
+      source: pythonSucceeded ? 'swiss_ephemeris' : 'calculated',
+      planets
+    });
+  } catch (error) {
+    console.error("Error generating planetary sounds data:", error);
+    res.status(500).json({ success: false, error: "Failed to generate planetary sound data" });
   }
 });
 
