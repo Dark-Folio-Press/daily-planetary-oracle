@@ -386,6 +386,11 @@ router.get("/planets/sounds", async (req: Request, res: Response) => {
       };
     }
 
+    const SIGN_INDEX: Record<string, number> = {
+      Aries: 0, Taurus: 1, Gemini: 2, Cancer: 3, Leo: 4, Virgo: 5,
+      Libra: 6, Scorpio: 7, Sagittarius: 8, Capricorn: 9, Aquarius: 10, Pisces: 11
+    };
+
     const TARGET_PLANETS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
     const planets = TARGET_PLANETS.map(name => {
       const raw = planetsRaw[name] || { sign: 'Aries', degree: 0, retrograde: false };
@@ -396,12 +401,14 @@ router.get("/planets/sounds", async (req: Request, res: Response) => {
       const baseFreq = KEPLER_FREQUENCIES[name];
       const freqOffset = ((degree / 30) - 0.5) * 40;
       const modulationDepth = retrograde ? 85 : 40;
+      const longitude = (SIGN_INDEX[sign] ?? 0) * 30 + degree;
 
       return {
         name,
         symbol: PLANET_SYMBOLS[name],
         sign,
         degree,
+        longitude,
         retrograde,
         element,
         color: PLANET_COLORS[name],

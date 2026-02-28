@@ -17,6 +17,7 @@ interface Planet {
   symbol: string;
   sign: string;
   degree: number;
+  longitude: number;
   retrograde: boolean;
   element: string;
   color: string;
@@ -185,7 +186,7 @@ export default function SoundGenerator() {
     if (!planets.length) return;
     planets.forEach(p => {
       if (!(p.name in orreryAngleRef.current)) {
-        const longi = ((p.degree || 0) / 30) * (Math.PI / 6);
+        const longi = ((p.longitude ?? 0) / 360) * (2 * Math.PI);
         orreryAngleRef.current[p.name] = longi;
       }
     });
