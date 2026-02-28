@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { ArrowLeft, Volume2, VolumeX, Play, Square, Layers } from "lucide-react";
+import { ArrowLeft, Volume2, VolumeX, Square, Layers } from "lucide-react";
+import tarotData from "@/data/tarot-correspondences.json";
+import { getSpectralColour, tarotColourToHex } from "@/lib/frequencyColour";
 
 interface PlanetAudio {
   baseFrequency: number;
@@ -41,10 +43,114 @@ interface ActiveSound {
   modGain: GainNode;
 }
 
+interface TarotRecord {
+  planet: string;
+  number: string;
+  rwName: string;
+  thothName: string;
+  elemental: string;
+  element: string;
+  colour: string;
+  astro: string;
+  planets: string;
+  signs: string;
+  gemstone: string;
+  runeName: string;
+  runeMeaning: string;
+  hebrewLetter: string;
+  hebrewMeaning: string;
+  numerologyKeys: string;
+  keywords: string[];
+  mythical: string;
+}
+
+type Element = 'Air' | 'Water' | 'Earth' | 'Fire';
+
+interface ElementPreset {
+  label: string;
+  icon: string;
+  genre: string;
+  filterType: BiquadFilterType;
+  filterFreq: number;
+  filterGain: number;
+  distortion: number;
+  description: string;
+}
+
+const ELEMENT_PRESETS: Record<Element, ElementPreset> = {
+  Air: {
+    label: 'Air',
+    icon: '🌬️',
+    genre: 'Pop Synth',
+    filterType: 'highshelf',
+    filterFreq: 3000,
+    filterGain: 10,
+    distortion: 0,
+    description: 'Bright · Electronic · Sylph',
+  },
+  Water: {
+    label: 'Water',
+    icon: '💧',
+    genre: 'Ambient',
+    filterType: 'lowpass',
+    filterFreq: 1800,
+    filterGain: 0,
+    distortion: 0,
+    description: 'Smooth · Flowing · Undine',
+  },
+  Earth: {
+    label: 'Earth',
+    icon: '🌍',
+    genre: 'Folk',
+    filterType: 'bandpass',
+    filterFreq: 700,
+    filterGain: 0,
+    distortion: 8,
+    description: 'Warm · Grounded · Gnome',
+  },
+  Fire: {
+    label: 'Fire',
+    icon: '🔥',
+    genre: 'Grunge',
+    filterType: 'peaking',
+    filterFreq: 1200,
+    filterGain: 12,
+    distortion: 50,
+    description: 'Raw · Distorted · Salamander',
+  },
+};
+
+const ELEMENTAL_TO_ELEMENT: Record<string, Element> = {
+  Sylph: 'Air',
+  Undine: 'Water',
+  Gnome: 'Earth',
+  Salamander: 'Fire',
+};
+
 const ORBIT_RADII_DISPLAY: Record<string, number> = {
   Sun: 0, Mercury: 55, Venus: 82, Moon: 108,
-  Mars: 135, Jupiter: 165, Saturn: 200
+  Mars: 135, Jupiter: 165, Saturn: 200,
 };
+
+function makeDistortionCurve(amount: number): Float32Array {
+  const n = 256;
+  const curve = new Float32Array(n);
+  const k = amount;
+  for (let i = 0; i < n; i++) {
+    const x = (i * 2) / n - 1;
+    curve[i] = ((Math.PI + k) * x) / (Math.PI + k * Math.abs(x));
+  }
+  return curve;
+}
+
+function getPrimaryCard(planetName: string): TarotRecord | null {
+  const all = (tarotData as TarotRecord[]).filter(r => r.planet === planetName);
+  return all.find(r => r.gemstone) || all[0] || null;
+}
+
+function getMinorCards(planetName: string): TarotRecord[] {
+  return (tarotData as TarotRecord[]).filter(r => r.planet === planetName && !r.gemstone);
+}
 
 export default function SoundGenerator() {
   const orreryRef = useRef<HTMLCanvasElement>(null);
@@ -56,6 +162,9 @@ export default function SoundGenerator() {
   const analyserFrameRef = useRef<number>(0);
   const orreryAngleRef = useRef<Record<string, number>>({});
   const starsRef = useRef<Array<{ x: number; y: number; r: number; speed: number }>>([]);
+  const masterGainRef = useRef<GainNode | null>(null);
+  const filterNodeRef = useRef<BiquadFilterNode | null>(null);
+  const distortionNodeRef = useRef<WaveShaperNode | null>(null);
 
   const [activePlanets, setActivePlanets] = useState<Set<string>>(new Set());
   const [frequency, setFrequency] = useState(440);
@@ -64,7 +173,9 @@ export default function SoundGenerator() {
   const [volume, setVolume] = useState(50);
   const [hoveredPlanet, setHoveredPlanet] = useState<Planet | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const masterGainRef = useRef<GainNode | null>(null);
+  const [activeElement, setActiveElement] = useState<Element>('Water');
+  const [focusedPlanet, setFocusedPlanet] = useState<Planet | null>(null);
+  const [showMinorCards, setShowMinorCards] = useState(false);
 
   const { data, isLoading } = useQuery<PlanetsResponse>({
     queryKey: ["/api/wix/horoscope/planets/sounds"],
@@ -77,18 +188,48 @@ export default function SoundGenerator() {
 
   const planets = data?.planets || [];
 
+  const applyElementPreset = useCallback((element: Element) => {
+    if (!filterNodeRef.current || !distortionNodeRef.current) return;
+    const preset = ELEMENT_PRESETS[element];
+    filterNodeRef.current.type = preset.filterType;
+    filterNodeRef.current.frequency.value = preset.filterFreq;
+    filterNodeRef.current.gain.value = preset.filterGain;
+    if (preset.distortion > 0) {
+      distortionNodeRef.current.curve = makeDistortionCurve(preset.distortion);
+      distortionNodeRef.current.oversample = '4x';
+    } else {
+      distortionNodeRef.current.curve = makeDistortionCurve(0);
+    }
+  }, []);
+
   const initAudio = useCallback(() => {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       analyserNodeRef.current = audioCtxRef.current.createAnalyser();
       analyserNodeRef.current.fftSize = 2048;
+
       masterGainRef.current = audioCtxRef.current.createGain();
       masterGainRef.current.gain.value = volume / 100;
+
+      filterNodeRef.current = audioCtxRef.current.createBiquadFilter();
+      distortionNodeRef.current = audioCtxRef.current.createWaveShaper();
+
+      filterNodeRef.current.connect(distortionNodeRef.current);
+      distortionNodeRef.current.connect(masterGainRef.current);
       masterGainRef.current.connect(analyserNodeRef.current);
       analyserNodeRef.current.connect(audioCtxRef.current.destination);
+
+      applyElementPreset(activeElement);
     }
     return audioCtxRef.current;
-  }, [volume]);
+  }, [volume, activeElement, applyElementPreset]);
+
+  const handleElementChange = useCallback((element: Element) => {
+    setActiveElement(element);
+    if (audioCtxRef.current) {
+      applyElementPreset(element);
+    }
+  }, [applyElementPreset]);
 
   const startPlanetSound = useCallback((planet: Planet) => {
     const ctx = initAudio();
@@ -116,7 +257,7 @@ export default function SoundGenerator() {
     modGain.connect(osc2.frequency);
     osc1.connect(gain);
     osc2.connect(gain);
-    gain.connect(masterGainRef.current!);
+    gain.connect(filterNodeRef.current!);
 
     osc1.start();
     osc2.start();
@@ -146,26 +287,30 @@ export default function SoundGenerator() {
       if (next.has(planet.name)) {
         next.delete(planet.name);
         stopPlanetSound(planet.name);
+        setFocusedPlanet(fp => fp?.name === planet.name ? null : fp);
       } else {
         next.add(planet.name);
         startPlanetSound(planet);
+        setFocusedPlanet(planet);
+        const card = getPrimaryCard(planet.name);
+        if (card?.elemental) {
+          const elem = ELEMENTAL_TO_ELEMENT[card.elemental];
+          if (elem) handleElementChange(elem);
+        }
       }
       return next;
     });
-  }, [startPlanetSound, stopPlanetSound]);
+  }, [startPlanetSound, stopPlanetSound, handleElementChange]);
 
   const playAll = useCallback(() => {
     const allActive = planets.every(p => activePlanets.has(p.name));
     if (allActive) {
-      planets.forEach(p => {
-        stopPlanetSound(p.name);
-      });
+      planets.forEach(p => stopPlanetSound(p.name));
       setActivePlanets(new Set());
+      setFocusedPlanet(null);
     } else {
       planets.forEach(p => {
-        if (!activePlanets.has(p.name)) {
-          startPlanetSound(p);
-        }
+        if (!activePlanets.has(p.name)) startPlanetSound(p);
       });
       setActivePlanets(new Set(planets.map(p => p.name)));
     }
@@ -174,6 +319,7 @@ export default function SoundGenerator() {
   const stopAll = useCallback(() => {
     planets.forEach(p => stopPlanetSound(p.name));
     setActivePlanets(new Set());
+    setFocusedPlanet(null);
   }, [planets, stopPlanetSound]);
 
   useEffect(() => {
@@ -263,13 +409,14 @@ export default function SoundGenerator() {
         const py = cy + r * 0.38 * Math.sin(angle);
 
         const isActive = activePlanets.has(planet.name);
+        const isFocused = focusedPlanet?.name === planet.name;
 
         if (isActive) {
           ctx.beginPath();
           ctx.moveTo(cx, cy);
           ctx.lineTo(px, py);
-          ctx.strokeStyle = `${planet.color}33`;
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = isFocused ? `${planet.color}66` : `${planet.color}22`;
+          ctx.lineWidth = isFocused ? 2 : 1;
           ctx.stroke();
 
           const glowR = 14 + Math.sin(now / (1000 / planet.audio.modulationRate)) * 4;
@@ -303,7 +450,7 @@ export default function SoundGenerator() {
 
     animFrameRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [planets, activePlanets]);
+  }, [planets, activePlanets, focusedPlanet]);
 
   useEffect(() => {
     const canvas = analyserRef.current;
@@ -344,9 +491,10 @@ export default function SoundGenerator() {
     };
   }, [stopPlanetSound]);
 
-  const elementLabel: Record<string, string> = {
-    fire: "🔥 Fire", earth: "🌍 Earth", air: "💨 Air", water: "💧 Water"
-  };
+  const focusedCard = focusedPlanet ? getPrimaryCard(focusedPlanet.name) : null;
+  const minorCards = focusedPlanet ? getMinorCards(focusedPlanet.name) : [];
+  const spectralColour = focusedPlanet ? getSpectralColour(focusedPlanet.audio.frequency) : null;
+  const tarotHex = focusedCard ? tarotColourToHex(focusedCard.colour) : null;
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden" style={{ fontFamily: "'Courier New', monospace" }}>
@@ -380,6 +528,9 @@ export default function SoundGenerator() {
             <div className="grid grid-cols-4 md:grid-cols-7 gap-2 mb-4">
               {planets.map(planet => {
                 const isActive = activePlanets.has(planet.name);
+                const isFocused = focusedPlanet?.name === planet.name;
+                const card = getPrimaryCard(planet.name);
+                const spectral = getSpectralColour(planet.audio.frequency);
                 return (
                   <button
                     key={planet.name}
@@ -388,10 +539,11 @@ export default function SoundGenerator() {
                     onMouseLeave={() => setHoveredPlanet(null)}
                     className="flex flex-col items-center gap-1 p-3 rounded-xl border transition-all duration-200"
                     style={{
-                      borderColor: isActive ? planet.color : "#333",
+                      borderColor: isActive ? planet.color : isFocused ? planet.color : "#333",
                       background: isActive ? `${planet.color}18` : "rgba(20,20,40,0.9)",
                       boxShadow: isActive ? `0 0 20px ${planet.color}44` : "none",
-                      transform: isActive ? "translateY(-2px)" : "none"
+                      transform: isActive ? "translateY(-2px)" : "none",
+                      outline: isFocused && isActive ? `2px solid ${planet.color}88` : "none",
                     }}
                   >
                     <span className="text-2xl">{planet.symbol}</span>
@@ -400,12 +552,26 @@ export default function SoundGenerator() {
                     </span>
                     <span className="text-xs text-gray-500">{planet.sign}</span>
                     {planet.retrograde && <span className="text-xs text-red-400">℞</span>}
+                    <div className="flex gap-1 mt-1">
+                      <div
+                        title={`${spectral.label} · ${spectral.wavelengthNm}nm`}
+                        className="w-2 h-2 rounded-full border border-black/30"
+                        style={{ background: spectral.hex }}
+                      />
+                      {card && (
+                        <div
+                          title={`Tarot: ${card.colour}`}
+                          className="w-2 h-2 rounded-full border border-black/30"
+                          style={{ background: tarotColourToHex(card.colour) }}
+                        />
+                      )}
+                    </div>
                   </button>
                 );
               })}
             </div>
 
-            <div className="flex gap-3 justify-center mb-4">
+            <div className="flex gap-3 justify-center mb-4 flex-wrap">
               <button
                 onClick={playAll}
                 className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all"
@@ -431,13 +597,221 @@ export default function SoundGenerator() {
               </button>
             </div>
 
-            {hoveredPlanet && (
-              <div className="text-center mb-3 text-sm animate-fade-in"
-                style={{ color: hoveredPlanet.color }}>
-                {hoveredPlanet.symbol} {hoveredPlanet.name} is in {hoveredPlanet.sign} at {hoveredPlanet.degree}°
-                {hoveredPlanet.retrograde ? " · Retrograde ℞" : " · Direct"}
-                {" · "}{elementLabel[hoveredPlanet.element]}
-                {" · "}{hoveredPlanet.audio.waveform} wave · {hoveredPlanet.audio.frequency.toFixed(1)} Hz
+            {hoveredPlanet && !activePlanets.has(hoveredPlanet.name) && (
+              <div className="text-center mb-3 text-sm" style={{ color: hoveredPlanet.color }}>
+                {hoveredPlanet.symbol} {hoveredPlanet.name} · {hoveredPlanet.sign} {hoveredPlanet.degree}°
+                {hoveredPlanet.retrograde ? " · ℞" : ""} · {hoveredPlanet.audio.frequency.toFixed(1)} Hz
+              </div>
+            )}
+
+            <div className="mb-4 p-3 rounded-xl border border-gray-800 bg-gray-950/60">
+              <p className="text-center text-xs text-gray-500 uppercase tracking-widest mb-3">
+                Elemental Filter · auto-sets when a planet activates
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                {(Object.entries(ELEMENT_PRESETS) as [Element, ElementPreset][]).map(([elem, preset]) => {
+                  const isActive = activeElement === elem;
+                  const elementColors: Record<Element, string> = {
+                    Air: '#60a5fa', Water: '#22d3ee', Earth: '#86efac', Fire: '#f97316'
+                  };
+                  const col = elementColors[elem];
+                  return (
+                    <button
+                      key={elem}
+                      onClick={() => handleElementChange(elem)}
+                      className="flex flex-col items-center gap-1 p-3 rounded-xl border transition-all duration-200 text-center"
+                      style={{
+                        borderColor: isActive ? col : '#333',
+                        background: isActive ? `${col}18` : 'rgba(10,10,20,0.9)',
+                        boxShadow: isActive ? `0 0 14px ${col}44` : 'none',
+                      }}
+                    >
+                      <span className="text-lg">{preset.icon}</span>
+                      <span className="text-xs font-bold" style={{ color: isActive ? col : '#888' }}>
+                        {preset.label}
+                      </span>
+                      <span className="text-xs" style={{ color: isActive ? col : '#555' }}>
+                        {preset.genre}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              {activeElement && (
+                <p className="text-center text-xs mt-2" style={{
+                  color: { Air: '#60a5fa', Water: '#22d3ee', Earth: '#86efac', Fire: '#f97316' }[activeElement]
+                }}>
+                  {ELEMENT_PRESETS[activeElement].icon} {ELEMENT_PRESETS[activeElement].description}
+                </p>
+              )}
+            </div>
+
+            {focusedPlanet && focusedCard && activePlanets.has(focusedPlanet.name) && (
+              <div className="mb-4 rounded-xl border border-purple-900/40 overflow-hidden"
+                style={{ background: "rgba(10,5,20,0.95)", boxShadow: `0 0 30px ${focusedPlanet.color}22` }}>
+                <div className="px-5 py-4 border-b border-gray-800/60">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                      <span className="text-xs uppercase tracking-widest text-gray-500">Symbolic Layer</span>
+                      <h2 className="text-xl font-bold mt-0.5" style={{ color: focusedPlanet.color }}>
+                        {focusedPlanet.symbol} {focusedCard.rwName}
+                        {focusedCard.thothName && focusedCard.thothName !== focusedCard.rwName && (
+                          <span className="text-gray-500 font-normal text-sm ml-2">/ {focusedCard.thothName}</span>
+                        )}
+                      </h2>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span>{focusedCard.elemental}</span>
+                      <span>·</span>
+                      <span>{focusedCard.element}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-5 py-4 space-y-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-gray-600 mb-2">Colour Correspondences</p>
+                    <div className="flex gap-3 flex-wrap">
+                      {spectralColour && (
+                        <div className="flex flex-col items-center gap-1">
+                          <div
+                            className="w-12 h-12 rounded-lg border border-gray-700"
+                            style={{
+                              background: spectralColour.hex,
+                              boxShadow: `0 0 12px ${spectralColour.hex}88`
+                            }}
+                          />
+                          <span className="text-xs text-gray-400 text-center leading-tight">
+                            {spectralColour.wavelengthNm}nm<br />
+                            <span style={{ color: spectralColour.hex }}>{spectralColour.label}</span>
+                          </span>
+                          <span className="text-xs text-gray-600">Spectral</span>
+                        </div>
+                      )}
+                      {tarotHex && (
+                        <div className="flex flex-col items-center gap-1">
+                          <div
+                            className="w-12 h-12 rounded-lg border border-gray-700"
+                            style={{
+                              background: tarotHex,
+                              boxShadow: `0 0 12px ${tarotHex}88`
+                            }}
+                          />
+                          <span className="text-xs text-center leading-tight" style={{ color: tarotHex }}>
+                            {focusedCard.colour}
+                          </span>
+                          <span className="text-xs text-gray-600">Tarot</span>
+                        </div>
+                      )}
+                      <div className="flex flex-col items-center gap-1">
+                        <div
+                          className="w-12 h-12 rounded-lg border border-gray-700"
+                          style={{
+                            background: focusedPlanet.color,
+                            boxShadow: `0 0 12px ${focusedPlanet.color}88`
+                          }}
+                        />
+                        <span className="text-xs text-center leading-tight" style={{ color: focusedPlanet.color }}>
+                          Planetary
+                        </span>
+                        <span className="text-xs text-gray-600">Astrological</span>
+                      </div>
+                      <div className="flex-1 min-w-32 flex flex-col justify-center">
+                        <div className="h-6 rounded-lg" style={{
+                          background: spectralColour
+                            ? `linear-gradient(to right, ${focusedPlanet.color}, ${tarotHex || '#888'}, ${spectralColour.hex})`
+                            : focusedPlanet.color
+                        }} />
+                        <p className="text-xs text-gray-600 mt-1 text-center">Planetary → Tarot → Spectral</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      {focusedCard.gemstone && (
+                        <div>
+                          <span className="text-xs uppercase tracking-widest text-gray-600">Gemstone</span>
+                          <p className="text-sm mt-0.5" style={{ color: focusedPlanet.color }}>
+                            💎 {focusedCard.gemstone}
+                          </p>
+                        </div>
+                      )}
+                      {focusedCard.runeName && (
+                        <div>
+                          <span className="text-xs uppercase tracking-widest text-gray-600">Rune</span>
+                          <p className="text-sm mt-0.5 text-gray-300">
+                            <span className="font-bold text-white">{focusedCard.runeName}</span>
+                            {focusedCard.runeMeaning && (
+                              <span className="text-gray-500"> · {focusedCard.runeMeaning}</span>
+                            )}
+                          </p>
+                        </div>
+                      )}
+                      {focusedCard.hebrewLetter && (
+                        <div>
+                          <span className="text-xs uppercase tracking-widest text-gray-600">Hebrew</span>
+                          <p className="text-sm mt-0.5 text-gray-300">
+                            <span className="font-bold text-white text-lg">{focusedCard.hebrewLetter}</span>
+                            {focusedCard.hebrewMeaning && (
+                              <span className="text-gray-500 text-xs ml-2">"{focusedCard.hebrewMeaning}"</span>
+                            )}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      {focusedCard.keywords.length > 0 && (
+                        <div>
+                          <span className="text-xs uppercase tracking-widest text-gray-600">Keywords</span>
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            {focusedCard.keywords.map((kw, i) => (
+                              <span key={i} className="px-2 py-0.5 rounded-full text-xs border"
+                                style={{ borderColor: `${focusedPlanet.color}55`, color: focusedPlanet.color, background: `${focusedPlanet.color}11` }}>
+                                {kw}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {focusedCard.numerologyKeys && (
+                        <div>
+                          <span className="text-xs uppercase tracking-widest text-gray-600">Numerology</span>
+                          <p className="text-xs text-gray-400 mt-0.5">{focusedCard.numerologyKeys}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {focusedCard.mythical && (
+                    <div className="border-t border-gray-800/60 pt-3">
+                      <span className="text-xs uppercase tracking-widest text-gray-600">Mythical / Spiritual</span>
+                      <p className="text-xs text-gray-400 italic mt-1 leading-relaxed">{focusedCard.mythical}</p>
+                    </div>
+                  )}
+
+                  {minorCards.length > 0 && (
+                    <div className="border-t border-gray-800/60 pt-3">
+                      <button
+                        onClick={() => setShowMinorCards(v => !v)}
+                        className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1"
+                      >
+                        <span>{showMinorCards ? '▾' : '▸'}</span>
+                        Also resonates with {minorCards.length} minor arcana
+                      </button>
+                      {showMinorCards && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {minorCards.map((mc, i) => (
+                            <span key={i} className="px-2 py-1 rounded-lg text-xs border border-gray-700 text-gray-400">
+                              {mc.rwName} · {mc.signs || mc.astro}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </>
@@ -445,25 +819,24 @@ export default function SoundGenerator() {
 
         <div className="bg-gray-950 rounded-xl border border-gray-800 p-6 mt-2">
           <h3 className="text-center text-cyan-400 mb-5 text-sm tracking-widest uppercase">Manual Controls</h3>
-
           <div className="space-y-4">
             {[
-              { label: "Frequency", id: "freq", min: 20, max: 2000, value: frequency, setter: setFrequency, unit: " Hz", onChange: (v: number) => {
+              { label: "Frequency", id: "freq", min: 20, max: 2000, value: frequency, unit: " Hz", onChange: (v: number) => {
                 setFrequency(v);
                 Object.values(activeSoundsRef.current).forEach(s => {
                   s.osc1.frequency.value = v;
                   s.osc2.frequency.value = v * 1.005;
                 });
               }},
-              { label: "Modulation Rate", id: "modRate", min: 0, max: 20, value: modRate, setter: setModRate, unit: " Hz", step: "0.1", onChange: (v: number) => {
+              { label: "Modulation Rate", id: "modRate", min: 0, max: 20, value: modRate, unit: " Hz", step: "0.1", onChange: (v: number) => {
                 setModRate(v);
                 Object.values(activeSoundsRef.current).forEach(s => s.modulator.frequency.value = v);
               }},
-              { label: "Modulation Depth", id: "modDepth", min: 0, max: 100, value: modDepth, setter: setModDepth, unit: "%", onChange: (v: number) => {
+              { label: "Modulation Depth", id: "modDepth", min: 0, max: 100, value: modDepth, unit: "%", onChange: (v: number) => {
                 setModDepth(v);
                 Object.values(activeSoundsRef.current).forEach(s => s.modGain.gain.value = v * 8);
               }},
-              { label: "Volume", id: "vol", min: 0, max: 100, value: volume, setter: setVolume, unit: "%", onChange: (v: number) => {
+              { label: "Volume", id: "vol", min: 0, max: 100, value: volume, unit: "%", onChange: (v: number) => {
                 setVolume(v);
                 if (masterGainRef.current) masterGainRef.current.gain.value = isMuted ? 0 : v / 100;
               }},
@@ -490,7 +863,7 @@ export default function SoundGenerator() {
           style={{ background: "#000" }} />
 
         <p className="text-center text-gray-600 mt-4 text-xs">
-          Kepler frequencies · Swiss Ephemeris transit data · FM synthesis · {data?.source === 'swiss_ephemeris' ? '🟢 Live ephemeris' : '🟡 Calculated positions'}
+          Kepler frequencies · Swiss Ephemeris · FM synthesis · Tarot correspondences · {data?.source === 'swiss_ephemeris' ? '🟢 Live ephemeris' : '🟡 Calculated positions'}
         </p>
       </div>
     </div>
