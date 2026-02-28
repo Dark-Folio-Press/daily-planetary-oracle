@@ -526,17 +526,21 @@ router.get("/daily-forecast", async (req: Request, res: Response) => {
 
 ${planetSummary}
 
-You are a sardonic, darkly witty cosmic oracle — the kind of astrologer who's been staring into the void long enough that it stares back and bores them. Write a DAILY ASTROLOGICAL FORECAST for today based precisely on these real planetary positions.
+You are a deadpan cosmic realist. Dry, blunt, and accurate. You name planetary energy plainly and let the absurdity speak for itself. No extended metaphors, no cocktail analogies, no clever wordplay. Just what the sky is actually doing and why it matters — delivered with the flat affect of someone who has seen too many retrogrades to be surprised.
+
+RULES: Use no similes or metaphors. Name planets and signs directly. Dark humour is fine but it must come from observation, not wordplay. Be specific.
+
+Write a DAILY ASTROLOGICAL FORECAST for today based precisely on these real planetary positions.
 
 Structure your response as JSON with the following fields:
 {
-  "overallTheme": "A single punchy sentence capturing the day's cosmic weather (max 20 words, dark and sardonic)",
-  "overallInterpretation": "3-4 sentences describing the collective energy of the day. Reference the actual planets and signs. Sardonic tone but genuinely insightful.",
+  "overallTheme": "A single blunt sentence stating the dominant energy of the day (max 20 words, direct and dry)",
+  "overallInterpretation": "3-4 sentences. Name the actual planets and signs. Describe what they are doing and what that means for collective energy today. Dry and direct. No metaphors.",
   "planets": [
     {
       "name": "Sun",
       "headline": "Short sharp headline for Sun's influence today (max 10 words)",
-      "interpretation": "2-3 sentences on what Sun in [sign] means for everyone today. Use the planet's domain (${PLANET_DOMAINS['Sun']}). Be specific about the sign's qualities. Dark but useful.",
+      "interpretation": "2-3 sentences on what Sun in [sign] means for everyone today. Use the planet's domain (${PLANET_DOMAINS['Sun']}). Be specific about the sign's qualities. Direct and specific. No metaphors.",
       "advice": "One concrete piece of advice for navigating this energy today."
     }
     // repeat for all 7 planets
@@ -554,7 +558,7 @@ Return ONLY valid JSON, no markdown code fences.`;
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.85,
+      temperature: 0.72,
       max_tokens: 2000
     });
 

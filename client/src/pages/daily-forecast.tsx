@@ -185,6 +185,11 @@ export default function DailyForecast() {
             >
               Get Personalized Horoscope
             </a>
+            <Link href="/sound-generator">
+              <button className="px-5 py-2.5 rounded-xl border border-indigo-800 text-indigo-300 hover:text-indigo-100 hover:border-indigo-600 transition-all text-sm">
+                🎵 Hear the Planets
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -198,6 +203,17 @@ export default function DailyForecast() {
 
         {forecast && !isLoading && (
           <>
+            {forecast.cosmicWarning && (
+              <div className="rounded-xl border border-orange-900/40 p-4 mb-4 flex gap-3"
+                style={{ background: "rgba(20,10,0,0.8)" }}>
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-orange-500" />
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-orange-600 mb-1">Cosmic Warning</p>
+                  <p className="text-sm text-orange-200">{forecast.cosmicWarning}</p>
+                </div>
+              </div>
+            )}
+
             <div className="rounded-2xl border border-purple-900/40 p-6 mb-6 text-center"
               style={{ background: "rgba(10,5,20,0.95)", boxShadow: "0 0 40px rgba(168,85,247,0.12)" }}>
               <p className="text-xs uppercase tracking-widest text-gray-600 mb-3">Today's Cosmic Weather</p>
@@ -252,23 +268,7 @@ export default function DailyForecast() {
               </div>
             </div>
 
-            {forecast.cosmicWarning && (
-              <div className="rounded-xl border border-orange-900/40 p-4 mb-6 flex gap-3"
-                style={{ background: "rgba(20,10,0,0.8)" }}>
-                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-orange-500" />
-                <div>
-                  <p className="text-xs uppercase tracking-widest text-orange-600 mb-1">Cosmic Warning</p>
-                  <p className="text-sm text-orange-200">{forecast.cosmicWarning}</p>
-                </div>
-              </div>
-            )}
-
             <div className="flex gap-3 justify-center flex-wrap">
-              <Link href="/sound-generator">
-                <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-purple-800 text-purple-400 hover:text-purple-200 hover:border-purple-600 transition-all text-sm">
-                  🎵 Hear the Planets
-                </button>
-              </Link>
               <Link href="/chat">
                 <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-all text-sm">
                   💬 Get Personal Reading
