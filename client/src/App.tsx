@@ -20,7 +20,6 @@ import WaitlistPage from "@/pages/WaitlistPage";
 import HarmonicAnalysisPage from "@/pages/harmonic-analysis";
 import WixTestPage from "@/pages/wix-test";
 import DailyPlanetaryOraclePage from "@/pages/daily-planetary-oracle";
-import DailyForecastPage from "@/pages/daily-forecast";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -82,8 +81,6 @@ function Router() {
       {/* Daily Planetary Oracle - publicly accessible */}
       <Route path="/daily-planetary-oracle"><DailyPlanetaryOraclePage /></Route>
 
-      {/* Daily Astrological Forecast - publicly accessible */}
-      <Route path="/daily-forecast"><DailyForecastPage /></Route>
       
       {/* Catch all */}
       <Route><NotFound /></Route>

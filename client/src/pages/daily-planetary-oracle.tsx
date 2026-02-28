@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { ArrowLeft, Volume2, VolumeX, Square, Layers } from "lucide-react";
+import { ArrowLeft, Volume2, VolumeX, Square, Layers, AlertTriangle, Clock, Shield, RefreshCw, Star, Zap } from "lucide-react";
 import tarotData from "@/data/tarot-correspondences.json";
 import { getSpectralColour, tarotColourToHex } from "@/lib/frequencyColour";
 
@@ -62,6 +62,44 @@ interface TarotRecord {
   numerologyKeys: string;
   keywords: string[];
   mythical: string;
+}
+
+interface PlanetPosition {
+  name: string;
+  symbol: string;
+  sign: string;
+  degree: number;
+  retrograde: boolean;
+  element: string;
+  color: string;
+  domain: string;
+}
+
+interface PlanetForecast {
+  name: string;
+  headline: string;
+  interpretation: string;
+  advice: string;
+}
+
+interface Forecast {
+  overallTheme: string;
+  overallInterpretation: string;
+  planets: PlanetForecast[];
+  dominantElement: string;
+  elementalMood: string;
+  luckyWindow: string;
+  avoidWindow: string;
+  dailyMantra: string;
+  cosmicWarning: string;
+}
+
+interface ForecastResponse {
+  success: boolean;
+  date: string;
+  source: string;
+  planetPositions: PlanetPosition[];
+  forecast: Forecast;
 }
 
 type Element = 'Air' | 'Water' | 'Earth' | 'Fire';
@@ -132,6 +170,19 @@ const ORBIT_RADII_DISPLAY: Record<string, number> = {
   Mars: 135, Jupiter: 165, Saturn: 200,
 };
 
+const ELEMENT_ICONS: Record<string, string> = {
+  fire: '🔥', earth: '🌍', air: '🌬️', water: '💧'
+};
+
+const ELEMENT_COLORS: Record<string, string> = {
+  fire: '#f97316', earth: '#86efac', air: '#60a5fa', water: '#22d3ee'
+};
+
+const PLANET_SYMBOLS: Record<string, string> = {
+  Sun: '☀️', Moon: '🌙', Mercury: '☿', Venus: '♀',
+  Mars: '♂', Jupiter: '♃', Saturn: '♄'
+};
+
 function makeDistortionCurve(amount: number): Float32Array {
   const n = 256;
   const curve = new Float32Array(n);
@@ -150,6 +201,61 @@ function getPrimaryCard(planetName: string): TarotRecord | null {
 
 function getMinorCards(planetName: string): TarotRecord[] {
   return (tarotData as TarotRecord[]).filter(r => r.planet === planetName && !r.gemstone);
+}
+
+function PlanetCard({ pos, forecast }: { pos: PlanetPosition; forecast?: PlanetForecast }) {
+  const [expanded, setExpanded] = useState(false);
+  const elemColor = ELEMENT_COLORS[pos.element] || '#a855f7';
+
+  return (
+    <div
+      className="rounded-xl border transition-all duration-200 overflow-hidden"
+      style={{
+        borderColor: expanded ? pos.color : '#2a2a3a',
+        background: expanded ? `${pos.color}08` : 'rgba(10,10,20,0.9)',
+        boxShadow: expanded ? `0 0 20px ${pos.color}22` : 'none',
+      }}
+    >
+      <button
+        onClick={() => setExpanded(v => !v)}
+        className="w-full flex items-center gap-3 p-4 text-left hover:bg-white/3 transition-colors"
+      >
+        <div className="flex flex-col items-center w-10 shrink-0">
+          <span className="text-2xl">{PLANET_SYMBOLS[pos.name] || pos.symbol}</span>
+          <span className="text-xs mt-0.5" style={{ color: pos.color }}>{pos.name}</span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-bold text-white">{pos.sign}</span>
+            <span className="text-xs text-gray-500">{pos.degree}°</span>
+            {pos.retrograde && (
+              <span className="text-xs text-red-400 font-bold">℞ Retrograde</span>
+            )}
+            <span className="text-xs px-1.5 py-0.5 rounded-full border"
+              style={{ borderColor: `${elemColor}55`, color: elemColor, background: `${elemColor}11` }}>
+              {ELEMENT_ICONS[pos.element]} {pos.element}
+            </span>
+          </div>
+          {forecast && (
+            <p className="text-xs text-gray-400 mt-1 truncate">{forecast.headline}</p>
+          )}
+          <p className="text-xs text-gray-600 mt-0.5">{pos.domain}</p>
+        </div>
+        <span className="text-gray-600 text-sm shrink-0">{expanded ? '▾' : '▸'}</span>
+      </button>
+
+      {expanded && forecast && (
+        <div className="px-4 pb-4 border-t border-gray-800/60 pt-3 space-y-3">
+          <p className="text-sm text-gray-300 leading-relaxed">{forecast.interpretation}</p>
+          <div className="flex items-start gap-2 p-3 rounded-lg border border-gray-800"
+            style={{ background: `${pos.color}0a` }}>
+            <Zap className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: pos.color }} />
+            <p className="text-xs text-gray-300 leading-relaxed">{forecast.advice}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function DailyPlanetaryOracle() {
@@ -192,6 +298,27 @@ export default function DailyPlanetaryOracle() {
     },
     staleTime: 1000 * 60 * 60,
   });
+
+  const { data: forecastData, isLoading: forecastLoading, isFetching: forecastFetching, refetch: refetchForecast } =
+    useQuery<ForecastResponse>({
+      queryKey: ["/api/wix/horoscope/daily-forecast"],
+      queryFn: async () => {
+        const res = await fetch("/api/wix/horoscope/daily-forecast");
+        if (!res.ok) throw new Error("Failed to fetch forecast");
+        return res.json();
+      },
+      staleTime: 1000 * 60 * 30,
+    });
+
+  const forecast = forecastData?.forecast;
+  const planetPositions = forecastData?.planetPositions || [];
+
+  const formatDate = (d?: string) => {
+    if (!d) return '';
+    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  };
 
   const planets = data?.planets || [];
 
@@ -502,10 +629,13 @@ export default function DailyPlanetaryOracle() {
   const minorCards = focusedPlanet ? getMinorCards(focusedPlanet.name) : [];
   const spectralColour = focusedPlanet ? getSpectralColour(focusedPlanet.audio.frequency) : null;
   const tarotHex = focusedCard ? tarotColourToHex(focusedCard.colour) : null;
+  const dominantColor = ELEMENT_COLORS[forecast?.dominantElement || 'fire'];
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden" style={{ fontFamily: "'Courier New', monospace" }}>
       <div className="max-w-5xl mx-auto px-4 py-6">
+
+        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <Link href="/">
             <button className="flex items-center gap-2 text-purple-400 hover:text-purple-200 transition-colors text-sm">
@@ -516,14 +646,50 @@ export default function DailyPlanetaryOracle() {
             style={{ background: "linear-gradient(45deg,#c084fc,#60a5fa,#f472b6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             ✨ DAILY PLANETARY ORACLE ✨
           </h1>
-          <div className="w-20" />
+          <button
+            onClick={() => refetchForecast()}
+            disabled={forecastFetching}
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors text-xs w-20 justify-end"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${forecastFetching ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
         </div>
 
-        <p className="text-center text-gray-400 mb-6 text-sm">
+        {/* Subtitle + date */}
+        <p className="text-center text-gray-400 mb-1 text-sm">
           Hear the planets — powered by live astronomical transit data
           {data && <span className="ml-2 text-purple-500">· {data.date}</span>}
         </p>
+        {forecastData?.date && (
+          <p className="text-center text-sm text-gray-500 mb-1">{formatDate(forecastData.date)}</p>
+        )}
+        {forecastData?.source === 'swiss_ephemeris' && (
+          <p className="text-center text-xs text-green-600 mb-3">🟢 Live Swiss Ephemeris data</p>
+        )}
 
+        {/* Nav buttons */}
+        <div className="flex gap-3 justify-center mb-6 flex-wrap">
+          <a
+            href="https://horoscopes.darkfoliopress.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded-xl border border-purple-700 text-purple-300 hover:text-purple-100 hover:border-purple-500 transition-all text-sm"
+          >
+            Get Daily Horoscope by Sign
+          </a>
+          <a
+            href="https://horoscopes.darkfoliopress.com/personal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90"
+            style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 4px 20px rgba(124,58,237,0.35)" }}
+          >
+            Get Personalized Horoscope
+          </a>
+        </div>
+
+        {/* Intro panel */}
         {introVisible && (
           <div className="mb-6 rounded-xl border border-purple-900/50 bg-gray-950/80 p-5">
             <p className="text-xs uppercase tracking-widest text-purple-500 mb-2">How to consult this oracle</p>
@@ -548,6 +714,7 @@ export default function DailyPlanetaryOracle() {
                 <div><span className="text-gray-200 font-semibold">Keywords —</span> The planet's operating principles in plain language.</div>
                 <div><span className="text-gray-200 font-semibold">Mythical / Spiritual —</span> The god, archetype, or myth that defines this planet's character.</div>
                 <div><span className="text-gray-200 font-semibold">Minor Arcana Spread —</span> The tarot cards that resonate with this planet's energy — a celestial spread drawn from today's active planetary positions. Expand it below the main card.</div>
+                <div><span className="text-gray-200 font-semibold">Today's Reading —</span> GPT-4o forecast for this planet based on its actual position in the sky right now. Includes a headline, interpretation, and specific advice.</div>
               </div>
             )}
 
@@ -560,6 +727,77 @@ export default function DailyPlanetaryOracle() {
           </div>
         )}
 
+        {/* Re-show intro link (shown after dismissal) */}
+        {!introVisible && (
+          <button
+            onClick={() => { setIntroVisible(true); setIntroExpanded(false); }}
+            className="block mx-auto mb-4 text-xs text-gray-600 hover:text-purple-400 transition-colors"
+          >
+            ▸ How does this oracle work?
+          </button>
+        )}
+
+        {/* Forecast Overview */}
+        {forecastLoading && !forecast && (
+          <div className="text-center py-8 mb-4">
+            <p className="text-purple-400 text-sm animate-pulse">The stars are being consulted...</p>
+            <p className="text-gray-600 text-xs mt-2">Calculating real planetary positions via Swiss Ephemeris</p>
+          </div>
+        )}
+        {forecast && (
+          <div className="mb-6 space-y-4">
+            {forecast.cosmicWarning && (
+              <div className="rounded-xl border border-orange-900/40 p-4 flex gap-3"
+                style={{ background: "rgba(20,10,0,0.8)" }}>
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-orange-500" />
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-orange-600 mb-1">Cosmic Warning</p>
+                  <p className="text-sm text-orange-200">{forecast.cosmicWarning}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-2xl border border-purple-900/40 p-6 text-center"
+              style={{ background: "rgba(10,5,20,0.95)", boxShadow: "0 0 40px rgba(168,85,247,0.12)" }}>
+              <p className="text-xs uppercase tracking-widest text-gray-600 mb-3">Today's Cosmic Weather</p>
+              <p className="text-sm text-gray-300 leading-relaxed max-w-2xl mx-auto">{forecast.overallInterpretation}</p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
+                <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Element</p>
+                <p className="text-lg">{ELEMENT_ICONS[forecast.dominantElement]}</p>
+                <p className="text-xs font-bold capitalize mt-1" style={{ color: dominantColor }}>
+                  {forecast.dominantElement}
+                </p>
+              </div>
+              <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
+                <Clock className="w-4 h-4 mx-auto mb-1 text-green-500" />
+                <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Best Window</p>
+                <p className="text-xs text-green-400 font-bold">{forecast.luckyWindow}</p>
+              </div>
+              <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
+                <Shield className="w-4 h-4 mx-auto mb-1 text-red-500" />
+                <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Avoid</p>
+                <p className="text-xs text-red-400 font-bold">{forecast.avoidWindow}</p>
+              </div>
+              <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
+                <Star className="w-4 h-4 mx-auto mb-1 text-purple-400" />
+                <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Mantra</p>
+                <p className="text-xs text-purple-300 italic leading-tight">"{forecast.dailyMantra}"</p>
+              </div>
+            </div>
+
+            {forecast.elementalMood && (
+              <div className="rounded-xl border p-3 text-center text-sm"
+                style={{ borderColor: `${dominantColor}44`, background: `${dominantColor}08`, color: dominantColor }}>
+                {ELEMENT_ICONS[forecast.dominantElement]} {forecast.elementalMood}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Orrery canvas */}
         <canvas ref={orreryRef} width={900} height={320}
           className="w-full rounded-xl border border-purple-900/40 mb-6"
           style={{ background: "#000", boxShadow: "0 0 40px rgba(168,85,247,0.15)" }} />
@@ -568,6 +806,7 @@ export default function DailyPlanetaryOracle() {
           <div className="text-center text-purple-400 py-8 animate-pulse">Consulting the heavens...</div>
         ) : (
           <>
+            {/* Planet buttons */}
             <div className="grid grid-cols-4 md:grid-cols-7 gap-2 mb-4">
               {planets.map(planet => {
                 const isActive = activePlanets.has(planet.name);
@@ -614,6 +853,7 @@ export default function DailyPlanetaryOracle() {
               })}
             </div>
 
+            {/* Playback controls */}
             <div className="flex gap-3 justify-center mb-4 flex-wrap">
               <button
                 onClick={playAll}
@@ -647,6 +887,7 @@ export default function DailyPlanetaryOracle() {
               </div>
             )}
 
+            {/* Elemental filter */}
             <div className="mb-4 p-3 rounded-xl border border-gray-800 bg-gray-950/60">
               <p className="text-center text-xs text-gray-500 uppercase tracking-widest mb-3">
                 Elemental Filter · auto-sets when a planet activates
@@ -689,6 +930,7 @@ export default function DailyPlanetaryOracle() {
               )}
             </div>
 
+            {/* Merged symbolic + forecast panel */}
             {focusedPlanet && focusedCard && activePlanets.has(focusedPlanet.name) && (
               <div className="mb-4 rounded-xl border border-purple-900/40 overflow-hidden"
                 style={{ background: "rgba(10,5,20,0.95)", boxShadow: `0 0 30px ${focusedPlanet.color}22` }}>
@@ -712,6 +954,7 @@ export default function DailyPlanetaryOracle() {
                 </div>
 
                 <div className="px-5 py-4 space-y-4">
+                  {/* Colour correspondences */}
                   <div>
                     <p className="text-xs uppercase tracking-widest text-gray-600 mb-2">Colour Correspondences</p>
                     <div className="flex gap-3 flex-wrap">
@@ -854,12 +1097,30 @@ export default function DailyPlanetaryOracle() {
                       )}
                     </div>
                   )}
+
+                  {/* Today's forecast reading for this planet */}
+                  {(() => {
+                    const pf = forecast?.planets?.find(p => p.name === focusedPlanet.name);
+                    return pf ? (
+                      <div className="border-t border-gray-800/60 pt-3 space-y-2">
+                        <p className="text-xs uppercase tracking-widest text-gray-600">Today's Reading</p>
+                        <p className="text-sm font-semibold" style={{ color: focusedPlanet.color }}>{pf.headline}</p>
+                        <p className="text-xs text-gray-400 leading-relaxed">{pf.interpretation}</p>
+                        <div className="flex items-start gap-2 p-3 rounded-lg border border-gray-800"
+                          style={{ background: `${focusedPlanet.color}0a` }}>
+                          <Zap className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: focusedPlanet.color }} />
+                          <p className="text-xs text-gray-300 leading-relaxed">{pf.advice}</p>
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
               </div>
             )}
           </>
         )}
 
+        {/* Manual Controls */}
         <div className="bg-gray-950 rounded-xl border border-gray-800 p-6 mt-2">
           <h3 className="text-center text-cyan-400 mb-5 text-sm tracking-widest uppercase">Manual Controls</h3>
           <div className="space-y-4">
@@ -901,12 +1162,27 @@ export default function DailyPlanetaryOracle() {
           </div>
         </div>
 
+        {/* Waveform analyser */}
         <canvas ref={analyserRef} width={900} height={60}
           className="w-full rounded-lg mt-4 border border-purple-900/20"
           style={{ background: "#000" }} />
 
-        <p className="text-center text-gray-600 mt-4 text-xs">
-          Kepler frequencies · Swiss Ephemeris · FM synthesis · Tarot correspondences · {data?.source === 'swiss_ephemeris' ? '🟢 Live ephemeris' : '🟡 Calculated positions'}
+        {/* Full Planetary Readings */}
+        {planetPositions.length > 0 && forecast && (
+          <div className="mt-6">
+            <h2 className="text-xs uppercase tracking-widest text-gray-600 mb-3">Full Planetary Readings</h2>
+            <div className="space-y-2">
+              {planetPositions.map(pos => {
+                const planetForecast = forecast.planets?.find(p => p.name === pos.name);
+                return <PlanetCard key={pos.name} pos={pos} forecast={planetForecast} />;
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <p className="text-center text-gray-600 mt-6 text-xs">
+          Kepler frequencies · Swiss Ephemeris · FM synthesis · Tarot correspondences · GPT-4o forecast · {data?.source === 'swiss_ephemeris' ? '🟢 Live ephemeris' : '🟡 Calculated positions'}
         </p>
       </div>
     </div>
