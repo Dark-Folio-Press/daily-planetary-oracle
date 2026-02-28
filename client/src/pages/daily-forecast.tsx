@@ -268,13 +268,6 @@ export default function DailyForecast() {
               </div>
             </div>
 
-            <div className="flex gap-3 justify-center flex-wrap">
-              <Link href="/chat">
-                <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-all text-sm">
-                  💬 Get Personal Reading
-                </button>
-              </Link>
-            </div>
           </>
         )}
 
