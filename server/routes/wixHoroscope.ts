@@ -442,10 +442,16 @@ router.get("/planets/sounds", async (req: Request, res: Response) => {
   }
 });
 
+let dailyForecastCache: { date: string; data: Record<string, unknown> } | null = null;
+
 router.get("/daily-forecast", async (req: Request, res: Response) => {
   try {
     const today = new Date();
     const dateStr = today.toISOString().split('T')[0];
+
+    if (dailyForecastCache && dailyForecastCache.date === dateStr) {
+      return res.json(dailyForecastCache.data);
+    }
 
     const ELEMENT_MAP: Record<string, string> = {
       Aries: 'fire', Leo: 'fire', Sagittarius: 'fire',
@@ -526,9 +532,15 @@ router.get("/daily-forecast", async (req: Request, res: Response) => {
 
 ${planetSummary}
 
-You are a deadpan cosmic realist. Dry, blunt, and accurate. You name planetary energy plainly and let the absurdity speak for itself. No extended metaphors, no cocktail analogies, no clever wordplay. Just what the sky is actually doing and why it matters — delivered with the flat affect of someone who has seen too many retrogrades to be surprised.
+You are a deadpan cosmic realist. Dry, blunt, and accurate. You name planetary energy plainly and let the absurdity speak for itself. No extended metaphors, no cocktail analogies, no clever wordplay. Just what the sky is actually doing — delivered with the flat affect of someone who has seen too many retrogrades to be surprised.
 
-RULES: Use no similes or metaphors. Name planets and signs directly. Dark humour is fine but it must come from observation, not wordplay. Be specific.
+RULES:
+- Use no similes or metaphors. Name planets and signs directly.
+- Use modal language: "might," "could," "suggests," "may" — not certainties or predictions.
+- Describe collective energy as something to work with, not as fate. Insight, not instruction.
+- Dry observation is fine. Alarming predictions, doom, or anxiety-inducing statements are not.
+- Do not venture into medical, legal, financial, or psychological advice of any kind.
+- Dark humour must come from observation of cosmic absurdity — never from predictions of harm.
 
 Write a DAILY ASTROLOGICAL FORECAST for today based precisely on these real planetary positions.
 
@@ -541,7 +553,7 @@ Structure your response as JSON with the following fields:
       "name": "Sun",
       "headline": "Short sharp headline for Sun's influence today (max 10 words)",
       "interpretation": "2-3 sentences on what Sun in [sign] means for everyone today. Use the planet's domain (${PLANET_DOMAINS['Sun']}). Be specific about the sign's qualities. Direct and specific. No metaphors.",
-      "advice": "One concrete piece of advice for navigating this energy today."
+      "advice": "One perspective for working with this energy today — framed as possibility, not instruction. Use 'might consider' or 'could be a time to' rather than directives."
     }
     // repeat for all 7 planets
   ],
@@ -550,7 +562,7 @@ Structure your response as JSON with the following fields:
   "luckyWindow": "The best 2-3 hour window today for important actions (e.g. '2pm - 4pm')",
   "avoidWindow": "The worst window today (e.g. 'early morning until noon')",
   "dailyMantra": "A short mantra for today, darkly cosmic in tone",
-  "cosmicWarning": "One tongue-in-cheek cosmic warning for the day"
+  "cosmicNote": "One dry, deadpan observation about today's sky — wry and absurd, not alarming. Not a warning. No predictions of harm or loss."
 }
 
 Return ONLY valid JSON, no markdown code fences.`;
@@ -566,13 +578,15 @@ Return ONLY valid JSON, no markdown code fences.`;
     const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     const forecast = JSON.parse(cleaned);
 
-    res.json({
+    const responseData = {
       success: true,
       date: dateStr,
       source: pythonSucceeded ? 'swiss_ephemeris' : 'calculated',
       planetPositions,
       forecast
-    });
+    };
+    dailyForecastCache = { date: dateStr, data: responseData as Record<string, unknown> };
+    res.json(responseData);
   } catch (error) {
     console.error("Error generating daily forecast:", error);
     res.status(500).json({ success: false, error: "Failed to generate daily forecast" });

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { ArrowLeft, Volume2, VolumeX, Square, Layers, AlertTriangle, Clock, Shield, RefreshCw, Star, Zap } from "lucide-react";
+import { ArrowLeft, Volume2, VolumeX, Square, Layers, Clock, Shield, RefreshCw, Star, Zap } from "lucide-react";
 import tarotData from "@/data/tarot-correspondences.json";
 import { getSpectralColour, tarotColourToHex } from "@/lib/frequencyColour";
 
@@ -91,7 +91,7 @@ interface Forecast {
   luckyWindow: string;
   avoidWindow: string;
   dailyMantra: string;
-  cosmicWarning: string;
+  cosmicNote: string;
 }
 
 interface ForecastResponse {
@@ -746,13 +746,13 @@ export default function DailyPlanetaryOracle() {
         )}
         {forecast && (
           <div className="mb-6 space-y-4">
-            {forecast.cosmicWarning && (
-              <div className="rounded-xl border border-orange-900/40 p-4 flex gap-3"
-                style={{ background: "rgba(20,10,0,0.8)" }}>
-                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-orange-500" />
+            {forecast.cosmicNote && (
+              <div className="rounded-xl border border-purple-900/40 p-4 flex gap-3"
+                style={{ background: "rgba(10,5,20,0.8)" }}>
+                <Star className="w-4 h-4 shrink-0 mt-0.5 text-purple-400" />
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-orange-600 mb-1">Cosmic Warning</p>
-                  <p className="text-sm text-orange-200">{forecast.cosmicWarning}</p>
+                  <p className="text-xs uppercase tracking-widest text-purple-600 mb-1">Cosmic Note</p>
+                  <p className="text-sm text-purple-200">{forecast.cosmicNote}</p>
                 </div>
               </div>
             )}
