@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { ArrowLeft, Volume2, VolumeX, Square, Layers, Clock, Shield, RefreshCw, Star, Zap } from "lucide-react";
+import { ArrowLeft, Volume2, VolumeX, Square, Layers, Clock, RefreshCw, Star, Zap } from "lucide-react";
 import tarotData from "@/data/tarot-correspondences.json";
 import { getSpectralColour, tarotColourToHex } from "@/lib/frequencyColour";
 
@@ -656,11 +656,7 @@ export default function DailyPlanetaryOracle() {
           </button>
         </div>
 
-        {/* Subtitle + date */}
-        <p className="text-center text-gray-400 mb-1 text-sm">
-          Hear the planets — powered by live astronomical transit data
-          {data && <span className="ml-2 text-purple-500">· {data.date}</span>}
-        </p>
+        {/* Date */}
         {forecastData?.date && (
           <p className="text-center text-sm text-gray-500 mb-1">{formatDate(forecastData.date)}</p>
         )}
@@ -737,6 +733,11 @@ export default function DailyPlanetaryOracle() {
           </button>
         )}
 
+        {/* Orrery canvas */}
+        <canvas ref={orreryRef} width={900} height={320}
+          className="w-full rounded-xl border border-purple-900/40 mb-6"
+          style={{ background: "#000", boxShadow: "0 0 40px rgba(168,85,247,0.15)" }} />
+
         {/* Forecast Overview */}
         {forecastLoading && !forecast && (
           <div className="text-center py-8 mb-4">
@@ -763,7 +764,7 @@ export default function DailyPlanetaryOracle() {
               <p className="text-sm text-gray-300 leading-relaxed max-w-2xl mx-auto">{forecast.overallInterpretation}</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
                 <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Element</p>
                 <p className="text-lg">{ELEMENT_ICONS[forecast.dominantElement]}</p>
@@ -775,11 +776,6 @@ export default function DailyPlanetaryOracle() {
                 <Clock className="w-4 h-4 mx-auto mb-1 text-green-500" />
                 <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Best Window</p>
                 <p className="text-xs text-green-400 font-bold">{forecast.luckyWindow}</p>
-              </div>
-              <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
-                <Shield className="w-4 h-4 mx-auto mb-1 text-red-500" />
-                <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Avoid</p>
-                <p className="text-xs text-red-400 font-bold">{forecast.avoidWindow}</p>
               </div>
               <div className="rounded-xl border border-gray-800 p-3 bg-gray-950/60 text-center">
                 <Star className="w-4 h-4 mx-auto mb-1 text-purple-400" />
@@ -796,11 +792,6 @@ export default function DailyPlanetaryOracle() {
             )}
           </div>
         )}
-
-        {/* Orrery canvas */}
-        <canvas ref={orreryRef} width={900} height={320}
-          className="w-full rounded-xl border border-purple-900/40 mb-6"
-          style={{ background: "#000", boxShadow: "0 0 40px rgba(168,85,247,0.15)" }} />
 
         {isLoading ? (
           <div className="text-center text-purple-400 py-8 animate-pulse">Consulting the heavens...</div>
