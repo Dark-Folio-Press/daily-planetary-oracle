@@ -164,6 +164,28 @@ export default function DailyForecast() {
           {data?.source === 'swiss_ephemeris' && (
             <p className="text-xs text-green-600 mt-1">🟢 Live Swiss Ephemeris data</p>
           )}
+          <p className="text-xs text-gray-600 mt-2">
+            General astrological conditions based on today's planetary positions — not sign-specific
+          </p>
+          <div className="flex gap-3 justify-center mt-4 flex-wrap">
+            <a
+              href="https://horoscopes.darkfoliopress.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 rounded-xl border border-purple-700 text-purple-300 hover:text-purple-100 hover:border-purple-500 transition-all text-sm"
+            >
+              Get Daily Horoscope by Sign
+            </a>
+            <a
+              href="https://horoscopes.darkfoliopress.com/personal"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90"
+              style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 4px 20px rgba(124,58,237,0.35)" }}
+            >
+              Get Personalized Horoscope
+            </a>
+          </div>
         </div>
 
         {isLoading && (
@@ -178,11 +200,7 @@ export default function DailyForecast() {
           <>
             <div className="rounded-2xl border border-purple-900/40 p-6 mb-6 text-center"
               style={{ background: "rgba(10,5,20,0.95)", boxShadow: "0 0 40px rgba(168,85,247,0.12)" }}>
-              <p className="text-xs uppercase tracking-widest text-gray-600 mb-2">Today's Cosmic Weather</p>
-              <blockquote className="text-xl md:text-2xl font-bold leading-tight mb-4"
-                style={{ color: dominantColor }}>
-                "{forecast.overallTheme}"
-              </blockquote>
+              <p className="text-xs uppercase tracking-widest text-gray-600 mb-3">Today's Cosmic Weather</p>
               <p className="text-sm text-gray-300 leading-relaxed max-w-2xl mx-auto">
                 {forecast.overallInterpretation}
               </p>
