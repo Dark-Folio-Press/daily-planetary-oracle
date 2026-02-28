@@ -2,8 +2,13 @@ import { Router, Request, Response, NextFunction } from "express";
 import { wixHoroscopeService } from "../services/wixHoroscope";
 import { z } from "zod";
 import Stripe from "stripe";
+import OpenAI from "openai";
 import { exec } from "child_process";
 import { promisify } from "util";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY
+});
 
 const execAsync = promisify(exec);
 
@@ -437,4 +442,138 @@ router.get("/planets/sounds", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/daily-forecast", async (req: Request, res: Response) => {
+  try {
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+
+    const ELEMENT_MAP: Record<string, string> = {
+      Aries: 'fire', Leo: 'fire', Sagittarius: 'fire',
+      Taurus: 'earth', Virgo: 'earth', Capricorn: 'earth',
+      Gemini: 'air', Libra: 'air', Aquarius: 'air',
+      Cancer: 'water', Scorpio: 'water', Pisces: 'water'
+    };
+
+    const PLANET_SYMBOLS: Record<string, string> = {
+      Sun: '☀️', Moon: '🌙', Mercury: '☿', Venus: '♀',
+      Mars: '♂', Jupiter: '♃', Saturn: '♄'
+    };
+
+    const PLANET_COLORS: Record<string, string> = {
+      Sun: '#FFD700', Moon: '#C0C0C0', Mercury: '#B5B5B5',
+      Venus: '#FFA07A', Mars: '#FF4500', Jupiter: '#DEB887', Saturn: '#DAA520'
+    };
+
+    const PLANET_DOMAINS: Record<string, string> = {
+      Sun: 'identity, vitality, life purpose',
+      Moon: 'emotions, instincts, subconscious',
+      Mercury: 'communication, thought, travel',
+      Venus: 'love, beauty, values, money',
+      Mars: 'action, desire, conflict, drive',
+      Jupiter: 'expansion, luck, wisdom, growth',
+      Saturn: 'structure, discipline, karma, limits'
+    };
+
+    let planetsRaw: Record<string, any> = {};
+    let pythonSucceeded = false;
+
+    try {
+      const command = `python server/astrology_engine.py "${dateStr}" "12:00" "51.5074" "-0.1278"`;
+      const { stdout } = await execAsync(command, { timeout: 15000 });
+      const chartData = JSON.parse(stdout);
+      if (chartData.planets && !chartData.error) {
+        planetsRaw = chartData.planets;
+        pythonSucceeded = true;
+      }
+    } catch (pyError) {
+      console.error('Python engine error for daily forecast, using fallback:', pyError);
+    }
+
+    if (!pythonSucceeded) {
+      const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+      const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+      const mkP = (offset: number, speed: number) => ({
+        sign: signs[Math.floor(((dayOfYear * speed) + offset) / 30) % 12],
+        degree: Math.floor(((dayOfYear * speed) + offset) % 30),
+        retrograde: false
+      });
+      planetsRaw = {
+        Sun: mkP(0, 1), Moon: mkP(0, 13.2), Mercury: mkP(20, 1.2),
+        Venus: mkP(45, 0.9), Mars: mkP(80, 0.5), Jupiter: mkP(120, 0.08), Saturn: mkP(200, 0.03)
+      };
+    }
+
+    const TARGET_PLANETS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
+    const planetPositions = TARGET_PLANETS.map(name => {
+      const raw = planetsRaw[name] || { sign: 'Aries', degree: 0, retrograde: false };
+      return {
+        name,
+        symbol: PLANET_SYMBOLS[name],
+        sign: raw.sign || 'Aries',
+        degree: Math.round(raw.degree || 0),
+        retrograde: raw.retrograde || false,
+        element: ELEMENT_MAP[raw.sign] || 'fire',
+        color: PLANET_COLORS[name],
+        domain: PLANET_DOMAINS[name]
+      };
+    });
+
+    const planetSummary = planetPositions.map(p =>
+      `${p.name} in ${p.sign} at ${p.degree}°${p.retrograde ? ' (retrograde)' : ''} — rules ${p.domain}`
+    ).join('\n');
+
+    const prompt = `Today is ${dateStr}. Here are the exact planetary positions from the Swiss Ephemeris:
+
+${planetSummary}
+
+You are a sardonic, darkly witty cosmic oracle — the kind of astrologer who's been staring into the void long enough that it stares back and bores them. Write a DAILY ASTROLOGICAL FORECAST for today based precisely on these real planetary positions.
+
+Structure your response as JSON with the following fields:
+{
+  "overallTheme": "A single punchy sentence capturing the day's cosmic weather (max 20 words, dark and sardonic)",
+  "overallInterpretation": "3-4 sentences describing the collective energy of the day. Reference the actual planets and signs. Sardonic tone but genuinely insightful.",
+  "planets": [
+    {
+      "name": "Sun",
+      "headline": "Short sharp headline for Sun's influence today (max 10 words)",
+      "interpretation": "2-3 sentences on what Sun in [sign] means for everyone today. Use the planet's domain (${PLANET_DOMAINS['Sun']}). Be specific about the sign's qualities. Dark but useful.",
+      "advice": "One concrete piece of advice for navigating this energy today."
+    }
+    // repeat for all 7 planets
+  ],
+  "dominantElement": "fire|earth|air|water",
+  "elementalMood": "One sentence describing the elemental mood of today",
+  "luckyWindow": "The best 2-3 hour window today for important actions (e.g. '2pm - 4pm')",
+  "avoidWindow": "The worst window today (e.g. 'early morning until noon')",
+  "dailyMantra": "A short mantra for today, darkly cosmic in tone",
+  "cosmicWarning": "One tongue-in-cheek cosmic warning for the day"
+}
+
+Return ONLY valid JSON, no markdown code fences.`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.85,
+      max_tokens: 2000
+    });
+
+    const raw = completion.choices[0].message.content || '{}';
+    const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const forecast = JSON.parse(cleaned);
+
+    res.json({
+      success: true,
+      date: dateStr,
+      source: pythonSucceeded ? 'swiss_ephemeris' : 'calculated',
+      planetPositions,
+      forecast
+    });
+  } catch (error) {
+    console.error("Error generating daily forecast:", error);
+    res.status(500).json({ success: false, error: "Failed to generate daily forecast" });
+  }
+});
+
 export default router;
+
