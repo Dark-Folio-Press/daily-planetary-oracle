@@ -185,7 +185,7 @@ export default function DailyForecast() {
             >
               Get Personalized Horoscope
             </a>
-            <Link href="/sound-generator">
+            <Link href="/daily-planetary-oracle">
               <button className="px-5 py-2.5 rounded-xl border border-indigo-800 text-indigo-300 hover:text-indigo-100 hover:border-indigo-600 transition-all text-sm">
                 🎵 Hear the Planets
               </button>

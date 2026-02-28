@@ -493,14 +493,14 @@ export default function ChatPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => window.location.href = '/sound-generator'}
+                      onClick={() => window.location.href = '/daily-planetary-oracle'}
                       className="text-muted-foreground hover:text-foreground hover:bg-white/10 p-2 rounded-lg transition-colors flex-shrink-0"
                     >
                       <Radio className="w-5 h-5" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent className="bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-md text-white border border-white/20 font-medium">
-                    🪐 Planetary Sound Oracle
+                    🪐 Daily Planetary Oracle
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

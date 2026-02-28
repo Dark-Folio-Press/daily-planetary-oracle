@@ -19,7 +19,7 @@ import LessonPage from "@/pages/lesson";
 import WaitlistPage from "@/pages/WaitlistPage";
 import HarmonicAnalysisPage from "@/pages/harmonic-analysis";
 import WixTestPage from "@/pages/wix-test";
-import SoundGeneratorPage from "@/pages/sound-generator";
+import DailyPlanetaryOraclePage from "@/pages/daily-planetary-oracle";
 import DailyForecastPage from "@/pages/daily-forecast";
 import NotFound from "@/pages/not-found";
 
@@ -79,8 +79,8 @@ function Router() {
       {/* Wix Horoscope API Test Page - publicly accessible */}
       <Route path="/wix-test"><WixTestPage /></Route>
 
-      {/* Planetary Sound Generator - publicly accessible */}
-      <Route path="/sound-generator"><SoundGeneratorPage /></Route>
+      {/* Daily Planetary Oracle - publicly accessible */}
+      <Route path="/daily-planetary-oracle"><DailyPlanetaryOraclePage /></Route>
 
       {/* Daily Astrological Forecast - publicly accessible */}
       <Route path="/daily-forecast"><DailyForecastPage /></Route>

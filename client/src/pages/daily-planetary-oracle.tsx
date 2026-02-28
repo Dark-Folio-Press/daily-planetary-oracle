@@ -152,7 +152,7 @@ function getMinorCards(planetName: string): TarotRecord[] {
   return (tarotData as TarotRecord[]).filter(r => r.planet === planetName && !r.gemstone);
 }
 
-export default function SoundGenerator() {
+export default function DailyPlanetaryOracle() {
   const orreryRef = useRef<HTMLCanvasElement>(null);
   const analyserRef = useRef<HTMLCanvasElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -507,7 +507,7 @@ export default function SoundGenerator() {
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-center"
             style={{ background: "linear-gradient(45deg,#c084fc,#60a5fa,#f472b6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            ✨ PLANETARY SOUND ORACLE ✨
+            ✨ DAILY PLANETARY ORACLE ✨
           </h1>
           <div className="w-20" />
         </div>
